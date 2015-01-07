@@ -1,14 +1,14 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 
 
 // Provides class sap.ui.model.odata.ODataMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs'],
+	function(jQuery, EventProvider, datajs) {
 	"use strict";
 
 	/*global OData *///declare unusual global vars for JSLint/SAPUI5 validation
@@ -16,17 +16,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Constructor for a new ODataMetadata.
 	 *
-	 * @param {string} sMetadataURI
-	 * @param {object} mParams
-	 * @param {boolean} mParams.async
-	 * @param {boolean} mParams.user
-	 * @param {boolean} mParams.password
+	 * @param {string} sMetadataURI needs the correct metadata uri including $metadata
+	 * @param {object} [mParams] optional map of parameters.
+	 * @param {boolean} [mParams.async=true] request is per default async
+	 * @param {string} [mParams.user] user for the service,
+	 * @param {string} [mParams.password] password for service
+	 * @param {object} [mParams.headers] (optional) map of custom headers which should be set with the request.
 	 * 
 	 * @class
 	 * Implementation to access oData metadata
 	 *
 	 * @author SAP SE
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 *
 	 * @constructor
 	 * @public
@@ -632,6 +633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 	/**
 	 * Get the the use-batch extension value if any
+	 * @return {boolean} true/false
 	 * @public
 	 */
 	ODataMetadata.prototype.getUseBatch = function() {

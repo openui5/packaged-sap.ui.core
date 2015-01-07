@@ -10815,14 +10815,14 @@ $.ui.position = {
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 /** 
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.26.2
+ * @version 1.26.3
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,7 +10847,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.26.2";
+		var apiVersion = "1.26.3";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10905,7 +10905,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.26.2";
+		var v = "1.26.3";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -14344,7 +14344,7 @@ return URI;
 }));
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -14536,7 +14536,7 @@ return URI;
 })(jQuery);
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -14619,7 +14619,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -15037,7 +15037,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 * @namespace
 	 * @public
 	 * @static
@@ -17048,7 +17048,11 @@ return URI;
 	 * @param {function}
 	 *          [fnLoadCallback] callback function to get notified once the link has been loaded
 	 * @param {function}
-	 *          [fnErrorCallback] callback function to get notified once the link loading failed
+	 *          [fnErrorCallback] callback function to get notified once the link loading failed.
+	 *          In case of usage in IE the error callback will also be executed if an empty stylesheet
+	 *          is loaded. This is the only option how to determine in IE if the load was successful
+	 *          or not since the native onerror callback for link elements doesn't work in IE. The IE 
+	 *          always calls the onload callback of the link element.
 	 *
 	 * @public
 	 * @static
@@ -17066,20 +17070,50 @@ return URI;
 			if (sId) {
 				oLink.id = sId;
 			}
-
-			jQuery(oLink).load(function() {
-				jQuery(oLink).attr("sap-ui-ready", "true");
-				if (fnLoadCallback) {
-					fnLoadCallback();
-				}
-			});
-
-			jQuery(oLink).error(function() {
+			
+			var fnError = function() {
 				jQuery(oLink).attr("sap-ui-ready", "false");
 				if (fnErrorCallback) {
 					fnErrorCallback();
 				}
-			});
+			};
+
+			var fnLoad = function() {
+				jQuery(oLink).attr("sap-ui-ready", "true");
+				if (fnLoadCallback) {
+					fnLoadCallback();
+				}
+			};
+			
+			// for IE we will check if the stylesheet contains any rule and then
+			// either trigger the load callback or the error callback
+			if (!!sap.ui.Device.browser.internet_explorer) {
+				var fnLoadOrg = fnLoad;
+				fnLoad = function(oEvent) {
+					var aRules;
+					try {
+						// in cross-origin scenarios the IE can still access the rules of the stylesheet
+						// if the stylesheet has been loaded properly
+						aRules = oEvent.target && oEvent.target.sheet && oEvent.target.sheet.rules;
+						// in cross-origin scenarios now the catch block will be executed because we
+						// cannot access the rules of the stylesheet but for non cross-origin stylesheets
+						// we will get an empty rules array and finally we cannot differ between 
+						// empty stylesheet or loading issue correctly => documented in JSDoc!
+					} catch (ex) {
+						// exception happens when the stylesheet could not be loaded from the server
+						// we now ignore this and know that the stylesheet doesn't exists => trigger error
+					}
+					// no rules means error
+					if (aRules && aRules.length > 0) {
+						fnLoadOrg();
+					} else {
+						fnError();
+					}
+				};
+			}
+			
+			jQuery(oLink).load(fnLoad);
+			jQuery(oLink).error(fnError);
 			return oLink;
 
 		};

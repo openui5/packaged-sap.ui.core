@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -44,7 +44,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 	
 	// nested components? 
 	//   indexOf check in convertURL will not work here!
-	
 	
 	// determine the language and loading mode from the configuration
 	var oConfiguration = sap.ui.getCore().getConfiguration();
@@ -537,6 +536,16 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			
 	};
 
+	// check for pre-defined callback handlers and register the callbacks
+	var mHooks = oConfiguration.getAppCacheBusterHooks();
+	if (mHooks) {
+		jQuery.each(["handleURL", "onIndexLoad", "onIndexLoaded"], function(iIndex, sFunction) {
+			if (typeof mHooks[sFunction] === "function") {
+				AppCacheBuster[sFunction] = mHooks[sFunction];
+			}
+		});
+	}
+	
 	return AppCacheBuster;
 
 }, /* bExport= */ true);

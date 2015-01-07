@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 /* Global CSS for 'base' theme */
@@ -318,6 +318,9 @@
 .sapUiNoMarginEnd {
   margin-right: 0 !important;
 }
+.sapUiHiddenPlaceholder {
+  display: none !important;
+}
 .sapUiBliLy {
   position: absolute;
   display: inline-block;
@@ -459,6 +462,9 @@ Usage:
 .sapThemeText-asBorderColor {
   border-color: #000000;
 }
+.sapThemeText-asOutlineColor {
+  outline-color: #000000;
+}
 .sapThemeTextInverted,
 .sapThemeTextInverted-asColor {
   color: #ffffff;
@@ -482,6 +488,9 @@ Usage:
 .sapThemeBrand-asBackgroundColor {
   background-color: #f0ab00;
 }
+.sapThemeBrand-asOutlineColor {
+  outline-color: #f0ab00;
+}
 .sapThemeHighlight-asColor {
   color: #111177;
 }
@@ -490,6 +499,9 @@ Usage:
 }
 .sapThemeHighlight-asBackgroundColor {
   background-color: #111177;
+}
+.sapThemeHighlight-asOutlineColor {
+  outline-color: #111177;
 }
 /* ============================================= */
 /* CSS for control sap.ui.core/ScrollBar.control */

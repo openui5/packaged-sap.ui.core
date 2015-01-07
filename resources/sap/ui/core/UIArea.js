@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public

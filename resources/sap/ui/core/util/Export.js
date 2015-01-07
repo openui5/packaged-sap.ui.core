@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 /*global Promise */// declare unusual global vars for JSLint/SAPUI5 validation
@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 * @since 1.22.0
 	 *
 	 * @constructor

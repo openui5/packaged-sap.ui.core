@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 *
 	 * @constructor
 	 * @public
@@ -753,11 +753,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (oData.results) {
 			aList = [];
 			jQuery.each(oData.results, function(i, entry) {
-				aList.push(that._importData(entry, mChangedEntities));
+				var sKey = that._importData(entry, mChangedEntities); 
+				if (sKey) {
+					aList.push(sKey);
+				}
 			});
 			return aList;
 		} else {
 			sKey = this._getKey(oData);
+			if (!sKey) {
+				return sKey;
+			}
 			oEntry = this.oData[sKey];
 			if (!oEntry) {
 				oEntry = oData;
@@ -1522,7 +1528,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			// If error is a 403 with XSRF token "Required" reset the token and retry sending request
 			if (that.bTokenHandling && oError.response) {
 				var sToken = that._getHeader("x-csrf-token", oError.response.headers);
-				if (!oRequest.bTokenReset && oError.response.statusCode === '403' && sToken && sToken.toLowerCase() === "required") {
+				if (!oRequest.bTokenReset && oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
 					that.resetSecurityToken();
 					oRequest.bTokenReset = true;
 					_submit();
@@ -2127,8 +2133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._updateETag = function(oRequest, oResponse) {
-		var sUrl,
-		oEntry;
+		var sUrl, oEntry, sETag;
 
 		// refresh ETag from response directly. We can not wait for the refresh.
 		sUrl = oRequest.requestUri.replace(this.sServiceUrl + '/', '');
@@ -2136,8 +2141,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sUrl = "/" + sUrl;
 		}
 		oEntry = this._getObject(sUrl);
-		if (oEntry && oEntry.__metadata && oResponse.headers.ETag){
-			oEntry.__metadata.etag = oResponse.headers.ETag;
+		sETag = this._getHeader("etag", oResponse.headers);
+		if (oEntry && oEntry.__metadata && sETag){
+			oEntry.__metadata.etag = sETag;
 		}
 	};
 
@@ -2158,7 +2164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required.
 				// a new token will be fetched in the refresh afterwards.
 				sToken = this._getHeader("x-csrf-token", oError.response.headers);
-				if (oError.response.statusCode === '403' && sToken && sToken.toLowerCase() === "required") {
+				if (oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
 					this.resetSecurityToken();
 				}
 			}
@@ -2556,15 +2562,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Trigger a request to the function import odata service that was specified in the model constructor.
-	 *
-	 * @param {string} sFunctionName A string containing the name of the function to call.
-	 *		The name is concatenated to the sServiceUrl which was specified in the model constructor.
+	 * Trigger a request to the function import odata service that was specified in the model constructor. 
+	 * 
+	 * If the ReturnType of the function import is either an EntityType or a collection of EntityType the 
+	 * changes are reflected in the model, otherwise they are ignored, and the <code>response</code> can 
+	 * be processed in the successHandler.
+	 * 
+	 * @param {string} sFunctionName A string containing the name of the function to call. The name is concatenated to the sServiceUrl which was
+	 *        specified in the model constructor.
 	 * @param {map} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {string} [mParameters.method] A string containing the type of method to call this function with
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully retrieved.
-	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
+	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully retrieved. The handler can have
+	 *        the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
@@ -2853,12 +2863,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		if (aKeys) {
 			jQuery.each(aKeys, function(iIndex, sKey) {
-				if (sKey in this.mChangedEntities) {
+				if (sKey in that.mChangedEntities) {
 					that.mChangeHandles[sKey].abort();
 					delete that.mChangeHandles[sKey];
 					delete that.mChangedEntities[sKey];
 				} else {
-					jQuery.log.warning(this + " - resetChanges: " + sKey + " is not changed nor a valid change key!");
+					jQuery.log.warning(that + " - resetChanges: " + sKey + " is not changed nor a valid change key!");
 				}
 			});
 		} else {

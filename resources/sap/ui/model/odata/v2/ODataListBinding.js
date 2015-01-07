@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -496,15 +496,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	};
 	
 	/**
-	 * Return the length of the list
+	 * Return the length of the list.
+	 * 
+	 * In case the final length is unknown (e.g. when searching on a large dataset), this will 
+	 * return an estimated length. 
 	 *
 	 * @return {number} the length
 	 * @public
 	 */
 	ODataListBinding.prototype.getLength = function() {
-		// If length is not final, add some additional length to enable scrolling/paging for
-		// controls who only enable this if more items are available
-		if (this.bLengthFinal) {
+		// If length is not final and larger than zero, add some additional length to enable 
+		// scrolling/paging for controls that only do this if more items are available
+		if (this.bLengthFinal || this.iLength == 0) {
 			return this.iLength;
 		} else {
 			var iAdditionalLength = this.iLastThreshold || this.iLastLength || 10;
@@ -753,6 +756,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			});
 			this.mRequestHandles = {};
 			this.bPendingRequest = false;
+		}
+	};
+	
+	/**
+	 * Get download URL
+	 * @param {string} sFormat The required format for the download
+	 * @since 1.24
+	 */
+	ODataListBinding.prototype.getDownloadUrl = function(sFormat) {
+		var aParams = [],
+			sPath;
+		
+		if (sFormat) {
+			aParams.push("$format=" + encodeURIComponent(sFormat));
+		}
+		if (this.sSortParams) {
+			aParams.push(this.sSortParams);
+		}
+		if (this.sFilterParams) {
+			aParams.push(this.sFilterParams);
+		}
+		if (this.sCustomParams) {
+			aParams.push(this.sCustomParams);
+		}
+		
+		sPath = this.oModel.resolve(this.sPath,this.oContext);
+
+		if (sPath) {
+			return this.oModel._createRequestUrl(sPath, null, aParams);
 		}
 	};
 

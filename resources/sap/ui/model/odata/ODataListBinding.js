@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -486,9 +486,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 *
 	 */
 	ODataListBinding.prototype.getLength = function() {
-		// If length is not final, add some additional length to enable scrolling/paging for
-		// controls who only enable this if more items are available
-		if (this.bLengthFinal) {
+		// If length is not final and larger than zero, add some additional length to enable 
+		// scrolling/paging for controls that only do this if more items are available
+		if (this.bLengthFinal || this.iLength == 0) {
 			return this.iLength;
 		} else {
 			var iAdditionalLength = this.iLastThreshold || this.iLastLength || 10;

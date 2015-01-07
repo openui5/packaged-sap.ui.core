@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -393,17 +393,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 					});
 				}
 			}
-	
-			if (options.homeIcon) {
-	
+
+			if (options && options.homeIcon) {
 				var oIcons;
-	
+
 				if (typeof options.homeIcon === "string") {
 					oIcons = { phone: options.homeIcon };
 				} else {
 					oIcons = $.extend({}, options.homeIcon);
 				}
-	
+
 				oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
 				oIcons.favicon = options.homeIcon.icon || oIcons.favicon;
 				oIcons.icon = undefined;

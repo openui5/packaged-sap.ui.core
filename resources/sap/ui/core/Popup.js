@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -968,12 +968,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		var fnClosed = function() { // the function to call when the popup closing animation has completed
+			// hide the old DOM ref
 			jQuery($Ref).hide().css({
 				"visibility" : "hidden",
 				"left" : "0px",
 				"top" : "0px",
 				"right" : ""
 			});
+
+			// update the DomRef because it could have been rerendered during closing
+			$Ref = that._$(/* forceRerender */ false, /* only get DOM */ true);
+			if ($Ref.length > 1) {
+				// also hide the new DOM ref
+				jQuery($Ref).hide().css({
+					"visibility" : "hidden",
+					"left" : "0px",
+					"top" : "0px",
+					"right" : ""
+				});
+			}
 
 			//disabled for mobile or desktop browser in touch mode
 			if (that.restoreFocus) {

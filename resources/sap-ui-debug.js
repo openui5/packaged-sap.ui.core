@@ -1,6 +1,6 @@
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -27,7 +27,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @class Control Tree used for the Debug Environment
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
@@ -402,7 +402,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -494,7 +494,7 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom'
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -684,7 +684,7 @@ sap.ui.define('sap/ui/debug/LogViewer', ['jquery.sap.global'],
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -702,7 +702,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis
@@ -1228,7 +1228,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2014 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -1244,7 +1244,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', './ControlTree', '.
 	 * @class Central Class for the Debug Environment
 	 *
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.26.2
+	 * @version 1.26.3
 	 * @private
 	 * @alias sap.ui.debug.DebugEnv
 	 */
