@@ -88,18 +88,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 			var bIsList = this.oModel.isList(this.sPath, this.getContext());
 
-			//We are bound to a single entity which represents the root context
-			if (!bIsList) {
+			if (bIsList) {
+				//We are bound to a collection which represents the first level
+				this.bDisplayRootNode = true;
+			} else {
+				//We are bound to a single entity which represents the root context
 				//Get the binding context for the root element, it is created if it doesn't exist yet
 				bRequestRootContexts = false;
-				this.oModel.createBindingContext(sNodeId, null, { skip: iStartIndex, top: iLength, expand: mRequestParameters.navPath }, function(oNewContext) {
+				this.oModel.createBindingContext(sNodeId, null, {expand: mRequestParameters.navPath }, function(oNewContext) {
 					aRootContexts = [oNewContext];
 					if (that.oRootContext !== oNewContext) {
 						that.oRootContext = oNewContext;
 						that._processODataObject(oNewContext.getObject(), sNodeId, mRequestParameters.navPath);
 						that.bNeedsUpdate = true;
 					}
-				});
+				}, this.bRefresh);
+				this.bRefresh = false;
 			}
 		}
 
@@ -113,11 +117,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 		}
 
 		if (!this.bDisplayRootNode && aRootContexts.length > 0) {
-			if (aRootContexts.length > 1) {
-				jQuery.sap.log.fatal("Disabling the display of the root node doesn't make sense if you have multiple root nodes");
-			}
 			this.oRootContext = aRootContexts[0];
-			return this.getNodeContexts(aRootContexts[0], iStartIndex, iLength, iThreshold);
+			aRootContexts = this.getNodeContexts(aRootContexts[0], iStartIndex, iLength, iThreshold);
 		}
 
 		return aRootContexts;
@@ -454,6 +455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 			this.oKeys = {};
 			this.oLengths = {};
 			this.oFinalLengths = {};
+			this.oRootContext = null;
 		}
 	};
 	
@@ -499,6 +501,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 		if (bForceUpdate || bChangeDetected) {
 			this.resetData();
 			this.bNeedsUpdate = false;
+			this.bRefresh = true;
 			this._fireChange();
 		}
 	};
@@ -581,13 +584,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 			this.oKeys[sPath] = oRef;
 			this.oLengths[sPath] = oRef.length;
 			this.oFinalLengths[sPath] = true;
-		} else if (typeof oRef === "object") {
-			this.oKeys[sPath] = [];
-			this.oLengths[sPath] = 0;
-			this.oFinalLengths[sPath] = true;
-		}
+		} 
 		
-		if (aNavPath.length > 0 && oObject[sNavPath]) {
+		if (sNavPath && oObject[sNavPath]) {
 			if (jQuery.isArray(oRef)) {
 				jQuery.each(oRef, function(iIndex, sRef) {
 					var oObject = that.getModel().getData("/" + sRef);

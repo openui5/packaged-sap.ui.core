@@ -32,7 +32,7 @@
 			 *        feature - DO NOT USE IN PRODUCTIVE SCENARIOS!!
 			 *
 			 * @author Peter Muessig
-			 * @version 1.26.3
+			 * @version 1.26.4
 			 * @private
 			 * @alias sap.ui.core.plugin.LessSupport
 			 */
@@ -277,7 +277,7 @@
 			/**
 			 * retrieves the last modified timestamp of the resource for the given url.
 			 * @param {string} sUrl URL to a resource
-			 * @return {number} timestamp
+			 * @return {number} timestamp (0 if no last-modified header is present / -1 if file is not available)
 			 * @private
 			 */
 			LessSupport.prototype.getLastModified = function(sUrl) {
@@ -290,7 +290,7 @@
 					async: false,
 					success : function(data, textStatus, xhr) {
 						var sLastModified = xhr.getResponseHeader("Last-Modified");
-						iLastModified = sLastModified ? Date.parse(sLastModified) : -1;
+						iLastModified = sLastModified ? Date.parse(sLastModified) : 0;
 					},
 					error : function(xhr, textStatus, error) {
 						iLastModified = -1;

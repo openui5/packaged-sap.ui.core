@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * @class ViewSerializer class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.26.3
+	 * @version 1.26.4
 	 * @alias sap.ui.core.util.serializer.ViewSerializer
 	 * @experimental Since 1.15.1. The ViewSerializer is still under construction, so some implementation details can be changed in future.
 	 */
@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	
 				// double check that the function is on the controller
 				var oController = oView.getController();
-				if (oController[sHandlerName]) {
+				if (oController[sHandlerName] || sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
 					return sHandlerName;
 				}
 			}

@@ -318,6 +318,7 @@
 .sapUiNoMarginEnd {
   margin-right: 0 !important;
 }
+.sapUiInvisibleText,
 .sapUiHiddenPlaceholder {
   display: none !important;
 }

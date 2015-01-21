@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 * @class
 	 * Component Container
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.3
+	 * @version 1.26.4
 	 *
 	 * @constructor
 	 * @public

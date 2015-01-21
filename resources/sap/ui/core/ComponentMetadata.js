@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @experimental Since 1.9.2. The Component concept is still under construction, so some implementation details can be changed in future.
 	 * @class
 	 * @author SAP SE
-	 * @version 1.26.3
+	 * @version 1.26.4
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -226,6 +226,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			return jQuery.extend(true, {}, oParent.getCustomEntry(sKey, bMerged), oData);
 		}
 		return jQuery.extend(true, {}, oData);
+	};
+	
+	/**
+	 * Returns the name of the Component (which is the namespace only with the module name)
+	 * @return {string} Component name
+	 * @public
+	 */
+	ComponentMetadata.prototype.getComponentName = function() {
+		return this._sComponentName;
 	};
 	
 	/**

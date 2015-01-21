@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.26.3
+	 * @version 1.26.4
 	 *
 	 * @constructor
 	 * @public
@@ -171,9 +171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				this.aUrlParams = this.aUrlParams.concat(ODataUtils._createUrlParamsArray(mServiceUrlParams));
 			}
 
-			if (this.oMetadata.isLoaded()) {
-				this._initializeMetadata(true);
-			} else {
+			if (!this.oMetadata.isLoaded()) {
 				this.oMetadata.attachLoaded(function(oEvent){
 					that._initializeMetadata();
 				}, this);
@@ -194,6 +192,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				this.oAnnotations.attachLoaded(function(oEvent) {
 					that.fireAnnotationsLoaded(oEvent.getParameters());
 				});
+			}
+
+			if (this.oMetadata.isLoaded()) {
+				this._initializeMetadata(true);
 			}
 
 			// prepare variables for request headers, data and metadata
@@ -2802,7 +2804,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
-		var bMerge = true, oRequest, mRequests, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
+		var bMerge = true, oRequest, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
 			that = this;
 
 		if (mParameters) {
@@ -2818,11 +2820,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
 				oRequest = that._processChange(sKey, oData, bMerge);
 				oRequest.key = sKey;
-				mRequests = that.mRequests;
 				if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
-					mRequests = that.mDeferredRequests;
+					that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 				}
-				that._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 			}
 		});
 
@@ -2882,16 +2882,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Sets a new value for the given property <code>sPropertyName</code> in the model without triggering a server request.
-	 *  This can be done by the submitChanges method.
-	 *
-	 *  Note: Only one entry of one collection can be updated at once. Otherwise a fireRejectChange event is fired.
-	 *
-	 *  Before updating a different entry the existing changes of the current entry have to be submitted or resetted by the
-	 *  corresponding methods: submitChanges, resetChanges.
-	 *
-	 *  IMPORTANT: All pending changes are resetted in the model if the application triggeres any kind of refresh
-	 *  on that entry. Make sure to submit the pending changes first. To determine if there are any pending changes call the hasPendingChanges method.
+	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
+	 * 
+	 * If the changeBatchGroup for the changed EntityType is set to deferred changes could be submitted 
+	 * with submitChanges. Otherwise the change will be submitted directly.
 	 *
 	 * @param {string}  sPath path of the property to set
 	 * @param {any}     oValue value to set the property to

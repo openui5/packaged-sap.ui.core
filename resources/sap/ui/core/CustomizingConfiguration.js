@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['jquery.sap.global', './Core'],
-	function(jQuery, Core) {
+sap.ui.define(['jquery.sap.global', './Core', './Component'],
+	function(jQuery, Core, Component) {
 	"use strict";
 
 
@@ -24,17 +24,30 @@ sap.ui.define(['jquery.sap.global', './Core'],
 		 * finds the config in the given type and use the check function to validate
 		 * if the correct entry has been found!
 		 * @param {string} sType name of the config section
+		 * @param {string|sap.ui.base.ManagedObject} vObject Component ID or ManagedObject
 		 * @param {function} fnCheck check function
 		 */
-		function findConfig(sType, fnCheck) {
-			// TODO: checking order of components?
-			jQuery.each(mComponentConfigs, function(sNamespace, oConfig) {
-				if (oConfig && oConfig[sType]) {
-					if (fnCheck(oConfig[sType])) {
+		function findConfig(sType, vObject, fnCheck) {
+			var sComponentId = vObject && typeof vObject === "string" ? vObject : Component.getOwnerIdFor(vObject);
+			if (sComponentId) {
+				// if a component name is given only the component customizing
+				// configuration is checked - the customizing configuration is
+				// merged in case of extending components - so the configuration
+				// should be available properly
+				var oComponent = sap.ui.component(sComponentId);
+				var sComponentName = oComponent && oComponent.getMetadata().getComponentName();
+				var oConfig = mComponentConfigs[sComponentName];
+				if (oConfig && oConfig[sType] && fnCheck(oConfig[sType])) {
+					return false;
+				}
+			} else {
+				// TODO: checking order of components?
+				jQuery.each(mComponentConfigs, function(sComponentName, oConfig) {
+					if (oConfig && oConfig[sType] && fnCheck(oConfig[sType])) {
 						return false;
 					}
-				}
-			});
+				});
+			}
 		}
 		
 		/**
@@ -45,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './Core'],
 		 * gets removed again.
 		 *
 		 * @author SAP SE
-		 * @version 1.26.3
+		 * @version 1.26.4
 		 * @constructor
 		 * @private
 		 * @since 1.15.1
@@ -94,10 +107,10 @@ sap.ui.define(['jquery.sap.global', './Core'],
 			 * returns the configuration of the replacement View or undefined
 			 * @private
 			 */
-			getViewReplacement: function(sViewName) {
+			getViewReplacement: function(sViewName, vObject) {
 				var oResultConfig;
 				// TODO: checking order of components?
-				findConfig(CONFIG_VIEW_REPLACEMENTS, function(oConfig) {
+				findConfig(CONFIG_VIEW_REPLACEMENTS, vObject, function(oConfig) {
 					oResultConfig = oConfig[sViewName];
 					return !!oResultConfig;
 				});
@@ -108,10 +121,10 @@ sap.ui.define(['jquery.sap.global', './Core'],
 			 * returns the configuration of the given extension point or undefined
 			 * @private
 			 */
-			getViewExtension: function(sViewName, sExtensionPointName) { // FIXME: currently ONE extension wins, but they should be somehow merged - but how to define the order?
+			getViewExtension: function(sViewName, sExtensionPointName, vObject) { // FIXME: currently ONE extension wins, but they should be somehow merged - but how to define the order?
 				var oResultConfig;
 				// TODO: checking order of components?
-				findConfig(CONFIG_VIEW_EXTENSIONS, function(oConfig) {
+				findConfig(CONFIG_VIEW_EXTENSIONS, vObject, function(oConfig) {
 					oResultConfig = oConfig[sViewName] && oConfig[sViewName][sExtensionPointName];
 					return !!oResultConfig;
 				});
@@ -123,9 +136,9 @@ sap.ui.define(['jquery.sap.global', './Core'],
 			 * controller name
 			 * @private
 			 */
-			getControllerExtension: function(sControllerName) {
+			getControllerExtension: function(sControllerName, vObject) {
 				var oResultConfig;
-				findConfig(CONFIG_CONTROLLER_EXTENSIONS, function(oConfig) {
+				findConfig(CONFIG_CONTROLLER_EXTENSIONS, vObject, function(oConfig) {
 					oResultConfig = oConfig[sControllerName];
 					return !!oResultConfig;
 				});
@@ -137,10 +150,10 @@ sap.ui.define(['jquery.sap.global', './Core'],
 			 * only one property modified and only once
 			 * @private
 			 */
-			getCustomProperties: function(sViewName, sControlId) { // TODO: Fragments and Views are mixed here
+			getCustomProperties: function(sViewName, sControlId, vObject) { // TODO: Fragments and Views are mixed here
 				var mSettings;
 				// TODO: checking order of components?
-				findConfig(CONFIG_VIEW_MODIFICATIONS, function(oConfig) {
+				findConfig(CONFIG_VIEW_MODIFICATIONS, vObject, function(oConfig) {
 					var oSettings = oConfig[sViewName] && oConfig[sViewName][sControlId];
 					var oUsedSettings = {};
 					var bValidConfigFound = false;
@@ -163,9 +176,9 @@ sap.ui.define(['jquery.sap.global', './Core'],
 				return mSettings;
 			},
 
-			hasCustomProperties: function(sViewName){
+			hasCustomProperties: function(sViewName, vObject) {
 				var mSettings = {};
-				findConfig(CONFIG_VIEW_MODIFICATIONS, function(oConfig){
+				findConfig(CONFIG_VIEW_MODIFICATIONS, vObject, function(oConfig) {
 					if (!!oConfig[sViewName]) {
 						mSettings = oConfig[sViewName];
 					}
