@@ -486,16 +486,16 @@ Usage:
   color: #000000;
 }
 .sapThemeBrand-asColor {
-  color: #f0ab00;
+  color: #ffffff;
 }
 .sapThemeBrand-asBorderColor {
-  border-color: #f0ab00;
+  border-color: #ffffff;
 }
 .sapThemeBrand-asBackgroundColor {
-  background-color: #f0ab00;
+  background-color: #ffffff;
 }
 .sapThemeBrand-asOutlineColor {
-  outline-color: #f0ab00;
+  outline-color: #ffffff;
 }
 .sapThemeHighlight-asColor {
   color: #7a5100;
@@ -603,6 +603,20 @@ html[data-sap-ui-browser=ie8] .sapUiShd {
 /* modal, bubble, bottom, top */
 /* modal, bubble, bottom, top */
 /* Toolbar Separator */
+/* ------------------------------------------------------------------- */
+/* Generic Mapping: not for usage in standard control development !!!! */
+/* ------------------------------------------------------------------- */
+/* Semantic Text Colors */
+/* Semantic Element Colors */
+/* Semantic Backgrounds */
+/* Background Brand */
+/* Text Colors */
+/* Border Colors */
+/* @sapUiLightBorder: @sapHCStandardFG; */
+/* @sapUiExtraLightBorder: @sapHCStandardFG; */
+/* Accent */
+/* Backgrounds Header/Footer */
+/* Background */
 /* Shared CSS for 'sap_hcb' theme */
 :focus {
   outline-width: 3px;

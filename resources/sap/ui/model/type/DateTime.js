@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './Date'],
 	 * @extends sap.ui.model.type.Date
 	 *
 	 * @author SAP SE
-	 * @version 1.26.4
+	 * @version 1.26.6
 	 *
 	 * @constructor
 	 * @public

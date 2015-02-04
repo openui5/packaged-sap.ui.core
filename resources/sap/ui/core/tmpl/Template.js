@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.26.4
+	 * @version 1.26.6
 	 * @alias sap.ui.core.tmpl.Template
 	 * @experimental Since 1.15.0. The Template concept is still under construction, so some implementation details can be changed in future.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

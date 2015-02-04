@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 	 * @class
 	 * A View defined using (P)XML and HTML markup.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.26.4
+	 * @version 1.26.6
 	 *
 	 * @constructor
 	 * @public
