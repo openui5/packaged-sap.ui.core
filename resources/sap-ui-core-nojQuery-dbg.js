@@ -4,6 +4,3727 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
+/** 
+ * Device and Feature Detection API of the SAP UI5 Library.
+ *
+ * @version 1.26.7
+ * @namespace
+ * @name sap.ui.Device
+ * @public
+ */
+
+/*global console */
+
+//Declare Module if API is available
+if (window.jQuery && window.jQuery.sap && window.jQuery.sap.declare) {
+	window.jQuery.sap.declare("sap.ui.Device", false);
+}
+
+//Introduce namespace if it does not yet exist
+if (typeof window.sap !== "object" && typeof window.sap !== "function" ) {
+	  window.sap = {};
+}
+if (typeof window.sap.ui !== "object") {
+	window.sap.ui = {};
+}
+
+(function() {
+
+	//Skip initialization if API is already available
+	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
+		var apiVersion = "1.26.7";
+		window.sap.ui.Device._checkAPIVersion(apiVersion);
+		return;
+	}
+	
+	var device = {};
+
+////-------------------------- Logging -------------------------------------
+	/* since we cannot use the logging from jquery.sap.global.js, we need to come up with a seperate
+	 * solution for the device API
+	 */
+	// helper function for date formatting
+	function pad0(i,w) {
+		return ("000" + String(i)).slice(-w);
+	}
+
+	var FATAL = 0, ERROR = 1, WARNING = 2, INFO = 3, DEBUG = 4, TRACE = 5;
+
+	var deviceLogger = function() {
+		this.defaultComponent = 'DEVICE';
+		this.sWindowName = (window.top == window) ? "" : "[" + window.location.pathname.split('/').slice(-1)[0] + "] ";
+	// Creates a new log entry depending on its level and component.
+		this.log = function (iLevel, sMessage, sComponent) {
+			sComponent = sComponent || this.defaultComponent  || '';
+				var oNow = new Date(),
+					oLogEntry = {
+						time     : pad0(oNow.getHours(),2) + ":" + pad0(oNow.getMinutes(),2) + ":" + pad0(oNow.getSeconds(),2),
+						date     : pad0(oNow.getFullYear(),4) + "-" + pad0(oNow.getMonth() + 1,2) + "-" + pad0(oNow.getDate(),2),
+						timestamp: oNow.getTime(),
+						level    : iLevel,
+						message  : sMessage || "",
+						component: sComponent || ""
+					};
+				/*eslint-disable no-console */
+				if (window.console) { // in IE and FF, console might not exist; in FF it might even disappear
+					var logText = oLogEntry.date + " " + oLogEntry.time + " " + this.sWindowName + oLogEntry.message + " - " + oLogEntry.component;
+					switch (iLevel) {
+					case FATAL:
+					case ERROR: console.error(logText); break;
+					case WARNING: console.warn(logText); break;
+					case INFO: console.info ? console.info(logText) : console.log(logText); break;    // info not available in iOS simulator
+					case DEBUG: console.debug ? console.debug(logText) : console.log(logText); break; // debug not available in IE, fallback to log
+					case TRACE: console.trace ? console.trace(logText) : console.log(logText); break; // trace not available in IE, fallback to log (no trace)
+					}
+				}
+				/*eslint-enable no-console */
+				return oLogEntry;
+		};
+	};
+// instantiate new logger		
+	var logger = new deviceLogger();
+	logger.log(INFO, "Device API logging initialized");
+	
+	
+//******** Version Check ********
+	
+	//Only used internal to make clear when Device API is loaded in wrong version
+	device._checkAPIVersion = function(sVersion){
+		var v = "1.26.7";
+		if (v != sVersion) {
+			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
+		}
+	};
+
+
+//******** Event Management ******** (see Event Provider)
+
+	var mEventRegistry = {};
+
+	function attachEvent(sEventId, fnFunction, oListener) {
+		if (!mEventRegistry[sEventId]) {
+			mEventRegistry[sEventId] = [];
+		}
+		mEventRegistry[sEventId].push({oListener: oListener, fFunction:fnFunction});
+	}
+
+	function detachEvent(sEventId, fnFunction, oListener) {
+		var aEventListeners = mEventRegistry[sEventId];
+		
+		if (!aEventListeners) {
+			return this;
+		}
+
+		for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
+			if (aEventListeners[i].fFunction === fnFunction && aEventListeners[i].oListener === oListener) {
+				aEventListeners.splice(i,1);
+				break;
+			}
+		}
+		if (aEventListeners.length == 0) {
+			delete mEventRegistry[sEventId];
+		}
+	}
+
+	function fireEvent(sEventId, mParameters) {
+		var aEventListeners = mEventRegistry[sEventId], oInfo;
+		if (aEventListeners) {
+			aEventListeners = aEventListeners.slice();
+			for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
+				oInfo = aEventListeners[i];
+				oInfo.fFunction.call(oInfo.oListener || window, mParameters);
+			}
+		}
+	}
+
+//******** OS Detection ********
+
+	/** 
+	 * Contains information about the operating system of the device.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.os
+	 * @public
+	 */
+	/**
+	 * Enumeration containing the names of known operating systems.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.os.OS
+	 * @public
+	 */
+	/**
+	 * The name of the operating system.
+	 * 
+	 * @see sap.ui.Device.os#OS
+	 * @name sap.ui.Device.os#name
+	 * @type String
+	 * @public
+	 */
+	/**
+	 * The version as string. Might be empty if no version can be determined.
+	 * 
+	 * @name sap.ui.Device.os#versionStr
+	 * @type String
+	 * @public
+	 */
+	/**
+	 * The version as float. Might be -1 if no version can be determined.
+	 * 
+	 * @name sap.ui.Device.os#version
+	 * @type float
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Windows operating system.
+	 * 
+	 * @name sap.ui.Device.os#windows
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Linux operating system.
+	 * 
+	 * @name sap.ui.Device.os#linux
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the MAC operating system.
+	 * 
+	 * @name sap.ui.Device.os#macintosh
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the iOS operating system.
+	 * 
+	 * @name sap.ui.Device.os#ios
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Android operating system.
+	 * 
+	 * @name sap.ui.Device.os#android
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Blackberry operating system.
+	 * 
+	 * @name sap.ui.Device.os#blackberry
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Windows Phone operating system.
+	 * 
+	 * @name sap.ui.Device.os#windows_phone
+	 * @type boolean
+	 * @public
+	 */
+	
+	/**
+	 * Windows operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#WINDOWS
+	 * @public
+	 */
+	/**
+	 * MAC operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#MACINTOSH
+	 * @public
+	 */
+	/**
+	 * Linux operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#LINUX
+	 * @public
+	 */
+	/**
+	 * iOS operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#IOS
+	 * @public
+	 */
+	/**
+	 * Android operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#ANDROID
+	 * @public
+	 */
+	/**
+	 * Blackberry operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @name sap.ui.Device.os.OS#BLACKBERRY
+	 * @public
+	 */
+	/**
+	 * Windows Phone operating system name.
+	 * 
+	 * @see sap.ui.Device.os#name
+	 * @alias sap.ui.Device.os.OS#WINDOWS_PHONE
+	 * @public
+	 */
+	
+	var OS = {
+		"WINDOWS": "win",
+		"MACINTOSH": "mac",
+		"LINUX": "linux",
+		"IOS": "iOS",
+		"ANDROID": "Android",
+		"BLACKBERRY": "bb",
+		"WINDOWS_PHONE": "winphone"
+	};
+
+	function getOS(userAgent){ // may return null!!
+
+		userAgent = userAgent || navigator.userAgent;
+
+		var platform, // regular expression for platform
+			result;
+
+		function getDesktopOS(){
+			var pf = navigator.platform;
+			if (pf.indexOf("Win") != -1 ) {
+				// userAgent in windows 7 contains: windows NT 6.1
+				// userAgent in windows 8 contains: windows NT 6.2 or higher
+				// TODO: update this after windows 9 is released
+				var rVersion = /windows NT 6.(\d)/i;
+				var uaResult = userAgent.match(rVersion);
+				var sVersionStr = "";
+				if (uaResult) {
+					if (uaResult[1] == 1) {
+						sVersionStr = "7";
+					} else if (uaResult[1] > 1) {
+						sVersionStr = "8";
+					}
+				}
+				return {"name": OS.WINDOWS, "versionStr": sVersionStr};
+			} else if (pf.indexOf("Mac") != -1) {
+				return {"name": OS.MACINTOSH, "versionStr": ""};
+			} else if (pf.indexOf("Linux") != -1) {
+				return {"name": OS.LINUX, "versionStr": ""};
+			}
+			logger.log(INFO, "OS detection returned no result");
+			return null;
+		}
+
+		// Windows Phone. User agent includes other platforms and therefore must be checked first:
+		platform = /Windows Phone (?:OS )?([\d.]*)/;
+		result = userAgent.match(platform);
+		if (result) {
+			return ({"name": OS.WINDOWS_PHONE, "versionStr": result[1]});
+		}
+
+		// BlackBerry 10:
+		if (userAgent.indexOf("(BB10;") > 0) {
+			platform = /\sVersion\/([\d.]+)\s/;
+			result = userAgent.match(platform);
+			if (result) {
+				return {"name": OS.BLACKBERRY, "versionStr": result[1]};
+			} else {
+				return {"name": OS.BLACKBERRY, "versionStr": '10'};
+			}
+		}
+
+		// iOS, Android, BlackBerry 6.0+:
+		platform = /\(([a-zA-Z ]+);\s(?:[U]?[;]?)([\D]+)((?:[\d._]*))(?:.*[\)][^\d]*)([\d.]*)\s/;
+		result = userAgent.match(platform);
+		if (result) {
+			var appleDevices = /iPhone|iPad|iPod/;
+			var bbDevices = /PlayBook|BlackBerry/;
+			if (result[0].match(appleDevices)) {
+				result[3] = result[3].replace(/_/g, ".");
+				//result[1] contains info of devices
+				return ({"name": OS.IOS, "versionStr": result[3]});
+			} else if (result[2].match(/Android/)) {
+				result[2] = result[2].replace(/\s/g, "");
+				return ({"name": OS.ANDROID, "versionStr": result[3]});
+			} else if (result[0].match(bbDevices)) {
+				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
+			}
+		}
+
+		// Desktop
+		return getDesktopOS();
+	}
+	
+	function setOS() {
+		device.os = getOS() || {};
+		device.os.OS = OS;
+		device.os.version = device.os.versionStr ? parseFloat(device.os.versionStr) : -1;
+
+		if (device.os.name) {
+			for (var b in OS) {
+				if (OS[b] === device.os.name) {
+					device.os[b.toLowerCase()] = true;
+				}
+			}
+		}
+	}
+	setOS();
+
+
+
+//******** Browser Detection ********
+	
+	/** 
+	 * Contains information about the used browser.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.browser
+	 * @public
+	 */
+	
+	/**
+	 * Enumeration containing the names of known browsers.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.browser.BROWSER
+	 * @public
+	 */
+	
+	/**
+	 * The name of the browser.
+	 * 
+	 * @see sap.ui.Device.browser#BROWSER
+	 * @name sap.ui.Device.browser#name
+	 * @type String
+	 * @public
+	 */
+	/**
+	 * The version as string. Might be empty if no version can be determined.
+	 * 
+	 * @name sap.ui.Device.browser#versionStr
+	 * @type String
+	 * @public
+	 */
+	/**
+	 * The version as float. Might be -1 if no version can be determined.
+	 * 
+	 * @name sap.ui.Device.browser#version
+	 * @type float
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether the mobile variant of the browser is used.
+	 * 
+	 * @name sap.ui.Device.browser#mobile
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Internet Explorer browser.
+	 * 
+	 * @name sap.ui.Device.browser#internet_explorer
+	 * @type boolean
+	 * @deprecated since 1.20: use sap.ui.Device.browser.msie
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Internet Explorer browser.
+	 * 
+	 * @name sap.ui.Device.browser#msie
+	 * @type boolean
+	 * @since 1.20.0
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Firefox browser.
+	 * 
+	 * @name sap.ui.Device.browser#firefox
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Chrome browser.
+	 * 
+	 * @name sap.ui.Device.browser#chrome
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating the Safari browser.
+	 * 
+	 * @name sap.ui.Device.browser#safari
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating a Webkit browser.
+	 * 
+	 * @name sap.ui.Device.browser#webkit
+	 * @type boolean
+	 * @since 1.20.0
+	 * @public
+	 */
+	/**
+	 * Flag indicating a Mozilla browser.
+	 * 
+	 * @name sap.ui.Device.browser#mozilla
+	 * @type boolean
+	 * @since 1.20.0
+	 * @public
+	 */
+	/**
+	 * Internet Explorer browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#INTERNET_EXPLORER
+	 * @public
+	 */
+	/**
+	 * Firefox browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#FIREFOX
+	 * @public
+	 */
+	/**
+	 * Chrome browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#CHROME
+	 * @public
+	 */
+	/**
+	 * Safari browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#SAFARI
+	 * @public
+	 */
+	/**
+	 * Android stock browser name.
+	 * 
+	 * @see sap.ui.Device.browser#name
+	 * @alias sap.ui.Device.browser.BROWSER#ANDROID
+	 * @public
+	 */
+	
+	var BROWSER = {
+		"INTERNET_EXPLORER": "ie",
+		"FIREFOX": "ff",
+		"CHROME": "cr",
+		"SAFARI": "sf",
+		"ANDROID": "an"
+	};
+
+	var ua = navigator.userAgent;
+
+	/*!
+	 * Taken from jQuery JavaScript Library v1.7.1
+	 * http://jquery.com/
+	 *
+	 * Copyright 2011, John Resig
+	 * Dual licensed under the MIT or GPL Version 2 licenses.
+	 * http://jquery.org/license
+	 *
+	 * Includes Sizzle.js
+	 * http://sizzlejs.com/
+	 * Copyright 2011, The Dojo Foundation
+	 * Released under the MIT, BSD, and GPL Licenses.
+	 *
+	 * Date: Mon Nov 21 21:11:03 2011 -0500
+	 */
+	function calcBrowser(customUa){
+		var _ua = (customUa || ua).toLowerCase(); // use custom user-agent if given
+
+		var rwebkit = /(webkit)[ \/]([\w.]+)/;
+		var ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/;
+		var rmsie = /(msie) ([\w.]+)/;
+		//TODO this might needs to be adjusted in future IE version > 11
+		var rmsienew = /(trident)\/[\w.]+;.*rv:([\w.]+)/;
+		var rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
+
+		// WinPhone IE11 userAgent contains "WebKit" and "Mozilla" and therefore must be checked first
+		var browserMatch = rmsienew.exec( _ua ) ||
+					rwebkit.exec( _ua ) ||
+					ropera.exec( _ua ) ||
+					rmsie.exec( _ua ) ||
+					_ua.indexOf("compatible") < 0 && rmozilla.exec( _ua ) ||
+					[];
+
+		var res = { browser: browserMatch[1] || "", version: browserMatch[2] || "0" };
+		res[res.browser] = true;
+		return res;
+	}
+
+	function getBrowser(customUa) {
+		var b = calcBrowser(customUa);
+		var _ua = customUa || ua;
+
+		// jQuery checks for user agent strings. We differentiate between browsers
+		var oExpMobile;
+		if ( b.mozilla ) {
+			oExpMobile = /Mobile/;
+			if ( _ua.match(/Firefox\/(\d+\.\d+)/) ) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.FIREFOX,
+					versionStr: "" + version,
+					version: version,
+					mozilla: true,
+					mobile: oExpMobile.test(_ua)
+				};
+			} else {
+				// unknown mozilla browser
+				return {
+					mobile: oExpMobile.test(_ua),
+					mozilla: true
+				};
+			}
+		} else if ( b.webkit ) {
+			// webkit version is needed for calculation if the mobile android device is a tablet (calculation of other mobile devices work without)
+			var regExpWebkitVersion = _ua.toLowerCase().match(/webkit[\/]([\d.]+)/);
+			var webkitVersion;
+			if (regExpWebkitVersion) {
+				webkitVersion = regExpWebkitVersion[1];
+			}
+			oExpMobile = /Mobile/;
+			if ( _ua.match(/(Chrome|CriOS)\/(\d+\.\d+).\d+/)) {
+				var version = parseFloat(RegExp.$2);
+				return {
+					name: BROWSER.CHROME,
+					versionStr: "" + version,
+					version: version,
+					mobile: oExpMobile.test(_ua),
+					webkit: true,
+					webkitVersion: webkitVersion
+				};
+			} else if ( _ua.match(/Android .+ Version\/(\d+\.\d+)/) ) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.ANDROID,
+					versionStr: "" + version,
+					version: version,
+					mobile: oExpMobile.test(_ua),
+					webkit: true,
+					webkitVersion: webkitVersion
+				};
+			} else { // Safari might have an issue with _ua.match(...); thus changing
+				var oExp = /(Version|PhantomJS)\/(\d+\.\d+).*Safari/;
+				if (oExp.test(_ua)) {
+					var aParts = oExp.exec(_ua);
+					var version = parseFloat(aParts[2]);
+					return {
+						name: BROWSER.SAFARI,
+						versionStr: "" + version,
+						version: version,
+						mobile: oExpMobile.test(_ua),
+						webkit: true,
+						webkitVersion: webkitVersion,
+						phantomJS: aParts[1] === "PhantomJS"
+					};
+				} else {
+					// unknown webkit browser
+					return {
+						mobile: oExpMobile.test(_ua),
+						webkit: true,
+						webkitVersion: webkitVersion
+					};
+				}
+			}
+		} else if ( b.msie || b.trident ) {
+			var version;
+			// recognize IE8 when running in compat mode (only then the documentMode property is there)
+			if (document.documentMode && !customUa) { // only use the actual documentMode when no custom user-agent was given
+				if (document.documentMode === 7) { // OK, obviously we are IE and seem to be 7... but as documentMode is there this cannot be IE7!
+					version = 8.0;
+				} else {
+					version = parseFloat(document.documentMode);
+				}
+			} else {
+				version = parseFloat(b.version);
+			}
+			return {
+				name: BROWSER.INTERNET_EXPLORER,
+				versionStr: "" + version,
+				version: version,
+				msie: true,
+				mobile: false // TODO: really?
+			};
+		}
+		return {
+			name: "",
+			versionStr: "",
+			version: -1,
+			mobile: false
+		};
+	}
+	device._testUserAgent = getBrowser; // expose the user-agent parsing (mainly for testing), but don't let it be overwritten
+	
+	function setBrowser() {
+		device.browser = getBrowser();
+		device.browser.BROWSER = BROWSER;
+		
+		if (device.browser.name) {
+			for (var b in BROWSER) {
+				if (BROWSER[b] === device.browser.name) {
+					device.browser[b.toLowerCase()] = true;
+				}
+			}
+		}
+	}
+	setBrowser();
+
+
+	
+
+//******** Support Detection ********
+	
+	/** 
+	 * Contains information about detected capabilities of the used browser or device.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.support
+	 * @public
+	 */
+	
+	/**
+	 * Flag indicating whether touch events are supported.
+	 * 
+	 * @name sap.ui.Device.support#touch
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether pointer events are supported.
+	 * 
+	 * @name sap.ui.Device.support#pointer
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether media queries via JavaScript are supported.
+	 * 
+	 * @name sap.ui.Device.support#matchmedia
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether events on JavaScript media queries are supported.
+	 * 
+	 * @name sap.ui.Device.support#matchmedialistener
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether the native orientationchange event is supported.
+	 * 
+	 * @name sap.ui.Device.support#orientation
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether the device has a Retina display.
+	 * 
+	 * @name sap.ui.Device.support#retina
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether WebSockets are supported.
+	 * 
+	 * @name sap.ui.Device.support#websocket
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating whether placeholder on input tags are supported.
+	 * 
+	 * @name sap.ui.Device.support#input.placeholder
+	 * @type boolean
+	 * @public
+	 */
+
+	device.support = {};
+
+	//Maybe better to but this on device.browser because there are cases that a browser can touch but a device can't!
+	device.support.touch = !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch);
+
+	device.support.pointer = !!window.PointerEvent;
+
+	device.support.matchmedia = !!window.matchMedia;
+	var m = device.support.matchmedia ? window.matchMedia("screen and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
+	device.support.matchmedialistener = !!(m && m.addListener);
+	if (device.browser.safari && device.browser.version < 6) {
+		//Safari seems to have addListener but no events are fired ?!
+		device.support.matchmedialistener = false;
+	}
+
+	device.support.orientation = !!("orientation" in window && "onorientationchange" in window);
+
+	device.support.retina = (window.retina || window.devicePixelRatio >= 2);
+
+	device.support.websocket = ('WebSocket' in window);
+
+	device.support.input = {};
+	device.support.input.placeholder = ('placeholder' in document.createElement("input"));
+
+//******** Match Media ********
+	
+	/** 
+	 * Event API for Screen width media queries.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.media
+	 * @public
+	 */
+	device.media = {};
+	
+	/**
+	 * Enumeration containing the names of predefined Screen width media query range sets.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.media.RANGESETS
+	 * @public
+	 */
+	
+	/**
+	 * A 3 step range set (S-L).
+	 * 
+	 * @name sap.ui.Device.media.RANGESETS#SAP_3STEPS
+	 * @public
+	 */
+	/**
+	 * A 4 step range set (S-XL).
+	 * 
+	 * @name sap.ui.Device.media.RANGESETS#SAP_4STEPS
+	 * @public
+	 */
+	/**
+	 * A 6 step range set (XS-XXL).
+	 * 
+	 * @name sap.ui.Device.media.RANGESETS#SAP_6STEPS
+	 * @public
+	 */
+	/**
+	 * A 3 step range set (Phone, Tablet, Desktop). <br/>
+	 * <br/>
+	 * This range set is initialized always by default.<br/>
+	 * Phone is < 600px<br/>
+	 * Tablet is 600px >= Tablet < 1024<br/>
+	 * Desktop is > 1024px<br/>
+	 * <br/>
+	 * There are 5 css classes to hide elements based on the width of the screen:
+	 * <ul>
+	 * 	<li>sapUiHideOnPhone - will be hidden if the screen has 600px or more</li>
+	 * 	<li>sapUiHideOnTablet - will be hidden if the screen has less than 600px or more than 1023px</li>
+	 * 	<li>sapUiHideOnDesktop - will be hidden if the screen is smaller than 1024px</li>
+	 * 	<li>sapUiVisibleOnlyOnPhone - will be visible if the screen has less than 600px</li>
+	 * 	<li>sapUiVisibleOnlyOnTablet - will be visible if the screen has 600px or more but less than 1024px</li>
+	 * 	<li>sapUiVisibleOnlyOnDesktop - will be visible if the screen has 1024px or more</li>
+	 * </ul>
+	 * @alias sap.ui.Device.media.RANGESETS#SAP_STANDARD
+	 * @public
+	 */
+	
+	var RANGESETS = {
+		"SAP_3STEPS": "3Step",
+		"SAP_4STEPS": "4Step",
+		"SAP_6STEPS": "6Step",
+		"SAP_STANDARD": "Std"
+	};
+	device.media.RANGESETS = RANGESETS;
+	
+	device.media._predefinedRangeSets = {};
+	device.media._predefinedRangeSets[RANGESETS.SAP_3STEPS] = {points: [520, 960], unit: "px", name: RANGESETS.SAP_3STEPS, names: ["S", "M", "L"]};
+	device.media._predefinedRangeSets[RANGESETS.SAP_4STEPS] = {points: [520, 760, 960], unit: "px", name: RANGESETS.SAP_4STEPS, names: ["S", "M", "L", "XL"]};
+	device.media._predefinedRangeSets[RANGESETS.SAP_6STEPS] = {points: [241, 400, 541, 768, 960], unit: "px", name: RANGESETS.SAP_6STEPS, names: ["XS", "S", "M", "L", "XL", "XXL"]};
+	device.media._predefinedRangeSets[RANGESETS.SAP_STANDARD] = {points: [600, 1024], unit: "px", name: RANGESETS.SAP_STANDARD, names: ["Phone", "Tablet", "Desktop"]};
+	
+	var _defaultRangeSet = RANGESETS.SAP_STANDARD;
+	var media_timeout = device.support.matchmedialistener ? 0 : 100;
+	var _querysets = {};
+	var media_currentwidth = null;
+	
+	function getQuery(from, to, unit){
+		unit = unit || "px";
+		var q = "screen";
+		if (from > 0) {
+			q = q + " and (min-width:" + from + unit + ")";
+		}
+		if (to > 0) {
+			q = q + " and (max-width:" + to + unit + ")";
+		}
+		return q;
+	}
+	
+	function handleChange(name){
+		if (!device.support.matchmedialistener && media_currentwidth == windowSize()[0]) {
+			return; //Skip unnecessary resize events
+		}
+		
+		if (_querysets[name].timer) {
+			clearTimeout(_querysets[name].timer);
+			_querysets[name].timer = null;
+		}
+		
+		_querysets[name].timer = setTimeout(function() {
+			var mParams = checkQueries(name, false);
+			if (mParams) {
+				fireEvent("media_" + name, mParams);
+			}
+		}, media_timeout);
+	}
+	
+	function getRangeInfo(sSetName, iRangeIdx){
+		var q = _querysets[sSetName].queries[iRangeIdx];
+		var info = {from: q.from, unit: _querysets[sSetName].unit};
+		if (q.to >= 0) {
+			info.to = q.to;
+		}
+		if (_querysets[sSetName].names) {
+			info.name = _querysets[sSetName].names[iRangeIdx];
+		}
+		return info;
+	}
+	
+	function checkQueries(name, infoOnly){
+		if (_querysets[name]) {
+			var aQueries = _querysets[name].queries;
+			var info = null;
+			for (var i = 0, len = aQueries.length; i < len; i++) {
+				var q = aQueries[i];
+				if ((q != _querysets[name].currentquery || infoOnly) && device.media.matches(q.from, q.to, _querysets[name].unit)) {
+					if (!infoOnly) {
+						_querysets[name].currentquery = q;
+					}
+					if (!_querysets[name].noClasses && _querysets[name].names && !infoOnly) {
+						refreshCSSClasses(name, _querysets[name].names[i]);
+					}
+					info = getRangeInfo(name, i);
+				}
+			}
+			
+			return info;
+		}
+		logger.log(WARNING, "No queryset with name " + name + " found", 'DEVICE.MEDIA');
+		return null;
+	}
+	
+	function refreshCSSClasses(sSetName, sRangeName, bRemove){
+		 var sClassPrefix = "sapUiMedia-" + sSetName + "-";
+		 changeRootCSSClass(sClassPrefix + sRangeName, bRemove, sClassPrefix);
+	}
+	
+	function changeRootCSSClass(sClassName, bRemove, sPrefix){
+		var oRoot = document.documentElement;
+		if (oRoot.className.length == 0) {
+			if (!bRemove) {
+				oRoot.className = sClassName;
+			}
+		} else {
+			var aCurrentClasses = oRoot.className.split(" ");
+			var sNewClasses = "";
+			for (var i = 0; i < aCurrentClasses.length; i++) {
+				if ((sPrefix && aCurrentClasses[i].indexOf(sPrefix) != 0) || (!sPrefix && aCurrentClasses[i] != sClassName)) {
+					sNewClasses = sNewClasses + aCurrentClasses[i] + " ";
+				}
+			}
+			if (!bRemove) {
+				sNewClasses = sNewClasses + sClassName;
+			}
+			oRoot.className = sNewClasses;
+		}
+	}
+	
+	function windowSize(){
+		return [document.documentElement.clientWidth, document.documentElement.clientHeight];
+	}
+	
+	function convertToPx(val, unit){
+		if (unit === "em" || unit === "rem") {
+			var s = window.getComputedStyle || function(e) {
+					return e.currentStyle;
+				};
+				var x = s(document.documentElement).fontSize;
+				var f = (x && x.indexOf("px") >= 0) ? parseFloat(x, 10) : 16;
+				return val * f;
+		}
+		return val;
+	}
+
+	function match_legacy(from, to, unit){
+		from = convertToPx(from, unit);
+		to = convertToPx(to, unit);
+		
+		var width = windowSize()[0];
+		var a = from < 0 || from <= width;
+		var b = to < 0 || width <= to;
+		return a && b;
+	}
+
+	function match(from, to, unit){
+		var q = getQuery(from, to, unit);
+		var mm = window.matchMedia(q); //FF returns null when running within an iframe with display:none
+		return mm && mm.matches;
+	}
+
+	device.media.matches = device.support.matchmedia ? match : match_legacy;
+	
+	/**
+	 * Registers the given handler to the range change event, which is fired when a new range of the set is entered.
+	 * 
+	 * The handler has one map parameter <code>mParams</code>:
+	 * <ul>
+	 * <li>mParams.from: the range start value</li>
+	 * <li>mParams.to: the range end value, not defined for the last range (INFINITY)</li>
+	 * <li>mParams.unit: the used unit, e.g. px</li>
+	 * <li>mParams.name: the range name if defined</li>
+	 * </ul>
+	 * 
+	 * @param {Function} fnFunction The function to call, when the range change event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @param {String} sName The name of the range set to listen to.
+	 * @name sap.ui.Device.media#attachHandler
+	 * @function
+	 * @public
+	 */
+	device.media.attachHandler = function(fnFunction, oListener, sName){
+		var name = sName || _defaultRangeSet;
+		attachEvent("media_" + name, fnFunction, oListener);
+	};
+
+	/**
+	 * Deregisters a previously registered handler from the range change event.
+	 * 
+	 * @param {Function} fnFunction The function to call, when the range change event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @param {String} sName The name of the range set to listen to.
+	 * @name sap.ui.Device.media#detachHandler
+	 * @function
+	 * @public
+	 */
+	device.media.detachHandler = function(fnFunction, oListener, sName){
+		var name = sName || _defaultRangeSet;
+		detachEvent("media_" + name, fnFunction, oListener);
+	};
+	
+	/** 
+	 * Initializes a Screen width media query range set.
+	 * 
+	 * This function can either be called only with the name parameter to initialize a predefined range set,
+	 * e.g. <code>sap.ui.Device.media.initRangeSet(sap.ui.Device.media.RANGESETS.SAP_3STEPS)</code>.
+	 * 
+	 * Or it is possible to define a custom range set as in the following example:
+	 * <code>sap.ui.Device.media.initRangeSet("MyRangeSet", [200, 400], "px", ["Small", "Medium", "Large"])</code> defines 3 ranges:
+	 * <ul>
+	 * <li>0px-199.999px with name "Small"</li>
+	 * <li>200px-399.999px with name "Medium"</li>
+	 * <li>400px-INFINITY with name "Large"</li>
+	 * </ul>
+	 * 
+	 * The range names are optional. If they are specified also a CSS class (e.g. sapUiMedia-MyRangeSet-Small) is added to the document root
+	 * depending on the current active range. This can be suppressed via parameter <code>bSuppressClasses</code>.
+	 * 
+	 * @param {String} sName The name of the range set. Either a predefined or custom one. The name must be a valid id (consist of letters and digits).
+	 * @param {int[]} aRangeBorders The range borders
+	 * @param {String} [sUnit] The unit which should be used. Allowed values are px (default), em or rem.
+	 * @param {String[]} [aRangeNames] The names of the ranges. The names must be a valid id (consist of letters and digits).
+	 * @param {boolean} [bSuppressClasses] Whether writing CSS classes to the document root should be suppressed
+	 * @name sap.ui.Device.media#initRangeSet
+	 * @function
+	 * @public
+	 */
+	device.media.initRangeSet = function(sName, aRangeBorders, sUnit, aRangeNames, bSuppressClasses){
+		//TODO Do some Assertions and parameter checking
+		var oConfig;
+		if (!sName) {
+			oConfig = device.media._predefinedRangeSets[_defaultRangeSet];
+		} else if (sName && device.media._predefinedRangeSets[sName]) {
+			oConfig = device.media._predefinedRangeSets[sName];
+		} else {
+			oConfig = {name: sName, unit: (sUnit || "px").toLowerCase(), points: aRangeBorders || [], names: aRangeNames, noClasses: !!bSuppressClasses};
+		}
+		
+		if (device.media.hasRangeSet(oConfig.name)) {
+			logger.log(INFO, "Range set " + oConfig.name + " hase already been initialized", 'DEVICE.MEDIA');
+			return;
+		}
+		
+		sName = oConfig.name;
+		oConfig.queries = [];
+		oConfig.timer = null;
+		oConfig.currentquery = null;
+		oConfig.listener = function(){
+			return handleChange(sName);
+		};
+			
+		var from, to, query;
+		var aPoints = oConfig.points;
+		for (var i = 0, len = aPoints.length; i <= len; i++) {
+			from = (i == 0) ? 0 : aPoints[i - 1];
+			to = (i == aPoints.length) ? -1 : aPoints[i];
+			query = getQuery(from, to, oConfig.unit);
+			oConfig.queries.push({
+				query: query,
+				from: from,
+				to: to
+			});
+		}
+		
+		if (oConfig.names && oConfig.names.length != oConfig.queries.length) {
+			oConfig.names = null;
+		}
+		
+		_querysets[oConfig.name] = oConfig;
+			
+		if (device.support.matchmedialistener) { //FF, Safari, Chrome, IE10?
+			var queries = oConfig.queries;
+			for (var i = 0; i < queries.length; i++) {
+				var q = queries[i];
+				q.media = window.matchMedia(q.query);
+				q.media.addListener(oConfig.listener);
+			}
+		} else { //IE, Safari (<6?)	
+			if (window.addEventListener) {
+				window.addEventListener("resize", oConfig.listener, false);
+				window.addEventListener("orientationchange", oConfig.listener, false);
+			} else { //IE8
+				window.attachEvent("onresize", oConfig.listener);
+			}
+		}
+		
+		oConfig.listener();
+	};
+	
+	/**
+	 * Returns information about the current active range of the range set with the given name.
+	 * 
+	 * @param {String} sName The name of the range set.
+	 * @name sap.ui.Device.media#getCurrentRange
+	 * @return {Map} the information about the current active range (same structure like the handler parameters (@see sap.ui.Device.media#attachHandler))
+	 * @function
+	 * @public
+	 */
+	device.media.getCurrentRange = function(sName){
+		if (!device.media.hasRangeSet(sName)) {
+			return null;
+		}
+		return checkQueries(sName, true);
+	};
+	
+	/**
+	 * Returns whether a range set with the given name is initialized.
+	 * 
+	 * @param {String} sName The name of the range set.
+	 * @name sap.ui.Device.media#hasRangeSet
+	 * @return {boolean}
+	 * @function
+	 * @public
+	 */
+	device.media.hasRangeSet = function(sName){
+		return sName && !!_querysets[sName];
+	};
+	
+	/**
+	 * Removes a previously initialized range set and detaches all registered handlers.
+	 * 
+	 * Initialized predefined range sets (@see sap.ui.Device.media#RANGESETS) cannot be removed.
+	 * 
+	 * @param {String} sName The name of the range set.
+	 * @name sap.ui.Device.media#removeRangeSet
+	 * @function
+	 * @protected
+	 */
+	device.media.removeRangeSet = function(sName){
+		if (!device.media.hasRangeSet(sName)) {
+			logger.log(INFO, "RangeSet " + sName + " not found, thus could not be removed.", 'DEVICE.MEDIA');
+			return;
+		}
+
+		for (var x in RANGESETS) {
+			if (sName === RANGESETS[x]) {
+				logger.log(WARNING, "Cannot remove default rangeset - no action taken.", 'DEVICE.MEDIA');
+				return;
+			}
+		}
+		
+		var oConfig = _querysets[sName];
+		if (device.support.matchmedialistener) { //FF, Safari, Chrome, IE10?
+			var queries = oConfig.queries;
+			for (var i = 0; i < queries.length; i++) {
+				queries[i].media.removeListener(oConfig.listener);
+			}
+		} else { //IE, Safari (<6?)	
+			if (window.removeEventListener) {
+				window.removeEventListener("resize", oConfig.listener, false);
+				window.removeEventListener("orientationchange", oConfig.listener, false);
+			} else { //IE8
+				window.detachEvent("onresize", oConfig.listener);
+			}
+		}
+		
+		refreshCSSClasses(sName, "", true);
+		delete mEventRegistry["media_" + sName];
+		delete _querysets[sName];
+	};
+
+//******** System Detection ********
+
+	/** 
+	 * Contains information about the system.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.system
+	 * @public
+	 */
+	/**
+	 * Enumeration containing the names of known types of the devices.
+	 * 
+	 * @namespace
+	 * @name sap.ui.Device.system.SYSTEMTYPE
+	 * @public
+	 */
+	/**
+	 * Flag indicating if the device is a tablet.
+	 * 
+	 * @name sap.ui.Device.system#tablet
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating if the device is a phone.
+	 * 
+	 * @name sap.ui.Device.system#phone
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating if the device is a desktop.
+	 * 
+	 * @name sap.ui.Device.system#desktop
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * Flag indicating if the device is a combination of desktop and tablet.
+	 * 
+	 * This property is mainly targeting the windows 8 devices where the mouse and touch event may supported
+	 * natively by the browser.
+	 * 
+	 * This property is set to true only when both mouse and touch event are natively supported.
+	 * 
+	 * @alias sap.ui.Device.system#combi
+	 * @type boolean
+	 * @public
+	 */
+
+	var SYSTEMTYPE = {
+			"TABLET" : "tablet",
+			"PHONE" : "phone",
+			"DESKTOP" : "desktop",
+			"COMBI" : "combi"
+	};
+
+	var isWin8 = !!device.os.windows && device.os.version === 8;
+	var isWin7 = !!device.os.windows && device.os.version === 7;
+
+	device.system = {};
+
+	function getSystem(_simMobileOnDesktop) {
+		var t = isTablet();
+		
+		var s = {};
+		s.tablet = ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && t;
+		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
+		s.desktop = (!s.tablet && !s.phone) || isWin8 || isWin7;
+		s.combi = (s.desktop && s.tablet);
+		s.SYSTEMTYPE = SYSTEMTYPE;
+		
+		for (var type in SYSTEMTYPE) {
+			changeRootCSSClass("sap-" + SYSTEMTYPE[type], !s[SYSTEMTYPE[type]]);
+		}
+		return s;
+	}
+
+	function isTablet() {
+		var android_phone = (/(?=android)(?=.*mobile)/i.test(navigator.userAgent));
+		// According to google documentation: https://developer.chrome.com/multidevice/webview/overview, the WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android.
+		// If you're attempting to differentiate between the WebView and Chrome for Android, you should look for the presence of the Version/_X.X_ string in the WebView user-agent string
+		var bChromeWebView = device.os.android && (device.os.version >= 4.4) && /Version\/\d.\d/.test(navigator.userAgent);
+		if (device.os.name === device.os.OS.IOS) {
+			return /ipad/i.test(navigator.userAgent);
+		} else {
+			if (device.support.touch) {
+				//in real mobile device
+				var densityFactor = window.devicePixelRatio ? window.devicePixelRatio : 1; // may be undefined in Windows Phone devices
+				if (!bChromeWebView && (device.os.name === device.os.OS.ANDROID) && device.browser.webkit && (device.browser.webkitVersion > 537.10)) {
+					// On Android sometimes window.screen.width returns the logical CSS pixels, sometimes the physical device pixels;
+					// Tests on multiple devices suggest this depends on the Webkit version.
+					// The Webkit patch which changed the behavior was done here: https://bugs.webkit.org/show_bug.cgi?id=106460
+					// Chrome 27 with Webkit 537.36 returns the logical pixels,
+					// Chrome 18 with Webkit 535.19 returns the physical pixels.
+					// The BlackBerry 10 browser with Webkit 537.10+ returns the physical pixels.
+					// So it appears like somewhere above Webkit 537.10 we do not hve to divide by the devicePixelRatio anymore.
+
+					// update: Chrome WebView returns physical pixels therefore it's excluded from this special check
+					densityFactor = 1;
+				}
+
+				//this is how android distinguishes between tablet and phone
+				//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
+				var bTablet = (Math.min(window.screen.width / densityFactor, window.screen.height / densityFactor) >= 600);
+				
+				// special workaround for Nexus 7 where the window.screen.width is 600px or 601px in portrait mode (=> tablet) 
+				// but window.screen.height 552px in landscape mode (=> phone), because the browser UI takes some space on top.
+				// So the detected device type depends on the orientation :-(
+				// actually this is a Chrome bug, as "width"/"height" should return the entire screen's dimensions and
+				// "availWidth"/"availHeight" should return the size available after subtracting the browser UI
+				if (isLandscape()
+						&& (window.screen.height === 552 || window.screen.height === 553) // old/new Nexus 7  
+						&& (/Nexus 7/i.test(navigator.userAgent))) {
+					bTablet = true;
+				}
+				
+				return bTablet;
+
+			} else {
+				//in desktop browser
+				var android_tablet = (device.os.name === device.os.OS.ANDROID) && !android_phone;
+				return android_tablet;
+			}
+		}
+	}
+	
+	function setSystem(_simMobileOnDesktop) {
+		device.system = getSystem(_simMobileOnDesktop);
+		if (device.system.tablet || device.system.phone) {
+			device.browser.mobile = true;
+		}
+	}
+	setSystem();
+
+//******** Orientation Detection ********
+
+	/** 
+	 * Orientation Change Event API.
+	 *
+	 * @namespace
+	 * @name sap.ui.Device.orientation
+	 * @public
+	 */
+
+	device.orientation = {};
+
+	/** 
+	 * Resize Event API.
+	 *
+	 * @namespace
+	 * @name sap.ui.Device.resize
+	 * @public
+	 */
+	device.resize = {};
+	
+	/**
+	 * Registers the given handler to the orientation change event.
+	 *
+	 * The handler has one map parameter <code>mParams</code>:
+	 * <ul>
+	 * <li>mParams.landscape: whether the orientation is currently landscape</li>
+	 * </ul>
+	 *
+	 * @param {Function} fnFunction The function to call, when the orientation change event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @name sap.ui.Device.orientation#attachHandler
+	 * @function
+	 * @public
+	 */
+	device.orientation.attachHandler = function(fnFunction, oListener){
+		attachEvent("orientation", fnFunction, oListener);
+	};
+
+	/**
+	 * Registers the given handler to the resize event.
+	 *
+	 * The handler has one map parameter <code>mParams</code>:
+	 * <ul>
+	 * <li>mParams.height: new height of the window</li>
+	 * <li>mParams.width: new width of the window</li>
+	 * </ul>
+	 *
+	 * @param {Function} fnFunction The function to call, when the resize event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @name sap.ui.Device.resize#attachHandler
+	 * @function
+	 * @public
+	 */
+	device.resize.attachHandler = function(fnFunction, oListener){
+		attachEvent("resize", fnFunction, oListener);
+	};
+
+	/**
+	 * Deregisters a previously registered handler from the orientation change event.
+	 * @param {Function} fnFunction The function to call, when the orientation change event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @name sap.ui.Device.orientation#detachHandler
+	 * @function
+	 * @public
+	 */
+	device.orientation.detachHandler = function(fnFunction, oListener){
+		detachEvent("orientation", fnFunction, oListener);
+	};
+
+	/**
+	 * Deregisters a previously registered handler from the resize event.
+	 * @param {Function} fnFunction The function to call, when the resize event occurs.
+	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @name sap.ui.Device.resize#detachHandler
+	 * @function
+	 * @public
+	 */
+	device.resize.detachHandler = function(fnFunction, oListener){
+		detachEvent("resize", fnFunction, oListener);
+	};
+
+	function setOrientationInfo(oInfo){
+		oInfo.landscape = isLandscape(true);
+		oInfo.portrait = !oInfo.landscape;
+	}
+
+	function handleOrientationChange(){
+		setOrientationInfo(device.orientation);
+		fireEvent("orientation", {landscape: device.orientation.landscape});
+	}
+
+	function handleResizeChange(){
+		setResizeInfo(device.resize);
+		fireEvent("resize", {height: device.resize.height, width: device.resize.width});
+	}
+
+	function setResizeInfo(oInfo){
+		oInfo.width = windowSize()[0];
+		oInfo.height = windowSize()[1];
+	}
+
+	function handleOrientationResizeChange(){
+		var wasL = device.orientation.landscape;
+		var isL = isLandscape();
+		if (wasL != isL) {
+			handleOrientationChange();
+		}
+		//throttle resize events because most browsers throw one or more resize events per pixel
+		//for every resize event inside the period from 150ms (starting from the first resize event),
+		//we only fire one resize event after this period
+		if (!iResizeTimeout) {
+			iResizeTimeout = window.setTimeout(handleResizeTimeout, 150);
+		}
+	}
+
+	function handleResizeTimeout() {
+		handleResizeChange();
+		iResizeTimeout = null;
+	}
+
+	var bOrientationchange = false;
+	var bResize = false;
+	var iOrientationTimeout;
+	var iResizeTimeout;
+	var iClearFlagTimeout;
+	var iWindowHeightOld = windowSize()[1];
+	var iWindowWidthOld = windowSize()[0];
+	var bKeyboardOpen = false;
+	var iLastResizeTime;
+	var rInputTagRegex = /INPUT|TEXTAREA|SELECT/;
+	// On iPhone with iOS version 7.0.x and on iPad with iOS version 7.x (tested with all versions below 7.1.1), there's a invalide resize event fired
+	// when changing the orientation while keyboard is shown.
+	var bSkipFirstResize = device.os.ios && device.browser.name === "sf" &&
+		((device.system.phone && device.os.version >= 7 && device.os.version < 7.1) || (device.system.tablet && device.os.version >= 7));
+	
+	function isLandscape(bFromOrientationChange){
+		if (device.support.touch && device.support.orientation) {
+			//if on screen keyboard is open and the call of this method is from orientation change listener, reverse the last value.
+			//this is because when keyboard opens on android device, the height can be less than the width even in portrait mode.
+			if (bKeyboardOpen && bFromOrientationChange) {
+				return !device.orientation.landscape;
+			}
+			//when keyboard opens, the last orientation change value will be retured.
+			if (bKeyboardOpen) {
+				return device.orientation.landscape;
+			}
+			//otherwise compare the width and height of window
+		} else {
+			//most desktop browsers and windows phone/tablet which not support orientationchange
+			if (device.support.matchmedia && device.support.orientation) {
+				return !!window.matchMedia("(orientation: landscape)").matches;
+			}
+		}
+		var size = windowSize();
+		return size[0] > size[1];
+	}
+
+	function handleMobileOrientationResizeChange(evt) {
+		if (evt.type == "resize") {
+			// supress the first invalid resize event fired before orientationchange event while keyboard is open on iPhone 7.0.x
+			// because this event has wrong size infos
+			if (bSkipFirstResize && rInputTagRegex.test(document.activeElement.tagName) && !bOrientationchange) {
+				return;
+			}
+
+			var iWindowHeightNew = windowSize()[1];
+			var iWindowWidthNew = windowSize()[0];
+			var iTime = new Date().getTime();
+			//skip multiple resize events by only one orientationchange
+			if (iWindowHeightNew === iWindowHeightOld && iWindowWidthNew === iWindowWidthOld) {
+				return;
+			}
+			bResize = true;
+			//on mobile devices opening the keyboard on some devices leads to a resize event
+			//in this case only the height changes, not the width
+			if ((iWindowHeightOld != iWindowHeightNew) && (iWindowWidthOld == iWindowWidthNew)) {
+				//Asus Transformer tablet fires two resize events when orientation changes while keyboard is open.
+				//Between these two events, only the height changes. The check of if keyboard is open has to be skipped because
+				//it may be judged as keyboard closed but the keyboard is still open which will affect the orientation detection
+				if (!iLastResizeTime || (iTime - iLastResizeTime > 300)) {
+					bKeyboardOpen = (iWindowHeightNew < iWindowHeightOld);
+				}
+				handleResizeChange();
+			} else {
+				iWindowWidthOld = iWindowWidthNew;
+			}
+			iLastResizeTime = iTime;
+			iWindowHeightOld = iWindowHeightNew;
+
+			if (iClearFlagTimeout) {
+				window.clearTimeout(iClearFlagTimeout);
+				iClearFlagTimeout = null;
+			}
+			//Some Android build-in browser fires a resize event after the viewport is applied.
+			//This resize event has to be dismissed otherwise when the next orientationchange event happens,
+			//a UI5 resize event will be fired with the wrong window size.
+			iClearFlagTimeout = window.setTimeout(clearFlags, 1200);
+		} else if (evt.type == "orientationchange") {
+			bOrientationchange = true;
+		}
+
+		if (iOrientationTimeout) {
+			clearTimeout(iOrientationTimeout);
+			iOrientationTimeout = null;
+		}
+		iOrientationTimeout = window.setTimeout(handleMobileTimeout, 50);
+	}
+
+	function handleMobileTimeout() {
+		if (bOrientationchange && bResize) {
+			handleOrientationChange();
+			handleResizeChange();
+			bOrientationchange = false;
+			bResize = false;
+			if (iClearFlagTimeout) {
+				window.clearTimeout(iClearFlagTimeout);
+				iClearFlagTimeout = null;
+			}
+		}
+		iOrientationTimeout = null;
+	}
+
+	function clearFlags(){
+		bOrientationchange = false;
+		bResize = false;
+		iClearFlagTimeout = null;
+	}
+
+//******** Update browser settings for test purposes ********
+
+	device._update = function(_simMobileOnDesktop) {
+		ua = navigator.userAgent;
+		logger.log(WARNING, "Device API values manipulated: NOT PRODUCTIVE FEATURE!!! This should be only used for test purposes. Only use if you know what you are doing.");
+		setBrowser();
+		setOS();
+		setSystem(_simMobileOnDesktop);
+	};
+
+//********************************************************
+	
+	setResizeInfo(device.resize);
+	setOrientationInfo(device.orientation);
+
+	//Add API to global namespace
+	window.sap.ui.Device = device;
+
+	// Add handler for orientationchange and resize after initialization of Device API (IE8 fires onresize synchronously)
+	if (device.support.touch && device.support.orientation) {
+		//logic for mobile devices which support orientationchange (like ios, android, blackberry)
+		window.addEventListener("resize", handleMobileOrientationResizeChange, false);
+		window.addEventListener("orientationchange", handleMobileOrientationResizeChange, false);
+	} else {
+		if (window.addEventListener) {
+			//most desktop browsers and windows phone/tablet which not support orientationchange
+			window.addEventListener("resize", handleOrientationResizeChange, false);
+		} else {
+			//IE8
+			window.attachEvent("onresize", handleOrientationResizeChange);
+		}
+	}
+
+	//Always initialize the default media range set
+	device.media.initRangeSet();
+
+	// define module if API is available
+	if (sap.ui.define) {
+		sap.ui.define("sap/ui/Device", [], function() {
+			return device;
+		});
+	}
+
+}());
+
+/*!
+ * URI.js - Mutating URLs
+ *
+ * Version: 1.11.2
+ *
+ * Author: Rodney Rehm
+ * Web: http://medialize.github.com/URI.js/
+ *
+ * Licensed under
+ *   MIT License http://www.opensource.org/licenses/mit-license
+ *   GPL v3 http://opensource.org/licenses/GPL-3.0
+ *
+ */
+(function (root, factory) {
+    // https://github.com/umdjs/umd/blob/master/returnExports.js
+    if (typeof exports === 'object') {
+        // Node
+        module.exports = factory(require('./punycode'), require('./IPv6'), require('./SecondLevelDomains'));
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+      // ##### BEGIN: MODIFIED BY SAP
+      // define(['./punycode', './IPv6', './SecondLevelDomains'], factory);
+      // we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code 
+      // and define() doesn't execute synchronously. So the UI5 code executed after URI.js 
+      // fails as it is missing the URI.js code.
+      // Instead we use the standard init code and only expose the result via define()
+      // The (optional) dependencies are lost or must be loaded in advance
+      root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
+      define([], function() { return root.URI; });
+      // ##### END: MODIFIED BY SAP
+    } else {
+        // Browser globals (root is window)
+        root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
+    }
+}(this, function (punycode, IPv6, SLD, root) {
+"use strict";
+
+// save current URI variable, if any
+var _URI = root && root.URI;
+
+function URI(url, base) {
+    // Allow instantiation without the 'new' keyword
+    if (!(this instanceof URI)) {
+        return new URI(url, base);
+    }
+
+    if (url === undefined) {
+        if (typeof location !== 'undefined') {
+            url = location.href + "";
+        } else {
+            url = "";
+        }
+    }
+
+    this.href(url);
+
+    // resolve to base according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#constructor
+    if (base !== undefined) {
+        return this.absoluteTo(base);
+    }
+
+    return this;
+};
+
+var p = URI.prototype;
+var hasOwn = Object.prototype.hasOwnProperty;
+
+function escapeRegEx(string) {
+    // https://github.com/medialize/URI.js/commit/85ac21783c11f8ccab06106dba9735a31a86924d#commitcomment-821963
+    return string.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
+}
+
+function getType(value) {
+    // IE8 doesn't return [Object Undefined] but [Object Object] for undefined value
+    if (value === undefined) {
+        return 'Undefined';
+    }
+
+    return String(Object.prototype.toString.call(value)).slice(8, -1);
+}
+
+function isArray(obj) {
+    return getType(obj) === "Array";
+}
+
+function filterArrayValues(data, value) {
+    var lookup = {};
+    var i, length;
+
+    if (isArray(value)) {
+        for (i = 0, length = value.length; i < length; i++) {
+            lookup[value[i]] = true;
+        }
+    } else {
+        lookup[value] = true;
+    }
+
+    for (i = 0, length = data.length; i < length; i++) {
+        if (lookup[data[i]] !== undefined) {
+            data.splice(i, 1);
+            length--;
+            i--;
+        }
+    }
+
+    return data;
+}
+
+function arrayContains(list, value) {
+    var i, length;
+    
+    // value may be string, number, array, regexp
+    if (isArray(value)) {
+        // Note: this can be optimized to O(n) (instead of current O(m * n))
+        for (i = 0, length = value.length; i < length; i++) {
+            if (!arrayContains(list, value[i])) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    var _type = getType(value);
+    for (i = 0, length = list.length; i < length; i++) {
+        if (_type === 'RegExp') {
+            if (typeof list[i] === 'string' && list[i].match(value)) {
+                return true;
+            }
+        } else if (list[i] === value) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function arraysEqual(one, two) {
+    if (!isArray(one) || !isArray(two)) {
+        return false;
+    }
+    
+    // arrays can't be equal if they have different amount of content
+    if (one.length !== two.length) {
+        return false;
+    }
+
+    one.sort();
+    two.sort();
+
+    for (var i = 0, l = one.length; i < l; i++) {
+        if (one[i] !== two[i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+URI._parts = function() {
+    return {
+        protocol: null,
+        username: null,
+        password: null,
+        hostname: null,
+        urn: null,
+        port: null,
+        path: null,
+        query: null,
+        fragment: null,
+        // state
+        duplicateQueryParameters: URI.duplicateQueryParameters,
+        escapeQuerySpace: URI.escapeQuerySpace
+    };
+};
+// state: allow duplicate query parameters (a=1&a=1)
+URI.duplicateQueryParameters = false;
+// state: replaces + with %20 (space in query strings)
+URI.escapeQuerySpace = true;
+// static properties
+URI.protocol_expression = /^[a-z][a-z0-9-+-]*$/i;
+URI.idn_expression = /[^a-z0-9\.-]/i;
+URI.punycode_expression = /(xn--)/i;
+// well, 333.444.555.666 matches, but it sure ain't no IPv4 - do we care?
+URI.ip4_expression = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+// credits to Rich Brown
+// source: http://forums.intermapper.com/viewtopic.php?p=1096#1096
+// specification: http://www.ietf.org/rfc/rfc4291.txt
+URI.ip6_expression = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+// gruber revised expression - http://rodneyrehm.de/t/url-regex.html
+URI.find_uri_expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig;
+// http://www.iana.org/assignments/uri-schemes.html
+// http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports
+URI.defaultPorts = {
+    http: "80",
+    https: "443",
+    ftp: "21",
+    gopher: "70",
+    ws: "80",
+    wss: "443"
+};
+// allowed hostname characters according to RFC 3986
+// ALPHA DIGIT "-" "." "_" "~" "!" "$" "&" "'" "(" ")" "*" "+" "," ";" "=" %encoded
+// I've never seen a (non-IDN) hostname other than: ALPHA DIGIT . -
+URI.invalid_hostname_characters = /[^a-zA-Z0-9\.-]/;
+// map DOM Elements to their URI attribute
+URI.domAttributes = {
+    'a': 'href',
+    'blockquote': 'cite',
+    'link': 'href',
+    'base': 'href',
+    'script': 'src',
+    'form': 'action',
+    'img': 'src',
+    'area': 'href',
+    'iframe': 'src',
+    'embed': 'src',
+    'source': 'src',
+    'track': 'src',
+    'input': 'src' // but only if type="image"
+};
+URI.getDomAttribute = function(node) {
+    if (!node || !node.nodeName) {
+        return undefined;
+    }
+    
+    var nodeName = node.nodeName.toLowerCase();
+    // <input> should only expose src for type="image"
+    if (nodeName === 'input' && node.type !== 'image') {
+        return undefined;
+    }
+    
+    return URI.domAttributes[nodeName];
+};
+
+function escapeForDumbFirefox36(value) {
+    // https://github.com/medialize/URI.js/issues/91
+    return escape(value);
+}
+
+// encoding / decoding according to RFC3986
+function strictEncodeURIComponent(string) {
+    // see https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/encodeURIComponent
+    return encodeURIComponent(string)
+        .replace(/[!'()*]/g, escapeForDumbFirefox36)
+        .replace(/\*/g, "%2A");
+}
+URI.encode = strictEncodeURIComponent;
+URI.decode = decodeURIComponent;
+URI.iso8859 = function() {
+    URI.encode = escape;
+    URI.decode = unescape;
+};
+URI.unicode = function() {
+    URI.encode = strictEncodeURIComponent;
+    URI.decode = decodeURIComponent;
+};
+URI.characters = {
+    pathname: {
+        encode: {
+            // RFC3986 2.1: For consistency, URI producers and normalizers should
+            // use uppercase hexadecimal digits for all percent-encodings.
+            expression: /%(24|26|2B|2C|3B|3D|3A|40)/ig,
+            map: {
+                // -._~!'()*
+                "%24": "$",
+                "%26": "&",
+                "%2B": "+",
+                "%2C": ",",
+                "%3B": ";",
+                "%3D": "=",
+                "%3A": ":",
+                "%40": "@"
+            }
+        },
+        decode: {
+            expression: /[\/\?#]/g,
+            map: {
+                "/": "%2F",
+                "?": "%3F",
+                "#": "%23"
+            }
+        }
+    },
+    reserved: {
+        encode: {
+            // RFC3986 2.1: For consistency, URI producers and normalizers should
+            // use uppercase hexadecimal digits for all percent-encodings.
+            expression: /%(21|23|24|26|27|28|29|2A|2B|2C|2F|3A|3B|3D|3F|40|5B|5D)/ig,
+            map: {
+                // gen-delims
+                "%3A": ":",
+                "%2F": "/",
+                "%3F": "?",
+                "%23": "#",
+                "%5B": "[",
+                "%5D": "]",
+                "%40": "@",
+                // sub-delims
+                "%21": "!",
+                "%24": "$",
+                "%26": "&",
+                "%27": "'",
+                "%28": "(",
+                "%29": ")",
+                "%2A": "*",
+                "%2B": "+",
+                "%2C": ",",
+                "%3B": ";",
+                "%3D": "="
+            }
+        }
+    }
+};
+URI.encodeQuery = function(string, escapeQuerySpace) {
+    var escaped = URI.encode(string + "");
+    return escapeQuerySpace ? escaped.replace(/%20/g, '+') : escaped;
+};
+URI.decodeQuery = function(string, escapeQuerySpace) {
+    string += "";
+    try {
+        return URI.decode(escapeQuerySpace ? string.replace(/\+/g, '%20') : string);
+    } catch(e) {
+        // we're not going to mess with weird encodings,
+        // give up and return the undecoded original string
+        // see https://github.com/medialize/URI.js/issues/87
+        // see https://github.com/medialize/URI.js/issues/92
+        return string;
+    }
+};
+URI.recodePath = function(string) {
+    var segments = (string + "").split('/');
+    for (var i = 0, length = segments.length; i < length; i++) {
+        segments[i] = URI.encodePathSegment(URI.decode(segments[i]));
+    }
+
+    return segments.join('/');
+};
+URI.decodePath = function(string) {
+    var segments = (string + "").split('/');
+    for (var i = 0, length = segments.length; i < length; i++) {
+        segments[i] = URI.decodePathSegment(segments[i]);
+    }
+
+    return segments.join('/');
+};
+// generate encode/decode path functions
+var _parts = {'encode':'encode', 'decode':'decode'};
+var _part;
+var generateAccessor = function(_group, _part) {
+    return function(string) {
+        return URI[_part](string + "").replace(URI.characters[_group][_part].expression, function(c) {
+            return URI.characters[_group][_part].map[c];
+        });
+    };
+};
+
+for (_part in _parts) {
+    URI[_part + "PathSegment"] = generateAccessor("pathname", _parts[_part]);
+}
+
+URI.encodeReserved = generateAccessor("reserved", "encode");
+
+URI.parse = function(string, parts) {
+    var pos;
+    if (!parts) {
+        parts = {};
+    }
+    // [protocol"://"[username[":"password]"@"]hostname[":"port]"/"?][path]["?"querystring]["#"fragment]
+
+    // extract fragment
+    pos = string.indexOf('#');
+    if (pos > -1) {
+        // escaping?
+        parts.fragment = string.substring(pos + 1) || null;
+        string = string.substring(0, pos);
+    }
+
+    // extract query
+    pos = string.indexOf('?');
+    if (pos > -1) {
+        // escaping?
+        parts.query = string.substring(pos + 1) || null;
+        string = string.substring(0, pos);
+    }
+
+    // extract protocol
+    if (string.substring(0, 2) === '//') {
+        // relative-scheme
+        parts.protocol = null;
+        string = string.substring(2);
+        // extract "user:pass@host:port"
+        string = URI.parseAuthority(string, parts);
+    } else {
+        pos = string.indexOf(':');
+        if (pos > -1) {
+            parts.protocol = string.substring(0, pos) || null;
+            if (parts.protocol && !parts.protocol.match(URI.protocol_expression)) {
+                // : may be within the path
+                parts.protocol = undefined;
+            } else if (parts.protocol === 'file') {
+                // the file scheme: does not contain an authority
+                string = string.substring(pos + 3);
+            } else if (string.substring(pos + 1, pos + 3) === '//') {
+                string = string.substring(pos + 3);
+
+                // extract "user:pass@host:port"
+                string = URI.parseAuthority(string, parts);
+            } else {
+                string = string.substring(pos + 1);
+                parts.urn = true;
+            }
+        }
+    }
+
+    // what's left must be the path
+    parts.path = string;
+
+    // and we're done
+    return parts;
+};
+URI.parseHost = function(string, parts) {
+    // extract host:port
+    var pos = string.indexOf('/');
+    var bracketPos;
+    var t;
+
+    if (pos === -1) {
+        pos = string.length;
+    }
+
+    if (string.charAt(0) === "[") {
+        // IPv6 host - http://tools.ietf.org/html/draft-ietf-6man-text-addr-representation-04#section-6
+        // I claim most client software breaks on IPv6 anyways. To simplify things, URI only accepts
+        // IPv6+port in the format [2001:db8::1]:80 (for the time being)
+        bracketPos = string.indexOf(']');
+        parts.hostname = string.substring(1, bracketPos) || null;
+        parts.port = string.substring(bracketPos+2, pos) || null;
+    } else if (string.indexOf(':') !== string.lastIndexOf(':')) {
+        // IPv6 host contains multiple colons - but no port
+        // this notation is actually not allowed by RFC 3986, but we're a liberal parser
+        parts.hostname = string.substring(0, pos) || null;
+        parts.port = null;
+    } else {
+        t = string.substring(0, pos).split(':');
+        parts.hostname = t[0] || null;
+        parts.port = t[1] || null;
+    }
+
+    if (parts.hostname && string.substring(pos).charAt(0) !== '/') {
+        pos++;
+        string = "/" + string;
+    }
+
+    return string.substring(pos) || '/';
+};
+URI.parseAuthority = function(string, parts) {
+    string = URI.parseUserinfo(string, parts);
+    return URI.parseHost(string, parts);
+};
+URI.parseUserinfo = function(string, parts) {
+    // extract username:password
+    var firstSlash = string.indexOf('/');
+    var pos = firstSlash > -1 
+        ? string.lastIndexOf('@', firstSlash) 
+        : string.indexOf('@');
+    var t;
+
+    // authority@ must come before /path
+    if (pos > -1 && (firstSlash === -1 || pos < firstSlash)) {
+        t = string.substring(0, pos).split(':');
+        parts.username = t[0] ? URI.decode(t[0]) : null;
+        t.shift();
+        parts.password = t[0] ? URI.decode(t.join(':')) : null;
+        string = string.substring(pos + 1);
+    } else {
+        parts.username = null;
+        parts.password = null;
+    }
+
+    return string;
+};
+URI.parseQuery = function(string, escapeQuerySpace) {
+    if (!string) {
+        return {};
+    }
+
+    // throw out the funky business - "?"[name"="value"&"]+
+    string = string.replace(/&+/g, '&').replace(/^\?*&*|&+$/g, '');
+
+    if (!string) {
+        return {};
+    }
+
+    var items = {};
+    var splits = string.split('&');
+    var length = splits.length;
+    var v, name, value;
+
+    for (var i = 0; i < length; i++) {
+        v = splits[i].split('=');
+        name = URI.decodeQuery(v.shift(), escapeQuerySpace);
+        // no "=" is null according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#collect-url-parameters
+        value = v.length ? URI.decodeQuery(v.join('='), escapeQuerySpace) : null;
+
+        if (items[name]) {
+            if (typeof items[name] === "string") {
+                items[name] = [items[name]];
+            }
+
+            items[name].push(value);
+        } else {
+            items[name] = value;
+        }
+    }
+
+    return items;
+};
+
+URI.build = function(parts) {
+    var t = "";
+
+    if (parts.protocol) {
+        t += parts.protocol + ":";
+    }
+
+    if (!parts.urn && (t || parts.hostname)) {
+        t += '//';
+    }
+
+    t += (URI.buildAuthority(parts) || '');
+
+    if (typeof parts.path === "string") {
+        if (parts.path.charAt(0) !== '/' && typeof parts.hostname === "string") {
+            t += '/';
+        }
+
+        t += parts.path;
+    }
+
+    if (typeof parts.query === "string" && parts.query) {
+        t += '?' + parts.query;
+    }
+
+    if (typeof parts.fragment === "string" && parts.fragment) {
+        t += '#' + parts.fragment;
+    }
+    return t;
+};
+URI.buildHost = function(parts) {
+    var t = "";
+
+    if (!parts.hostname) {
+        return "";
+    } else if (URI.ip6_expression.test(parts.hostname)) {
+        if (parts.port) {
+            t += "[" + parts.hostname + "]:" + parts.port;
+        } else {
+            // don't know if we should always wrap IPv6 in []
+            // the RFC explicitly says SHOULD, not MUST.
+            t += parts.hostname;
+        }
+    } else {
+        t += parts.hostname;
+        if (parts.port) {
+            t += ':' + parts.port;
+        }
+    }
+
+    return t;
+};
+URI.buildAuthority = function(parts) {
+    return URI.buildUserinfo(parts) + URI.buildHost(parts);
+};
+URI.buildUserinfo = function(parts) {
+    var t = "";
+
+    if (parts.username) {
+        t += URI.encode(parts.username);
+
+        if (parts.password) {
+            t += ':' + URI.encode(parts.password);
+        }
+
+        t += "@";
+    }
+
+    return t;
+};
+URI.buildQuery = function(data, duplicateQueryParameters, escapeQuerySpace) {
+    // according to http://tools.ietf.org/html/rfc3986 or http://labs.apache.org/webarch/uri/rfc/rfc3986.html
+    // being »-._~!$&'()*+,;=:@/?« %HEX and alnum are allowed
+    // the RFC explicitly states ?/foo being a valid use case, no mention of parameter syntax!
+    // URI.js treats the query string as being application/x-www-form-urlencoded
+    // see http://www.w3.org/TR/REC-html40/interact/forms.html#form-content-type
+
+    var t = "";
+    var unique, key, i, length;
+    for (key in data) {
+        if (hasOwn.call(data, key) && key) {
+            if (isArray(data[key])) {
+                unique = {};
+                for (i = 0, length = data[key].length; i < length; i++) {
+                    if (data[key][i] !== undefined && unique[data[key][i] + ""] === undefined) {
+                        t += "&" + URI.buildQueryParameter(key, data[key][i], escapeQuerySpace);
+                        if (duplicateQueryParameters !== true) {
+                            unique[data[key][i] + ""] = true;
+                        }
+                    }
+                }
+            } else if (data[key] !== undefined) {
+                t += '&' + URI.buildQueryParameter(key, data[key], escapeQuerySpace);
+            }
+        }
+    }
+
+    return t.substring(1);
+};
+URI.buildQueryParameter = function(name, value, escapeQuerySpace) {
+    // http://www.w3.org/TR/REC-html40/interact/forms.html#form-content-type -- application/x-www-form-urlencoded
+    // don't append "=" for null values, according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#url-parameter-serialization
+    return URI.encodeQuery(name, escapeQuerySpace) + (value !== null ? "=" + URI.encodeQuery(value, escapeQuerySpace) : "");
+};
+
+URI.addQuery = function(data, name, value) {
+    if (typeof name === "object") {
+        for (var key in name) {
+            if (hasOwn.call(name, key)) {
+                URI.addQuery(data, key, name[key]);
+            }
+        }
+    } else if (typeof name === "string") {
+        if (data[name] === undefined) {
+            data[name] = value;
+            return;
+        } else if (typeof data[name] === "string") {
+            data[name] = [data[name]];
+        }
+
+        if (!isArray(value)) {
+            value = [value];
+        }
+
+        data[name] = data[name].concat(value);
+    } else {
+        throw new TypeError("URI.addQuery() accepts an object, string as the name parameter");
+    }
+};
+URI.removeQuery = function(data, name, value) {
+    var i, length, key;
+    
+    if (isArray(name)) {
+        for (i = 0, length = name.length; i < length; i++) {
+            data[name[i]] = undefined;
+        }
+    } else if (typeof name === "object") {
+        for (key in name) {
+            if (hasOwn.call(name, key)) {
+                URI.removeQuery(data, key, name[key]);
+            }
+        }
+    } else if (typeof name === "string") {
+        if (value !== undefined) {
+            if (data[name] === value) {
+                data[name] = undefined;
+            } else if (isArray(data[name])) {
+                data[name] = filterArrayValues(data[name], value);
+            }
+        } else {
+            data[name] = undefined;
+        }
+    } else {
+        throw new TypeError("URI.addQuery() accepts an object, string as the first parameter");
+    }
+};
+URI.hasQuery = function(data, name, value, withinArray) {
+    if (typeof name === "object") {
+        for (var key in name) {
+            if (hasOwn.call(name, key)) {
+                if (!URI.hasQuery(data, key, name[key])) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    } else if (typeof name !== "string") {
+        throw new TypeError("URI.hasQuery() accepts an object, string as the name parameter");
+    }
+
+    switch (getType(value)) {
+        case 'Undefined':
+            // true if exists (but may be empty)
+            return name in data; // data[name] !== undefined;
+
+        case 'Boolean':
+            // true if exists and non-empty
+            var _booly = Boolean(isArray(data[name]) ? data[name].length : data[name]);
+            return value === _booly;
+
+        case 'Function':
+            // allow complex comparison
+            return !!value(data[name], name, data);
+
+        case 'Array':
+            if (!isArray(data[name])) {
+                return false;
+            }
+
+            var op = withinArray ? arrayContains : arraysEqual;
+            return op(data[name], value);
+
+        case 'RegExp':
+            if (!isArray(data[name])) {
+                return Boolean(data[name] && data[name].match(value));
+            }
+
+            if (!withinArray) {
+                return false;
+            }
+
+            return arrayContains(data[name], value);
+
+        case 'Number':
+            value = String(value);
+            // omit break;
+        case 'String':
+            if (!isArray(data[name])) {
+                return data[name] === value;
+            }
+
+            if (!withinArray) {
+                return false;
+            }
+
+            return arrayContains(data[name], value);
+
+        default:
+            throw new TypeError("URI.hasQuery() accepts undefined, boolean, string, number, RegExp, Function as the value parameter");
+    }
+};
+
+
+URI.commonPath = function(one, two) {
+    var length = Math.min(one.length, two.length);
+    var pos;
+
+    // find first non-matching character
+    for (pos = 0; pos < length; pos++) {
+        if (one.charAt(pos) !== two.charAt(pos)) {
+            pos--;
+            break;
+        }
+    }
+
+    if (pos < 1) {
+        return one.charAt(0) === two.charAt(0) && one.charAt(0) === '/' ? '/' : '';
+    }
+    
+    // revert to last /
+    if (one.charAt(pos) !== '/' || two.charAt(pos) !== '/') {
+        pos = one.substring(0, pos).lastIndexOf('/');
+    }
+
+    return one.substring(0, pos + 1);
+};
+
+URI.withinString = function(string, callback) {
+    // expression used is "gruber revised" (@gruber v2) determined to be the best solution in
+    // a regex sprint we did a couple of ages ago at
+    // * http://mathiasbynens.be/demo/url-regex
+    // * http://rodneyrehm.de/t/url-regex.html
+
+    return string.replace(URI.find_uri_expression, callback);
+};
+
+URI.ensureValidHostname = function(v) {
+    // Theoretically URIs allow percent-encoding in Hostnames (according to RFC 3986)
+    // they are not part of DNS and therefore ignored by URI.js
+
+    if (v.match(URI.invalid_hostname_characters)) {
+        // test punycode
+        if (!punycode) {
+            throw new TypeError("Hostname '" + v + "' contains characters other than [A-Z0-9.-] and Punycode.js is not available");
+        }
+
+        if (punycode.toASCII(v).match(URI.invalid_hostname_characters)) {
+            throw new TypeError("Hostname '" + v + "' contains characters other than [A-Z0-9.-]");
+        }
+    }
+};
+
+// noConflict
+URI.noConflict = function(removeAll) {
+    if (removeAll) {
+        var unconflicted = {
+            URI: this.noConflict()
+        };
+
+        if (URITemplate && typeof URITemplate.noConflict == "function") {
+            unconflicted.URITemplate = URITemplate.noConflict();
+        }
+
+        if (IPv6 && typeof IPv6.noConflict == "function") {
+            unconflicted.IPv6 = IPv6.noConflict();
+        }
+
+        if (SecondLevelDomains && typeof SecondLevelDomains.noConflict == "function") {
+            unconflicted.SecondLevelDomains = SecondLevelDomains.noConflict();
+        }
+
+        return unconflicted;
+    } else if (root.URI === this) {
+        root.URI = _URI;
+    }
+
+    return this;
+};
+
+p.build = function(deferBuild) {
+    if (deferBuild === true) {
+        this._deferred_build = true;
+    } else if (deferBuild === undefined || this._deferred_build) {
+        this._string = URI.build(this._parts);
+        this._deferred_build = false;
+    }
+
+    return this;
+};
+
+p.clone = function() {
+    return new URI(this);
+};
+
+p.valueOf = p.toString = function() {
+    return this.build(false)._string;
+};
+
+// generate simple accessors
+_parts = {protocol: 'protocol', username: 'username', password: 'password', hostname: 'hostname',  port: 'port'};
+generateAccessor = function(_part){
+    return function(v, build) {
+        if (v === undefined) {
+            return this._parts[_part] || "";
+        } else {
+            this._parts[_part] = v || null;
+            this.build(!build);
+            return this;
+        }
+    };
+};
+
+for (_part in _parts) {                                                                                                                                                                                        
+    p[_part] = generateAccessor(_parts[_part]);
+}
+
+// generate accessors with optionally prefixed input
+_parts = {query: '?', fragment: '#'};
+generateAccessor = function(_part, _key){
+    return function(v, build) {
+        if (v === undefined) {
+            return this._parts[_part] || "";
+        } else {
+            if (v !== null) {
+                v = v + "";
+                if (v.charAt(0) === _key) {
+                    v = v.substring(1);
+                }
+            }
+
+            this._parts[_part] = v;
+            this.build(!build);
+            return this;
+        }
+    };
+};
+
+for (_part in _parts) {
+    p[_part] = generateAccessor(_part, _parts[_part]);
+}
+
+// generate accessors with prefixed output
+_parts = {search: ['?', 'query'], hash: ['#', 'fragment']};
+generateAccessor = function(_part, _key){
+    return function(v, build) {
+        var t = this[_part](v, build);
+        return typeof t === "string" && t.length ? (_key + t) : t;
+    };
+};
+
+for (_part in _parts) {
+    p[_part] = generateAccessor(_parts[_part][1], _parts[_part][0]);
+}
+
+p.pathname = function(v, build) {
+    if (v === undefined || v === true) {
+        var res = this._parts.path || (this._parts.hostname ? '/' : '');
+        return v ? URI.decodePath(res) : res;
+    } else {
+        this._parts.path = v ? URI.recodePath(v) : "/";
+        this.build(!build);
+        return this;
+    }
+};
+p.path = p.pathname;
+p.href = function(href, build) {
+    var key;
+    
+    if (href === undefined) {
+        return this.toString();
+    }
+
+    this._string = "";
+    this._parts = URI._parts();
+
+    var _URI = href instanceof URI;
+    var _object = typeof href === "object" && (href.hostname || href.path || href.pathname);
+    if (href.nodeName) {
+        var attribute = URI.getDomAttribute(href);
+        href = href[attribute] || "";
+        _object = false;
+    }
+    
+    // window.location is reported to be an object, but it's not the sort
+    // of object we're looking for: 
+    // * location.protocol ends with a colon
+    // * location.query != object.search
+    // * location.hash != object.fragment
+    // simply serializing the unknown object should do the trick 
+    // (for location, not for everything...)
+    if (!_URI && _object && href.pathname !== undefined) {
+        href = href.toString();
+    }
+
+    if (typeof href === "string") {
+        this._parts = URI.parse(href, this._parts);
+    } else if (_URI || _object) {
+        var src = _URI ? href._parts : href;
+        for (key in src) {
+            if (hasOwn.call(this._parts, key)) {
+                this._parts[key] = src[key];
+            }
+        }
+    } else {
+        throw new TypeError("invalid input");
+    }
+
+    this.build(!build);
+    return this;
+};
+
+// identification accessors
+p.is = function(what) {
+    var ip = false;
+    var ip4 = false;
+    var ip6 = false;
+    var name = false;
+    var sld = false;
+    var idn = false;
+    var punycode = false;
+    var relative = !this._parts.urn;
+
+    if (this._parts.hostname) {
+        relative = false;
+        ip4 = URI.ip4_expression.test(this._parts.hostname);
+        ip6 = URI.ip6_expression.test(this._parts.hostname);
+        ip = ip4 || ip6;
+        name = !ip;
+        sld = name && SLD && SLD.has(this._parts.hostname);
+        idn = name && URI.idn_expression.test(this._parts.hostname);
+        punycode = name && URI.punycode_expression.test(this._parts.hostname);
+    }
+
+    switch (what.toLowerCase()) {
+        case 'relative':
+            return relative;
+
+        case 'absolute':
+            return !relative;
+
+        // hostname identification
+        case 'domain':
+        case 'name':
+            return name;
+
+        case 'sld':
+            return sld;
+
+        case 'ip':
+            return ip;
+
+        case 'ip4':
+        case 'ipv4':
+        case 'inet4':
+            return ip4;
+
+        case 'ip6':
+        case 'ipv6':
+        case 'inet6':
+            return ip6;
+
+        case 'idn':
+            return idn;
+
+        case 'url':
+            return !this._parts.urn;
+
+        case 'urn':
+            return !!this._parts.urn;
+
+        case 'punycode':
+            return punycode;
+    }
+
+    return null;
+};
+
+// component specific input validation
+var _protocol = p.protocol;
+var _port = p.port;
+var _hostname = p.hostname;
+
+p.protocol = function(v, build) {
+    if (v !== undefined) {
+        if (v) {
+            // accept trailing ://
+            v = v.replace(/:(\/\/)?$/, '');
+
+            if (v.match(/[^a-zA-z0-9\.+-]/)) {
+                throw new TypeError("Protocol '" + v + "' contains characters other than [A-Z0-9.+-]");
+            }
+        }
+    }
+    return _protocol.call(this, v, build);
+};
+p.scheme = p.protocol;
+p.port = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v !== undefined) {
+        if (v === 0) {
+            v = null;
+        }
+
+        if (v) {
+            v += "";
+            if (v.charAt(0) === ":") {
+                v = v.substring(1);
+            }
+
+            if (v.match(/[^0-9]/)) {
+                throw new TypeError("Port '" + v + "' contains characters other than [0-9]");
+            }
+        }
+    }
+    return _port.call(this, v, build);
+};
+p.hostname = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v !== undefined) {
+        var x = {};
+        URI.parseHost(v, x);
+        v = x.hostname;
+    }
+    return _hostname.call(this, v, build);
+};
+
+// compound accessors
+p.host = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined) {
+        return this._parts.hostname ? URI.buildHost(this._parts) : "";
+    } else {
+        URI.parseHost(v, this._parts);
+        this.build(!build);
+        return this;
+    }
+};
+p.authority = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined) {
+        return this._parts.hostname ? URI.buildAuthority(this._parts) : "";
+    } else {
+        URI.parseAuthority(v, this._parts);
+        this.build(!build);
+        return this;
+    }
+};
+p.userinfo = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined) {
+        if (!this._parts.username) {
+            return "";
+        }
+
+        var t = URI.buildUserinfo(this._parts);
+        return t.substring(0, t.length -1);
+    } else {
+        if (v[v.length-1] !== '@') {
+            v += '@';
+        }
+
+        URI.parseUserinfo(v, this._parts);
+        this.build(!build);
+        return this;
+    }
+};
+p.resource = function(v, build) {
+    var parts;
+    
+    if (v === undefined) {
+        return this.path() + this.search() + this.hash();
+    }
+    
+    parts = URI.parse(v);
+    this._parts.path = parts.path;
+    this._parts.query = parts.query;
+    this._parts.fragment = parts.fragment;
+    this.build(!build);
+    return this;
+};
+
+// fraction accessors
+p.subdomain = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    // convenience, return "www" from "www.example.org"
+    if (v === undefined) {
+        if (!this._parts.hostname || this.is('IP')) {
+            return "";
+        }
+
+        // grab domain and add another segment
+        var end = this._parts.hostname.length - this.domain().length - 1;
+        return this._parts.hostname.substring(0, end) || "";
+    } else {
+        var e = this._parts.hostname.length - this.domain().length;
+        var sub = this._parts.hostname.substring(0, e);
+        var replace = new RegExp('^' + escapeRegEx(sub));
+
+        if (v && v.charAt(v.length - 1) !== '.') {
+            v += ".";
+        }
+
+        if (v) {
+            URI.ensureValidHostname(v);
+        }
+
+        this._parts.hostname = this._parts.hostname.replace(replace, v);
+        this.build(!build);
+        return this;
+    }
+};
+p.domain = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (typeof v === 'boolean') {
+        build = v;
+        v = undefined;
+    }
+
+    // convenience, return "example.org" from "www.example.org"
+    if (v === undefined) {
+        if (!this._parts.hostname || this.is('IP')) {
+            return "";
+        }
+
+        // if hostname consists of 1 or 2 segments, it must be the domain
+        var t = this._parts.hostname.match(/\./g);
+        if (t && t.length < 2) {
+            return this._parts.hostname;
+        }
+
+        // grab tld and add another segment
+        var end = this._parts.hostname.length - this.tld(build).length - 1;
+        end = this._parts.hostname.lastIndexOf('.', end -1) + 1;
+        return this._parts.hostname.substring(end) || "";
+    } else {
+        if (!v) {
+            throw new TypeError("cannot set domain empty");
+        }
+
+        URI.ensureValidHostname(v);
+
+        if (!this._parts.hostname || this.is('IP')) {
+            this._parts.hostname = v;
+        } else {
+            var replace = new RegExp(escapeRegEx(this.domain()) + "$");
+            this._parts.hostname = this._parts.hostname.replace(replace, v);
+        }
+
+        this.build(!build);
+        return this;
+    }
+};
+p.tld = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (typeof v === 'boolean') {
+        build = v;
+        v = undefined;
+    }
+
+    // return "org" from "www.example.org"
+    if (v === undefined) {
+        if (!this._parts.hostname || this.is('IP')) {
+            return "";
+        }
+
+        var pos = this._parts.hostname.lastIndexOf('.');
+        var tld = this._parts.hostname.substring(pos + 1);
+
+        if (build !== true && SLD && SLD.list[tld.toLowerCase()]) {
+            return SLD.get(this._parts.hostname) || tld;
+        }
+
+        return tld;
+    } else {
+        var replace;
+        
+        if (!v) {
+            throw new TypeError("cannot set TLD empty");
+        } else if (v.match(/[^a-zA-Z0-9-]/)) {
+            if (SLD && SLD.is(v)) {
+                replace = new RegExp(escapeRegEx(this.tld()) + "$");
+                this._parts.hostname = this._parts.hostname.replace(replace, v);
+            } else {
+                throw new TypeError("TLD '" + v + "' contains characters other than [A-Z0-9]");
+            }
+        } else if (!this._parts.hostname || this.is('IP')) {
+            throw new ReferenceError("cannot set TLD on non-domain host");
+        } else {
+            replace = new RegExp(escapeRegEx(this.tld()) + "$");
+            this._parts.hostname = this._parts.hostname.replace(replace, v);
+        }
+
+        this.build(!build);
+        return this;
+    }
+};
+p.directory = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined || v === true) {
+        if (!this._parts.path && !this._parts.hostname) {
+            return '';
+        }
+
+        if (this._parts.path === '/') {
+            return '/';
+        }
+
+        var end = this._parts.path.length - this.filename().length - 1;
+        var res = this._parts.path.substring(0, end) || (this._parts.hostname ? "/" : "");
+
+        return v ? URI.decodePath(res) : res;
+
+    } else {
+        var e = this._parts.path.length - this.filename().length;
+        var directory = this._parts.path.substring(0, e);
+        var replace = new RegExp('^' + escapeRegEx(directory));
+
+        // fully qualifier directories begin with a slash
+        if (!this.is('relative')) {
+            if (!v) {
+                v = '/';
+            }
+
+            if (v.charAt(0) !== '/') {
+                v = "/" + v;
+            }
+        }
+
+        // directories always end with a slash
+        if (v && v.charAt(v.length - 1) !== '/') {
+            v += '/';
+        }
+
+        v = URI.recodePath(v);
+        this._parts.path = this._parts.path.replace(replace, v);
+        this.build(!build);
+        return this;
+    }
+};
+p.filename = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined || v === true) {
+        if (!this._parts.path || this._parts.path === '/') {
+            return "";
+        }
+
+        var pos = this._parts.path.lastIndexOf('/');
+        var res = this._parts.path.substring(pos+1);
+
+        return v ? URI.decodePathSegment(res) : res;
+    } else {
+        var mutatedDirectory = false;
+        
+        if (v.charAt(0) === '/') {
+            v = v.substring(1);
+        }
+
+        if (v.match(/\.?\//)) {
+            mutatedDirectory = true;
+        }
+
+        var replace = new RegExp(escapeRegEx(this.filename()) + "$");
+        v = URI.recodePath(v);
+        this._parts.path = this._parts.path.replace(replace, v);
+
+        if (mutatedDirectory) {
+            this.normalizePath(build);
+        } else {
+            this.build(!build);
+        }
+
+        return this;
+    }
+};
+p.suffix = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined || v === true) {
+        if (!this._parts.path || this._parts.path === '/') {
+            return "";
+        }
+
+        var filename = this.filename();
+        var pos = filename.lastIndexOf('.');
+        var s, res;
+
+        if (pos === -1) {
+            return "";
+        }
+
+        // suffix may only contain alnum characters (yup, I made this up.)
+        s = filename.substring(pos+1);
+        res = (/^[a-z0-9%]+$/i).test(s) ? s : "";
+        return v ? URI.decodePathSegment(res) : res;
+    } else {
+        if (v.charAt(0) === '.') {
+            v = v.substring(1);
+        }
+
+        var suffix = this.suffix();
+        var replace;
+
+        if (!suffix) {
+            if (!v) {
+                return this;
+            }
+
+            this._parts.path += '.' + URI.recodePath(v);
+        } else if (!v) {
+            replace = new RegExp(escapeRegEx("." + suffix) + "$");
+        } else {
+            replace = new RegExp(escapeRegEx(suffix) + "$");
+        }
+
+        if (replace) {
+            v = URI.recodePath(v);
+            this._parts.path = this._parts.path.replace(replace, v);
+        }
+
+        this.build(!build);
+        return this;
+    }
+};
+p.segment = function(segment, v, build) {
+    var separator = this._parts.urn ? ':' : '/';
+    var path = this.path();
+    var absolute = path.substring(0, 1) === '/';
+    var segments = path.split(separator);
+
+    if (segment !== undefined && typeof segment !== 'number') {
+        build = v;
+        v = segment;
+        segment = undefined;
+    }
+
+    if (segment !== undefined && typeof segment !== 'number') {
+        throw new Error("Bad segment '" + segment + "', must be 0-based integer");
+    }
+
+    if (absolute) {
+        segments.shift();
+    }
+
+    if (segment < 0) {
+        // allow negative indexes to address from the end
+        segment = Math.max(segments.length + segment, 0);
+    }
+
+    if (v === undefined) {
+        return segment === undefined
+            ? segments
+            : segments[segment];
+    } else if (segment === null || segments[segment] === undefined) {
+        if (isArray(v)) {
+            segments = [];
+            // collapse empty elements within array
+            for (var i=0, l=v.length; i < l; i++) {
+                if (!v[i].length && (!segments.length || !segments[segments.length -1].length)) {
+                    continue;
+                }
+                
+                if (segments.length && !segments[segments.length -1].length) {
+                    segments.pop();
+                }
+                
+                segments.push(v[i]);
+            }
+        } else if (v || (typeof v === "string")) {
+            if (segments[segments.length -1] === "") {
+                // empty trailing elements have to be overwritten
+                // to prevent results such as /foo//bar
+                segments[segments.length -1] = v;
+            } else {
+                segments.push(v);
+            }
+        }
+    } else {
+        if (v || (typeof v === "string" && v.length)) {
+            segments[segment] = v;
+        } else {
+            segments.splice(segment, 1);
+        }
+    }
+
+    if (absolute) {
+        segments.unshift("");
+    }
+
+    return this.path(segments.join(separator), build);
+};
+p.segmentCoded = function(segment, v, build) {
+    var segments, i, l;
+
+    if (typeof segment !== 'number') {
+        build = v;
+        v = segment;
+        segment = undefined;
+    }
+
+    if (v === undefined) {
+        segments = this.segment(segment, v, build);
+        if (!isArray(segments)) {
+            segments = segments !== undefined ? URI.decode(segments) : undefined;
+        } else {
+            for (i = 0, l = segments.length; i < l; i++) {
+                segments[i] = URI.decode(segments[i]);
+            }
+        }
+
+        return segments;
+    }
+
+    if (!isArray(v)) {
+        v = typeof v === 'string' ? URI.encode(v) : v;
+    } else {
+        for (i = 0, l = v.length; i < l; i++) {
+            v[i] = URI.decode(v[i]);
+        }
+    }
+
+    return this.segment(segment, v, build);
+};
+
+// mutating query string
+var q = p.query;
+p.query = function(v, build) {
+    if (v === true) {
+        return URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
+    } else if (typeof v === "function") {
+        var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
+        var result = v.call(this, data);
+        this._parts.query = URI.buildQuery(result || data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
+        this.build(!build);
+        return this;
+    } else if (v !== undefined && typeof v !== "string") {
+        this._parts.query = URI.buildQuery(v, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
+        this.build(!build);
+        return this;
+    } else {
+        return q.call(this, v, build);
+    }
+};
+p.setQuery = function(name, value, build) {
+    var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
+    
+    if (typeof name === "object") {
+        for (var key in name) {
+            if (hasOwn.call(name, key)) {
+                data[key] = name[key];
+            }
+        }
+    } else if (typeof name === "string") {
+        data[name] = value !== undefined ? value : null;
+    } else {
+        throw new TypeError("URI.addQuery() accepts an object, string as the name parameter");
+    }
+    
+    this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
+    if (typeof name !== "string") {
+        build = value;
+    }
+
+    this.build(!build);
+    return this;
+};
+p.addQuery = function(name, value, build) {
+    var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
+    URI.addQuery(data, name, value === undefined ? null : value);
+    this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
+    if (typeof name !== "string") {
+        build = value;
+    }
+
+    this.build(!build);
+    return this;
+};
+p.removeQuery = function(name, value, build) {
+    var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
+    URI.removeQuery(data, name, value);
+    this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
+    if (typeof name !== "string") {
+        build = value;
+    }
+
+    this.build(!build);
+    return this;
+};
+p.hasQuery = function(name, value, withinArray) {
+    var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
+    return URI.hasQuery(data, name, value, withinArray);
+};
+p.setSearch = p.setQuery;
+p.addSearch = p.addQuery;
+p.removeSearch = p.removeQuery;
+p.hasSearch = p.hasQuery;
+
+// sanitizing URLs
+p.normalize = function() {
+    if (this._parts.urn) {
+        return this
+            .normalizeProtocol(false)
+            .normalizeQuery(false)
+            .normalizeFragment(false)
+            .build();
+    }
+
+    return this
+        .normalizeProtocol(false)
+        .normalizeHostname(false)
+        .normalizePort(false)
+        .normalizePath(false)
+        .normalizeQuery(false)
+        .normalizeFragment(false)
+        .build();
+};
+p.normalizeProtocol = function(build) {
+    if (typeof this._parts.protocol === "string") {
+        this._parts.protocol = this._parts.protocol.toLowerCase();
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizeHostname = function(build) {
+    if (this._parts.hostname) {
+        if (this.is('IDN') && punycode) {
+            this._parts.hostname = punycode.toASCII(this._parts.hostname);
+        } else if (this.is('IPv6') && IPv6) {
+            this._parts.hostname = IPv6.best(this._parts.hostname);
+        }
+
+        this._parts.hostname = this._parts.hostname.toLowerCase();
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizePort = function(build) {
+    // remove port of it's the protocol's default
+    if (typeof this._parts.protocol === "string" && this._parts.port === URI.defaultPorts[this._parts.protocol]) {
+        this._parts.port = null;
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizePath = function(build) {
+    if (this._parts.urn) {
+        return this;
+    }
+
+    if (!this._parts.path || this._parts.path === '/') {
+        return this;
+    }
+
+    var _was_relative;
+    var _path = this._parts.path;
+    var _parent, _pos;
+
+    // handle relative paths
+    if (_path.charAt(0) !== '/') {
+        _was_relative = true;
+        _path = '/' + _path;
+    }
+
+    // resolve simples
+    _path = _path
+        .replace(/(\/(\.\/)+)|(\/\.$)/g, '/')
+        .replace(/\/{2,}/g, '/');
+
+    // resolve parents
+    while (true) {
+        _parent = _path.indexOf('/../');
+        if (_parent === -1) {
+            // no more ../ to resolve
+            break;
+        } else if (_parent === 0) {
+            // top level cannot be relative...
+            _path = _path.substring(3);
+            break;
+        }
+
+        _pos = _path.substring(0, _parent).lastIndexOf('/');
+        if (_pos === -1) {
+            _pos = _parent;
+        }
+        _path = _path.substring(0, _pos) + _path.substring(_parent + 3);
+    }
+
+    // revert to relative
+    if (_was_relative && this.is('relative')) {
+        _path = _path.substring(1);
+    }
+
+    _path = URI.recodePath(_path);
+    this._parts.path = _path;
+    this.build(!build);
+    return this;
+};
+p.normalizePathname = p.normalizePath;
+p.normalizeQuery = function(build) {
+    if (typeof this._parts.query === "string") {
+        if (!this._parts.query.length) {
+            this._parts.query = null;
+        } else {
+            this.query(URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace));
+        }
+
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizeFragment = function(build) {
+    if (!this._parts.fragment) {
+        this._parts.fragment = null;
+        this.build(!build);
+    }
+
+    return this;
+};
+p.normalizeSearch = p.normalizeQuery;
+p.normalizeHash = p.normalizeFragment;
+
+p.iso8859 = function() {
+    // expect unicode input, iso8859 output
+    var e = URI.encode;
+    var d = URI.decode;
+
+    URI.encode = escape;
+    URI.decode = decodeURIComponent;
+    this.normalize();
+    URI.encode = e;
+    URI.decode = d;
+    return this;
+};
+
+p.unicode = function() {
+    // expect iso8859 input, unicode output
+    var e = URI.encode;
+    var d = URI.decode;
+
+    URI.encode = strictEncodeURIComponent;
+    URI.decode = unescape;
+    this.normalize();
+    URI.encode = e;
+    URI.decode = d;
+    return this;
+};
+
+p.readable = function() {
+    var uri = this.clone();
+    // removing username, password, because they shouldn't be displayed according to RFC 3986
+    uri.username("").password("").normalize();
+    var t = '';
+    if (uri._parts.protocol) {
+        t += uri._parts.protocol + '://';
+    }
+
+    if (uri._parts.hostname) {
+        if (uri.is('punycode') && punycode) {
+            t += punycode.toUnicode(uri._parts.hostname);
+            if (uri._parts.port) {
+                t += ":" + uri._parts.port;
+            }
+        } else {
+            t += uri.host();
+        }
+    }
+
+    if (uri._parts.hostname && uri._parts.path && uri._parts.path.charAt(0) !== '/') {
+        t += '/';
+    }
+
+    t += uri.path(true);
+    if (uri._parts.query) {
+        var q = '';
+        for (var i = 0, qp = uri._parts.query.split('&'), l = qp.length; i < l; i++) {
+            var kv = (qp[i] || "").split('=');
+            q += '&' + URI.decodeQuery(kv[0], this._parts.escapeQuerySpace)
+                .replace(/&/g, '%26');
+
+            if (kv[1] !== undefined) {
+                q += "=" + URI.decodeQuery(kv[1], this._parts.escapeQuerySpace)
+                    .replace(/&/g, '%26');
+            }
+        }
+        t += '?' + q.substring(1);
+    }
+
+    t += URI.decodeQuery(uri.hash(), true);
+    return t;
+};
+
+// resolving relative and absolute URLs
+p.absoluteTo = function(base) {
+    var resolved = this.clone();
+    var properties = ['protocol', 'username', 'password', 'hostname', 'port'];
+    var basedir, i, p;
+
+    if (this._parts.urn) {
+        throw new Error('URNs do not have any generally defined hierarchical components');
+    }
+
+    if (!(base instanceof URI)) {
+        base = new URI(base);
+    }
+    
+    if (!resolved._parts.protocol) {
+        resolved._parts.protocol = base._parts.protocol;
+    }
+    
+    if (this._parts.hostname) {
+        return resolved;
+    }
+
+    for (i = 0; p = properties[i]; i++) {
+        resolved._parts[p] = base._parts[p];
+    }
+    
+    properties = ['query', 'path'];
+    for (i = 0; p = properties[i]; i++) {
+        if (!resolved._parts[p] && base._parts[p]) {
+            resolved._parts[p] = base._parts[p];
+        }
+    }
+
+    if (resolved.path().charAt(0) !== '/') {
+        basedir = base.directory();
+        resolved._parts.path = (basedir ? (basedir + '/') : '') + resolved._parts.path;
+        resolved.normalizePath();
+    }
+
+    resolved.build();
+    return resolved;
+};
+p.relativeTo = function(base) {
+    var relative = this.clone().normalize();
+    var relativeParts, baseParts, common, relativePath, basePath;
+
+    if (relative._parts.urn) {
+        throw new Error('URNs do not have any generally defined hierarchical components');
+    }
+
+    base = new URI(base).normalize();
+    relativeParts = relative._parts;
+    baseParts = base._parts;
+    relativePath = relative.path();
+    basePath = base.path();
+
+    if (relativePath.charAt(0) !== '/') {
+        throw new Error('URI is already relative');
+    }
+
+    if (basePath.charAt(0) !== '/') {
+        throw new Error('Cannot calculate a URI relative to another relative URI');
+    }
+
+    if (relativeParts.protocol === baseParts.protocol) {
+        relativeParts.protocol = null;
+    }
+
+    if (relativeParts.username !== baseParts.username || relativeParts.password !== baseParts.password) {
+        return relative.build();
+    }
+
+    if (relativeParts.protocol !== null || relativeParts.username !== null || relativeParts.password !== null) {
+        return relative.build();
+    }
+
+    if (relativeParts.hostname === baseParts.hostname && relativeParts.port === baseParts.port) {
+        relativeParts.hostname = null;
+        relativeParts.port = null;
+    } else {
+        return relative.build();
+    }
+
+    if (relativePath === basePath) {
+        relativeParts.path = '';
+        return relative.build();
+    }
+    
+    // determine common sub path
+    common = URI.commonPath(relative.path(), base.path());
+
+    // If the paths have nothing in common, return a relative URL with the absolute path.
+    if (!common) {
+        return relative.build();
+    }
+
+    var parents = baseParts.path
+        .substring(common.length)
+        .replace(/[^\/]*$/, '')
+        .replace(/.*?\//g, '../');
+
+    relativeParts.path = parents + relativeParts.path.substring(common.length);
+
+    return relative.build();
+};
+
+// comparing URIs
+p.equals = function(uri) {
+    var one = this.clone();
+    var two = new URI(uri);
+    var one_map = {};
+    var two_map = {};
+    var checked = {};
+    var one_query, two_query, key;
+
+    one.normalize();
+    two.normalize();
+
+    // exact match
+    if (one.toString() === two.toString()) {
+        return true;
+    }
+
+    // extract query string
+    one_query = one.query();
+    two_query = two.query();
+    one.query("");
+    two.query("");
+
+    // definitely not equal if not even non-query parts match
+    if (one.toString() !== two.toString()) {
+        return false;
+    }
+
+    // query parameters have the same length, even if they're permuted
+    if (one_query.length !== two_query.length) {
+        return false;
+    }
+
+    one_map = URI.parseQuery(one_query, this._parts.escapeQuerySpace);
+    two_map = URI.parseQuery(two_query, this._parts.escapeQuerySpace);
+
+    for (key in one_map) {
+        if (hasOwn.call(one_map, key)) {
+            if (!isArray(one_map[key])) {
+                if (one_map[key] !== two_map[key]) {
+                    return false;
+                }
+            } else if (!arraysEqual(one_map[key], two_map[key])) {
+                return false;
+            }
+
+            checked[key] = true;
+        }
+    }
+
+    for (key in two_map) {
+        if (hasOwn.call(two_map, key)) {
+            if (!checked[key]) {
+                // two contains a parameter not present in one
+                return false;
+            }
+        }
+    }
+
+    return true;
+};
+
+// state
+p.duplicateQueryParameters = function(v) {
+    this._parts.duplicateQueryParameters = !!v;
+    return this;
+};
+
+p.escapeQuerySpace = function(v) {
+    this._parts.escapeQuerySpace = !!v;
+    return this;
+};
+
+return URI;
+}));
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+// Provides ECMA Script 6 Polyfill
+(function(jQuery) {
+	"use strict";
+	
+	/*
+	 * No Documentation by intention.
+	 * This class represents a polyfill for ECMA Script 6 Promises
+	 * see http://www.html5rocks.com/en/tutorials/es6/promises/
+	 */
+	
+	var Promise = function(fAction) {
+		if (typeof (fAction) != "function") {
+			throw new TypeError("Argument is not a function");
+		}
+		
+		this._deferred = new jQuery.Deferred();
+
+		try {
+			var that = this;
+			fAction(function(oVal){
+				_finalize(that, oVal, true); //force async resolve
+			}, function(oVal){
+				_finalize(that, oVal, false); //force async reject
+			});
+		} catch (e) { //Error in action rejects the promise
+			_finalize(this, e, false);
+		}
+	};
+	
+	// *** Instance Promise functions ***
+	
+	Promise.prototype.then = function(fOnFulfilled, fOnRejected){
+		var oFollowUpPromise = new Promise(_dummy);
+		this._deferred.then(_doWrap(fOnFulfilled, oFollowUpPromise, true), _doWrap(fOnRejected, oFollowUpPromise, false));
+		return oFollowUpPromise;
+	};
+	
+	Promise.prototype["catch"] = function(fOnRejected){
+		return this.then(undefined, fOnRejected);
+	};
+	
+	
+	// *** Static Promise functions ***
+	
+	Promise.all = function(aPromises){
+		return new Promise(function(fResolve, fReject){
+			if (!jQuery.isArray(aPromises)) {
+				fReject({});
+				return;
+			}
+			if (aPromises.length == 0) {
+				fResolve([]);
+				return;
+			}
+			
+			var bFailed = false,
+				aValues = new Array(aPromises.length),
+				iCount = 0;
+			
+			function _check(iIdx){
+				Promise.resolve(aPromises[iIdx]).then(function(oObj){
+					if (!bFailed) {
+						iCount++;
+						aValues[iIdx] = oObj;
+						if (iCount == aPromises.length) {
+							fResolve(aValues);
+						}
+					}
+				}, function(oObj){
+					if (!bFailed) {
+						bFailed = true;
+						fReject(oObj);
+					}
+				});
+			}
+			
+			for (var i = 0; i < aPromises.length; i++) {
+				_check(i);
+			}
+		});
+	};
+	
+	Promise.race = function(aPromises){
+		return new Promise(function(fResolve, fReject){
+			if (!jQuery.isArray(aPromises)) {
+				fReject({});
+			}
+			
+			var bFinal = false;
+			
+			for (var i = 0; i < aPromises.length; i++) {
+				/*eslint-disable no-loop-func */
+				Promise.resolve(aPromises[i]).then(function(oObj){
+					if (!bFinal) {
+						bFinal = true;
+						fResolve(oObj);
+					}
+				}, function(oObj){
+					if (!bFinal) {
+						bFinal = true;
+						fReject(oObj);
+					}
+				});
+				/*eslint-enable no-loop-func */
+			}
+		});
+	};
+	
+	Promise.resolve = function(oObj){
+		return oObj instanceof Promise ? oObj : _resolve(new Promise(_dummy), oObj);
+	};
+	
+	Promise.reject = function(oObj){
+		return _finalize(new Promise(_dummy), oObj, false);
+	};
+	
+	
+	// *** Helper functions ***
+	
+	function _dummy(){}
+	
+	function _isThenable(oObj){
+		return oObj && oObj.then && typeof (oObj.then) == "function";
+	}
+	
+	function _finalize(oPromise, oObj, bResolve){
+		setTimeout(function(){
+			if (_isThenable(oObj) && bResolve) { //Assimilation
+				_resolve(oPromise, oObj);
+			} else {
+				oPromise._deferred[bResolve ? "resolve" : "reject"](oObj);
+			}
+		}, 0);
+		return oPromise;
+	}
+	
+	function _resolve(oPromise, oObj){
+		if (_isThenable(oObj)) {
+			var bFinal = false;
+			try {
+				oObj.then(function(oVal){
+					_finalize(oPromise, oVal, true);
+					bFinal = true;
+				}, function(oVal){
+					_finalize(oPromise, oVal, false);
+					bFinal = true;
+				});
+			} catch (e) {
+				if (!bFinal) {
+					_finalize(oPromise, e, false);
+				} else {
+					jQuery.sap.log.debug("Promise: Error in then: " + e); //Error is ignored
+				}
+			}
+		} else {
+			_finalize(oPromise, oObj, true);
+		}
+		return oPromise;
+	}
+	
+	function _doWrap(fAction, oPromise, bResolve){
+		return function(oObj){
+			if (!fAction) {
+				_finalize(oPromise, oObj, bResolve);
+			} else {
+				try {
+					_resolve(oPromise, fAction(oObj));
+				} catch (e) { //catch error in fAction
+					_finalize(oPromise, e, false);
+				}
+			}
+		};
+	}
+	
+	
+	// *** Polyfill ***
+	
+	if (!window.Promise) {
+		window.Promise = Promise;
+	}
+
+	if (window.sap && window.sap.__ui5PublishPromisePolyfill) { //For testing purposes
+		window._UI5Promise = Promise;
+	}
+	
+})(jQuery);
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
 /*global URI, alert, console */
 
 /**
@@ -3208,3 +6929,4 @@ jQuery.sap.globalEval = function() {
 	eval(arguments[0]);
 	/*eslint-enable no-eval */
 };
+if (!window["sap-ui-debug"]) { jQuery.sap.preloadModules("sap.ui.core.library-preload", false); } jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();

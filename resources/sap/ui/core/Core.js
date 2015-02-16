@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @extends sap.ui.base.EventProvider
 	 * @final
 	 * @author SAP SE
-	 * @version 1.26.6
+	 * @version 1.26.7
 	 * @constructor
 	 * @alias sap.ui.core.Core 
 	 * @public
@@ -209,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			var aModules = this.oConfiguration.modules;
 			if ( this.oConfiguration.getDebug() ) {
 				// add debug module if configured
-				aModules.unshift("sap-ui-debug");
+				aModules.unshift("sap.ui.debug.DebugEnv");
 			}
 			// enforce the core library as the first loaded module
 			var i = jQuery.inArray("sap.ui.core.library", aModules);
