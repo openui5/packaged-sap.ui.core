@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<title>TestSuite for sap.ui.core: GTP testcase CORE/OPA</title>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="../../../../../../resources/sap-ui-core.js"></script>
+
+		<script>
+
+		/**
+		 * Add test pages to this test suite function.
+		 * Please order alphabetically
+		 */
+		function suite() {
+			var suite = new parent.jsUnitTestSuite();
+			var contextPath = "/" + window.location.pathname.split("/")[1];
+
+			var sUrlParameters = "?noglobals=true";
+
+			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
+				// In ie8 sinon will introduce globals and less does not work so the execution is without check for globals but with noless
+				sUrlParameters = "?sap-ui-xx-noless=true"
+			}
+
+			function addTestPage(sUrl) {
+				suite.addTestPage(contextPath + sUrl + sUrlParameters);
+			}
+
+			//OPA
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa5.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaPlugin.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaIntegration.qunit.html");
+
+			// Introduces globals
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/Opa5PageObject.qunit.html?sap-ui-xx-noless=true");
+
+			//OPA matchers
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationFilled.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationLengthEquals.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/PropertyStrictEquals.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationContainsPropertyEquals.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/Ancestor.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/Properties.qunit.html");
+
+			return suite;
+		}
+
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
