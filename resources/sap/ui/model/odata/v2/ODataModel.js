@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.26.7
+	 * @version 1.26.8
 	 *
 	 * @constructor
 	 * @public
