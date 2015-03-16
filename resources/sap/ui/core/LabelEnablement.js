@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @see sap.ui.core.LabelEnablement#enrich
 	 *
 	 * @author SAP SE
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 * @protected
 	 * @alias sap.ui.core.LabelEnablement
 	 * @namespace

@@ -136,6 +136,35 @@
 			start();
 		});
 	});
+
+	QUnit.asyncTest("Should throw error if the iframe throws an error", function (assert) {
+		// Arrange
+		jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
+		var $Frame = jQuery("#OpaFrame").on("load", function () {
+			var fnSpy = sinon.spy();
+			$Frame[0].contentWindow.onerror = fnSpy;
+
+			// System under Test
+			var oOpa5 = new Opa5();
+
+			oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
+				// Act + Assert
+				assert.throws(function () {
+					Opa5.getWindow().onerror("Errormessage", "Url", 31);
+				},"OpaFrame error message: Errormessage url: Url line: 31" , "Did throw an error");
+
+				assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
+			});
+
+			oOpa5.iTeardownMyAppFrame();
+
+			oOpa5.emptyQueue().done(function () {
+				QUnit.start();
+			});
+		});
+
+	});
+
 	asyncTest("Should Navigate in an Iframe", function() {
 		// System under Test
 		var oOpa5 = new Opa5();
@@ -505,13 +534,13 @@
 			id : "myButton3",
 			matchers : fnMatcher,
 			check : fnCheckSpy1,
-			timeout : 1, //second
+			timeout : 1 //second
 		});
 		oOpa5.waitFor({
 			id : "myButton3",
 			matchers : [ fnMatcher ],
 			check : fnCheckSpy2,
-			timeout : 1, //second
+			timeout : 1 //second
 		});
 		oOpa5.emptyQueue();
 
@@ -616,6 +645,38 @@
 
 		// Cleanup
 		oButton.destroy();
+	});
+
+	QUnit.module("ControlType", {
+		setup: function () {
+			this.oOpa5 = new Opa5();
+			this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+		},
+		teardown: function () {
+		}
+	});
+
+	QUnit.asyncTest("Should wait for lazy stubs", function (assert) {
+
+		this.oOpa5.waitFor({
+			success: function () {
+				setTimeout(function () {
+					new Opa5.getWindow().sap.ui.commons.Button().placeAt("body");
+				}, 1000);
+			}
+		});
+
+		this.oOpa5.waitFor({
+			controlType: "sap.ui.commons.Button",
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 1, "Did find the button after a while");
+			}
+		});
+
+		this.oOpa5.iTeardownMyAppFrame();
+		Opa5.emptyQueue().done(function () {
+			QUnit.start();
+		});
 	});
 })();
 

@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -66,16 +66,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 			"abstract" : true,
 			publicMethods : [ "getId", "getMetadata", "getTooltip_AsString", "getTooltip_Text", "getModel", "setModel", "hasModel", "bindElement", "unbindElement", "getElementBinding", "prop", "getLayoutData", "setLayoutData" ],
 			library : "sap.ui.core",
-			properties : {
-				/*
-				 * TODO model id as a property as soon as write-once-during-init properties become available
-				 * can't yet declare it as a property: would show up in ControlTree and applySettings would allow to modify id
-				 * 
-				 * The unique identifier within a page, either configured or automatically generated.
-				 *
-				id : {name : "id", type : "string", group : "Identification", defaultValue : '', readOnly : true}
-				*/
-			},
 			aggregations : {
 				
 				/**

@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 *
 	 * @constructor
 	 * @public
@@ -370,11 +370,8 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	};
 	
 	Icon.prototype._addColorClass = function(sColor, sCSSPropName) {
-		var $Icon = this.$();
-
-		if (!$Icon.length) {
-			return;
-		}
+		var $Icon = this.$(),
+				that = this;
 
 		var sCSSClassNamePrefix = "";
 		if (sCSSPropName === "color") {
@@ -386,13 +383,13 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 		}
 
 		jQuery.each(sap.ui.core.IconColor, function(sPropertyName, sPropertyValue) {
-			$Icon.removeClass(sCSSClassNamePrefix + sPropertyValue);
+			that.removeStyleClass(sCSSClassNamePrefix + sPropertyValue);
 		});
 
 		if (sColor in sap.ui.core.IconColor) {
 			// reset the relevant css property
 			$Icon.css(sCSSPropName, "");
-			$Icon.addClass(sCSSClassNamePrefix + sColor);
+			this.addStyleClass(sCSSClassNamePrefix + sColor);
 		} else {
 			$Icon.css(sCSSPropName, sColor);
 		}

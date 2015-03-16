@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.28.0
+	 * 1.28.1
 	 *
 	 * @constructor
 	 * @public
@@ -130,16 +130,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Checks whether annotations loading has already failed.
 	 * Note:
 	 * For asynchronous annotations {@link #attachFailed} has to be used also.
-	 *
-	 * @public
-	 * @returns {boolean} whether annotations request has failed
-	 */
-	ODataAnnotations.prototype.isFailed = function() {
-		return this.error !== null;
-	};
-
-	/**
-	 * Fire event loaded to attached listeners.
 	 *
 	 * @public
 	 * @returns {boolean} whether annotations request has failed

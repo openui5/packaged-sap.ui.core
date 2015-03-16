@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		 *
 		 * @abstract
 		 * @extends sap.ui.base.Object
-		 * @version 1.28.0
+		 * @version 1.28.1
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Performance
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 	*/
 			this.$("active").click(jQuery.proxy(function(oEvent) {
 				var bActive = false;
-				if (this.$("active").attr("checked")) {
+				if (this.$("active").prop("checked")) {
 					bActive = true;
 				}
 				this._oStub.sendEvent(this.getId() + "Activate", {"active": bActive});

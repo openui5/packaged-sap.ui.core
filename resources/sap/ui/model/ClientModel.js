@@ -4,15 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-/**
- * client-based DataBinding
- *
- * @namespace
- * @name sap.ui.model.json
- * @public
- */
-
-// Provides the JSON object based model implementation
+// Provides client-based DataBinding implementation
 sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBinding', './ClientPropertyBinding', './ClientTreeBinding', './Model'],
 	function(jQuery, ClientContextBinding, ClientListBinding, ClientPropertyBinding, ClientTreeBinding, Model) {
 	"use strict";
@@ -26,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 *
 	 * @param {object} oData URL where to load the data from
 	 * @constructor

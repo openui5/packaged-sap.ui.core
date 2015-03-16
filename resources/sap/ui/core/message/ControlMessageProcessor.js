@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 *
 	 * @constructor
 	 * @public
@@ -44,10 +44,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	
 	/**
 	 * Set Messages to check
-	 * @abstract
-	 *
-	 * @name sap.ui.core.message.MessageProcessor.prototype.setMessages
-	 * @function
 	 * @param {map}
 	 *         vMessages map of messages: {'target': [array of messages],...}
 	 * @protected
@@ -61,11 +57,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	
 	/**
 	 * Check Messages and update controls with messages
-	 * @abstract
-	 *
-	 * @name sap.ui.core.message.MessageProcessor.prototype.checkMessage
-	 * @function
-	 * @return {sap.ui.model.ListBinding}
 	 * @protected
 	 */
 	ControlMessageProcessor.prototype.checkMessages = function() {
@@ -87,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
 			
 			if (oBinding) {
-				oBinding._fireMessageChange({type: 'control', messages:aMessages});
+				oBinding._fireMessageChange({messageSource: 'control', messages:aMessages});
 			} else {
 				oControl.updateMessages(aParts[1], aMessages);
 			}

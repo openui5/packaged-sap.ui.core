@@ -7,7 +7,7 @@
 /** 
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.0
+ * @version 1.28.1
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.0";
+		var apiVersion = "1.28.1";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.0";
+		var v = "1.28.1";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -3810,7 +3810,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -4228,7 +4228,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 * @namespace
 	 * @public
 	 * @static
@@ -5825,7 +5825,7 @@ return URI;
 		 * Any required and not yet loaded script will be loaded and execute synchronously.
 		 * Already loaded modules will be skipped.
 		 *
-		 * @param {string... | object}  vModuleName one or more names of modules to be loaded
+		 * @param {...string | object}  vModuleName one or more names of modules to be loaded
 		 *                              or in case of an object {modName: "...", type: "..."}
 		 *                              where modName is the name of the module and the type
 		 *                              could be a specific dot separated extension e.g.
@@ -6760,7 +6760,7 @@ return URI;
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9 && document.styleSheets.length >= 28) {
 				// in IE9 only 30 links are alowed, so use stylesheet object insted
 				var sRootUrl = URI.parse(document.URL).path;
-				var sAbsoluteUrl = new URI(sUrl).absoluteTo(sRootUrl);
+				var sAbsoluteUrl = new URI(sUrl).absoluteTo(sRootUrl).toString();
 
 				if (sId) {
 					var oIEStyleSheet = mIEStyleSheets[sId];

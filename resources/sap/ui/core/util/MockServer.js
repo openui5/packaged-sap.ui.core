@@ -29,7 +29,7 @@ sap.ui
 					 * @extends sap.ui.base.ManagedObject
 					 * @abstract
 					 * @author SAP SE
-					 * @version 1.28.0
+					 * @version 1.28.1
 					 * @public
 					 * @alias sap.ui.core.util.MockServer
 					 */
@@ -431,8 +431,6 @@ sap.ui
 					 * This function is called recursively on expressions in brackets.
 					 * @param {string} sString
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getBracketIndices
-					 * @function
 					 */
 					MockServer.prototype._recursiveOdataQueryFilter = function(aDataSet, sODataQueryValue) {
 

@@ -51,10 +51,12 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * {@link sap.ui.model.Model#event:requestCompleted requestCompleted},
 	 * {@link sap.ui.model.Model#event:requestFailed requestFailed},
 	 * {@link sap.ui.model.Model#event:requestSent requestSent}) are fired!
-	 * For asynchronous loading use {@link #loaded loaded} instead, which is based on promises.
+	 *
+	 * <b>BEWARE:</b> Access to this OData meta model will fail before the promise returned by
+	 * {@link #loaded loaded} has been resolved!
 	 *
 	 * @author SAP SE
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 * @alias sap.ui.model.odata.ODataMetaModel
 	 * @extends sap.ui.model.MetaModel
 	 * @public
@@ -67,9 +69,8 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 				MetaModel.apply(this); // no arguments to pass!
 				this.sDefaultBindingMode = BindingMode.OneTime;
 				this.mSupportedBindingModes = {"OneTime" : true};
-				this.oModel = new JSONModel();
-				this.oModel.setDefaultBindingMode(this.sDefaultBindingMode);
-				this.oLoadedPromise = load(this.oModel, oMetadata, oAnnotations);
+				this.oModel = null; // not yet available!
+				this.oLoadedPromise = load(this, oMetadata, oAnnotations);
 			},
 
 			metadata : {
@@ -166,14 +167,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 
 	/*
 	 * Waits until the given OData meta data and annotations are fully loaded and merges them
-	 * into the given JSON model. Returns the promise used by {@link #loaded}.
+	 * into a new JSON model. Returns the promise used by {@link #loaded}.
 	 *
-	 * @param {sap.ui.model.json.JSONModel} oModel
+	 * @param {sap.ui.model.odata.ODataMetaModel} that
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
 	 * @returns {Promise}
 	 */
-	function load(oModel, oMetadata, oAnnotations) {
+	function load(that, oMetadata, oAnnotations) {
 		/*
 		 * Lift all extensions from the <a href="http://www.sap.com/Protocols/SAPData">
 		 * SAP Annotations for OData Version 2.0</a> namespace up as attributes with "sap:" prefix.
@@ -344,7 +345,8 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 					try {
 						var oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
 						merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
-						oModel.setData(oData);
+						that.oModel = new JSONModel(oData);
+						that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
 						fnResolve();
 					} catch (ex) {
 						fnReject(ex);

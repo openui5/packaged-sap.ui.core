@@ -560,6 +560,8 @@ html[data-sap-ui-browser=ie8] .sapUiShd {
 }
 .sapUiTInfCfg {
   font-size: 0.9em;
+  overflow-y: auto;
+  max-height: 12em;
 }
 .sapUiTInfMList {
   font-size: 0.9em;

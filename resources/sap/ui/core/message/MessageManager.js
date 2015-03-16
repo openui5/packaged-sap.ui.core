@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.28.0
+	 * @version 1.28.1
 	 *
 	 * @constructor
 	 * @public
@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 		var aMessages = mMessages[oMessage.getTarget()];
 		
 		if (aMessages) {
-			for (var i = 0; aMessages.length; i++) {
+			for (var i = 0; i < aMessages.length; i++) {
 				var oMsg = aMessages[i];
 				if (jQuery.sap.equal(oMsg, oMessage) && !oMsg.getPersistent()) {
 					aMessages.splice(i,1);
