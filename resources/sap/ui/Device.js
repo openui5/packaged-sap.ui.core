@@ -7,7 +7,7 @@
 /** 
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.1
+ * @version 1.28.2
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.1";
+		var apiVersion = "1.28.2";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.1";
+		var v = "1.28.2";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -751,6 +751,13 @@ if (typeof window.sap.ui !== "object") {
 
 	//Maybe better to but this on device.browser because there are cases that a browser can touch but a device can't!
 	device.support.touch = !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch);
+
+	// FIXME: PhantomJS doesn't support touch events but exposes itself as touch
+	//        enabled browser. Therfore we manually override that in jQuery.support!
+	//        This has been tested with PhantomJS 1.9.7 and 2.0.0!
+	if (device.browser.phantomJS) {
+		device.support.touch = false;
+	}
 
 	device.support.pointer = !!window.PointerEvent;
 

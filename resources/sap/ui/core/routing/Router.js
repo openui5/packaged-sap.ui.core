@@ -57,7 +57,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * Eg: if the config object specifies :
 		 * <pre>
 		 * <code>
-		 * { viewType : "XML" }
+		 * {
+		 *     viewType : "XML"
+		 * }
 		 * </code>
 		 * </pre>
 		 * The targets look like this:
@@ -80,9 +82,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *         ...
 		 *     },
 		 *     jsTarget : {
-		 *        viewType : "JS"
-		 *       ...
-		 *   }
+		 *         viewType : "JS"
+		 *         ...
+		 *     }
 		 * }
 		 * </pre>
 		 *
@@ -114,14 +116,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *              ...
 		 *              // more properties to place the view in the correct container
 		 *          }
-		 *     })
+		 *     });
 		 * </code>
 		 * </pre>
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,
 		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
 		 * @param {object} [oTargetsConfig]
-		 * @since 1.28 the target configuration, see {@link m.Targets#constructor} documentation (the options object).<br/>
+		 * available @since 1.28 the target configuration, see {@link sap.ui.core.Targets#constructor} documentation (the options object).<br/>
 		 * You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.<br/>
 		 * <b>Example:</b>
 		 * <pre>
@@ -226,7 +228,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			 * @protected
 			 */
 			parse : function (sNewHash) {
-				this._oRouter.parse(sNewHash);
+				if (this._oRouter) {
+					this._oRouter.parse(sNewHash);
+				} else {
+					$.sap.log.warning("This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.", this);
+				}
 			},
 
 			/**
@@ -381,7 +387,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			/**
 			 * Returns a cached view for a given name or creates it if it does not yet exists
 			 *
-			 * @deprecated @since 1.28 use {@link #getViews} instead.
+			 * @deprecated @since 1.28.1 use {@link #getViews} instead.
 			 * @param {string} sViewName Name of the view
 			 * @param {string} sViewType Type of the view
 			 * @param {string} sViewId Optional view id

@@ -50,7 +50,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		
 		//default value for collapse recursive
 		if (this.mParameters.collapseRecursive === undefined) {
-			this.mParameters.collapseRecursive = true;
+			this.bCollapseRecursive = true;
+		} else {
+			this.bCollapseRecursive = !!this.mParameters.collapseRecursive;
 		}
 	};
 	
@@ -218,45 +220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		
 		return oNodeState.sections;
 	};
-	
-	/**
-	 * Merges together oNewSection into a set of other sections (aSections)
-	 * The array/objects are not modified, the function returns a new section array.
-	 */
-	ODataTreeBindingAdapter.prototype._mergeSections = function (aSections, oNewSection) {
 
-		// Iterate over all known/loaded sections of the node
-		var aNewSections = [];
-		for (var i = 0; i < aSections.length; i++) {
-			
-			var oCurrentSection = aSections[i];
-			var iCurrentSectionEndIndex = oCurrentSection.startIndex + oCurrentSection.length;
-			var iNewSectionEndIndex = oNewSection.startIndex + oNewSection.length;
-			
-			if (oNewSection.startIndex <= iCurrentSectionEndIndex && iNewSectionEndIndex >= iCurrentSectionEndIndex 
-					&& oNewSection.startIndex >= oCurrentSection.startIndex) {
-				//new section expands to the left
-				oNewSection.startIndex = oCurrentSection.startIndex; 
-				oNewSection.length = iNewSectionEndIndex - oCurrentSection.startIndex;
-			} else if (oNewSection.startIndex <= oCurrentSection.startIndex && iNewSectionEndIndex >= oCurrentSection.startIndex
-					&& iNewSectionEndIndex <= iCurrentSectionEndIndex) {
-				//new section expands to the right 
-				oNewSection.length = iCurrentSectionEndIndex - oNewSection.startIndex;
-			} else if (oNewSection.startIndex >= oCurrentSection.startIndex && iNewSectionEndIndex <= iCurrentSectionEndIndex) {
-				//new section is contained in old one
-				oNewSection.startIndex = oCurrentSection.startIndex;
-				oNewSection.length = oCurrentSection.length;
-			} else if (iNewSectionEndIndex < oCurrentSection.startIndex || oNewSection.startIndex > iCurrentSectionEndIndex) {
-				//old and new sections do not overlap, either the new section is completely left or right from the old one
-				aNewSections.push(oCurrentSection);
-			}
-		}
-		
-		aNewSections.push(oNewSection);
-		
-		return aNewSections;
-	};
-	
 	/**
 	 * Increases the section length of all sections of all nodes in the tree. This is necessary in case the page size increases between requests.
 	 * Otherwise unnecessary requests would be performed, because the section length does not match the requested page size.
@@ -309,10 +273,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
 		}
+
 		if (!iThreshold) {
 			iThreshold = 0;
 		}
-		
+
 		// test if the pagesize has increased -> used to optimise "too small" node sections, see _loadChildContexts
 		if (iLength > this._iPageSize) {
 			this._iPageSize = iLength;
@@ -439,7 +404,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		var oRootNodeState = this._getNodeState(sRootGroupID);
 		
 		// create root node state if none exists
-		var iNumberOfExpandedLevels = this.mParameters && this.mParameters.numberOfExpandedLevels;
 		if (!oRootNodeState) {
 			
 			var oRootNodeState = this._createNodeState({
@@ -457,7 +421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			this._updateTreeState({
 				groupID: oRootNodeState.groupID,
 				fallbackNodeState: oRootNodeState,
-				expanded: true //(!this.bDisplayRootNode || iNumberOfExpandedLevels > 0) && !this._mTreeState.collapsed[sRootGroupID],
+				expanded: true
 			});
 
 		}
@@ -469,7 +433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			level: this.bDisplayRootNode && !(oRootContext === null) ? 0 : -1,
 			nodeState: oRootNodeState,
 			isLeaf: false,
-			autoExpand: iNumberOfExpandedLevels + 1
+			autoExpand: this.iNumberOfExpandedLevels + 1
 		});
 		//flag the root node as artificial in case we have no real root context (but only children)
 		this._oRootNode.isArtificial = true; 
@@ -515,7 +479,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 				iRequestedLength = oCurrentSection.length;
 			} else {
 				//the maximum entries we can request is the groupSize
-				iRequestedLength = Math.min(oCurrentSection.length, iMaxGroupSize - oCurrentSection.startIndex);
+				iRequestedLength = Math.max(Math.min(oCurrentSection.length, iMaxGroupSize - oCurrentSection.startIndex), 0);
 			}
 			
 			//if we are in the autoexpand mode "bundled", supress additional requests during the tree traversal
@@ -535,6 +499,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			//for each child context we create a new node
 			for (var j = 0; j < aChildContexts.length; j++) {
 				var oChildContext = aChildContexts[j];
+				
+				// in case the binding does return a gap in the data (a.k.a. undefined) we skip this child
+				// it will be collected as a missing section later in getContexts()
+				if (!oChildContext) {
+					continue;
+				}
 				
 				// calculate the index of the child node in the children array
 				// the offset in the children array is the section start index
@@ -760,7 +730,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		// remove selectAllMode if necessary
 		oNodeStateForCollapsingNode.selectAllMode = false;
 		
-		if (this.mParameters.collapseRecursive) {
+		if (this.bCollapseRecursive) {
 			var sGroupIDforCollapsingNode = oNodeStateForCollapsingNode.groupID;
 			
 			// Collapse all subsequent child nodes, this is determined by a common groupID prefix, e.g.: "/A100-50/" is the parent of "/A100-50/Finance/"
@@ -1386,7 +1356,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	 * @param {boolean} bCollapseRecursive
 	 */
 	ODataTreeBindingAdapter.prototype.setCollapseRecursive = function (bCollapseRecursive) {
-		this.mParameters.collapseRecursive = !!bCollapseRecursive;
+		this.bCollapseRecursive = !!bCollapseRecursive;
 	};
 	
 	//*********************************************
@@ -1480,65 +1450,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		return this;
 	};
 	
-	/**
-	 * Sets the number of expanded levels on the TreeBinding (commonly an ODataTreeBinding).
-	 * This is NOT the same as ODataTreeBindingAdapter#collapse or ODataTreeBindingAdapter#expand.
-	 * Setting the number of expanded levels leads to different requests.
-	 * This function is used by the TreeTable for the ungroup/ungroup-all feature.
-	 * @see sap.ui.table.TreeTable#_getGroupHeaderMenu
-	 * @param {int} iLevels the number of levels which should be expanded, minimum is 0
-	 * @protected
-	 * @name sap.ui.model.odata.ODataTreeBindingAdapter#setNumberOfExpandedLevels
-	 * @function
-	 */
-	ODataTreeBindingAdapter.prototype.setNumberOfExpandedLevels = function(iLevels) {
-		iLevels = iLevels || 0;
-		if (iLevels < 0) {
-			jQuery.sap.log.warning("ODataTreeBindingAdapterdapter: numberOfExpandedLevels was set to 0. Negative values are prohibited.");
-			iLevels = 0;
-		}
-		// set the numberOfExpandedLevels on the binding directly
-		// this.mParameters is inherited from the Binding super class
-		this.mParameters.numberOfExpandedLevels = iLevels;
-		this._fireChange();
-	};
-	
-	/**
-	 * Retrieves the currently set number of expanded levels from the Binding (commonly an ODataTreeBinding).
-	 * @protected
-	 * @name sap.ui.model.odata.ODataTreeBindingAdapter#getNumberOfExpandedLevels
-	 * @function
-	 * @returns {int} the number of expanded levels
-	 */
-	ODataTreeBindingAdapter.prototype.getNumberOfExpandedLevels = function() {
-		return this.mParameters.numberOfExpandedLevels;
-	};
-
-	/**
-	 * Sets the rootLevel
-	 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
-	 * @param {int} iRootLevel
-	 */
-	ODataTreeBindingAdapter.prototype.setRootLevel = function(iRootLevel) {
-		iRootLevel = parseInt(iRootLevel || 0, 10);
-		if (iRootLevel < 0) {
-			jQuery.sap.log.warning("ODataTreeBindingAdapterdapter: rootLevels was set to 0. Negative values are prohibited.");
-			iRootLevel = 0;
-		}
-		// set the rootLevel on the binding directly
-		// this.mParameters is inherited from the Binding super class
-		this.mParameters.rootLevel = iRootLevel;
-		this.refresh();
-	};
-
-	/**
-	 * Returns the rootLevel
-	 * @returns {int}
-	 */
-	ODataTreeBindingAdapter.prototype.getRootLevel = function() {
-		return this.mParameters.rootLevel;
-	};
-
 	return ODataTreeBindingAdapter;
 	
 }, /* bExport= */ true);

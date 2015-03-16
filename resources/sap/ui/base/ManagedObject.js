@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * 
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.28.1
+	 * @version 1.28.2
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -2385,6 +2385,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			that = this;
 
 		var fChangeHandler = function(oEvent) {
+			/* as we reuse the context objects we need to ensure an update of relative bindings. Therefore we set
+			   the context to null so relative bindings will detect a context change */ 
+			if (oBinding.getBoundContext() === that.getBindingContext(sModelName)) {
+				that.setElementBindingContext(null, sModelName);
+			}
 			that.setElementBindingContext(oBinding.getBoundContext(), sModelName);
 		};
 
@@ -2605,7 +2610,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				var aMessages = oEvent.getParameter("messages");
 		
 				if (sMessageSource == "control") {
-					that._aMessages = that._aMessages ? that._aMessages.concat(aMessages) : aMessages;
+					that._aMessages = aMessages;
 				}
 				//merge object/model messages
 				if (that._aMessages && that._aMessages.length > 0) {

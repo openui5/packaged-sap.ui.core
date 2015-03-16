@@ -83,7 +83,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.1
+	 * @version 1.28.2
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -274,6 +274,7 @@
 	// simply load our script resources from another domain when using the CDN
 	// variant of SAPUI5. The following fix is also recommended by jQuery:
 	if (!!sap.ui.Device.browser.internet_explorer) {
+		jQuery.support = jQuery.support || {};
 		jQuery.support.cors = true;
 	}
 
@@ -501,7 +502,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.1
+	 * @version 1.28.2
 	 * @namespace
 	 * @public
 	 * @static
@@ -1413,8 +1414,11 @@
 		 * @private
 		 */
 			mAMDShim = {
+				'sap/ui/thirdparty/blanket.js': true,
 				'sap/ui/thirdparty/crossroads.js': true,
+				'sap/ui/thirdparty/d3.js': true,
 				'sap/ui/thirdparty/datajs.js': true,
+				'sap/ui/thirdparty/handlebars.js': true,
 				'sap/ui/thirdparty/hasher.js': true,
 				'sap/ui/thirdparty/IPv6.js': true,
 				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': true,
@@ -1423,6 +1427,7 @@
 				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': true,
 				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': true,
 				'sap/ui/thirdparty/jquery-mobile-custom.js': true,
+				'sap/ui/thirdparty/jszip.js': true,
 				'sap/ui/thirdparty/less.js': true,
 				'sap/ui/thirdparty/punycode.js': true,
 				'sap/ui/thirdparty/require.js': true,
@@ -3092,7 +3097,7 @@
 		var oOld = jQuery.sap.domById(sId);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
-			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI()).toString()) {
+			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
 				jQuery(oOld).replaceWith(_createLink(sUrl, sId, fnLoadCallback, fnErrorCallback));
 			}
 		} else {
@@ -3163,7 +3168,7 @@
 		jQuery.support = {};
 	}
 
-	jQuery.extend(jQuery.support, {touch: "ontouchend" in document}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
+	jQuery.extend(jQuery.support, {touch: sap.ui.Device.support.touch}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
 
 	var aPrefixes = ["Webkit", "ms", "Moz"];
 	var oStyle = document.documentElement.style;
@@ -3793,7 +3798,7 @@
 			lockDiv.style.right = "0px";
 			lockDiv.style.opacity = "0";
 			lockDiv.style.backgroundColor = "white";
-			lockDiv.style.zIndex = Number.MAX_VALUE;
+			lockDiv.style.zIndex = 2147483647; // Max value of signed integer (32bit)
 			document.body.appendChild(lockDiv);
 			this._lockDiv = lockDiv;
 		}
@@ -3817,7 +3822,11 @@
 				that._createBlockLayer();
 				that._setCursor();
 			};
-			document.addEventListener("readystatechange", this._blockLayer);
+			if (document.readyState == "complete") {
+				this._blockLayer();
+			} else {
+				document.addEventListener("readystatechange", this._blockLayer);
+			}
 		}
 	};
 

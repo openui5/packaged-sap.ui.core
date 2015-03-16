@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.28.1
+	 * @version 1.28.2
 	 *
 	 * @constructor
 	 * @public
@@ -209,16 +209,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	/**
 	 * Remove given Messages
 	 * 
-	 * @param {object|array} 
-	 * 		vMessages Either an Array of sap.ui.core.message.Message, 
-	 * 		a single sap.ui.core.message.Message or a map in the following format:
-	 * 		{'target':[array of Messages]}
-	 * 		 
+	 * @param {array} 
+	 * vMessages Either an Array of sap.ui.core.message.Message, 
+	 * a single sap.ui.core.message.Message
+	 * 
 	 * @public
 	 */
 	MessageManager.prototype.removeMessages = function(vMessages) {
 		var that = this;
-		if (!vMessages) {
+		if (!vMessages || (jQuery.isArray(vMessages) && vMessages.length == 0)) {
 			return;
 		}else if (jQuery.isArray(vMessages)) {
 			for (var i = 0; i < vMessages.length; i++) {

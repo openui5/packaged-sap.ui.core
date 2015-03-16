@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
-	 * @version 1.28.1
+	 * @version 1.28.2
 	 *
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
 	 * @constructor
@@ -211,6 +211,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 		// return if path / context is invalid
 		if (!sResolvedPath) {
 			return false;
+		}
+		
+		// If data is set on root, call setData instead
+		if (sResolvedPath == "/") {
+			this.setData(oValue);
+			return true;
 		}
 
 		iLastSlash = sResolvedPath.lastIndexOf("/");
