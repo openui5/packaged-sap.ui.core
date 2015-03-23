@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP SE
-	 * @version 1.26.8
+	 * @version 1.26.9
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -893,12 +893,6 @@ sap.ui.define(['jquery.sap.global'],
 		// Handle case when target is a string or something (possible in deep copy)
 		if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
 			target = {};
-		}
-
-		// extend jQuery itself if only one argument is passed
-		if ( i === length ) {
-			target = this;
-			i--;
 		}
 
 		for ( ; i < length; i++ ) {
