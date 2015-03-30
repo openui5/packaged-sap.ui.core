@@ -20,9 +20,30 @@ var mSeverityMap = {
 	"info":    sap.ui.core.MessageType.Information
 };
 
+/**
+ * 
+ * @namespace
+ * @name sap.ui.model.odata
+ * @public
+ */
 
 /**
  * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ * 
+ * @class
+ * @classdesc 
+ *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ * @extends sap.ui.core.message.MessageParser
+ *
+ * @author SAP SE
+ * @version 1.28.3
+ * @public
+ * @abstract
+ * @alias sap.ui.model.odata.ODataMessageParser
+ */
+
+
+/**
  * 
  * @public
  */
@@ -243,11 +264,15 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, sRequestUr
 		sTarget = oMessageObject.propertyref;
 	}
 
-	if (sTarget.substr(0, 1) === "/") {
-		// Absolute target path, do not use base URL
-		sTarget =  sTarget.substr(1); // Remove leading "/"
-	} else {
-		var sRequestTarget = stripURI(sRequestUri).substr(this._serviceUrl.length + 1);
+	if (sTarget.substr(0, 1) !== "/") {
+		var sRequestTarget = "";
+		var sUri = stripURI(sRequestUri);
+
+		if (sUri.indexOf(this._serviceUrl) === 0) {
+			sRequestTarget = "/" + sUri.substr(this._serviceUrl.length + 1);
+		} else {
+			sRequestTarget = "/" + sUri;
+		}
 
 		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
 		// a target would start with the specific product (like "(23)"), but the request itself
@@ -261,7 +286,9 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, sRequestUr
 			// It's a collection
 			sTarget = sRequestTarget + sTarget;
 		}
-	}
+	} /* else {
+		// Absolute target path, do not use base URL
+	} */
 
 	return sTarget;
 };

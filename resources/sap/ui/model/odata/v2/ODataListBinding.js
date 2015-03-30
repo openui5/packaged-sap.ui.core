@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			}
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);
-			this.oLastContextData = jQuery.extend(true, {}, oContextData);
+			this.oLastContextData = jQuery.sap.extend(true, {}, oContextData);
 		}
 
 		return aContexts;
@@ -337,11 +337,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 						this.iLength = oRef.length;
 						this.bLengthFinal = true;
 						this._fireChange();
-					} else if (oRef === null && this.oModel.resolve(this.sPath, this.oContext)) { // means that expanded data has no data available e.g. for 0..n relations
-							this.aKeys = [];
-							this.iLength = 0;
-							this.bLengthFinal = true;
-							this._fireChange();
+					} else if (!this.oModel.resolve(this.sPath, this.oContext) || oRef === null){ 
+						// if path does not resolve, or data is known to be null (e.g. expanded list)
+						this.aKeys = [];
+						this.iLength = 0;
+						this.bLengthFinal = true;
+						this._fireChange();
 					} else {
 						this.refresh();
 					}
@@ -629,7 +630,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (bForceUpdate || bChangeDetected) {
 			this.abortPendingRequest();
 			this.resetData();
-			this._fireRefresh({reason: ChangeReason.Refresh});
+			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
 		}
 	};
 
