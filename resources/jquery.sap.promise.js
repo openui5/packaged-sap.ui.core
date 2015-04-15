@@ -51,7 +51,7 @@
 	Promise.all = function(aPromises){
 		return new Promise(function(fResolve, fReject){
 			if (!jQuery.isArray(aPromises)) {
-				fReject({});
+				fReject(new TypeError("invalid argument"));
 				return;
 			}
 			if (aPromises.length == 0) {
@@ -89,7 +89,7 @@
 	Promise.race = function(aPromises){
 		return new Promise(function(fResolve, fReject){
 			if (!jQuery.isArray(aPromises)) {
-				fReject({});
+				fReject(new TypeError("invalid argument"));
 			}
 			
 			var bFinal = false;

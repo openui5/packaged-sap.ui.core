@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	 * @class
 	 * A View defined using JSON.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.28.3
+	 * @version 1.28.4
 	 *
 	 * @constructor
 	 * @public
@@ -137,7 +137,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 								switch (oKeyInfo._iKind) {
 								case 3: // SINGLE ASSOCIATIONS
 									// prefix the association ids with the view id
-									oSettings[sKey] = that.createId(oValue);
+									if ( typeof oValue === "string" ) {
+										oSettings[sKey] = that.createId(oValue);
+									}
 									break;
 								case 5: // EVENTS
 									if ( typeof oValue === "string" ) {

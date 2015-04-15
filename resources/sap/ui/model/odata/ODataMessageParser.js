@@ -36,16 +36,10 @@ var mSeverityMap = {
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
- * @version 1.28.3
+ * @version 1.28.4
  * @public
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
- */
-
-
-/**
- * 
- * @public
  */
 var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessageParser", {
 	metadata: {

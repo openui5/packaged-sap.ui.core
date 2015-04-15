@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.28.3
+	 * @version 1.28.4
 	 *
 	 * @constructor
 	 * @public
@@ -187,15 +187,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				this.aUrlParams = this.aUrlParams.concat(ODataUtils._createUrlParamsArray(mServiceUrlParams));
 			}
 
+			this.onMetadataLoaded = function(oEvent){
+				that._initializeMetadata();
+			};
+			this.onMetadataFailed = function(oEvent) {
+				that.fireMetadataFailed(oEvent.getParameters());
+			};
+			
 			if (!this.oMetadata.isLoaded()) {
-				this.oMetadata.attachLoaded(function(oEvent){
-					that._initializeMetadata();
-				}, this);
-				this.oMetadata.attachFailed(function(oEvent) {
-					that.fireMetadataFailed(oEvent.getParameters());
-				});
+				this.oMetadata.attachLoaded(this.onMetadataLoaded);
+				this.oMetadata.attachFailed(this.onMetadataFailed);
 			}
-
 			if (this.oMetadata.isFailed()){
 				this.refreshMetadata();
 			}
@@ -1321,6 +1323,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var oData = this._getObject(sPath, oContext),
 		sKey,
 		oNewContext,
+		sBatchGroupId,
 		that = this;
 
 		if (!bReload) {
@@ -1344,7 +1347,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				if (sCustomParams) {
 					aParams.push(sCustomParams);
 				}
-
+				if (mParameters && mParameters.batchGroupId) {
+					sBatchGroupId = mParameters.batchGroupId;
+				}
 				var handleSuccess = function(oData) {
 					sKey = oData ? that._getKey(oData) : undefined;
 					if (sKey && oContext && bIsRelative) {
@@ -1371,7 +1376,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					}
 					fnCallBack(null); // error - notify to recreate contexts
 				};
-				this.read(sFullPath, {urlParameters: aParams,success: handleSuccess, error: handleError});
+				this.read(sFullPath, {batchGroupId: sBatchGroupId, urlParameters: aParams, success: handleSuccess, error: handleError});
 			} else {
 				fnCallBack(null); // error - notify to recreate contexts
 			}
@@ -3036,7 +3041,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (oFunctionMetadata.parameter != null) {
 				jQuery.each(mUrlParams, function (sParameterName, oParameterValue) {
 					var matchingParams = jQuery.grep(oFunctionMetadata.parameter, function (oParameter) {
-						return oParameter.name === sParameterName && oParameter.mode === "In";
+						return oParameter.name === sParameterName && 
+								(!oParameter.mode || oParameter.mode === "In");
 					});
 					if (matchingParams != null && matchingParams.length > 0) {
 						mInputParams[sParameterName] = ODataUtils.formatValue(oParameterValue, matchingParams[0].type);
@@ -3877,7 +3883,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 
 		if (this.oMetadata) {
-			this.oMetadata.destroy();
+			this.oMetadata.detachLoaded(this.onMetadataLoaded);
+			this.oMetadata.detachFailed(this.onMetadataFailed);
+			// Only destroy metadata, if request is still running and no other models
+			// are registered to it
+			if (!this.oMetadata.isLoaded() && !this.oMetadata.hasListeners("loaded")) {
+				this.oMetadata.destroy();
+				delete this.oServiceData.oMetadata;
+			}
 			delete this.oMetadata;
 		}
 

@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.28.3
+	 * @version 1.28.4
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -633,7 +633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			var $preserve = jQuery("#" + ID_PRESERVE_AREA);
 			if ($preserve.length === 0) {
 				$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
-					addClass("sapUiHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
+					addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
 					appendTo(document.body);
 			}
 			return $preserve;
