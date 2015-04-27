@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	 * @class
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.28.4
+	 * @version 1.28.5
 	 * @public
 	 * @alias sap.ui.core.Fragment
 	 */
@@ -59,7 +59,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 				/*
 				 * An enclosing view that contains this instance of the fragment (optional)
 				 */
-				containingView : true
+				containingView : true,
+				/*
+				 * A controller of a containing View that should be used by this fragment (optional)
+				 */
+				oController : true,
+				/*
+				 * The ID of this fragment (optional)
+				 */
+				sId : true
 			}
 		},
 		

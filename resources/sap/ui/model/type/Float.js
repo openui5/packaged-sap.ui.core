@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.28.4
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.FormatException("Cannot format float: " + vValue + " has the wrong format");
 			}
 		}
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				return this.oOutputFormat.format(fValue);
 			case "int":
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 */
 	Float.prototype.parseValue = function(vValue, sInternalType) {
 		var fResult, oBundle;
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				fResult = this.oOutputFormat.parse(vValue);
 				if (isNaN(fResult)) {

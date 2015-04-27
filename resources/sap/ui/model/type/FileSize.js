@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.28.4
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 			return null;
 		}
 
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				return this.oOutputFormat.format(fValue);
 			case "int":
@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 			return null;
 		}
 
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				vResult = this.oOutputFormat.parse(vValue);
 				if (isNaN(vResult)) {

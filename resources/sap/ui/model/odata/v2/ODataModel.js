@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.28.4
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -962,7 +962,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				vResponse = vResponse.response;
 			}
 			//in case of aborted requests there is no further info
-			if (vResponse && vResponse.statusCode) {
+			if (vResponse && vResponse.statusCode != undefined) {
 				oEventInfo.response.headers = vResponse.headers;
 				oEventInfo.response.statusCode = vResponse.statusCode;
 				oEventInfo.response.statusText = vResponse.statusText;
@@ -1937,14 +1937,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			that._processSuccess(oRequest, oResponse, fnSingleSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 		};
 		var handleError = function(oError) {
-			if (fnError) {
-				fnError(that._handleError(oError));
-			}
-			oEventInfo = that._createEventInfo(oRequest, oError);
-
-			that.fireRequestCompleted(oEventInfo);
-			if (!oRequestHandle || !oRequestHandle.bAborted) {
-				that.fireRequestFailed(oEventInfo);
+			if (oError.message == "Request aborted") {
+				that._processAborted(oRequest, oError, fnError);
+			} else {
+				that._processError(oRequest, oError, fnError);
 			}
 		};
 		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
@@ -1989,7 +1985,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 								oRequestObject = aRequests[i][j];
 								
 								if (oRequestObject.request._aborted) {
-									that._processAborted(oRequestObject.request, oResponse);
+									that._processAborted(oRequestObject.request, oResponse, oRequestObject.fnError);
 								} else {
 									that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
 								}
@@ -2002,7 +1998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 								oRequestObject = aRequests[i][j];
 								//check for error
 								if (oRequestObject.request._aborted) {
-									that._processAborted(oRequestObject.request, oChangeResponse);
+									that._processAborted(oRequestObject.request, oChangeResponse, oRequestObject.fnError);
 								} else if (oChangeResponse.message) {
 									that._processError(oRequestObject.request, oChangeResponse, oRequestObject.fnError);
 								} else {
@@ -2014,7 +2010,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					} else {
 						oRequestObject = aRequests[i];
 						if (oRequestObject.request._aborted) {
-							that._processAborted(oRequestObject.request, oResponse);
+							that._processAborted(oRequestObject.request, oResponse, oRequestObject.fnError);
 						} else if (oResponse.message) {
 							that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
 						} else {
@@ -2033,13 +2029,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		};
 
 		var handleError = function(oError) {
+			var oEventInfo,
+				bAborted = oRequestHandle && oRequestHandle.bAborted;
+			// Call procesError for all contained requests first
+			jQuery.each(aRequests, function(i, oRequest) {
+				if (jQuery.isArray(oRequest)) {
+					jQuery.each(oRequest, function(i, oRequest) {
+						if (bAborted) {
+							that._processAborted(oRequest.request, oError, oRequest.fnError);
+						} else {
+							that._processError(oRequest.request, oError, oRequest.fnError);
+						}
+					});
+				} else {
+					if (bAborted) {
+						that._processAborted(oRequest.request, oError, oRequest.fnError);
+					} else {
+						that._processError(oRequest.request, oError, oRequest.fnError);
+					}
+				}
+			});
+			// Call callback and fire events for the batch request
 			if (fnError) {
 				fnError(oError);
 			}
-			fireEvent("Completed", oBatchRequest, oError, aRequests);
+			oEventInfo = that._createEventInfo(oBatchRequest, oError, aRequests);
+			that.fireBatchRequestCompleted(oEventInfo);
 			// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation)
-			if (!oRequestHandle || !oRequestHandle.bAborted) {
-				fireEvent("Failed", oBatchRequest, oError, aRequests);
+			if (!bAborted) {
+				that.fireBatchRequestFailed(oEventInfo);
 			}
 		};
 		
@@ -2186,14 +2204,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (oGroup.changes) {
 			jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 				for (var i = 0; i < aChangeSet.length; i++) {
-					var oRequest = aChangeSet[i].request;
+					var oRequest = aChangeSet[i].request,
+						sKey = oRequest.requestUri.split('?')[0];
 					if (oRequest.method === "POST") {
-						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + oRequest.requestUri);
+						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
 						if (oEntityMetadata) {
 							mEntityTypes[oEntityMetadata.entityType] = true;
 						}
 					} else {
-						mChangedEntities[oRequest.requestUri] = true;
+						mChangedEntities[sKey] = true;
 					}
 				}
 			});
@@ -2241,7 +2260,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 							oChangeSet = {__changeRequests:[]};
 							for (var i = 0; i < aChangeSet.length; i++) {
 								//clear metadata.create
-								if (!aChangeSet[i].request._aborted) {
+								if (aChangeSet[i].request._aborted) {
+									that._processAborted(aChangeSet[i].request, null, aChangeSet[i].fnError);
+								} else {
 									if (aChangeSet[i].request.data && aChangeSet[i].request.data.__metadata) {
 										delete aChangeSet[i].request.data.__metadata.created;
 									}
@@ -2257,7 +2278,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					if (oGroup.requests) {
 						var aRequests = oGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
-							if (!aRequests[i].request._aborted) {
+							if (aRequests[i].request._aborted) {
+								that._processAborted(aRequests[i].request, null, aRequests[i].fnError);
+							} else {
 								aReadRequests.push(aRequests[i].request);
 								aBatchGroup.push(aRequests[i]);
 							}
@@ -2279,8 +2302,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 							for (var i = 0; i < aChangeSet.length; i++) {
 								// store last request Handle. If no batch there will be only 1 and we cpould return it?
-								if (!aChangeSet[i].request._aborted) {
-									oRequestHandle.push(that._submitSingleRequest(aChangeSet[i].request, aChangeSet[i].fnSuccess, aChangeSet[i].fnError));
+								if (aChangeSet[i].request._aborted) {
+									that._processAborted(aChangeSet[i].request, null, aChangeSet[i].fnError);
+								} else {
+									aChangeSet[i].request._handle = that._submitSingleRequest(aChangeSet[i].request, aChangeSet[i].fnSuccess, aChangeSet[i].fnError);
+									oRequestHandle.push(aChangeSet[i].request._handle);
 								}
 							}
 						});
@@ -2289,8 +2315,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						var aRequests = oGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
 							// store last request Handle. If no batch there will be only 1 and we cpould return it?
-							if (!aRequests[i].request._aborted) {
-								oRequestHandle.push(that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError));
+							if (aRequests[i].request._aborted) {
+								that._processAborted(aRequests[i].request, null, aRequests[i].fnError);
+							} else {
+								aRequests[i].request._handle = that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError);
+								oRequestHandle.push(aRequests[i].request._handle);
 							}
 						}
 					}
@@ -2396,7 +2425,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * process request response for successful requests
+	 * process request response for failed requests
 	 *
 	 * @param {object} oRequest The request
 	 * @param {object} oResponse The response
@@ -2420,12 +2449,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {object} oRequest The request
 	 * @param {object} oResponse The response
+	 * @param {function} fnError The error callback function
 	 * @private
 	 */
-	ODataModel.prototype._processAborted = function(oRequest, oResponse) {
-		var oEventInfo = this._createEventInfo(oRequest, oResponse);
-		oEventInfo.success = false;
-		this.fireRequestCompleted(oEventInfo);
+	ODataModel.prototype._processAborted = function(oRequest, oResponse, fnError) {
+		var oError = {
+			message: "Request aborted",
+			statusCode: 0,
+			statusText: "abort",
+			headers: {},
+			responseText: ""
+		};
+		if (fnError) {
+			fnError(oError);
+		}
+		// If no response is contained, request was never sent and completes event can be omitted
+		if (oResponse) {
+			var oEventInfo = this._createEventInfo(oRequest, oError);
+			oEventInfo.success = false;
+			this.fireRequestCompleted(oEventInfo);
+		}
 	};
 	
 	/**
@@ -2621,30 +2664,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * returns an ETag: either the passed sETag or tries to retrieve the ETag from the metadata of oPayload or sPath
-	 *
+	 * Returns the ETag for a given url, binding path/context or data object
+	 * 
 	 * @param {string} sPath The binding path
-	 * @param {object} oData The entry data
-	 * @returns {string} sEtag The eTag
+	 * @param {sap.ui.model.Context} [oContext] The binding context
+	 * @param {object} [oData] The entry data
+	 * 
+	 * @returns {string} The found ETag (or null if none could be found)
 	 * @private
 	 */
-	ODataModel.prototype._getETag = function(sPath, oData) {
-		var sETag, sEntry, iIndex;
-
-		if (oData && oData.__metadata){
-			sETag = oData.__metadata.etag;
-		} else if (sPath) {
-			sEntry = sPath.replace(this.sServiceUrl + '/', '');
-			iIndex = sEntry.indexOf("?");
-			if (iIndex > -1){
-				sEntry = sEntry.substr(0, iIndex);
-			}
-			if (this.oData.hasOwnProperty(sEntry)){
-				sETag = this.getProperty('/' + sEntry + '/__metadata/etag');
-			}
+	ODataModel.prototype._getETag = function(sPath, oContext, oData) {
+		if (!oData || !oData.__metadata) {
+			oData = this._getObject(sPath, oContext);
 		}
-
-		return sETag;
+		if (oData && oData.__metadata) {
+			return oData.__metadata.etag;
+		}
+		return null;
 	};
 
 	/**
@@ -2660,8 +2696,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._createRequest = function(sUrl, sMethod, mHeaders, oData, sETag, bAsync) {
-		sETag = sETag || this._getETag(sUrl, oData);
-
 		bAsync = bAsync !== false;
 
 		if (sETag && sMethod !== "GET") {
@@ -2734,19 +2768,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 */
 	ODataModel.prototype._processRequest = function(fnProcessRequest) {
-		var oRequestHandle, oRequestHandleInternal, oRequest,  
+		var oRequestHandle, oRequest,  
 			bAborted = false,
 			that = this;
 		
 		this.oMetadata.loaded().then(function() {			
 			oRequest = fnProcessRequest();
 			
-			if (that.bUseBatch) {
-				if (!that.oRequestTimer) {
-					that.oRequestTimer = jQuery.sap.delayedCall(0, that, that._processRequestQueue, [that.mRequests]);
-				}
-			} else {
-				oRequestHandleInternal = that._processRequestQueue(that.mRequests);
+			if (!that.oRequestTimer) {
+				that.oRequestTimer = jQuery.sap.delayedCall(0, that, that._processRequestQueue, [that.mRequests]);
 			}
 			
 			if (bAborted) {
@@ -2757,11 +2787,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		oRequestHandle = {
 			abort: function() {
 				bAborted = true;
-				if (that.bUseBatch && oRequest) {
+				if (oRequest) {
 					oRequest._aborted = true;
-				} else if (oRequestHandleInternal) {
-					oRequestHandleInternal.abort();
-				}
+					if (oRequest._handle) {
+						oRequest._handle.abort();
+					}
+				} 
 			}
 		};
 
@@ -2798,7 +2829,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype.update = function(sPath, oData, mParameters) {
 		var fnSuccess, fnError, bMerge, oRequest, sUrl, oContext, sETag, 
 			oStoredEntry, sKey, aUrlParams, sBatchGroupId, sChangeSetId,
-			mUrlParams, mHeaders, sMethod, mRequests,
+			mUrlParams, mHeaders, sMethod, mRequests, 
+			oKeys = {},
 			that = this;
 
 		if (mParameters) {
@@ -2816,19 +2848,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = bMerge ? "MERGE" : "PUT";
+		sETag = sETag || this._getETag(sPath, oContext, oData);
+		oStoredEntry = that._getObject(sPath, oContext);
+		if (oStoredEntry) {
+			sKey = this._getKey(oStoredEntry);
+			oKeys[sKey] = true;
+		}
 
 		return this._processRequest(function() {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sETag);
-
-			sPath = that._normalizePath(sPath, oContext);
-			oStoredEntry = that._getObject(sPath);
-
-			oRequest.keys = {};
-			if (oStoredEntry) {
-				sKey = that._getKey(oStoredEntry);
-				oRequest.keys[sKey] = true;
-			}
+			oRequest.keys = oKeys;
 
 			mRequests = that.mRequests;
 			if (sBatchGroupId in that.mDeferredBatchGroups) {
@@ -2947,6 +2977,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = "DELETE";
+		sETag = sETag || this._getETag(sPath, oContext);
+
 		handleSuccess = function(oData, oResponse) {
 			sEntry = sUrl.substr(sUrl.lastIndexOf('/') + 1);
 			//remove query params if any
@@ -3096,7 +3128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		aFilters, aSorters, sFilterParams, sSorterParams,
 		oEntityType, sNormalizedPath,
 		aUrlParams, mHeaders, sMethod,
-		sBatchGroupId,
+		sBatchGroupId, sETag,
 		mRequests,
 		that = this;
 
@@ -3119,6 +3151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = "GET";
+		sETag = this._getETag(sPath, oContext);
 
 		function createReadRequest() {
 			// Add filter/sorter to URL parameters
@@ -3137,7 +3170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 	
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders);
+			oRequest = that._createRequest(sUrl, sMethod, mHeaders, null, sETag);
 	
 			mRequests = that.mRequests;
 			if (sBatchGroupId in that.mDeferredBatchGroups) {

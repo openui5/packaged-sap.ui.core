@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.28.4
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		if (sValue == undefined || sValue == null) {
 			return null;
 		}
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 			case "any":
 				return sValue;
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
 	StringType.prototype.parseValue = function(oValue, sInternalType) {
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				return oValue;
 			case "boolean":

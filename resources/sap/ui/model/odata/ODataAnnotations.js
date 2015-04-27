@@ -42,6 +42,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		NavigationPropertyPath: true,
 		AnnotationPath: true
 	};
+	
+	var mMultipleArgumentDynamicExpressions = {
+		And: true,
+		Or: true,
+		// Not: true,
+		Eq: true,
+		Ne: true,
+		Gt: true,
+		Ge: true,
+		Lt: true,
+		Le: true,
+		If: true,
+		Collection: true
+	};	
 
 	/**
 	 * !!! EXPERIMENTAL !!!
@@ -54,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.28.4
+	 * 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -973,7 +987,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							for (nodeIndex = 0; nodeIndex < collectionNodes.length; nodeIndex += 1) {
 								pathNode = this.xPath.nextNode(collectionNodes, nodeIndex);
 								oPath = {};
-								oPath[pathNode.nodeName] = xPath.getNodeText(pathNode);
+								oPath[pathNode.nodeName] = this.replaceWithAlias(xPath.getNodeText(pathNode), oAlias);
 								propertyValue.push(oPath);
 							}
 						} else {
@@ -999,7 +1013,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 										} else {
 											vValue = this.getPropertyValueAttributes(oOtherNode, oAlias);
 										}
-										propertyValue[oOtherNode.nodeName] = vValue;
+										
+										var sNodeName = oOtherNode.nodeName;
+										var sParentName = oOtherNode.parentNode.nodeName;
+										
+										
+										// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
+										// their order within the document
+										if (mMultipleArgumentDynamicExpressions[sParentName]) {
+											if (!Array.isArray(propertyValue)) {
+												propertyValue = [];
+											}
+											
+											var mValue = {};
+											mValue[sNodeName] = vValue;
+											propertyValue.push(mValue);
+										} else {
+											if (propertyValue[sNodeName]) {
+												jQuery.sap.log.warning(
+													"Annotation contained multiple " + sNodeName + " values. Only the last " +
+													"one will be stored"
+												);
+											}
+											propertyValue[sNodeName] = vValue;
+										}
 									}
 								}
 							} else if (documentNode.nodeName in mTextNodeWhitelist) {

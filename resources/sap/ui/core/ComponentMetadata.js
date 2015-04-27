@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @experimental Since 1.9.2. The Component concept is still under construction, so some implementation details can be changed in future.
 	 * @class
 	 * @author SAP SE
-	 * @version 1.28.4
+	 * @version 1.28.5
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		// the namespace sap.ui5 and eventually the extends property
 		oManifest["name"] = oManifest["name"] || sName;
 		oManifest["sap.app"] = oManifest["sap.app"] || {
-			"id": sName
+			"id": sPackage // use the "package" namespace instead of the classname (without ".Component")
 		};
 		oManifest["sap.ui5"] = oManifest["sap.ui5"] || {};
 		if (sParentName) {
@@ -571,27 +571,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 */
 	ComponentMetadata.prototype._loadIncludes = function() {
 
-		// afterwards we load our includes!
-		var aIncludes = this.getIncludes();
-		if (aIncludes && aIncludes.length > 0) {
-			var that = this;
-			var sLibName = this.getLibraryName();
-			for (var i = 0, l = aIncludes.length; i < l; i++) {
-				var sFile = aIncludes[i];
-				if (sFile.match(/\.css$/i)) {
-					var sCssUrl = sap.ui.resource(sLibName, sFile);
-					jQuery.sap.log.info("Component \"" + that.getName() + "\" is loading CSS: \"" + sCssUrl + "\"");
-					jQuery.sap.includeStyleSheet(sCssUrl /* TODO: , sId (do we have a good idea how to create the id?!) */ );
-				} else {
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		var mResources = oUI5Manifest["resources"];
+
+		if (!mResources) {
+			return;
+		}
+
+		var sComponentName = this.getComponentName();
+
+		// load JS files
+		var aJSResources = mResources["js"];
+		if (aJSResources) {
+			for (var i = 0; i < aJSResources.length; i++) {
+				var oJSResource = aJSResources[i];
+				var sFile = oJSResource.uri;
+				if (sFile) {
 					// load javascript file
 					var m = sFile.match(/\.js$/i);
 					if (m) {
 						// prepend lib name to path, remove extension
-						var sPath = sLibName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
-						jQuery.sap.log.info("Component \"" + that.getName() + "\" is loading JS: \"" + sPath + "\"");
+						var sPath = sComponentName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
+						jQuery.sap.log.info("Component \"" + this.getName() + "\" is loading JS: \"" + sPath + "\"");
 						// call internal require variant that accepts a requireJS path
 						jQuery.sap._requirePath(sPath);
 					}
+				}
+			}
+		}
+
+		// include CSS files
+		var aCSSResources = mResources["css"];
+		if (aCSSResources) {
+			for (var j = 0; j < aCSSResources.length; j++) {
+				var oCSSResource = aCSSResources[j];
+				if (oCSSResource.uri) {
+					var sCssUrl = sap.ui.resource(sComponentName, oCSSResource.uri);
+					jQuery.sap.log.info("Component \"" + this.getName() + "\" is loading CSS: \"" + sCssUrl + "\"");
+					jQuery.sap.includeStyleSheet(sCssUrl, oCSSResource.id);
 				}
 			}
 		}

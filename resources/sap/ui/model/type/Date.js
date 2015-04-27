@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.28.4
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 */
 	Date1.prototype.formatValue = function(oValue, sInternalType) {
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 			case "any":
 				if (oValue == null) {
@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 */
 	Date1.prototype.parseValue = function(oValue, sInternalType) {
 		var oResult, oBundle;
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				if (oValue === "") {
 					return null;
