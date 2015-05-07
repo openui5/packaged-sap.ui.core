@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Control'],
 	 * </code>
 	 *
 	 * @author Daniel Brinkmann
-	 * @version 1.26.10
+	 * @version 1.26.11
 	 * @param {boolean} [bDefault=true] the value that should be used as default value for the enhancement of the control.
 	 * @param {boolean} [bLegacy=false] whether the introduced property should use the old name 'Enabled' 
 	 * @public

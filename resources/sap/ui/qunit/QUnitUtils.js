@@ -18,7 +18,7 @@
  * The <code>sap.ui.test.qunit</code> namespace contains helper functionality for
  * QUnit tests.
  *
- * @version 1.26.10
+ * @version 1.26.11
  * @namespace
  * @name sap.ui.test.qunit
  * @public
@@ -51,6 +51,11 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			
 			// Do not reorder tests, as most of the tests depend on each other
 			QUnit.config.reorder = false;
+			
+			// Set "hidepassed" option using URL Param (required in QUnit < 1.16.0)
+			if (QUnit.urlParams && QUnit.urlParams.hidepassed) {
+				QUnit.config.hidepassed = true;
+			}
 			
 			// only when instrumentation is done on server-side blanket itself doesn't
 			// take care about rendering the report - in this case we do it manually

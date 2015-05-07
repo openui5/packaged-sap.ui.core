@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.26.10
+	 * 1.26.11
 	 *
 	 * @constructor
 	 * @public
@@ -968,7 +968,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							for (nodeIndex = 0; nodeIndex < collectionNodes.length; nodeIndex += 1) {
 								pathNode = this.xPath.nextNode(collectionNodes, nodeIndex);
 								oPath = {};
-								oPath[pathNode.nodeName] = xPath.getNodeText(pathNode);
+								oPath[pathNode.nodeName] = this.replaceWithAlias(xPath.getNodeText(pathNode), oAlias);
 								propertyValue.push(oPath);
 							}
 						} else {

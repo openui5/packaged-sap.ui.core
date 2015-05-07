@@ -83,7 +83,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.26.11
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -501,7 +501,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.26.10
+	 * @version 1.26.11
 	 * @namespace
 	 * @public
 	 * @static
@@ -2650,7 +2650,7 @@
 		var oOld = jQuery.sap.domById(sId);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
-			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI()).toString()) {
+			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
 				jQuery(oOld).replaceWith(_createLink(sUrl, sId, fnLoadCallback, fnErrorCallback));
 			}
 		} else {

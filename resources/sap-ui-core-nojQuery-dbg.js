@@ -7,7 +7,7 @@
 /** 
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.26.10
+ * @version 1.26.11
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.26.10";
+		var apiVersion = "1.26.11";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.26.10";
+		var v = "1.26.11";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -3809,7 +3809,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.26.11
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -4227,7 +4227,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.26.10
+	 * @version 1.26.11
 	 * @namespace
 	 * @public
 	 * @static
@@ -6376,7 +6376,7 @@ return URI;
 		var oOld = jQuery.sap.domById(sId);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
-			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI()).toString()) {
+			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
 				jQuery(oOld).replaceWith(_createLink(sUrl, sId, fnLoadCallback, fnErrorCallback));
 			}
 		} else {
