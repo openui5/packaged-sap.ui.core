@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.28.5
+	 * @version 1.28.6
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -542,7 +542,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				var len = cleanUpDom(aContent, true);
 
 				for (var i = 0; i < len; i++) {
-					this.oCore.oRenderManager.render(aContent[i], this.oRootNode, true);
+					if (aContent[i] && aContent[i].getParent() === this) {
+						this.oCore.oRenderManager.render(aContent[i], this.oRootNode, true);
+					}
 				}
 				bUpdated = true;
 

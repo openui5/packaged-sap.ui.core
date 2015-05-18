@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.28.5
+	 * @version 1.28.6
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -543,6 +543,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @public
 	 */
 	Element.prototype.destroy = function(bSuppressInvalidate) {
+		
+		// update the focus information (potentionally) stored by the central UI5 focus handling
+		Element._updateFocusInfo(this);
 	
 		ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
 	

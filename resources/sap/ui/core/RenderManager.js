@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.28.5
+	 * @version 1.28.6
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -1098,8 +1098,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 					var aIds = oElement[oAssoc._sGetter]();
 					if (sElemAssoc == "ariaLabelledBy") {
 						var aLabelIds = sap.ui.core.LabelEnablement.getReferencingLabels(oElement);
-						if (aLabelIds.length) {
-							aIds = aLabelIds.concat(aIds);
+						var iLen = aLabelIds.length;
+						if (iLen) {
+							var aFilteredLabelIds = [];
+							for (var i = 0; i < iLen; i++) {
+								if (jQuery.inArray(aLabelIds[i], aIds) < 0) {
+									aFilteredLabelIds.push(aLabelIds[i]);
+								}
+							}
+							aIds = aFilteredLabelIds.concat(aIds);
 						}
 					}
 

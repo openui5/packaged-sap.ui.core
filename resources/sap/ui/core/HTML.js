@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.28.5
+	 * @version 1.28.6
 	 *
 	 * @constructor
 	 * @public
@@ -175,6 +175,13 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		return this;
 	};
 	
+	HTML.prototype.setSanitizeContent = function(bSanitizeContent) {
+		this.setProperty("sanitizeContent", bSanitizeContent, true);
+		// if sanitizeContent has been enabled, set the content again to enable sanitizing on current content
+		if (bSanitizeContent) {
+			this.setContent(this.getContent());
+		}
+	};
 	
 	HTML.prototype.onBeforeRendering = function() {
 		if (this.getPreferDOM() && this.getDomRef() && !sap.ui.core.RenderManager.isPreservedContent(this.getDomRef())) {

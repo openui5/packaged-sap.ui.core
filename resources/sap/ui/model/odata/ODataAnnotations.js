@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.28.5
+	 * 1.28.6
 	 *
 	 * @constructor
 	 * @public
@@ -605,7 +605,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
 		}
 
-		if (oXMLDoc.getElementsByTagName("parsererror").length > 0) {
+		if (
+			// All browsers including IE
+			oXMLDoc.getElementsByTagName("parsererror").length > 0 
+			// IE 11 special case
+			|| (oXMLDoc.parseError && oXMLDoc.parseError.errorCode !== 0)
+		) {
 			// Malformed XML, notify application of the problem
 
 			// This seems to be needed since with some jQuery versions the XML document
@@ -914,7 +919,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		return propertyValueAttributes;
 	};
 
-	ODataAnnotations.prototype.getSimpleNodeValue = function(xmlDoc, documentNode) {
+	ODataAnnotations.prototype.getSimpleNodeValue = function(xmlDoc, documentNode, mAlias) {
 		var oValue = {};
 
 		var oValueNodes = this.xPath.selectNodes(xmlDoc, "./d:String | ./d:Path | ./d:Apply", documentNode);
@@ -924,7 +929,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 			switch (oValueNode.nodeName) {
 				case "Apply":
-					vValue = this.getApplyFunctions(xmlDoc, oValueNode, this.xPath);
+					vValue = this.getApplyFunctions(xmlDoc, oValueNode, mAlias);
 					break;
 
 				default:
@@ -937,6 +942,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 		return oValue;
 	};
+	
+	/**
+	 * Returns the text value of a given node and does an alias replacement if neccessary.
+	 * 
+	 * @param {Node} oNode - The Node of which the text value should be determined
+	 * @param {map} mAlias - The alias map
+	 * @return {string} The text content
+	 */
+	ODataAnnotations.prototype._getTextValue = function(oNode, mAlias) {
+		var sValue = "";
+		if (oNode.nodeName in mAliasNodeWhitelist) {
+			sValue = this.replaceWithAlias(this.xPath.getNodeText(oNode), mAlias);
+		} else {
+			sValue = this.xPath.getNodeText(oNode);
+		}
+		if (oNode.nodeName !== "String") {
+			// Trim whitespace if it's not specified as string value
+			sValue = sValue.trim();
+		}
+		return sValue;
+	};
+
+	
 	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, oAlias) {
 		var propertyValue = {}, recordNodes, recordNodeCnt, nodeIndex, recordNode, propertyValues, urlValueNodes, urlValueNode, pathNode, oPath = {}, annotationNodes, annotationNode, nodeIndexValue, termValue, collectionNodes;
 		var xPath = this.getXPath();
@@ -1007,16 +1035,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 								for (var i = 0; i < aOtherNodes.length; i++) {
 									var oOtherNode = xPath.nextNode(aOtherNodes, i);
 									if (oOtherNode.nodeName !== "Annotation") {
-										var vValue;
-										if (oOtherNode.hasChildNodes()) {
-											vValue = this.getPropertyValue(xmlDoc, oOtherNode, oAlias);
-										} else {
-											vValue = this.getPropertyValueAttributes(oOtherNode, oAlias);
-										}
-										
+										var vValue = this.getPropertyValue(xmlDoc, oOtherNode, oAlias);
 										var sNodeName = oOtherNode.nodeName;
 										var sParentName = oOtherNode.parentNode.nodeName;
-										
 										
 										// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
 										// their order within the document
@@ -1040,21 +1061,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 									}
 								}
 							} else if (documentNode.nodeName in mTextNodeWhitelist) {
-								// hasChildNodes, but selectNodes found nothing - it should be a text node
-								if (documentNode.nodeName in mAliasNodeWhitelist) {
-									propertyValue = this.replaceWithAlias(this.xPath.getNodeText(documentNode), oAlias);
-								} else {
-									propertyValue = this.xPath.getNodeText(documentNode);
-								}
-								if (documentNode.nodeName !== "String") {
-									// Trim whitespace if it's not specified as string values
-									propertyValue = propertyValue.replace(/^[ \t\n\r]*(.*?)[ \t\n\r]*$/, "$1");
-								}
+								propertyValue = this._getTextValue(documentNode, oAlias);
 							}
 						}
 					}
 				}
 			}
+		} else if (documentNode.nodeName in mTextNodeWhitelist) {
+			propertyValue = this._getTextValue(documentNode, oAlias);
 		} else {
 			propertyValue = this.getPropertyValueAttributes(documentNode, oAlias);
 		}
@@ -1082,7 +1096,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					applyNode = this.xPath.nextNode(applyNodes, applyNodeIndex);
 					if (applyNode) {
 						properties[propertyName] = {};
-						properties[propertyName]['Apply'] = this.getApplyFunctions(xmlDoc, applyNode);
+						properties[propertyName]['Apply'] = this.getApplyFunctions(xmlDoc, applyNode, oAlias);
 					}
 				}
 			}
@@ -1091,31 +1105,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 		return properties;
 	};
-	ODataAnnotations.prototype.getApplyFunctions = function(xmlDoc, applyNode) {
+	ODataAnnotations.prototype.getApplyFunctions = function(xmlDoc, applyNode, mAlias) {
 		var apply = {}, parameterNodes, paraNode = null, parameters = [], i;
 		parameterNodes = this.xPath.selectNodes(xmlDoc, "./d:*", applyNode);
 		for (i = 0; i < parameterNodes.length; i += 1) {
 			paraNode = this.xPath.nextNode(parameterNodes, i);
-			switch (paraNode.nodeName) {
-				case "Apply" :
-					parameters.push({
-						"Type" : "Apply",
-						"Value" : this.getApplyFunctions(xmlDoc, paraNode)
-					});
-					break;
-				case "LabeledElement" :
-					parameters.push({
-						"Name" : paraNode.getAttribute("Name"),
-						"Value" : this.getSimpleNodeValue(xmlDoc, paraNode)
-					});
-					break;
-				default :
-					parameters.push({
-						"Type" : paraNode.nodeName,
-						"Value" : this.xPath.getNodeText(paraNode)
-					});
-					break;
+			
+			var mParameter = {
+				Type:  paraNode.nodeName
+			};
+			
+			if (paraNode.nodeName === "Apply") {
+				mParameter.Value = this.getApplyFunctions(xmlDoc, paraNode);
+				
+			} else if (paraNode.nodeName === "LabeledElement") {
+				mParameter.Name = paraNode.getAttribute("Name");
+				var vValue = this.getSimpleNodeValue(xmlDoc, paraNode, mAlias);
+				if (!vValue || Object.keys(vValue).length === 0) {
+					vValue = this.getPropertyValue(xmlDoc, paraNode, mAlias);
+				}				
+				
+				mParameter.Value = vValue;
+				
+			} else if (mMultipleArgumentDynamicExpressions[paraNode.nodeName]) {
+				mParameter.Value = this.getPropertyValue(xmlDoc, paraNode, mAlias);
+				
+			} else {
+				mParameter.Value = this.xPath.getNodeText(paraNode);
 			}
+
+			parameters.push(mParameter);
+			
+			
 		}
 		apply['Name'] = applyNode.getAttribute('Function');
 		apply['Parameters'] = parameters;

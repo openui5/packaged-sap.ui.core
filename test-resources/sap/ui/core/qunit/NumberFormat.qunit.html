@@ -95,13 +95,13 @@
 		equal(oFormat.parse("12"), 12, "\"12\" parsed");
 		equal(oFormat.format(123), "123", "123 formatted");
 		equal(oFormat.parse("123"), 123, "\"123\" parsed");
-		equal(oFormat.format(1234), "1" + String.fromCharCode(160) + "Tsd", "1234 formatted");
-		equal(oFormat.parse("1 Tsd"), 1000, "\"1 Tsd\" parsed");
-		equal(oFormat.format(12345), "12" + String.fromCharCode(160) + "Tsd", "12345 formatted");
-		equal(oFormat.parse("10 Tsd"), 10000, "\"10 Tsd\" parsed");
-		equal(oFormat.format(123456), "123" + String.fromCharCode(160) + "Tsd", "123456 formatted");
-		equal(oFormat.parse("100 Tsd"), 100000, "\"100 Tsd\" parsed");
-		equal(oFormat.parse("1000 Tsd"), 1000000, "\"1000 Tsd\" parsed");
+		equal(oFormat.format(1234), "1" + String.fromCharCode(160) + "Tsd.", "1234 formatted");
+		equal(oFormat.parse("1 Tsd."), 1000, "\"1 Tsd\" parsed");
+		equal(oFormat.format(12345), "12" + String.fromCharCode(160) + "Tsd.", "12345 formatted");
+		equal(oFormat.parse("10 Tsd."), 10000, "\"10 Tsd\" parsed");
+		equal(oFormat.format(123456), "123" + String.fromCharCode(160) + "Tsd.", "123456 formatted");
+		equal(oFormat.parse("100 Tsd."), 100000, "\"100 Tsd\" parsed");
+		equal(oFormat.parse("1000 Tsd."), 1000000, "\"1000 Tsd\" parsed");
 		equal(oFormat.format(1234567), "1" + String.fromCharCode(160) + "Mio", "1234567 formatted");
 		equal(oFormat.parse("1 Mio"), 1000000, "\"1 Mio\" parsed");
 		equal(oFormat.format(12345678), "12" + String.fromCharCode(160) + "Mio", "12345678 formatted");
@@ -114,8 +114,8 @@
 		equal(oFormat.parse("10 Mrd"), 10000000000, "\"10 Mrd\" parsed");
 		equal(oFormat.format(123456789012), "123" + String.fromCharCode(160) + "Mrd", "123456789012 formatted");
 		equal(oFormat.parse("100 Mrd"), 100000000000, "\"100 Mrd\" parsed");
-		equal(oFormat.format(1234567890123), "1" + String.fromCharCode(160) + "Bio", "1234567890123 formatted");
-		equal(oFormat.parse("1 Bio"), 1000000000000, "\"1 Bio\" parsed");
+		equal(oFormat.format(1234567890123), "1" + String.fromCharCode(160) + "Bio.", "1234567890123 formatted");
+		equal(oFormat.parse("1 Bio."), 1000000000000, "\"1 Bio\" parsed");
 	});
 
 	test("float default format", function(){
@@ -464,7 +464,9 @@
 		// The currency pattern is definde in "ko" as: ¤#,##0.00;(¤#,##0.00) where the pattern after ';'
 		// should be used for negative numbers.
 		var oLocale = new sap.ui.core.Locale("ko");
-		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oLocale);
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyContext: "accounting"
+		}, oLocale);
 
 		equal(oFormat.format(123456.789, "EUR"), "EUR123,456.79", "123456.789 EUR");
 		equal(oFormat.format([123456.789, "EUR"]), "EUR123,456.79", "123456.789 EUR");
@@ -510,6 +512,7 @@
 		equal(oDefaultInteger.parse("123"), 123, "123");
 		equal(oDefaultInteger.parse("123,123"), 123123, "123,123");
 		equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
+		equal(oDefaultInteger.parse(""), 0, "Empty string is parsed as 0");
 		equal(isNaN(oDefaultInteger.parse("123.00")), true, "123.00");
 		equal(isNaN(oDefaultInteger.parse("5e+3")), true, "5e+3");
 		equal(isNaN(oDefaultInteger.parse("a1b2c3")), true, "a1b2c3");
@@ -523,6 +526,8 @@
 		equal(oDefaultFloat.parse("1E+4"), 10000, "1E+4");
 		equal(oDefaultFloat.parse("5e-3"), 0.005, "5e-3");
 		equal(oDefaultFloat.parse(".5e-3"), 5e-4, ".5e-3");
+		equal(oDefaultFloat.parse("1."), 1, "1.");
+		equal(oDefaultFloat.parse(""), 0, "Empty string is parsed as 0");
 		equal(isNaN(oDefaultFloat.parse("123.x5")), true, "123.x5");
 		
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
@@ -561,6 +566,31 @@
 		equal(oFloatFormat.parse("5e-3"), "0.005", "5e-3");
 		equal(oFloatFormat.parse(".5e-3"), "0.0005", ".5e-3");
 		equal(isNaN(oFloatFormat.parse("123.x5")), true, "123.x5");
+	});
+
+	test("parse a number with custom plus and minus signs", function() {
+		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+			plusSign: ".",
+			minusSign: "["
+		}), oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			plusSign: "]",
+			minusSign: "|"
+		});
+
+		equal(oIntegerFormat.parse(".1,234"), 1234, "1234 with custom plusSign '.'");
+		equal(oIntegerFormat.parse("[1,234,567"), -1234567, "-1234567 with custom minusSign '['");
+		equal(oFloatFormat.parse("]1,234.567"), 1234.567, "1234.567 with custom plusSign ']'");
+		equal(oFloatFormat.parse("|1,234.567"), -1234.567, "1234.567 with custom minusSign '|'");
+	});
+
+	test("parse a number with custom grouping separator", function() {
+		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+			groupingEnabled: true,
+			groupingSeparator: "S"
+		});
+
+		equal(oIntegerFormat.parse("1S234S567"), 1234567, "1S234S567 is parsed as 1234567 with grouping separator set to 's'");
+		ok(isNaN(oIntegerFormat.parse("1s234s567")), "1s234s567 is parsed as NaN");
 	});
 
 	test("parse custom format", function(){
@@ -628,8 +658,13 @@
 		aResult = oFormat.parse("$ 1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
-		strictEqual(aResult[1], "$", "Currency Code is parsed correctly: expected $, parsed " + aResult[1]);
-		
+		strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], 0, "Number is parsed correctly");
+		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: false
 		});
@@ -649,6 +684,11 @@
 		aResult = oFormat.parse("1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], 0, "Number is parsed correctly");
 		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({

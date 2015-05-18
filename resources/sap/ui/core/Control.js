@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.28.5
+	 * @version 1.28.6
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -561,8 +561,11 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart mouseup touchend click",
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
-					if (this.getProperty("busy") === true && this.$()) {
-						fnAppendBusyIndicator.apply(this);
+					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId) {
+						// Also use the BusyIndicatorDelay when a control is initialized with "busy = true"
+						// If the delayed call was already initialized skip any further call if the control was re-rendered while
+						// the delay is on its way.
+						this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
 					}
 				}
 			},

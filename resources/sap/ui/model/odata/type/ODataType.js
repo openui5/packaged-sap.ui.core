@@ -181,7 +181,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.28.5
+	 * @version 1.28.6
 	 *
 	 * @alias sap.ui.model.odata.type.ODataType
 	 * @param {object} [oFormatOptions]

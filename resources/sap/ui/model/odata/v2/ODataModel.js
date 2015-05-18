@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.28.5
+	 * @version 1.28.6
 	 *
 	 * @constructor
 	 * @public
@@ -163,7 +163,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				// add statistics parameter to every request (supported only on Gateway servers)
 				this.aUrlParams.push("sap-statistics=true");
 			}
-
+			
+			this.oHeaders = {};
+			this.setHeaders(mHeaders);
+			
 			// Get/create service specific data container
 			this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
 			if (!this.oServiceData) {
@@ -215,11 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (this.oMetadata.isLoaded()) {
 				this._initializeMetadata(true);
 			}
-
-			// prepare variables for request headers, data and metadata
-			this.oHeaders = {};
-			this.setHeaders(mHeaders);
-
+			
 			// set the header for the accepted content types
 			if (this.bJSON) {
 				if (this.sMaxDataServiceVersion === "3.0") {
@@ -909,21 +908,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					for (var j = 0; j < aChangeSet.length; j++) {
 						var oRequest = aChangeSet[j].request;
 						var oInnerResponse = aBatchRequests[i][j].response;
+						oBatchRequest = {};
 						oBatchRequest.url = oRequest.requestUri;
 						oBatchRequest.method = oRequest.method;
 						oBatchRequest.headers = oRequest.headers;
 						if (oInnerResponse) {
 							oBatchRequest.response = {};
-							oBatchRequest.success = true;
-							if (oInnerResponse.message) {
-								oBatchRequest.response.message = oInnerResponse.message;
-								oInnerResponse = oInnerResponse.response;
-								oBatchRequest.response.responseText = oInnerResponse.body;
+							if (oRequest._aborted) {
 								oBatchRequest.success = false;
+								oBatchRequest.response.statusCode = 0;
+								oBatchRequest.response.statusText = "abort";
+							} else {
+								oBatchRequest.success = true;
+								if (oInnerResponse.message) {
+									oBatchRequest.response.message = oInnerResponse.message;
+									oInnerResponse = oInnerResponse.response;
+									oBatchRequest.response.responseText = oInnerResponse.body;
+									oBatchRequest.success = false;
+								}
+								oBatchRequest.response.headers = oInnerResponse.headers;
+								oBatchRequest.response.statusCode = oInnerResponse.statusCode;
+								oBatchRequest.response.statusText = oInnerResponse.statusText;
 							}
-							oBatchRequest.response.headers = oInnerResponse.headers;
-							oBatchRequest.response.statusCode = oInnerResponse.statusCode;
-							oBatchRequest.response.statusText = oInnerResponse.statusText;
 						}
 						oEventInfo.requests.push(oBatchRequest);
 					}
@@ -935,16 +941,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					oBatchRequest.headers = oRequest.headers;
 					if (oInnerResponse) {
 						oBatchRequest.response = {};
-						oBatchRequest.success = true;
-						if (oInnerResponse.message) {
-							oBatchRequest.response.message = oInnerResponse.message;
-							oInnerResponse = oInnerResponse.response;
-							oBatchRequest.response.responseText = oInnerResponse.body;
+						if (oRequest._aborted) {
 							oBatchRequest.success = false;
+							oBatchRequest.response.statusCode = 0;
+							oBatchRequest.response.statusText = "abort";
+						} else {
+							oBatchRequest.success = true;
+							if (oInnerResponse.message) {
+								oBatchRequest.response.message = oInnerResponse.message;
+								oInnerResponse = oInnerResponse.response;
+								oBatchRequest.response.responseText = oInnerResponse.body;
+								oBatchRequest.success = false;
+							}
+							oBatchRequest.response.headers = oInnerResponse.headers;
+							oBatchRequest.response.statusCode = oInnerResponse.statusCode;
+							oBatchRequest.response.statusText = oInnerResponse.statusText;
 						}
-						oBatchRequest.response.headers = oInnerResponse.headers;
-						oBatchRequest.response.statusCode = oInnerResponse.statusCode;
-						oBatchRequest.response.statusText = oInnerResponse.statusText;
 					}
 					oEventInfo.requests.push(oBatchRequest);
 				}
@@ -1694,17 +1706,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype._getObject = function(sPath, oContext) {
 		var oNode = this.isLegacySyntax() ? this.oData : null, 
 			sResolvedPath = this.resolve(sPath, oContext),
-			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey;
+			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
 
 		//check for metadata path
 		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
 			iSeparator = sResolvedPath.indexOf('/##');
 			if (iSeparator >= 0) {
 				// Metadata binding resolved by ODataMetaModel
+				oMetaModel = this.getMetaModel();
+				if (!this.bMetaModelLoaded) {
+					return null;
+				}
 				sDataPath = sResolvedPath.substr(0, iSeparator);
 				sMetaPath = sResolvedPath.substr(iSeparator + 3);
-				oMetaContext = this.getMetaModel().getMetaContext(sDataPath);
-				oNode = this.getMetaModel()._getObject(sMetaPath, oMetaContext);
+				oMetaContext = oMetaModel.getMetaContext(sDataPath);
+				oNode = oMetaModel.getProperty(sMetaPath, oMetaContext);
 			} else {
 				// Metadata binding resolved by ODataMetadata
 				oNode = this.oMetadata._getAnnotation(sResolvedPath);
@@ -2253,11 +2269,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 			jQuery.each(mRequests, function(sGroupId, oGroup) {
 				if (sGroupId === sBatchGroupId || !sBatchGroupId) {
-					var aReadRequests = [], aBatchGroup = [], /* aChangeRequests, */ oChangeSet;
+					var aReadRequests = [], aBatchGroup = [], /* aChangeRequests, */ oChangeSet, aChanges;
 
 					if (oGroup.changes) {
 						jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 							oChangeSet = {__changeRequests:[]};
+							aChanges = [];
 							for (var i = 0; i < aChangeSet.length; i++) {
 								//clear metadata.create
 								if (aChangeSet[i].request._aborted) {
@@ -2267,11 +2284,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 										delete aChangeSet[i].request.data.__metadata.created;
 									}
 									oChangeSet.__changeRequests.push(aChangeSet[i].request);
+									aChanges.push(aChangeSet[i]);
 								}
 							}
 							if (oChangeSet.__changeRequests && oChangeSet.__changeRequests.length > 0) {
 								aReadRequests.push(oChangeSet);
-								aBatchGroup.push(oGroup.changes[sChangeSetId]);
+								aBatchGroup.push(aChanges);
 							}
 						});
 					}
@@ -4047,8 +4065,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @returns {sap.ui.model.odata.ODataMetaModel} The meta model for this ODataModel
 	 */
 	ODataModel.prototype.getMetaModel = function() {
+		var that = this;
 		if (!this.oMetaModel) {
 			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations);
+			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
+			this.oMetaModel.loaded().then(function() {
+				that.bMetaModelLoaded = true;
+				that.checkUpdate();
+			});
 		}
 		return this.oMetaModel;
 	};
