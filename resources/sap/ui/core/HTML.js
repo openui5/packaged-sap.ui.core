@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.28.6
+	 * @version 1.28.7
 	 *
 	 * @constructor
 	 * @public
@@ -181,6 +181,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		if (bSanitizeContent) {
 			this.setContent(this.getContent());
 		}
+		return this;
 	};
 	
 	HTML.prototype.onBeforeRendering = function() {
