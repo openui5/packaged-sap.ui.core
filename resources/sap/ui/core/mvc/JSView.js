@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	 * @class
 	 * A View defined/constructed by JavaScript code.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.28.7
+	 * @version 1.28.8
 	 *
 	 * @constructor
 	 * @public

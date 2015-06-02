@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 		 * @class This class represents the ControlTree plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 * @abstract
 		 * @extends sap.ui.base.Object
-		 * @version 1.28.7
+		 * @version 1.28.8
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.ControlTree
@@ -1035,7 +1035,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 			return true;
 		};
 
-		Plugin.prototype.getSelectedControlId = function() {
+		ControlTree.prototype.getSelectedControlId = function() {
 			var $sret = this.$().find(".sapUiSupportControlTreeSelected");
 			if ($sret.length === 0) {
 				return undefined;
@@ -1553,7 +1553,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 							};
 							break;
 						}
-					} while ((oCurrentControl = oCurrentControl.getParent()) !== undefined);
+					} while ( (oCurrentControl = oCurrentControl.getParent()) );
 
 					mControlBindingInfos.contexts.push(mContext);
 				}
@@ -1596,7 +1596,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 						};
 						break;
 					}
-				} while ((oCurrentControl = oCurrentControl.getParent()) !== undefined);
+				} while ( (oCurrentControl = oCurrentControl.getParent()) );
 
 				// check for core model if no model was found
 				if (!mModelInfo.location) {

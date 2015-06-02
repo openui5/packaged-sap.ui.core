@@ -10822,7 +10822,7 @@ $.ui.position = {
 /** 
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.7
+ * @version 1.28.8
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,7 +10847,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.7";
+		var apiVersion = "1.28.8";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10905,7 +10905,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.7";
+		var v = "1.28.8";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -14394,7 +14394,9 @@ return URI;
 	
 	Promise.prototype.then = function(fOnFulfilled, fOnRejected){
 		var oFollowUpPromise = new Promise(_dummy);
-		this._deferred.then(_doWrap(fOnFulfilled, oFollowUpPromise, true), _doWrap(fOnRejected, oFollowUpPromise, false));
+		setTimeout(function(){
+			this._deferred.then(_doWrap(fOnFulfilled, oFollowUpPromise, true), _doWrap(fOnRejected, oFollowUpPromise, false));
+		}.bind(this), 0);
 		return oFollowUpPromise;
 	};
 	
@@ -14632,7 +14634,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.7
+	 * @version 1.28.8
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -15051,7 +15053,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.7
+	 * @version 1.28.8
 	 * @namespace
 	 * @public
 	 * @static
