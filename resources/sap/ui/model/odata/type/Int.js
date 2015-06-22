@@ -77,7 +77,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.28.9
+	 * @version 1.28.10
 	 *
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int

@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.28.9
+	 * @version 1.28.10
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -609,7 +609,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				var $this = this.$(this._sBusySection);
 
 				if (bBusy) {
-					var $TabRefs = $this.find('[tabindex]'),
+					// all focusable elements must be processed for the "tabindex=-1"
+					// attribute. The dropdownBox for example has got two focusable elements
+					// (arrow and intput field) and both shouldn't be focusable. Otherwise
+					// the input field will still be focused on keypress (tab) because the
+					// browser focuses the element
+					var $TabRefs = $this.find(":sapTabbable"),
 						that = this;
 					this._busyTabIndices = [];
 
@@ -649,6 +654,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				}
 			},
 			fnPreserveEvents = function(oEvent) {
+				jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
 			},

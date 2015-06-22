@@ -10822,7 +10822,7 @@ $.ui.position = {
 /** 
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.9
+ * @version 1.28.10
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,7 +10847,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.9";
+		var apiVersion = "1.28.10";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10905,7 +10905,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.9";
+		var v = "1.28.10";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -11112,16 +11112,18 @@ if (typeof window.sap.ui !== "object") {
 			if (pf.indexOf("Win") != -1 ) {
 				// userAgent in windows 7 contains: windows NT 6.1
 				// userAgent in windows 8 contains: windows NT 6.2 or higher
-				// TODO: update this after windows 9 is released
-				var rVersion = /windows NT 6.(\d)/i;
+				// userAgent since windows 10: Windows NT 10[...]
+				var rVersion = /Windows NT (\d+).(\d)/i;
 				var uaResult = userAgent.match(rVersion);
 				var sVersionStr = "";
-				if (uaResult) {
-					if (uaResult[1] == 1) {
+				if (uaResult[1] == "6") {
+					if (uaResult[2] == 1) {
 						sVersionStr = "7";
-					} else if (uaResult[1] > 1) {
+					} else if (uaResult[2] > 1) {
 						sVersionStr = "8";
 					}
+				} else {
+					sVersionStr = uaResult[1];
 				}
 				return {"name": OS.WINDOWS, "versionStr": sVersionStr};
 			} else if (pf.indexOf("Mac") != -1) {
@@ -14634,7 +14636,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.9
+	 * @version 1.28.10
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -15053,7 +15055,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.9
+	 * @version 1.28.10
 	 * @namespace
 	 * @public
 	 * @static

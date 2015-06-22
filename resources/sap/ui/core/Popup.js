@@ -658,8 +658,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		var that = this;
 
-		// shield layer is needs for iOS devices to prevent the delayed mouse events from reaching the dom element in popup while it's being open.
-		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
+		//  to prevent the delayed mouse events from reaching the dom element in popup while it's being open.
+		if (jQuery.sap.isMouseEventDelayed) {
 			if (this._oTopShieldLayer) {
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
 				// reuse the same shieldlayer and clear the timeout
@@ -893,15 +894,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			if (arguments.length > 1) {
 				// arguments[0] = iDuration
 				var sAutoclose = arguments[1];
-				var oDomRef = this._$().get(0);
 				/*
 				 * If coming from the delayedCall from the autoclose mechanism
 				 * but the active element is still in the Popup -> events messed up somehow.
 				 * This is especially needed for the IE because it messes up focus and blur
 				 * events if using a scroll-bar within a Popup
 				 */
-				if ((typeof (sAutoclose) == "string" && sAutoclose == "autocloseBlur") &&
-				     (oDomRef && jQuery.sap.containsOrEquals(oDomRef, document.activeElement))) {
+				if (typeof (sAutoclose) == "string" && sAutoclose == "autocloseBlur" && this._isFocusInsidePopup()) {
 					return;
 				}
 			}
@@ -979,8 +978,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		var that = this;
 
-		// shield layer is needs for iOS devices to prevent the delayed mouse events from reaching the underneath dom element.
-		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
+		//  to prevent the delayed mouse events from reaching the underneath dom element.
+		if (jQuery.sap.isMouseEventDelayed) {
 			if (this._oBottomShieldLayer) {
 
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
@@ -2080,6 +2080,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 	};
 
+	/**
+	 * Check if the focused element is still inside the Popup
+	 *
+	 * @returns {boolean} true if the focused element is still inside the Popup, otherwise returns false
+	 * @private
+	 */
+	Popup.prototype._isFocusInsidePopup = function () {
+		var oDomRef = this._$(false).get(0);
+
+		if (oDomRef && jQuery.sap.containsOrEquals(oDomRef, document.activeElement)) {
+			return true;
+		}
+
+		return false;
+	};
+
 	//****************************************************
 	//Handling of movement of the dock references
 	//****************************************************
@@ -2116,10 +2132,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			var oCurrentOfRef = this._getOfDom(this._oLastPosition.of),
 				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 
+			// it's not possible to check for the width/height because the "of" could be window.document and the
+			// document doesn't have a height/width
 			if (!oCurrentOfRect) {
-				// Docking not possibe due to missing opener.
 				this.close();
 				return;
+			} else if (oCurrentOfRect.left === 0 && oCurrentOfRect.top === 0 &&
+					oCurrentOfRect.height === 0 && oCurrentOfRect.height === 0 &&
+					this._oLastPosition.of.id) {
+				// sometimes the "of" was rerendered and therefore the new DOM-reference must be used for the checks.
+				// An id is only ensured for controls and only those can be re-rendered
+				this._oLastPosition.of = jQuery.sap.domById(this._oLastPosition.of.id);
+				oCurrentOfRef = this._getOfDom(this._oLastPosition.of);
+				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
+
+				if (!oCurrentOfRect) {
+					this.close();
+					return;
+				}
 			}
 
 			// Check if the current 'of' dom element is removed from the dom tree which indicates that it
