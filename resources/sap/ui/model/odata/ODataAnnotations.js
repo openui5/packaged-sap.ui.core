@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.28.10
+	 * 1.28.11
 	 *
 	 * @constructor
 	 * @public
@@ -597,6 +597,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			// TODO: Check when IE will support evaluate-method
 			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
 			oXMLDoc.preserveWhiteSpace = true;
+			
+			// The MSXML implementation does not parse documents with the technically correct "xmlns:xml"-attribute
+			// So if a document contains 'xmlns:xml="http://www.w3.org/XML/1998/namespace"', IE will stop working.
+			// This hack removes the XML namespace declaration which is then implicitly set to the default one.
+			if (sXMLContent.indexOf(" xmlns:xml=") > -1) {
+				sXMLContent = sXMLContent
+					.replace(' xmlns:xml="http://www.w3.org/XML/1998/namespace"', "")
+					.replace(" xmlns:xml='http://www.w3.org/XML/1998/namespace'", "");
+			}
+			
 			oXMLDoc.loadXML(sXMLContent);
 			this.xmlCompatVersion = true;
 		} else if (oXMLDocument) {
