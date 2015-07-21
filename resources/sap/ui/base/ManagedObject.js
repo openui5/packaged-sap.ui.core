@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * 
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.28.11
+	 * @version 1.28.12
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -1370,6 +1370,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	ManagedObject.prototype.removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate) {
 		var aIds = this.mAssociations[sAssociationName];
 		var sId = null;
+
+		if (!aIds) {
+			return null;
+		}
 
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
@@ -2596,7 +2600,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				}
 				//delete control Messages (value is updated from model) and update control with model messages
 				if (oBinding.getMessages()) {
-					that.updateMessages(sName, oBinding.getMessages());
+					that.propagateMessages(sName, oBinding.getMessages());
 				}
 				if (oBinding.getBindingMode() === sap.ui.model.BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
@@ -2619,7 +2623,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				if (oBinding.getMessages()) {
 					aAllMessages = aAllMessages.concat(oBinding.getMessages());
 				}
-				that.updateMessages(sName, aAllMessages);
+				that.propagateMessages(sName, aAllMessages);
 			};
 
 		// Only use context for bindings on the primary model
@@ -3085,7 +3089,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	* @protected
 	* @since 1.28
 	*/
-	ManagedObject.prototype.updateMessages = function(sName, aMessages) {
+	ManagedObject.prototype.propagateMessages = function(sName, aMessages) {
 		jQuery.sap.log.warning("Message for " + this + ", Property " + sName);
 	};
 

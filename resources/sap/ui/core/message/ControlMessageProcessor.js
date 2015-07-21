@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.28.11
+	 * @version 1.28.12
 	 *
 	 * @constructor
 	 * @public
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			if (oBinding) {
 				oBinding._fireMessageChange({messageSource: 'control', messages:aMessages});
 			} else {
-				oControl.updateMessages(aParts[1], aMessages);
+				oControl.propagateMessages(aParts[1], aMessages);
 			}
 		});
 	};

@@ -7,7 +7,7 @@
 /** 
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.11
+ * @version 1.28.12
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.11";
+		var apiVersion = "1.28.12";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.11";
+		var v = "1.28.12";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -1275,7 +1275,7 @@ if (typeof window.sap.ui !== "object") {
 				
 				//in real mobile device
 				var densityFactor = window.devicePixelRatio ? window.devicePixelRatio : 1; // may be undefined in Windows Phone devices
-				if (!bChromeWebView && (device.os.name === device.os.OS.ANDROID) && device.browser.webkit && (device.browser.webkitVersion > 537.10)) {
+				if (!bChromeWebView && (device.os.name === device.os.OS.ANDROID) && device.browser.webkit && (parseFloat(device.browser.webkitVersion) > 537.10)) {
 					// On Android sometimes window.screen.width returns the logical CSS pixels, sometimes the physical device pixels;
 					// Tests on multiple devices suggest this depends on the Webkit version.
 					// The Webkit patch which changed the behavior was done here: https://bugs.webkit.org/show_bug.cgi?id=106460
@@ -3821,7 +3821,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.11
+	 * @version 1.28.12
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -4240,7 +4240,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.11
+	 * @version 1.28.12
 	 * @namespace
 	 * @public
 	 * @static
@@ -5895,6 +5895,9 @@ return URI;
 		window.sap = window.sap || {};
 		sap.ui = sap.ui || {};
 
+		var rDotsAnywhere = /(?:^|\/)\.+/;
+		var r2DotsAnywhere = /(?:^|\/)\.{2,}/;
+		
 		/**
 		 * Defines a Javascript module with its name, its dependencies and a module value or factory.
 		 *
@@ -6148,6 +6151,14 @@ return URI;
 				// resolve relative module names
 				var sPackage = sResourceName.slice(0,1 + sResourceName.lastIndexOf('/'));
 				for (i = 0; i < aDependencies.length; i++) {
+					if ( r2DotsAnywhere.test(aDependencies[i]) ) {
+						log.error(
+							"In UI5 1.28, relative module names using '../' are not supported by sap.ui.define. " +
+							"Code that uses them might fail with release 1.30 or later even if that code seems to work now. " +
+							"In 1.28, the browser might resolve the '../', but that resolution differs significantly from the " + 
+							"AMD compliant resolution implemented in 1.30 and later. " +
+							"It is therefore strongly discouraged in version 1.28 to use '../' in the module dependencies for a sap.ui.define call.");
+					}
 					if ( /^\.\//.test(aDependencies[i]) ) {
 						aDependencies[i] = sPackage + aDependencies[i].slice(2); // 2 == length of './' prefix
 					}
@@ -6256,6 +6267,12 @@ return URI;
 
 				return oModule ? (oModule.content || jQuery.sap.getObject(urnToUI5(sModuleName))) : undefined;
 
+			}
+
+			for (var i = 0; i < vDependencies.length; i++) {
+				if ( rDotsAnywhere.test(vDependencies[i]) ) {
+					log.error("sap.ui.require does not support relative names using './' or '..'/'");
+				}
 			}
 
 			requireAll(vDependencies, function(aModules) {

@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.28.11
+	 * @version 1.28.12
 	 *
 	 * @constructor
 	 * @public
@@ -226,8 +226,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				} else {
 					this.oHeaders["Accept"] = "application/json";
 				}
+				this.oHeaders["Content-Type"] = "application/json";
 			} else {
 				this.oHeaders["Accept"] = "application/atom+xml,application/atomsvc+xml,application/xml";
+				this.oHeaders["Content-Type"] = "application/atom+xml";
 			}
 
 			// Get CSRF token, if already available
@@ -1243,10 +1245,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
 		});
 		//handle calls after update
-		for (var i = 0; i < this.aCallAfterUpdate.length; i++) {
-			this.aCallAfterUpdate[i]();
-		}
+		var aCallAfterUpdate = this.aCallAfterUpdate;
 		this.aCallAfterUpdate = [];
+		for (var i = 0; i < aCallAfterUpdate.length; i++) {
+			aCallAfterUpdate[i]();
+		}
 	};
 
 	/**
