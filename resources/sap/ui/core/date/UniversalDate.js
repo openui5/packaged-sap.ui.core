@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * @see sap.ui.core.Configuration#getCalendarType
 		 *
 		 * @author SAP SE
-		 * @version 1.30.1
+		 * @version 1.30.2
 		 *
 		 * @constructor
 		 * @private

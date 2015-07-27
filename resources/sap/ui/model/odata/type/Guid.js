@@ -55,7 +55,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.30.1
+	 * @version 1.30.2
 	 *
 	 * @alias sap.ui.model.odata.type.Guid
 	 * @param {object} [oFormatOptions]

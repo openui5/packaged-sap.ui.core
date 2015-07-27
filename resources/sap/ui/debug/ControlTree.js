@@ -5,12 +5,11 @@
  */
 
 // Provides a tree of controls for the testsuite
-sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/Element'],
-	function(jQuery, EventProvider, Element) {
+sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/UIArea', './Highlighter'],
+	function(jQuery, EventProvider, Element, UIArea, Highlighter) {
 	"use strict";
 
 
-	
 	/**
 	 * Constructs the class <code>sap.ui.debug.ControlTree</code> and registers
 	 * to the <code>sap.ui.core.Core</code> for UI change events.
@@ -27,7 +26,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @class Control Tree used for the Debug Environment
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.30.1
+	 * @version 1.30.2
 	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
@@ -39,8 +38,8 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			this.oCore = oCore;
 			this.oSelectedNode = null;
 			this.oParentDomRef = oParentDomRef;
-			this.oSelectionHighlighter = new sap.ui.debug.Highlighter("sap-ui-testsuite-SelectionHighlighter");
-			this.oHoverHighlighter = new sap.ui.debug.Highlighter("sap-ui-testsuite-HoverHighlighter", true, '#c8f', 1);
+			this.oSelectionHighlighter = new Highlighter("sap-ui-testsuite-SelectionHighlighter");
+			this.oHoverHighlighter = new Highlighter("sap-ui-testsuite-HoverHighlighter", true, '#c8f', 1);
 			var that = this;
 			jQuery(oParentDomRef).bind("click",function(evt) {
 				that.onclick(evt);
@@ -360,7 +359,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			oSomething = oSomething.getParent();
 		}
 	
-		if ( oSomething instanceof sap.ui.core.UIArea ) {
+		if ( oSomething instanceof UIArea ) {
 			return oSomething.getRootNode();
 		}
 	};

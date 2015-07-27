@@ -5,8 +5,8 @@
  */
 
 // Provides a (modifiable) list of properties for a given control
-sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'jquery.sap.strings'],
-	function(jQuery, DataType, EventProvider, Element/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'jquery.sap.strings', 'jquery.sap.encoder'],
+	function(jQuery, DataType, EventProvider, Element, ElementMetadata/* , jQuerySap */) {
 	"use strict";
 
 
@@ -18,7 +18,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus
-	 * @version 1.30.1
+	 * @version 1.30.2
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis
@@ -101,7 +101,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 		}
 		aHTML.push("<div style='border-bottom:1px solid gray'>&nbsp;</div><table cellspacing='1' style='font-size:8pt;width:100%;table-layout:fixed'>");
 	
-		while ( oMetadata instanceof sap.ui.core.ElementMetadata ) {
+		while ( oMetadata instanceof ElementMetadata ) {
 			var mProperties = oMetadata.getProperties();
 			var bHeaderCreated = false;
 			if ( !jQuery.isEmptyObject(mProperties) ) {
