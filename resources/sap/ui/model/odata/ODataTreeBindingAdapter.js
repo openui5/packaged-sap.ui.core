@@ -757,7 +757,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		});
 		
 		if (!bSuppressChange) {
-			this._fireChange({changeReason: ChangeReason.Collapse});
+			this._fireChange({reason: ChangeReason.Collapse});
 		}
 	};
 	
@@ -781,7 +781,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			}
 		});
 		
-		this._fireChange({changeReason: ChangeReason.Collapse});
+		this._fireChange({reason: ChangeReason.Collapse});
 	};
 	
 	/**

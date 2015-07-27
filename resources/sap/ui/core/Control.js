@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.30.3
+	 * @version 1.30.4
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -653,7 +653,16 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				} else {
 					if (this._busyTabIndices) {
 						jQuery.each(this._busyTabIndices, function(iIndex, oObject) {
-							oObject.ref.attr('tabindex', oObject.tabindex);
+							if (oObject.tabindex) {
+								// if there was no tabindex before it was added by the BusyIndicator
+								// the previous value is "undefined". And this value can't be set
+								// so the attribute remains at the DOM-ref. So if there was no tabindex
+								// attribute before the whole attribute should be removed again.
+								oObject.ref.attr('tabindex', oObject.tabindex);
+							} else {
+								oObject.ref.removeAttr('tabindex');
+							}
+
 							oObject.ref.unbind(sPreventedEvents, fnPreserveEvents);
 						});
 					}

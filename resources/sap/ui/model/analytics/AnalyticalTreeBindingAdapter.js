@@ -494,7 +494,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		}
 		
 		// add up the total number of sum rows (expanded nodes with at least one child)
-		if (oNode.sumNode || oNode === this._oRootNode) {
+		// the number of totals for the root node is always 1 except in case the grand totals were not requested
+		if (oNode.sumNode || (oNode === this._oRootNode && this.bProvideGrandTotals)) {
 			oNode.numberOfTotals += 1;
 		}
 		
@@ -619,7 +620,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		// this prevents the table from rerendering because, the autoExpand logic
 		// uses the same collapse/expand functions as the user interactions
 		if (!bAutoExpandRequestTriggered) {
-			this._fireChange(ChangeReason.Collapse);
+			this._fireChange({reason: ChangeReason.Collapse});
 		}
 	};
 

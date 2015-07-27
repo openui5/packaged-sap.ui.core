@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.30.3
+	 * @version 1.30.4
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -403,6 +403,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			that.registerObject(this);
 		};
 		Component.prototype.deregister = function() {
+			var sComponentId = this.sId;
+			for (var sElementId in that.mElements) {
+				var oElement = that.mElements[sElementId];
+				if ( oElement._sapui_candidateForDestroy && oElement._sOwnerId === sComponentId && !oElement.getParent() ) {
+					jQuery.sap.log.debug("destroying dangling template " + oElement + " when destroying the owner component");
+					oElement.destroy();
+				}
+			}
 			that.deregisterObject(this);
 		};
 
@@ -2048,6 +2056,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.registerElement = function(oElement) {
 		var oldElement = this.byId(oElement.getId());
 		if ( oldElement && oldElement !== oElement ) {
+			if ( oldElement._sapui_candidateForDestroy ) {
+				jQuery.sap.log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
+				oldElement.destroy();
+				oldElement = null;
+			}
+		}
+		if ( oldElement && oldElement !== oElement ) {
+
 			// duplicate ID detected => fail or at least log a warning
 			if (this.oConfiguration.getNoDuplicateIds()) {
 				jQuery.sap.log.error("adding element with duplicate id '" + oElement.getId() + "'");
