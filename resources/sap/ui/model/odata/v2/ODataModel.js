@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.30.2
+	 * @version 1.30.3
 	 *
 	 * @constructor
 	 * @public
@@ -246,8 +246,10 @@ sap.ui.define([
 				} else {
 					this.oHeaders["Accept"] = "application/json";
 				}
+				this.oHeaders["Content-Type"] = "application/json";
 			} else {
 				this.oHeaders["Accept"] = "application/atom+xml,application/atomsvc+xml,application/xml";
+				this.oHeaders["Content-Type"] = "application/atom+xml;";
 			}
 
 			// Get CSRF token, if already available

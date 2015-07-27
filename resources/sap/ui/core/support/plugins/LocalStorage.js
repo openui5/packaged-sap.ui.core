@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.30.2
+		 * @version 1.30.3
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.LocalStorage
