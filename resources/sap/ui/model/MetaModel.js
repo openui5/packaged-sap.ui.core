@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['jquery.sap.global', './Model'],
-	function(jQuery, Model) {
+sap.ui.define(['./Model'],
+	function(Model) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './Model'],
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 *
 	 * @constructor
 	 * @public
@@ -84,4 +84,4 @@ sap.ui.define(['jquery.sap.global', './Model'],
 
 	return MetaModel;
 
-}, /* bExport= */ true);
+});

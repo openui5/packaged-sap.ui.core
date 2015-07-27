@@ -5,8 +5,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', './FormatException', './ParseException', './SimpleType', './ValidateException'],
-	function(jQuery, FormatException, ParseException, SimpleType, ValidateException) {
+sap.ui.define(['./FormatException', './ParseException', './SimpleType', './ValidateException'],
+	function(FormatException, ParseException, SimpleType, ValidateException) {
 	"use strict";
 	
 	/**
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './FormatException', './ParseException', './
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 *
 	 * @constructor
 	 * @param {object} [oFormatOptions] options as provided by concrete subclasses
@@ -103,4 +103,4 @@ sap.ui.define(['jquery.sap.global', './FormatException', './ParseException', './
 	
 	return CompositeType;
 
-}, /* bExport= */ true);
+});

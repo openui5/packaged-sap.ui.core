@@ -5,8 +5,8 @@
  */
 
 // Provides control sap.ui.core.tmpl.DOMAttribute.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library'],
+	function(Element, library) {
 	"use strict";
 
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library'
 	 * @class
 	 * Represents a DOM attribute of a DOM element.
 	 * @extends sap.ui.core.Element
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 *
 	 * @constructor
 	 * @public
@@ -60,4 +60,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library'
 
 	return DOMAttribute;
 
-}, /* bExport= */ true);
+});

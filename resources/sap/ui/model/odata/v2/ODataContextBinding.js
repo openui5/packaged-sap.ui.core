@@ -186,4 +186,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 	return ODataContextBinding;
 
-}, /* bExport= */ true);
+});

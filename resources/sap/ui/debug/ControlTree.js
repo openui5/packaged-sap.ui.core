@@ -5,8 +5,8 @@
  */
 
 // Provides a tree of controls for the testsuite
-sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/Element'],
+	function(jQuery, EventProvider, Element) {
 	"use strict";
 
 
@@ -27,7 +27,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @class Control Tree used for the Debug Environment
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
@@ -177,11 +177,11 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 				if (oAggregation && oAggregation.length) {
 					for (var i = 0;i < oAggregation.length;i++) {
 						var o = oAggregation[i];
-						if (o  instanceof sap.ui.core.Element) {
+						if (o  instanceof Element) {
 							this.renderNode(oDomRef,oAggregation[i],iLevel + 1);
 						}
 					}
-				} else if (oAggregation instanceof sap.ui.core.Element) {
+				} else if (oAggregation instanceof Element) {
 					this.renderNode(oDomRef,oAggregation,iLevel + 1);
 				}
 			}
@@ -265,7 +265,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 				oElement = this.oCore.getElementById(sId),
 				sNodeId = oParent.getAttribute("sap-type") === "Link" ? "sap-debug-controltree-" + sId : oParent.id;
 			this.oSelectionHighlighter.hide();
-			if (oElement && oElement instanceof sap.ui.core.Element) {
+			if (oElement && oElement instanceof Element) {
 				this.oSelectionHighlighter.highlight(oElement.getDomRef());
 				this.oHoverHighlighter.hide();
 			}
@@ -352,7 +352,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			sId = oTreeNodeDomRef.getAttribute("sap-id"),
 			oSomething = sType === "UIArea" ? this.oCore.getUIArea(sId) : this.oCore.getElementById(sId);
 	
-		while (oSomething && oSomething instanceof sap.ui.core.Element) {
+		while (oSomething && oSomething instanceof Element) {
 			var oDomRef = oSomething.getDomRef();
 			if ( oDomRef ) {
 				return oDomRef;
@@ -398,4 +398,4 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 
 	return ControlTree;
 
-}, /* bExport= */ true);
+});

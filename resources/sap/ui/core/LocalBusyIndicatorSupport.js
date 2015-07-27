@@ -5,8 +5,8 @@
  */
 
 // Provides helper sap.ui.core.LocalBusyIndicatorSupport
-sap.ui.define(['jquery.sap.global', './Element'],
-	function(jQuery, Element) {
+sap.ui.define(['jquery.sap.global', './Control'],
+	function(jQuery, Control) {
 	"use strict";
 
 
@@ -22,8 +22,8 @@ sap.ui.define(['jquery.sap.global', './Element'],
 	var LocalBusyIndicatorSupport = function() {
 		// "this" is the prototype now when called with apply()
 	
-		// Ensure only Element prototype is enhanced
-		if (this === sap.ui.core.Control.prototype) {
+		// Ensure only Control prototype is enhanced
+		if (this === Control.prototype) {
 	
 			/**
 			 * This function set the delay until the BusyIndicator is being shown
@@ -39,9 +39,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 			jQuery.sap.log.error("Only controls can use the LocalBusyIndicator", this);
 		}
 	};
-	
-	//moved here to fix the cyclic dependency LocalBusyIndicatorSupport, Element, control
-	
+
 
 	return LocalBusyIndicatorSupport;
 

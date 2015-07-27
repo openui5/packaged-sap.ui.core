@@ -5,8 +5,8 @@
  */
 
 // Provides the basic UI5 support functionality
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jquery.sap.dom', 'jquery.sap.encoder', 'jquery.sap.script'],
-	function(jQuery, EventProvider, Plugin/* , jQuerySap, jQuerySap2, jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.sap.encoder', 'jquery.sap.script'],
+	function(jQuery, EventProvider, Plugin, Device/* , jQuerySap, jQuerySap2, jQuerySap1 */) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 * @class This class provides the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 	 *
 	 * @extends sap.ui.base.EventProvider
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @constructor
 	 * @private
 	 * @alias sap.ui.core.support.Support
@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 					this._isOpen = false;
 					this.attachEvent(mEvents.TEAR_DOWN, function(oEvent){
 						that._isOpen = false;
-						if (!!sap.ui.Device.browser.internet_explorer) {
+						if (!!Device.browser.internet_explorer) {
 							jQuery.sap.byId(ID_SUPPORT_AREA + "-frame").remove();
 						} else {
 							close(that._oRemoteWindow);
@@ -214,11 +214,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 
 		mParams = mParams ? mParams : {};
 
-		if (!!sap.ui.Device.browser.internet_explorer && this._sType === mTypes.TOOL) {
+		if (!!Device.browser.internet_explorer && this._sType === mTypes.TOOL) {
 			this._oRemoteWindow.sap.ui.core.support.Support.getStub(mTypes.IFRAME).sendEvent(sEventId, mParams);
 		} else {
 			var mParamsLocal = mParams;
-			if (!!sap.ui.Device.browser.internet_explorer) {
+			if (!!Device.browser.internet_explorer) {
 				//Attention mParams comes from an other window
 				//-> (mParams instanceof Object == false)!
 				mParamsLocal = {};
@@ -269,7 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 
 		if (this._sType === mTypes.APPLICATION) {
 			if (!this._isOpen) {
-				if (!!sap.ui.Device.browser.internet_explorer) {
+				if (!!Device.browser.internet_explorer) {
 					var sIFrameUrl = jQuery.sap.getModulePath("sap.ui.core.support", "/msiebridge.html");
 					getSupportArea().html("").append("<iframe id=\"" + ID_SUPPORT_AREA + "-frame\" src=\"" + sIFrameUrl + sParams + "\" onload=\"sap.ui.core.support.Support._onSupportIFrameLoaded();\"></iframe>");
 					this._sRemoteOrigin = checkLocalUrl(sIFrameUrl) ? this._sLocalOrigin : sIFrameUrl;
@@ -429,4 +429,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 
 	return Support;
 
-}, /* bExport= */ true);
+});

@@ -5,8 +5,12 @@
  */
 
 // Provides the render manager sap.ui.core.RenderManager
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/core/LabelEnablement', 'jquery.sap.act', 'jquery.sap.encoder'],
-	function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
+sap.ui.define([
+		'jquery.sap.global',
+		'../base/Interface', '../base/Object', 'sap/ui/core/LabelEnablement',
+		'jquery.sap.act', 'jquery.sap.encoder'
+	], function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
+
 	"use strict";
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
@@ -34,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -1265,7 +1269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			mDefaultAttributes = {
 				"data-sap-ui-icon-content": oIconInfo.content,
 				"role": "presentation",
-				"aria-label": oIconInfo.name
+				"aria-label": oIconInfo.text || oIconInfo.name
 			};
 
 			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
@@ -1313,4 +1317,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 	return RenderManager;
 
-}, /* bExport= */ true);
+});

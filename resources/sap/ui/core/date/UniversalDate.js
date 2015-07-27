@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * @see sap.ui.core.Configuration#getCalendarType
 		 *
 		 * @author SAP SE
-		 * @version 1.30.0
+		 * @version 1.30.1
 		 *
 		 * @constructor
 		 * @private
@@ -134,4 +134,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		generateStaticMethods();
 
 		return UniversalDate;
-	}, /* bExport= */true);
+	});

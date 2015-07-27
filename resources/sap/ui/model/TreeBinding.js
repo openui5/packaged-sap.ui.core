@@ -5,8 +5,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './Binding'],
-	function(jQuery, Binding) {
+sap.ui.define(['./Binding'],
+	function(Binding) {
 	"use strict";
 
 
@@ -156,4 +156,4 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 
 	return TreeBinding;
 
-}, /* bExport= */ true);
+});

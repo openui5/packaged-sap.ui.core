@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
 	 * @author Malte Wedel, Daniel Brinkmann
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @alias sap.ui.base.Event
 	 * @public
 	 */
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 */
 	Event.prototype.init = function(sId, oSource, mParameters) {
 		jQuery.sap.assert(typeof sId === "string", "Event.init: sId must be a string");
-		jQuery.sap.assert(oSource instanceof sap.ui.base.EventProvider, "Event.init: oSource must be an EventProvider");
+		jQuery.sap.assert(sap.ui.require('sap/ui/base/EventProvider') && oSource instanceof sap.ui.require('sap/ui/base/EventProvider'), "Event.init: oSource must be an EventProvider");
 	
 		this.sId = sId;
 		this.oSource = oSource;
@@ -146,4 +146,4 @@ sap.ui.define(['jquery.sap.global', './Object'],
 
 	return Event;
 
-}, /* bExport= */ true);
+});

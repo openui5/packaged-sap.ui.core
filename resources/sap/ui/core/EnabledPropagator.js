@@ -5,8 +5,8 @@
  */
 
 // Provides helper sap.ui.core.EnabledPropagator
-sap.ui.define(['jquery.sap.global', './Control'],
-	function(jQuery, Control) {
+sap.ui.define(['./Control'],
+	function(Control) {
 	"use strict";
 
 
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Control'],
 	 * </code>
 	 *
 	 * @author Daniel Brinkmann
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @param {boolean} [bDefault=true] the value that should be used as default value for the enhancement of the control.
 	 * @param {boolean} [bLegacy=false] whether the introduced property should use the old name 'Enabled' 
 	 * @public

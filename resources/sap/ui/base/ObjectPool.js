@@ -5,8 +5,8 @@
  */
 
 // Provides class sap.ui.base.ObjectPool
-sap.ui.define(['jquery.sap.global', './Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['./Object'],
+	function(BaseObject) {
 	"use strict";
 
 
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Malte Wedel
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @constructor
 	 * @alias sap.ui.base.ObjectPool
 	 * @public
@@ -136,4 +136,4 @@ sap.ui.define(['jquery.sap.global', './Object'],
 
 	return ObjectPool;
 
-}, /* bExport= */ true);
+});

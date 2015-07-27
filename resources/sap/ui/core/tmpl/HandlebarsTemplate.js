@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/thirdparty/handlebars'],
-	function(jQuery, Core, Template, Handlebars) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/thirdparty/handlebars', 'sap/ui/base/ManagedObject'],
+	function(jQuery, Core, Template, Handlebars, ManagedObject) {
 	"use strict";
 
 
@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @alias sap.ui.core.tmpl.HandlebarsTemplate
 	 * @experimental Since 1.15.0. The Template concept is still under construction, so some implementation details can be changed in future.
 	 */
@@ -355,7 +355,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 								// the aggregation is bound => so we create a binding info object 
 								// which is used in the createControl function of the TemplateControl
 								// to create a proper binding
-								var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(mSettings[sAggregationName], oView && oView.getController());
+								var oBindingInfo = ManagedObject.bindingParser(mSettings[sAggregationName], oView && oView.getController());
 								oBindingInfo.template = oChildControl;
 								oNewControl.bindAggregation(sAggregationName, oBindingInfo);
 							} else {
@@ -588,4 +588,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 
 	return HandlebarsTemplate;
 
-}, /* bExport= */ true);
+});

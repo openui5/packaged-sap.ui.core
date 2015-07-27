@@ -7,7 +7,7 @@
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.30.0
+ * @version 1.30.1
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.30.0";
+		var apiVersion = "1.30.1";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.30.0";
+		var v = "1.30.1";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -302,9 +302,9 @@ if (typeof window.sap.ui !== "object") {
 				var uaResult = userAgent.match(rVersion);
 				var sVersionStr = "";
 				if (uaResult[1] == "6") {
-					if (uaResult[1] == 1) {
+					if (uaResult[2] == 1) {
 						sVersionStr = "7";
-					} else if (uaResult[1] > 1) {
+					} else if (uaResult[2] > 1) {
 						sVersionStr = "8";
 					}
 				} else {

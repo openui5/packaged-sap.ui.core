@@ -5,8 +5,8 @@
  */
 
 // Provides base class sap.ui.core.Component for all components
-sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './mvc/View'],
-	function(jQuery, Component, UIComponentMetadata, View) {
+sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './UIComponentMetadata', './mvc/View'],
+	function(jQuery, ManagedObject, Component, UIComponentMetadata, View) {
 	"use strict";
 
 
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * @extends sap.ui.core.Component
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @alias sap.ui.core.UIComponent
 	 * @since 1.9.2
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 
 		// create the content
 		this.runAsOwner(function() {
-			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
+			ManagedObject.runWithPreprocessors(function() {
 				that.setAggregation("rootControl", that.createContent());
 			}, oPreprocessors);
 		});
@@ -487,4 +487,4 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 
 	return UIComponent;
 
-}, /* bExport= */ true);
+});

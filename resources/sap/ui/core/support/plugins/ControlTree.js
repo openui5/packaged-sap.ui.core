@@ -5,8 +5,10 @@
  */
 
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip'],
-	function(jQuery, Plugin, ViewSerializer, JSZip) {
+sap.ui.define([
+	'jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip',
+	'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/ui/core/UIArea', 'sap/ui/core/mvc/View', 'sap/ui/core/mvc/Controller'
+], function(jQuery, Plugin, ViewSerializer, JSZip, Element, ElementMetadata, UIArea, View /*, Controller */) {
 	"use strict";
 
 
@@ -20,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 		 * @class This class represents the ControlTree plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 * @abstract
 		 * @extends sap.ui.base.Object
-		 * @version 1.30.0
+		 * @version 1.30.1
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.ControlTree
@@ -1119,7 +1121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 					var index;
 					index = oParentControl.indexOfContent(oControl);
 
-					if (oControl instanceof sap.ui.core.mvc.View) {
+					if (oControl instanceof View) {
 						oViewSerializer = new ViewSerializer(oControl, window, "sap.m");
 					} else {
 						var oView = sap.ui.jsview(sType + "ViewExported");
@@ -1243,7 +1245,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 			function serializeElement(oElement) {
 				var mElement = {id: oElement.getId(), type: "", aggregation: [], association: []};
 				mAllElements[mElement.id] = mElement.id;
-				if (oElement instanceof sap.ui.core.UIArea) {
+				if (oElement instanceof UIArea) {
 					mElement.library = "sap.ui.core";
 					mElement.type = "sap.ui.core.UIArea";
 					$.each(oElement.getContent(), function(iIndex, oElement) {
@@ -1261,7 +1263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 								var aElements = $.isArray(oAggrElement) ? oAggrElement : [oAggrElement];
 								$.each(aElements, function(iIndex, oValue) {
 									// tooltips are also part of aggregations
-									if (oValue instanceof sap.ui.core.Element) {
+									if (oValue instanceof Element) {
 										var mChild = serializeElement(oValue);
 										mElement.aggregation.push(mChild);
 									}
@@ -1366,7 +1368,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 				var oMetadata = oControl.getMetadata();
 
 				/*eslint-disable no-loop-func */
-				while (oMetadata instanceof sap.ui.core.ElementMetadata) {
+				while (oMetadata instanceof ElementMetadata) {
 
 					var mControlProp = {
 						control: oMetadata.getName(),
@@ -1662,4 +1664,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 
 	return ControlTree;
 
-}, /* bExport= */ true);
+});

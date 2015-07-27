@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @class HTML serializer delegate class.
 	 * @extends sap.ui.core.util.serializer.delegate.Delegate
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @alias sap.ui.core.util.serializer.delegate.HTML
 	 * @experimental Since 1.15.1. The HTML serializer delegate is still under construction, so some implementation details can be changed in future.
 	 */
@@ -266,4 +266,4 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 
 	return HTML;
 
-}, /* bExport= */ true);
+});

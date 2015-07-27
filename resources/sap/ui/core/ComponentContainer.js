@@ -5,12 +5,11 @@
  */
 
 // Provides control sap.ui.core.ComponentContainer.
-sap.ui.define(['jquery.sap.global', './Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['./Control', './Component', './Core', './library'],
+	function(Control, Component, Core, library) {
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new ComponentContainer.
 	 *
@@ -20,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 * @class
 	 * Component Container
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 *
 	 * @constructor
 	 * @public
@@ -181,4 +180,4 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 
 	return ComponentContainer;
 
-}, /* bExport= */ true);
+});

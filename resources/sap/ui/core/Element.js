@@ -5,8 +5,8 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './ElementMetadata', 'sap/ui/model/SimpleType', 'jquery.sap.strings'],
-	function(jQuery, ManagedObject, Core, ElementMetadata, SimpleType/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings'],
+	function(jQuery, BaseObject, ManagedObject, ElementMetadata/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -255,7 +255,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 */
 	Element.defineClass = function(sClassName, oStaticInfo, fnMetaImpl) {
 		// create and attach metadata but with an Element specific implementation
-		return sap.ui.base.Object.defineClass(sClassName, oStaticInfo, fnMetaImpl || ElementMetadata);
+		return BaseObject.defineClass(sClassName, oStaticInfo, fnMetaImpl || ElementMetadata);
 	};
 
 	/**
@@ -569,8 +569,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 		// TODO 'id' is somewhat redundant to getSource(), but it is commonly used - fade out with next major release?
 		aArgs[1] = mParameters = mParameters || {};
 		mParameters.id = mParameters.id || this.getId();
-		// 'aArgs' is necessary, as the EventProvider.fireEvent signature has more parameters
-		return sap.ui.base.EventProvider.prototype.fireEvent.apply(this, aArgs);
+		// 'aArgs' is necessary, as the ManagedObject.fireEvent signature has more parameters
+		return ManagedObject.prototype.fireEvent.apply(this, aArgs);
 	};
 
 
@@ -751,7 +751,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 *
 	 * If a new tooltip is set, any previously set tooltip is deactivated.
 	 *
-	 * @param {string|sap.ui.core.TooltipBase} oTooltip.
+	 * @param {string|sap.ui.core.TooltipBase} oTooltip
 	 * @public
 	 */
 	Element.prototype.setTooltip = function(oTooltip) {
@@ -1077,4 +1077,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 
 	return Element;
 
-}, /* bExport= */ true);
+});

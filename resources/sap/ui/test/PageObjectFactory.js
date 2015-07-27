@@ -99,4 +99,4 @@ sap.ui.define(['./Opa',
 		
 		
 		return fnPageObjectFactory;
-}, /* bExport= */ true);
+});

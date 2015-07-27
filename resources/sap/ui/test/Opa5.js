@@ -395,8 +395,8 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt;
 		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-2&gt;
 		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.assertions]
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions 1&gt;
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions 2&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-1&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-2&gt;
 		 * @returns {map} mPageObject
 		 * @returns {map} mPageObject.&lt;your-page-object-name&gt;
 		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.actions an instance of baseClass or Opa5 with all the actions defined above
@@ -626,8 +626,8 @@ sap.ui.define(['jquery.sap.global',
 		function modifyHashChanger (oNewHashChanger) {
 			oHashChanger = oNewHashChanger;
 
-			var oFrameHasher = oFrameWindow.hasher,
-				fnOriginalSetHash = oHashChanger.setHash;
+			var fnOriginalSetHash = oHashChanger.setHash,
+				fnOriginalGetHash = oHashChanger.getHash;
 
 			// replace hash is only allowed if it is triggered within the inner window. Even if you trigger an event from the outer test, it will not work.
 			// Therefore we have mock the behavior of replace hash. If an application uses the dom api to change the hash window.location.hash, this workaround will fail.
@@ -651,7 +651,7 @@ sap.ui.define(['jquery.sap.global',
 
 				//initial hash
 				if (this._sCurrentHash === undefined) {
-					return oFrameHasher.getHash();
+					return fnOriginalGetHash.apply(this, arguments);
 				}
 
 				return this._sCurrentHash;
@@ -676,4 +676,4 @@ sap.ui.define(['jquery.sap.global',
 		});
 
 		return Opa5;
-}, /* bExport= */ true);
+});

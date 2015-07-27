@@ -5,8 +5,8 @@
  */
 
 // Provides default renderer for JSONView
-sap.ui.define(['jquery.sap.global', './ViewRenderer'],
-	function(jQuery, ViewRenderer) {
+sap.ui.define(['./ViewRenderer', 'sap/ui/core/Control'],
+	function(ViewRenderer, Control) {
 	"use strict";
 
 
@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 
 		var content = oControl.getContent();
 		if (content) {
-			if (content instanceof Array && !(content instanceof sap.ui.core.Control)) {
+			if (content instanceof Array && !(content instanceof Control)) {
 				for (var i = 0; i < content.length; i++) {
 					rm.renderControl(content[i]);
 				}

@@ -5,8 +5,8 @@
  */
 
 // Provides base class sap.ui.core.tmpl.Template for all templates
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control'],
+	function(jQuery, ManagedObject, Control) {
 	"use strict";
 
 
@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @alias sap.ui.core.tmpl.Template
 	 * @experimental Since 1.15.0. The Template concept is still under construction, so some implementation details can be changed in future.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			 */
 			Template.prototype.extractBindingInfo = function(oValue, bIgnoreObjects, oScope) {
 				ManagedObject.bindingParser = sap.ui.base.BindingParser.simpleParser;
-				var oReturnValue = sap.ui.core.Control.prototype.extractBindingInfo.apply(this, arguments);
+				var oReturnValue = Control.prototype.extractBindingInfo.apply(this, arguments);
 				ManagedObject.bindingParser = sap.ui.base.BindingParser.complexParser;
 				return oReturnValue;
 			};
@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		// inline we lookup the context from DOM element and mark the template
 		// as an inline template to avoid additional elements around the template.
 		var sId;
-		if (!(oRef instanceof sap.ui.core.Control) && bInline) {
+		if (!(oRef instanceof Control) && bInline) {
 			
 			// lookup the DOM element in which to place the template
 			var $this = typeof oRef === "string" ? jQuery.sap.byId(oRef) : jQuery(oRef);
@@ -601,4 +601,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	return Template;
 
-}, /* bExport= */ true);
+});

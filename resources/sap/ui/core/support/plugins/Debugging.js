@@ -5,8 +5,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Debugging
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/support/Plugin'],
-	function(jQuery, RenderManager, Plugin) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
+	function(jQuery, Plugin) {
 		"use strict";
 
 
@@ -549,4 +549,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 
 	return Debugging;
 
-}, /* bExport= */ true);
+});

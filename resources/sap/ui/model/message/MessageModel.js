@@ -13,8 +13,8 @@
  */
 
 // Provides the Message based model implementation
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './MessageListBinding', './MessagePropertyBinding'],
-	function(jQuery, ClientModel, MessageListBinding, MessagePropertyBinding) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/model/Context', './MessageListBinding', './MessagePropertyBinding'],
+	function(jQuery, BindingMode, ClientModel, Context, MessageListBinding, MessagePropertyBinding) {
 	"use strict";
 
 
@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './MessageListBi
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 *
 	 * @param {sap.ui.core.message.MessageManager} oMessageManager The MessageManager instance
 	 * @constructor
@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './MessageListBi
 		constructor : function(oMessageManager) {
 			ClientModel.apply(this, arguments);
 			
-			this.sDefaultBindingMode = sap.ui.model.BindingMode.OneWay;
+			this.sDefaultBindingMode = BindingMode.OneWay;
 			this.mSupportedBindingModes = {
 				"OneWay" : true,
 				"TwoWay" : false,
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './MessageListBi
 	MessageModel.prototype._getObject = function (sPath, oContext) {
 		var oNode;
 		
-		if (oContext instanceof sap.ui.model.Context) {
+		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		}
 		if (!sPath) {
@@ -143,4 +143,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './MessageListBi
 	
 	return MessageModel;
 
-}, /* bExport= */ true);
+});

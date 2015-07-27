@@ -5,8 +5,8 @@
  */
 
 // Provides control sap.ui.core.VariantLayoutData.
-sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
-	function(jQuery, LayoutData, library) {
+sap.ui.define(['./LayoutData', './library'],
+	function(LayoutData, library) {
 	"use strict";
 
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
 	 * @class
 	 * Allows to add multiple LayoutData to one control in case that a easy switch of layouts (e.g. in a Form) is needed.
 	 * @extends sap.ui.core.LayoutData
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 *
 	 * @constructor
 	 * @public
@@ -44,4 +44,4 @@ sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
 
 	return VariantLayoutData;
 
-}, /* bExport= */ true);
+});

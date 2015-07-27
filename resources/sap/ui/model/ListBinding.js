@@ -250,4 +250,4 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 
 	return ListBinding;
 
-}, /* bExport= */ true);
+});

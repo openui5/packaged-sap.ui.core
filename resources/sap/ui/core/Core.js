@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -272,13 +272,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				oSyncPoint1.finishTask(iDocumentReadyTask);
 			});
 
-			// sync point 2 synchronizes all preload script loads and the end of the bootstrap script
+			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
 			var oSyncPoint2 = jQuery.sap.syncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot();
 				oSyncPoint1.finishTask(iCoreBootTask);
 			});
 
+			// a helper task to prevent the premature completion of oSyncPoint2
+			var iCreateTasksTask = oSyncPoint2.startTask("create sp2 tasks task");
+			
 			// when a boot task is configured, add it to syncpoint2
 			var fnCustomBootTask = this.oConfiguration["xx-bootTask"];
 			if ( fnCustomBootTask ) {
@@ -330,6 +333,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				jQuery.sap.require("sap.ui.core.AppCacheBuster");
 				sap.ui.core.AppCacheBuster.boot(oSyncPoint2);
 			}
+
+			oSyncPoint2.finishTask(iCreateTasksTask);
 
 		},
 
@@ -1522,8 +1527,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			jQuery.sap.includeStyleSheet(cssPathAndName, "sap-ui-theme-" + sLibId);
 
 			// if parameters have been used, update them with the new style sheet
-			if (sap.ui.core.theming && sap.ui.core.theming.Parameters) {
-				sap.ui.core.theming.Parameters._addLibraryTheme(sLibId, cssPathAndName);
+			var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+			if (Parameters) {
+				Parameters._addLibraryTheme(sLibId, cssPathAndName);
 			}
 		}
 
@@ -1810,8 +1816,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// special hook for resetting theming parameters before the controls get
 		// notified (lightweight coupling to static Parameters module)
-		if (sap.ui.core.theming && sap.ui.core.theming.Parameters) {
-			sap.ui.core.theming.Parameters.reset(/* bOnlyWhenNecessary= */ true);
+		var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+		if (Parameters) {
+			Parameters.reset(/* bOnlyWhenNecessary= */ true);
 		}
 
 		// notify all elements/controls via a pseudo browser event
@@ -2981,4 +2988,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 	return new Core().getInterface();
 
-}, /* bExport= */ false);
+});

@@ -5,8 +5,8 @@
  */
 
 // Provides class sap.ui.core.util.ExportColumn
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell'],
-	function(jQuery, ManagedObject, ExportCell) {
+sap.ui.define(['sap/ui/base/ManagedObject', './ExportCell'],
+	function(ManagedObject, ExportCell) {
 	'use strict';
 
 	/**
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell']
 	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @since 1.22.0
 	 *
 	 * @constructor
@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell']
 	 */
 	var ExportColumn = ManagedObject.extend("sap.ui.core.util.ExportColumn", {
 		metadata: {
+			library: "sap.ui.core",
 			properties: {
 				/**
 				 * Column name.
@@ -49,4 +50,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ExportCell']
 
 	return ExportColumn;
 
-}, /* bExport= */ true);
+});

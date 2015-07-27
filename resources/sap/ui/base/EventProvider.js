@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * @abstract
 	 * @extends sap.ui.base.Object
 	 * @author Malte Wedel, Daniel Brinkmann
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.base.EventProvider
@@ -310,4 +310,4 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 
 	return EventProvider;
 
-}, /* bExport= */ true);
+});

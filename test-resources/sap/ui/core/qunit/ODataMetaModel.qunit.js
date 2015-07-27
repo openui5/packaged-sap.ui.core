@@ -379,6 +379,23 @@ sap.ui.require([
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
+		', sEmptySchemaWithAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	>\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en">\
+			<!-- mind the XML namespace! -->\
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/CompanyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
 		',
 		sFARMetadata = jQuery.sap.syncGetText(
 			"model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml", "", null),
@@ -407,6 +424,8 @@ sap.ui.require([
 	</edmx:DataServices>\
 </edmx:Edmx>\
 		',
+		sFARMetadataMyComplexType_Customer = jQuery.sap.syncGetText(
+			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_MyComplexTypeCustomer.xml", "", null),
 		sGWAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
 		sGWMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
 		sMultipleValueListAnnotations = '\
@@ -459,6 +478,7 @@ sap.ui.require([
 			"/fake/emptyEntityType/$metadata" : [200, mHeaders, sEmptyEntityType],
 			"/fake/emptyMetadata/$metadata" : [200, mHeaders, sEmptyDataServices],
 			"/fake/emptySchema/$metadata" : [200, mHeaders, sEmptySchema],
+			"/fake/emptySchemaWithAnnotations/$metadata" : [200, mHeaders, sEmptySchemaWithAnnotations],
 			"/fake/service/$metadata" : [200, mHeaders, sMetadata],
 			"/fake/annotations" : [200, mHeaders, sAnnotations],
 			"/fake/annotations2" : [200, mHeaders, sAnnotations2],
@@ -479,6 +499,8 @@ sap.ui.require([
 				[200, mHeaders, sFARMetadataInvalid], // no annotations at all
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Foo%2FInvalid" :
 				[200, mHeaders, sFARMetadataCompanyCode], // annotations for a different type
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer" :
+				[200, mHeaders, sFARMetadataMyComplexType_Customer],
 			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sGWMetadata],
 			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sGWAnnotations]
 		},
@@ -623,6 +645,74 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	test("compatibility with asynchronous old ODataModel: use after load", function (assert) {
+		var iCount = 0,
+			fnDone = assert.async(),
+			oModel = new ODataModel("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			}),
+			oMetaModel;
+
+		function loaded() {
+			iCount += 1;
+			if (iCount === 2) {
+				// ...then get meta model and use immediately
+				oMetaModel = oModel.getMetaModel();
+
+				try {
+					strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
+						"GWSAMPLE_BASIC", "meta data available");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
+							+ "sap:label"),
+						"Bus. Part. ID", "SAPData is lifted");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
+							+ "com.sap.vocabularies.Common.v1.Label/String"),
+						"Bus. Part. ID", "v2 --> v4");
+					strictEqual(
+						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
+							+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
+						"Business Partner", "v4 annotations available");
+				} catch (ex) {
+					ok(false, ex);
+				}
+
+				fnDone();
+			}
+		}
+
+		// wait for metadata and annotations to be loaded (but not via oMetaModel.loaded())...
+		oModel.attachAnnotationsLoaded(loaded);
+		oModel.attachMetadataLoaded(loaded);
+	});
+
+	//*********************************************************************************************
+	test("compatibility with old ODataModel: separate value list load", function () {
+		var oModel = new ODataModel("/FAR_CUSTOMER_LINE_ITEMS", {
+				json : true,
+				loadMetadataAsync : false
+			}),
+			oMetaModel = oModel.getMetaModel(),
+			oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item"),
+			oProperty = oMetaModel.getODataProperty(oEntityType, "Customer"),
+			oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
+
+		return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+			deepEqual(mValueLists, {
+				"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"],
+				"DEBID" : oProperty["com.sap.vocabularies.Common.v1.ValueList#DEBID"]
+			});
+
+			// check robustness: no error even if interface is missing
+			oMetaModel = new ODataMetaModel(oMetaModel.oMetadata);
+			return oMetaModel.getODataValueLists(oContext);
+		});
+	});
+
+	//*********************************************************************************************
 	test("functions using 'this.oModel' directly", function () {
 		var oModel = new ODataModel2("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
@@ -675,8 +765,6 @@ sap.ui.require([
 	test("basics", function () {
 		var oMetaModel = new ODataMetaModel({
 				getServiceMetadata : function () { return {dataServices : {}}; }
-			}, null, {
-				annotationsLoadedPromise : Promise.resolve()
 			});
 
 		return oMetaModel.loaded().then(function () {
@@ -1013,6 +1101,15 @@ sap.ui.require([
 
 		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel._getObject("some/relative/path"), null);
+		});
+	});
+
+	//*********************************************************************************************
+	test("/dataServices/schema/<i>/annotations dropped", function () {
+		return withGivenService("/fake/emptySchemaWithAnnotations", "", function (oMetaModel) {
+			return oMetaModel.loaded().then(function () {
+				strictEqual(oMetaModel.getObject("/dataServices/schema/0/annotations"), undefined);
+			});
 		});
 	});
 
@@ -2074,7 +2171,6 @@ sap.ui.require([
 					}]
 				},
 				oInterface = oMetaModel.oODataModelInterface,
-				oProperty = oMetaModel.getODataProperty(oEntityType, "Customer"),
 				oPromise;
 
 			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
@@ -2351,7 +2447,34 @@ sap.ui.require([
 		});
 	});
 
-	//TODO is getODataValueLists also supported for properties of complex types?
+	//*********************************************************************************************
+	test("getODataValueLists: ValueList on ComplexType", function () {
+		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Complex/Customer"),
+				oInterface = oMetaModel.oODataModelInterface;
+
+			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				deepEqual(mValueLists, {
+					"" : {
+						"CollectionPath" : {"String":"VL_SH_DEBIA"},
+						"Parameters" :[{
+							"LocalDataProperty" : {"PropertyPath":"Customer"},
+							"ValueListProperty" : {"String":"KUNNR"},
+							"RecordType":"com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+						}]
+					}
+				});
+
+				ok(oInterface.addAnnotationUrl.calledWithExactly(
+					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer"),
+					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+			});
+		});
+	});
+
+	//TODO support getODataValueLists with reference to complex type property via entity type
 	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?
 
 	//TODO our errors do not include sufficient detail for error analysis, e.g. a full path

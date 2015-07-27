@@ -3,13 +3,11 @@
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-sap.ui.define(['jquery.sap.global', './EventBus'],
-	function(jQuery, EventBus) {
+sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
+	function(jQuery, BaseObject, EventBus) {
 	"use strict";
 
 
-	
-	
 		var _EVENT_ID = "sapUiIntervalTrigger-event";
 	
 		/**
@@ -25,15 +23,15 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		 * 
 		 * @extends sap.ui.base.Object
 		 * @author SAP SE
-		 * @version 1.30.0
+		 * @version 1.30.1
 		 * @constructor
 		 * @public
 		 * @since 1.11.0
 		 * @alias sap.ui.core.IntervalTrigger
 		 */
-		var IntervalTrigger = sap.ui.base.Object.extend("sap.ui.core.IntervalTrigger", {
+		var IntervalTrigger = BaseObject.extend("sap.ui.core.IntervalTrigger", {
 			constructor : function(iInterval) {
-				sap.ui.base.Object.apply(this);
+				BaseObject.apply(this);
 	
 				this._oEventBus = new EventBus();
 	
@@ -71,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		 * @public
 		 */
 		IntervalTrigger.prototype.destroy = function() {
-			sap.ui.base.Object.prototype.destroy.apply(this, arguments);
+			BaseObject.prototype.destroy.apply(this, arguments);
 	
 			delete this._triggerProxy;
 	
@@ -135,8 +133,8 @@ sap.ui.define(['jquery.sap.global', './EventBus'],
 		IntervalTrigger.prototype.getInterface = function() {
 			return this;
 		};
-	
+
 
 	return IntervalTrigger;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,8 @@
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent'],
-	function($, EventProvider, UIComponent) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
+	function($, EventProvider, UIComponent, View) {
 		"use strict";
 
 		/**
@@ -221,4 +221,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 
 		return Views;
 
-	}, /* bExport= */ true);
+	});

@@ -256,4 +256,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	return Controller;
 
-}, /* bExport= */ true);
+});

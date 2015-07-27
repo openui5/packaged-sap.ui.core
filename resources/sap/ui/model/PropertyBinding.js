@@ -173,4 +173,4 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType'],
 
 	return PropertyBinding;
 
-}, /* bExport= */ true);
+});

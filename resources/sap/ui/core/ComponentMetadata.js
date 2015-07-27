@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @experimental Since 1.9.2. The Component concept is still under construction, so some implementation details can be changed in future.
 	 * @class
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -242,10 +242,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 */
 	ComponentMetadata.prototype.onInitComponent = function() {
 		var oUI5Manifest = this.getManifestEntry("sap.ui5", true),
-		    mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
+			mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
 		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {
 			jQuery.sap.require("sap.ui.core.CustomizingConfiguration");
-			sap.ui.core.CustomizingConfiguration.activateForComponent(this._sComponentName);
+			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+			CustomizingConfiguration.activateForComponent(this._sComponentName);
 		}
 		this._iInstanceCount++;
 	};
@@ -259,10 +260,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	ComponentMetadata.prototype.onExitComponent = function() {
 		this._iInstanceCount--;
 		var oUI5Manifest = this.getManifestEntry("sap.ui5", true),
-		    mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
+			mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
 		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {
-			if (sap.ui.core.CustomizingConfiguration) {
-				sap.ui.core.CustomizingConfiguration.deactivateForComponent(this._sComponentName);
+			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+			if (CustomizingConfiguration) {
+				CustomizingConfiguration.deactivateForComponent(this._sComponentName);
 			}
 		}
 	};

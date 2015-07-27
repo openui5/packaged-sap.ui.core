@@ -5,8 +5,12 @@
  */
 
 // Provides the implementation for a MessageManager
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/message/MessageModel', './Message', './ControlMessageProcessor'],
-	function(jQuery, EventProvider, MessageModel, Message, ControlMessageProcessor) {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject',
+		'sap/ui/model/message/MessageModel', './Message', './ControlMessageProcessor'],
+	function(jQuery, EventProvider, ManagedObject, MessageModel, Message, ControlMessageProcessor) {
+
 	"use strict";
 
 
@@ -25,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 *
 	 * @constructor
 	 * @public
@@ -76,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 			if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
 				this.removeMessages(this.mMessages[sProcessorId][sTarget]);
 			}
-			var oMessage = new sap.ui.core.message.Message({
+			var oMessage = new Message({
 					type: sap.ui.core.MessageType.Error,
 					message: oEvent.getParameter("message"), 
 					target: sTarget,
@@ -224,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 			for (var i = 0; i < vOriginalMessages.length; i++) {
 				that._removeMessage(vOriginalMessages[i]);
 			}
-		} else if (vMessages instanceof sap.ui.core.message.Message){
+		} else if (vMessages instanceof Message){
 			that._removeMessage(vMessages);
 		} else {
 			//map with target as key
@@ -304,7 +308,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @public
 	 */
 	MessageManager.prototype.registerObject = function(oObject, bHandleValidation) {
-		if (!oObject instanceof sap.ui.base.ManagedObject) {
+		if (!oObject instanceof ManagedObject) {
 			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
 		}
@@ -321,7 +325,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @public
 	 */
 	MessageManager.prototype.unregisterObject = function(oObject) {
-		if (!oObject instanceof sap.ui.base.ManagedObject) {
+		if (!oObject instanceof ManagedObject) {
 			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
 		}
@@ -376,4 +380,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	
 	return MessageManager;
 
-}, /* bExport= */ true);
+});

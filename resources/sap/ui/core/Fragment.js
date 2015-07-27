@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeSupport', './XMLTemplateProcessor'],
-	function(jQuery, ManagedObject, DeclarativeSupport1, XMLTemplateProcessor) {
+sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './DeclarativeSupport', './XMLTemplateProcessor'],
+	function(jQuery, ManagedObject, DeclarativeSupport, XMLTemplateProcessor) {
 	"use strict";
 
 
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	 * @class
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @public
 	 * @alias sap.ui.core.Fragment
 	 */
@@ -577,7 +577,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	
 				if (oMetaElement) {
 					var that = this;
-					var DeclarativeSupport = DeclarativeSupport1;
 					jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
 						var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
 						var sValue = oAttr.value;
@@ -604,7 +603,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 				// unset any preprocessors (e.g. from an enclosing HTML view)
 				var that = this;
 				ManagedObject.runWithPreprocessors(function() {
-					DeclarativeSupport1.compile(that._oTemplate, that);
+					DeclarativeSupport.compile(that._oTemplate, that);
 	
 					// FIXME declarative support automatically inject the content into that through "that.addContent()"
 					var content = that.getContent();
@@ -620,4 +619,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 
 	return Fragment;
 
-}, /* bExport= */ true);
+});

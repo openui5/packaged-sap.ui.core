@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
-	function(jQuery, coreLibrary, URI, MessageParser, Message) {
+sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
+	function(jQuery, Device, coreLibrary, URI, MessageParser, Message) {
 	"use strict";
 
 /**
@@ -67,7 +67,7 @@ var mSeverityMap = {
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
- * @version 1.30.0
+ * @version 1.30.1
  * @public
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
@@ -196,6 +196,17 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 		var sTarget = aMessages[i].getTarget();
 
 		if (sTarget) {
+			// Add all "parents" of the current target to the list of affected targets
+			var sTrimmedTarget = sTarget.replace(/^\/+|\/$/g, "");
+			mAffectedTargets[sTrimmedTarget] = true;
+			var iPos = sTrimmedTarget.lastIndexOf("/");
+			while (iPos > -1) {
+				sTrimmedTarget = sTrimmedTarget.substr(0, iPos);
+				mAffectedTargets[sTrimmedTarget] = true;
+				iPos = sTrimmedTarget.lastIndexOf("/");
+			}
+			
+			// Add the Entityset itself
 			mEntitySet = this._metadata._getEntitySetByPath(sTarget);
 			if (mEntitySet) {
 				mAffectedTargets[mEntitySet.name] = true;
@@ -226,7 +237,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 	for (i = 0; i < this._lastMessages.length; ++i) {
 		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must 
 		// be trimmed here
-		sTarget = this._lastMessages[i].getTarget().trim("/");
+		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
 		
 		if (mAffectedTargets[sTarget]) {
 			// Message belongs to targets handled/requested by this request
@@ -306,8 +317,22 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 			sTarget = sTarget.substr(iPos + this._serviceUrl.length);
 		}
 	} else {
+		
+		// Search for "action-for" annotation
+		var sActionFor = null;
+		if (mFunctionInfo.extensions) {
+			for (var i = 0; i < mFunctionInfo.extensions.length; ++i) {
+				if (mFunctionInfo.extensions[i].name === "action-for") {
+					sActionFor = mFunctionInfo.extensions[i].value;
+					break;
+				}
+			}
+		}
+		
 		var mEntityType;
-		if (mFunctionInfo.entitySet) {
+		if (sActionFor) {
+			mEntityType = this._metadata._getEntityTypeByName(sActionFor);
+		} else if (mFunctionInfo.entitySet) {
 			mEntityType = this._metadata._getEntityTypeByPath(mFunctionInfo.entitySet);
 		} else if (mFunctionInfo.returnType) {
 			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
@@ -704,7 +729,7 @@ var xPath = null;
 function getXPath() {
 	if (xPath === null) {
 		xPath = {};
-		if (sap.ui.Device.browser.msie) {// IE
+		if (Device.browser.msie) {// IE
 			xPath = {
 				selectNodes : function(oSearchNode, sPath) {
 					return oSearchNode.selectNodes(sPath);

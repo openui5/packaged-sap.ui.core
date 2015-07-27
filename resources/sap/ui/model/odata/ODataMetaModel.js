@@ -5,18 +5,19 @@
  */
 
 sap.ui.define([
+   'jquery.sap.global',
    'sap/ui/model/BindingMode', 'sap/ui/base/BindingParser', 'sap/ui/model/Context',
    'sap/ui/base/ManagedObject', 'sap/ui/model/ClientContextBinding',
    'sap/ui/model/FilterProcessor', 'sap/ui/model/json/JSONModel',
    'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONPropertyBinding',
    'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel', './_ODataMetaModelUtils'
-], function (BindingMode, BindingParser, Context, ManagedObject, ClientContextBinding,
+], function (jQuery, BindingMode, BindingParser, Context, ManagedObject, ClientContextBinding,
 		FilterProcessor, JSONModel, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
 		MetaModel, Utils) {
 	"use strict";
 
-	// path to an entity type's property ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
-	var rPropertyPath = /^((\/dataServices\/schema\/\d+)\/entityType\/\d+)\/property\/\d+$/;
+	// path to a type's property e.g. ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
+	var rPropertyPath = /^((\/dataServices\/schema\/\d+)\/(?:complexType|entityType)\/\d+)\/property\/\d+$/;
 
 	/**
 	 * @class List binding implementation for the OData meta model which supports filtering on
@@ -57,19 +58,19 @@ sap.ui.define([
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataMetaModel</code>,
-	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel} instead!
+	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel getMetaModel} instead!
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 *   the OData model's meta data object
-	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
+	 * @param {sap.ui.model.odata.ODataAnnotations} [oAnnotations]
 	 *   the OData model's annotations object
-	 * @param {object} oODataModelInterface
+	 * @param {object} [oODataModelInterface]
 	 *   the private interface object of the OData model which provides friend access to
 	 *   selected methods
 	 * @param {function} [oODataModelInterface.addAnnotationUrl]
-	 *   the {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl} method of the OData model,
-	 *   in case this feature is supported
-	 * @param {Promise} oODataModelInterface.annotationsLoadedPromise
+	 *   the {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl addAnnotationUrl} method
+	 *   of the OData model, in case this feature is supported
+	 * @param {Promise} [oODataModelInterface.annotationsLoadedPromise]
 	 *   a promise which is resolved by the OData model once meta data and annotations have been
 	 *   fully loaded
 	 *
@@ -168,7 +169,7 @@ sap.ui.define([
 	 * {@link #loaded loaded} has been resolved!
 	 *
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @alias sap.ui.model.odata.ODataMetaModel
 	 * @extends sap.ui.model.MetaModel
 	 * @public
@@ -187,24 +188,25 @@ sap.ui.define([
 					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
 				}
 
+				oODataModelInterface = oODataModelInterface || {};
+
 				MetaModel.apply(this); // no arguments to pass!
+				this.oModel = null; // not yet available!
+
 				// map path of property to promise for loading its value list
 				this.mContext2Promise = {};
-				this.oODataModelInterface = oODataModelInterface;
 				this.sDefaultBindingMode = BindingMode.OneTime;
-				this.oMetadata = oMetadata;
-				// map qualified property name to internal "promise interface" for request bundling
-				this.mQName2PendingRequest = {};
-				this.mSupportedBindingModes = {"OneTime" : true};
-				this.oModel = null; // not yet available!
-				this.oODataModelInterface = oODataModelInterface;
-				// map path of property to promise for loading its value help
-				this.mContext2Promise = {};
-				this.oLoadedPromise = oODataModelInterface.annotationsLoadedPromise
+				this.oLoadedPromise
+					= oODataModelInterface.annotationsLoadedPromise
 					? oODataModelInterface.annotationsLoadedPromise.then(load)
 					: Promise.resolve(load()); // call load() synchronously!
-				this.oResolver = undefined;
+				this.oMetadata = oMetadata;
+				this.oODataModelInterface = oODataModelInterface;
 				this.mQueryCache = {};
+				// map qualified property name to internal "promise interface" for request bundling
+				this.mQName2PendingRequest = {};
+				this.oResolver = undefined;
+				this.mSupportedBindingModes = {"OneTime" : true};
 			},
 
 			metadata : {
@@ -288,7 +290,7 @@ sap.ui.define([
 				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
 					jQuery.sap.log.warning("Invalid part: " + vPart,
 						"path: " + sPath + ", context: "
-						+ (oContext instanceof sap.ui.model.Context ?
+						+ (oContext instanceof Context ?
 							oContext.getPath() : oContext),
 						"sap.ui.model.odata.ODataMetaModel");
 				}
@@ -792,8 +794,8 @@ sap.ui.define([
 	 * <code>com.sap.vocabularies.Common.v1.ValueList</code> annotations.
 	 *
 	 * @param {sap.ui.model.Context} oPropertyContext
-	 *   a model context for a structural property of an entity type, as returned by
-	 *   {@link #getMetaContext getMetaContext}
+	 *   a model context for a structural property of an entity type or a complex type, as
+	 *   returned by {@link #getMetaContext getMetaContext}
 	 * @returns {Promise}
 	 *   a Promise that gets resolved as soon as the value lists as well as the required model
 	 *   elements have been loaded
@@ -821,7 +823,8 @@ sap.ui.define([
 				sQualifiedTypeName,
 				mValueLists = Utils.getValueLists(oProperty);
 
-			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]) {
+			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]
+				&& that.oODataModelInterface.addAnnotationUrl) {
 				// property with value list which is not yet loaded
 				bCachePromise = true;
 				sQualifiedTypeName = that.oModel.getObject(aMatches[2]).namespace
@@ -920,4 +923,4 @@ sap.ui.define([
 	};
 
 	return ODataMetaModel;
-}, /* bExport= */ true);
+});

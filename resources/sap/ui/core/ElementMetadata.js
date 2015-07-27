@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 *
 	 * @class
 	 * @author SAP SE
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @since 0.8.6
 	 * @alias sap.ui.core.ElementMetadata
 	 */
@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			}
 			if ( !oBaseRenderer ) {
 				jQuery.sap.require("sap.ui.core.Renderer");
-				oBaseRenderer = sap.ui.core.Renderer;
+				oBaseRenderer = sap.ui.require('sap/ui/core/Renderer');
 			}
 			var oRenderer = jQuery.sap.newObject(oBaseRenderer);
 			jQuery.extend(oRenderer, vRenderer);

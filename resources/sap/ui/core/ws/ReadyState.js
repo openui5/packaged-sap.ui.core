@@ -5,15 +5,14 @@
  */
 
 // Provides enumeration sap.ui.core.ws.ReadyState
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
 	/**
 	 * @class Defines the different ready states for a WebSocket connection.
 	 *
-	 * @version 1.30.0
+	 * @version 1.30.1
 	 * @static
 	 * @public
 	 * @alias sap.ui.core.ws.ReadyState
