@@ -1,5 +1,5 @@
 /*!
- * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.28.12
+	 * @version 1.28.13
 	 *
 	 * @constructor
 	 * @public
@@ -294,6 +294,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		var that = this;
 		this.bUseBatch = this.bUseBatch || this.oMetadata.getUseBatch();
 		var doFire = function(bDelay){
+			if (!that.oMetadata) {
+				return;
+			}
 			if (!!bDelay) {
 				that.metadataLoadEvent = jQuery.sap.delayedCall(0, that, doFire);
 			} else {
