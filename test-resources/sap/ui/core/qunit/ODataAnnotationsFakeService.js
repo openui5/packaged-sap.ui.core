@@ -150,6 +150,13 @@ xhr.onCreate = function(request) {
 				sAnswer = sApplyInIf;
 				break;
 
+			case "fakeService://testdata/odata/empty-collection.xml":
+				sAnswer = sEmptyCollection;
+				break;
+				
+			case "fakeService://testdata/odata/multiple-enums.xml":
+				sAnswer = sMultipleEnums;
+				break;
 
 			default:
 				// You used the wrong URL, dummy!
@@ -4246,6 +4253,58 @@ var sApplyInIf = '\
 								</If>\
 							</UrlRef>\
 						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sEmptyCollection = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.FilledCollection">\
+					<Collection>\
+						<String>THIS</String>\
+						<String>IS</String>\
+						<String>ODATA!</String>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.EmptyCollection">\
+					<Collection />\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sMultipleEnums = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.SimpleEnum">\
+					<Record>\
+						<PropertyValue Property="Test" EnumMember="Test.Value"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.MultipleEnums">\
+					<Record>\
+						<PropertyValue Property="Test" EnumMember="Test.Value1 Test.Value2"/>\
 					</Record>\
 				</Annotation>\
 			</Annotations>\

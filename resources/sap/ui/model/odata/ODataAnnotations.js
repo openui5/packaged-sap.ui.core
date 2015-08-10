@@ -1,5 +1,5 @@
 /*!
- * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.30.4
+	 * 1.30.5
 	 *
 	 * @constructor
 	 * @public
@@ -406,7 +406,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 					}
 
 					if (propertyAnnotationNode.hasChildNodes() === false) {
-						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.getPropertyValueAttributes(propertyAnnotationNode, oAlias);
+						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = 
+							this.enrichFromPropertyValueAttributes({}, propertyAnnotationNode, oAlias);
 					} else {
 						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.getPropertyValue(oXMLDoc, propertyAnnotationNode, oAlias);
 					}
@@ -1013,13 +1014,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 * @return {map} A map containing the attributes as key/value pairs
 	 * @private
 	 */
-	ODataAnnotations.prototype.getPropertyValueAttributes = function(oNode, mAlias) {
+	ODataAnnotations.prototype.enrichFromPropertyValueAttributes = function(mAttributes, oNode, mAlias) {
 		var mIgnoredAttributes = { "Property" : true, "Term": true, "Qualifier": true };
-		var mAttributes = {};
+		
+		var fnReplaceAlias = function(sValue) {
+			return this.replaceWithAlias(sValue, mAlias);
+		}.bind(this);
 
 		for (var i = 0; i < oNode.attributes.length; i += 1) {
 			if (!mIgnoredAttributes[oNode.attributes[i].name]) {
-				mAttributes[oNode.attributes[i].name] = this.replaceWithAlias(oNode.attributes[i].value, mAlias);
+				var sName = oNode.attributes[i].name;
+				var sValue = oNode.attributes[i].value;
+				
+				// Special case: EnumMember can contain a space separated list of properties that must all have their
+				// aliases replaced
+				if (sName === "EnumMember" && sValue.indexOf(" ") > -1) {
+					var aValues = sValue.split(" ");
+					mAttributes[sName] = aValues.map(fnReplaceAlias).join(" ");
+				} else {
+					mAttributes[sName] = this.replaceWithAlias(sValue, mAlias);
+				}
 			}
 		}
 
@@ -1099,7 +1113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	};
 
 	ODataAnnotations.prototype.getPropertyValue = function(oXmlDocument, oDocumentNode, mAlias) {
-		var vPropertyValue = {};
+		var vPropertyValue = oDocumentNode.nodeName === "Collection" ? [] : {};
 
 		if (oDocumentNode.hasChildNodes()) {
 			// This is a complex value, check for child values
@@ -1124,7 +1138,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 				if (oCollectionNodes.length > 0) {
 					vPropertyValue = this._getTextValues(oXmlDocument, oCollectionNodes, mAlias);
 				} else {
-					vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
 
 					var oChildNodes = this.xPath.selectNodes(oXmlDocument, "./d:*[not(local-name() = \"Annotation\")]", oDocumentNode);
 					if (oChildNodes.length > 0) {
@@ -1152,6 +1165,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 								var mValue = {};
 								mValue[sNodeName] = vValue;
 								vPropertyValue.push(mValue);
+							} else if (sNodeName === "Collection") {
+								// Collections are lists by definition and thus should be parsed as arrays
+								vPropertyValue = vValue;
 							} else {
 								if (vPropertyValue[sNodeName]) {
 									jQuery.sap.log.warning(
@@ -1165,6 +1181,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 					} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
 						vPropertyValue = this._getTextValue(oDocumentNode, mAlias);
 					}
+					
+					this.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode, mAlias);
 				}
 			}
 		} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
@@ -1172,7 +1190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 		} else if (oDocumentNode.nodeName.toLowerCase() === "null") {
 			vPropertyValue = null;
 		} else {
-			vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
+			this.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode, mAlias);
 		}
 		return vPropertyValue;
 	};

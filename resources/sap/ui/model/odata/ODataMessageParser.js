@@ -1,5 +1,5 @@
 /*!
- * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -67,7 +67,7 @@ var mSeverityMap = {
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
- * @version 1.30.4
+ * @version 1.30.5
  * @public
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
@@ -238,7 +238,13 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must 
 		// be trimmed here
 		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
-		
+
+		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
+		var iPropertyPos = sTarget.lastIndexOf(")/");
+		if (iPropertyPos > 0) {
+			sTarget = sTarget.substr(0, iPropertyPos + 1);
+		}
+
 		if (mAffectedTargets[sTarget]) {
 			// Message belongs to targets handled/requested by this request
 			aRemovedMessages.push(this._lastMessages[i]);

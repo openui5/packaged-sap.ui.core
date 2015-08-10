@@ -1,5 +1,5 @@
 /*!
- * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -630,7 +630,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/date/
 					checkValid(oPart.sType, sPart === "");
 					iIndex += sPart.length;
 					iDay = parseInt(sPart, 10);
-					if (bStrict && iDay > 31) {
+					if (bStrict && (iDay > 31 || iDay < 1)) {
 						bValid = false;
 					}
 					break;
@@ -649,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/date/
 						checkValid(oPart.sType, sPart === "");
 						iMonth = parseInt(sPart, 10) - 1;
 						iIndex += sPart.length;
-						if (bStrict && iMonth > 11) {
+						if (bStrict && (iMonth > 11 || iMonth < 0)) {
 							bValid = false;
 						}
 					} else {
