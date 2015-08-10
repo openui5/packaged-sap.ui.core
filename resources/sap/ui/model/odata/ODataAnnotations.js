@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.28.13
+	 * 1.28.14
 	 *
 	 * @constructor
 	 * @public
@@ -411,7 +411,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					}
 
 					if (propertyAnnotationNode.hasChildNodes() === false) {
-						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.getPropertyValueAttributes(propertyAnnotationNode, oAlias);
+						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.enrichFromPropertyValueAttributes({}, propertyAnnotationNode, oAlias);
 					} else {
 						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.getPropertyValue(oXMLDoc, propertyAnnotationNode, oAlias);
 					}
@@ -914,8 +914,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 		}
 	};
-	ODataAnnotations.prototype.getPropertyValueAttributes = function(documentNode, oAlias) {
-		var sKey = "", sValue = "", i, propertyValueAttributes = {};
+	ODataAnnotations.prototype.enrichFromPropertyValueAttributes = function(propertyValueAttributes, documentNode, oAlias) {
+		var sKey = "", sValue = "", i;
+		
+		var fnReplaceAlias = function(sValue) {
+			return this.replaceWithAlias(sValue, oAlias);
+		}.bind(this);
+
+
 		for (i = 0; i < documentNode.attributes.length; i += 1) {
 			var sAttrName = documentNode.attributes[i].name;
 			if (sAttrName !== "Property" && sAttrName !== "Term" && sAttrName !== "Qualifier") {
@@ -923,7 +929,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				sValue = documentNode.attributes[i].value;
 			}
 			if (sKey) {
-				propertyValueAttributes[sKey] = this.replaceWithAlias(sValue, oAlias);
+				
+				// Special case: EnumMember can contain a space separated list of properties that must all have their
+				// aliases replaced
+				if (sKey === "EnumMember" && sValue.indexOf(" ") > -1) {
+					var aValues = sValue.split(" ");
+					propertyValueAttributes[sKey] = aValues.map(fnReplaceAlias).join(" ");
+				} else {
+					propertyValueAttributes[sKey] = this.replaceWithAlias(sValue, oAlias);
+				}
 			}
 		}
 		return propertyValueAttributes;
@@ -976,7 +990,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	
 	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, oAlias) {
-		var propertyValue = {}, recordNodes, recordNodeCnt, nodeIndex, recordNode, propertyValues, urlValueNodes, urlValueNode, pathNode, oPath = {}, annotationNodes, annotationNode, nodeIndexValue, termValue, collectionNodes;
+		var recordNodes, recordNodeCnt, nodeIndex, recordNode, propertyValues, urlValueNodes, urlValueNode, pathNode, oPath = {}, annotationNodes, annotationNode, nodeIndexValue, termValue, collectionNodes;
+		var propertyValue = documentNode.nodeName === "Collection" ? [] : {};
 		var xPath = this.getXPath();
 
 		if (documentNode.hasChildNodes()) {
@@ -1029,14 +1044,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 								propertyValue.push(oPath);
 							}
 						} else {
-							propertyValue = this.getPropertyValueAttributes(documentNode, oAlias);
 							annotationNodes = this.xPath.selectNodes(xmlDoc, "./d:Annotation", documentNode);
 							annotationNode = {};
 							for (nodeIndexValue = 0; nodeIndexValue < annotationNodes.length; nodeIndexValue += 1) {
 								annotationNode = this.xPath.nextNode(annotationNodes, nodeIndexValue);
 								if (annotationNode.hasChildNodes() === false) {
 									termValue = this.replaceWithAlias(annotationNode.getAttribute("Term"), oAlias);
-									propertyValue[termValue] = this.getPropertyValueAttributes(annotationNode, oAlias);
+									propertyValue[termValue] = this.enrichFromPropertyValueAttributes({}, annotationNode, oAlias);
 								}
 							}
 
@@ -1065,6 +1079,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 											var mValue = {};
 											mValue[sNodeName] = vValue;
 											propertyValue.push(mValue);
+										} else if (sNodeName === "Collection") {
+											// Collections are lists by definition and thus should be parsed as arrays
+											propertyValue = vValue;
 										} else {
 											if (propertyValue[sNodeName]) {
 												jQuery.sap.log.warning(
@@ -1079,6 +1096,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							} else if (documentNode.nodeName in mTextNodeWhitelist) {
 								propertyValue = this._getTextValue(documentNode, oAlias);
 							}
+							
+							this.enrichFromPropertyValueAttributes(propertyValue, documentNode, oAlias);
 						}
 					}
 				}
@@ -1086,7 +1105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		} else if (documentNode.nodeName in mTextNodeWhitelist) {
 			propertyValue = this._getTextValue(documentNode, oAlias);
 		} else {
-			propertyValue = this.getPropertyValueAttributes(documentNode, oAlias);
+			this.enrichFromPropertyValueAttributes(propertyValue, documentNode, oAlias);
 		}
 		return propertyValue;
 	};
