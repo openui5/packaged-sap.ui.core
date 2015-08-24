@@ -83,7 +83,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.30.6
+	 * @version 1.30.7
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -506,7 +506,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.30.6
+	 * @version 1.30.7
 	 * @namespace
 	 * @public
 	 * @static
@@ -3970,6 +3970,7 @@
 		this.bUnlocked = false;
 		this.bRunnable = false;
 		this.bParentUnlocked = false;
+		this.bParentResponded = false;
 		this.sStatus = "pending";
 		this.aFPChilds = [];
 
@@ -4020,12 +4021,12 @@
 					}
 				} catch(e) {
 					// access to the top window is not possible
-					FrameOptions.__parent.postMessage('SAPFrameProtection*require-origin', '*');
+					this._sendRequireMessage();
 				}
 
 			} else {
 				// same origin not allowed
-				FrameOptions.__parent.postMessage('SAPFrameProtection*require-origin', '*');
+				this._sendRequireMessage();
 			}
 
 		}
@@ -4151,6 +4152,9 @@
 	};
 
 	FrameOptions.prototype._applyState = function(bIsRunnable, bIsParentUnlocked) {
+		if (this.bUnlocked) {
+			return;
+		}
 		if (bIsRunnable) {
 			this.bRunnable = true;
 		}
@@ -4174,12 +4178,12 @@
 		}
 	};
 
-	FrameOptions.prototype._check = function() {
+	FrameOptions.prototype._check = function(bParentResponsePending) {
 		if (this.bRunnable) {
 			return;
 		}
 		var bTrusted = false;
-		if (this.bAllowSameOrigin && FrameOptions.__window.document.URL.indexOf(this.sParentOrigin) == 0) {
+		if (this.bAllowSameOrigin && this.sParentOrigin && FrameOptions.__window.document.URL.indexOf(this.sParentOrigin) == 0) {
 			bTrusted = true;
 		} else if (this.mSettings.whitelist && this.mSettings.whitelist.length != 0) {
 			var sHostName = this.sParentOrigin.split('//')[1];
@@ -4200,7 +4204,7 @@
 			var url = this.mSettings.whitelistService + '?parentOrigin=' + encodeURIComponent(this.sParentOrigin);
 			xmlhttp.onreadystatechange = function() {
 				if (xmlhttp.readyState == 4) {
-					that._handleXmlHttpResponse(xmlhttp);
+					that._handleXmlHttpResponse(xmlhttp, bParentResponsePending);
 				}
 			};
 			xmlhttp.open('GET', url, true);
@@ -4211,18 +4215,23 @@
 		}
 	};
 
-	FrameOptions.prototype._handleXmlHttpResponse = function(xmlhttp) {
+	FrameOptions.prototype._handleXmlHttpResponse = function(xmlhttp, bParentResponsePending) {
 		if (xmlhttp.status === 200) {
 			var bTrusted = false;
 			var sResponseText = xmlhttp.responseText;
 			var oRuleSet = JSON.parse(sResponseText);
 			if (oRuleSet.active == false) {
-				bTrusted = true;
-			} else if (this.match(this.sParentOrigin, oRuleSet.origin)) {
-				bTrusted = oRuleSet.framing;
+				this._applyState(true, true);
+			} else if (bParentResponsePending) {
+				return;
+			} else {
+				if (this.match(this.sParentOrigin, oRuleSet.origin)) {
+					bTrusted = oRuleSet.framing;
+				}
+				this._applyTrusted(bTrusted);
 			}
-			this._applyTrusted(bTrusted);
 		} else {
+			jQuery.sap.log.warning("The configured whitelist service is not available: " + xmlhttp.status);
 			this._callback(false);
 		}
 	};
@@ -4230,6 +4239,19 @@
 	FrameOptions.prototype._notifyChildFrames = function() {
 		for (var i = 0; i < this.aFPChilds.length; i++) {
 			this.aFPChilds[i].postMessage('SAPFrameProtection*parent-unlocked','*');
+		}
+	};
+
+	FrameOptions.prototype._sendRequireMessage = function() {
+		FrameOptions.__parent.postMessage('SAPFrameProtection*require-origin', '*');
+		// If not postmessage response was received, send request to whitelist service
+		// anyway, to check whether frame protection is enabled
+		if (this.mSettings.whitelistService) {
+			setTimeout(function() {
+				if (!this.bParentResponded) {
+					this._check(true);
+				}
+			}.bind(this), 10);
 		}
 	};
 
@@ -4247,6 +4269,7 @@
 			return;
 		}
 		if (oSource === FrameOptions.__parent) {
+			this.bParentResponded = true;
 			if (!this.sParentOrigin) {
 				this.sParentOrigin = oEvent.origin;
 				this._check();

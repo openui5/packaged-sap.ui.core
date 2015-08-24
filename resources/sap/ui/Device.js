@@ -7,7 +7,7 @@
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.30.6
+ * @version 1.30.7
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.30.6";
+		var apiVersion = "1.30.7";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.30.6";
+		var v = "1.30.7";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -1277,13 +1277,13 @@ if (typeof window.sap.ui !== "object") {
 
 	function getSystem(_simMobileOnDesktop, customUA) {
 		var t = isTablet(customUA);
-		var isWin8 = device.os.windows && device.os.version === 8;
+		var isWin8Upwards = device.os.windows && device.os.version >= 8;
 		var isWin7 = device.os.windows && device.os.version === 7;
 
 		var s = {};
-		s.tablet = ((device.support.touch && !isWin7) || isWin8 || !!_simMobileOnDesktop) && t;
+		s.tablet = ((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t;
 		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
-		s.desktop = (!s.tablet && !s.phone) || isWin8 || isWin7;
+		s.desktop = (!s.tablet && !s.phone) || isWin8Upwards || isWin7;
 		s.combi = (s.desktop && s.tablet);
 		s.SYSTEMTYPE = SYSTEMTYPE;
 
@@ -1295,13 +1295,13 @@ if (typeof window.sap.ui !== "object") {
 
 	function isTablet(customUA) {
 		var ua = customUA || navigator.userAgent;
-		var isWin8 = device.os.windows && device.os.version === 8;
+		var isWin8Upwards = device.os.windows && device.os.version >= 8;
 		if (device.os.name === device.os.OS.IOS) {
 			return /ipad/i.test(ua);
 		} else {
 			//in real mobile device
 			if (device.support.touch) {
-				if (isWin8) {
+				if (isWin8Upwards) {
 					return true;
 				}
 

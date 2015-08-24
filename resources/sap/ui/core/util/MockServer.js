@@ -34,7 +34,7 @@ sap.ui
 			 * @extends sap.ui.base.ManagedObject
 			 * @abstract
 			 * @author SAP SE
-			 * @version 1.30.6
+			 * @version 1.30.7
 			 * @public
 			 * @alias sap.ui.core.util.MockServer
 			 */
@@ -2888,6 +2888,9 @@ sap.ui
 				if (iInlinecountIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iInlinecountIndex]);
 				}
+				if (iExpandIndex >= 0) {
+					aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
+				}
 				if (iOrderbyIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iOrderbyIndex]);
 				}
@@ -2896,9 +2899,6 @@ sap.ui
 				}
 				if (iTopIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iTopIndex]);
-				}
-				if (iExpandIndex >= 0) {
-					aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
 				}
 				if (iSelectindex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iSelectindex]);

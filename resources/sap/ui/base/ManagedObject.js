@@ -172,7 +172,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.30.6
+	 * @version 1.30.7
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -2261,7 +2261,7 @@ sap.ui.define([
 				// if value contains ui5object property, this is not a binding info,
 				// remove it and not check for path or parts property
 				delete oValue.ui5object;
-			} else if (oValue.path || oValue.parts) {
+			} else if (oValue.path != undefined || oValue.parts) {
 				// allow JSON syntax for templates
 				if (oValue.template) {
 					oValue.template = ManagedObject.create(oValue.template);
@@ -3056,7 +3056,7 @@ sap.ui.define([
 		// Check the current context for its group. If the group key changes, call the
 		// group function on the control.
 		function updateGroup(oContext) {
-			var oNewGroup = oBinding.aSorters[0].getGroup(oContext);
+			var oNewGroup = oBinding.getGroup(oContext);
 			if (oNewGroup.key !== sGroup) {
 				var oGroupHeader;
 				//If factory is defined use it
@@ -3083,9 +3083,11 @@ sap.ui.define([
 		if (oBinding instanceof ListBinding) {
 			// If grouping is enabled, use updateGroup as fnBefore to create groups
 			bGrouped = oBinding.isGrouped() && sGroupFunction;
-			if (bGrouped) {
+			// Destroy children if binding is grouped or was grouped last time
+			if (bGrouped || oBinding.bWasGrouped) {
 				this[oAggregationInfo._sDestructor]();
 			}
+			oBinding.bWasGrouped = bGrouped;
 			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 			update(this, aContexts, bGrouped ? updateGroup : null);
 		} else if (oBinding instanceof TreeBinding) {
