@@ -7,7 +7,7 @@
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.30.7
+ * @version 1.30.8
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.30.7";
+		var apiVersion = "1.30.8";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.30.7";
+		var v = "1.30.8";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -447,8 +447,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @name sap.ui.Device.browser#edge
 	 * @type boolean
-	 * @since 1.30.0
-	 * @experimental
+	 * @since 1.28.0
 	 * @public
 	 */
 	/**
@@ -669,7 +668,6 @@ if (typeof window.sap.ui !== "object") {
 				mobile: false // TODO: really?
 			};
 		} else if ( b.edge ) {
-			logger.log(WARNING, "New MS Edge browser detected. Be aware that this browser is not yet officially supported by UI5.", _ua);
 			var version = version = parseFloat(b.version);
 			return {
 				name: BROWSER.EDGE,

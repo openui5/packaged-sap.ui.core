@@ -244,7 +244,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			}
 		} catch (e) {
 			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
-		}	
+		}
 
 		return this;
 	};
@@ -274,7 +274,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			}
 		} catch (e) {
 			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
-		}	
+		}
 
 		return "";
 	};
@@ -526,7 +526,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (oDomRef) {
 
 			if (iPos === undefined) { // GETTER code
-				if (!!Device.browser.internet_explorer) {
+				if (!!Device.browser.internet_explorer || !!Device.browser.edge) {
 					return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
 
 				} else if (!!Device.browser.webkit) {
@@ -978,7 +978,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return _oScrollbarSize[sKey];
 	};
 
-	// handle weak dependency to sap/ui/core/Control 
+	// handle weak dependency to sap/ui/core/Control
 	var _Control;
 
 	function getControl() {
@@ -1004,7 +1004,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 
 		var Control = getControl();
-		
+
 		if (Control && vSource instanceof Control) {
 			vSource = vSource.$();
 		} else if (typeof vSource === "string") {
@@ -1026,7 +1026,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		return vDestination;
 	};
-	
+
 	/**
 	 * Adds space separated value to the given attribute.
 	 * This method ignores when the value is already available for the given attribute.
@@ -1054,7 +1054,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		return this;
 	}
-	
+
 	/**
 	 * Remove space separated value from the given attribute.
 	 *
@@ -1100,7 +1100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.addAriaLabelledBy = function (sId) {
 		return addToAttributeList.call(this, "aria-labelledby", sId);
 	};
-	
+
 	/**
 	 * Removes the given ID reference from the aria-labelledby attribute.
 	 *
@@ -1115,7 +1115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.removeAriaLabelledBy = function (sId) {
 		return removeFromAttributeList.call(this, "aria-labelledby", sId);
 	};
-	
+
 	/**
 	 * Adds the given ID reference to the aria-describedby attribute.
 	 *
@@ -1130,7 +1130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.addAriaDescribedBy = function (sId) {
 		return addToAttributeList.call(this, "aria-describedby", sId);
 	};
-	
+
 	/**
 	 * Removes the given ID reference from the aria-describedby attribute.
 	 *

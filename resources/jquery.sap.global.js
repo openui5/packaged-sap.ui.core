@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-/*global URI, Promise, alert, confirm, console, XMLHttpRequest */
+/*global URI, Promise, ES6Promise, alert, confirm, console, XMLHttpRequest */
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -32,6 +32,11 @@
 	// ensure not to initialize twice
 	if (jQuery.sap) {
 		return;
+	}
+
+	// Enable promise polyfill if native promise is not available
+	if (!window.Promise) {
+		ES6Promise.polyfill();
 	}
 
 	/**
@@ -83,7 +88,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.30.7
+	 * @version 1.30.8
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -506,7 +511,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.30.7
+	 * @version 1.30.8
 	 * @namespace
 	 * @public
 	 * @static
@@ -1513,6 +1518,10 @@
 				'sap/ui/thirdparty/datajs.js': {
 					amd: true,
 					exports: 'OData' // 'datajs'
+				},
+				'sap/ui/thirdparty/es6-promise.js' : { 
+					amd: true,
+					exports: 'ES6Promise'
 				},
 				'sap/ui/thirdparty/flexie.js': {
 					exports: 'Flexie'
