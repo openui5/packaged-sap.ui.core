@@ -1,5 +1,5 @@
 /*!
- * UI development toolkit for HTML5 (OpenUI5)
+  * UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -167,7 +167,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	};
 	
 	ClientTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
-		if (typeof oNode == "object") {
+		// only collect node if it is defined (and not null), because typeof null == "object"!
+		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
 			if (this.aFilters && !this.bIsFiltering) {

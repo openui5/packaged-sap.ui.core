@@ -38,7 +38,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.32.0
+	 * @version 1.32.1
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -626,6 +626,21 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Creates the ID to be used for the invisible Placeholder DOM element.
+	 * This method can be used to get direct access to the placeholder DOM element.
+	 * Also statically available as RenderManager.createInvisiblePlaceholderId()
+	 *
+	 * @param {sap.ui.core.Element} oElement - The Element instance for which to create the placeholder ID
+	 * @returns {string} The ID used for the invisible Placeholder of this element
+	 * @static
+	 * @protected
+	 */
+	RenderManager.createInvisiblePlaceholderId = function(oElement) {
+		return sap.ui.core.RenderPrefixes.Invisible + oElement.getId();
+	};
+
+
 	//#################################################################################################
 	// Methods for preserving HTML content
 	//#################################################################################################
@@ -1000,7 +1015,7 @@ sap.ui.define([
 	RenderManager.prototype.writeInvisiblePlaceholderData = function(oElement) {
 		jQuery.sap.assert(oElement instanceof sap.ui.core.Element, "oElement must be an instance of sap.ui.core.Element");
 
-		var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oElement.getId(),
+		var sPlaceholderId = RenderManager.createInvisiblePlaceholderId(oElement),
 			sPlaceholderHtml = ' ' +
 				'id="' + sPlaceholderId + '" ' +
 				'class="sapUiHiddenPlaceholder" ' +
@@ -1011,7 +1026,7 @@ sap.ui.define([
 		this.write(sPlaceholderHtml);
 		return this;
 	};
-
+	
 	/**
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of a element

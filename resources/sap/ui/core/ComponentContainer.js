@@ -19,7 +19,7 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 	 * @class
 	 * Component Container
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.0
+	 * @version 1.32.1
 	 *
 	 * @constructor
 	 * @public
@@ -176,6 +176,15 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 			this._propagateProperties(vName, oComponent);
 			Control.prototype.propagateProperties.apply(this, arguments);
 		}
+	};
+
+	/*
+	 * overridden to support property propagation to the associated component 
+	 * when unbinding the component container (e.g. call unbindElement)
+	 */
+	ComponentContainer.prototype.unbindObject = function (sModelName, /* internal use only */ _bSkipUpdateBindingContext) {
+		Control.prototype.unbindObject.apply(this, arguments);
+		this.propagateProperties(sModelName);
 	};
 
 	return ComponentContainer;

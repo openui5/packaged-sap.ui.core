@@ -13,15 +13,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	/**
 	 *
 	 * @class
-	 * Tree binding implementation for odata models. The ODataTreeBinding does only support CountMode.Inline. 
+	 * Tree binding implementation for odata models.
 	 * This CountMode is set as default. To use the ODataTreeBinding with an odata service, which exposed hierarchy annotations, please
-	 * consult the "SAP Annotations for OData Version 2.0" Specification. The necessary property annotations, as well as accepted/defaukt values
+	 * consult the "SAP Annotations for OData Version 2.0" Specification. The necessary property annotations, as well as accepted/default values
 	 * are documented in the specification.
+	 * 
+	 * Filtering on the ODataTreeBinding is only supported with initial filters. However please be aware that this applies only to filters which do not obstruct the
+	 * creation of a hierarchy. So filtering on a property (e.g. a "Customer") is fine, as long as the application can ensure, that the responses from the backend are enough
+	 * to construct a tree hierarchy. Subsequent paging requests for sibiling and child nodes must return responses.
+	 * Filtering with the filter() function is not supported.
 	 *
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {string} sPath
 	 * @param {sap.ui.model.Context} oContext
-	 * @param {sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
+	 * @param {sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters). All initial filters,
+	 *                                           will be sent with every request. Filtering on the ODataTreeBinding is only supported with initial filters.
 	 * @param {object} [mParameters] Parameter Object
 	 * 
 	 * @param {object} [mParameters.treeAnnotationProperties] This parameter defines the mapping between data properties and 
@@ -578,9 +584,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			// If rows are missing send a request
 			if (aMissingSections.length > 0) {
 				var aParams = [];
+				var sFilterParams = this.getFilterParams();
 				if (this.bHasTreeAnnotations) {
 					// application/control filter parameters, will be added to the node/level filter
-					var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
+					sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
 					if (sNodeId) {
 						var sNodeFilterParams = this._getNodeFilterParams({id: sNodeId});
 						aParams.push("$filter=" + sNodeFilterParams + sFilterParams);
@@ -589,12 +596,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 						// in this case we use the root level
 						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + this.getRootLevel()) + sFilterParams);
 					}
-				}
-				/*else {
-					if (mRequestParameters.navPath) {
-						aParams.push("$expand=" + mRequestParameters.navPath);
+				} else {
+					// append application filters for navigation property case
+					if (sFilterParams) {
+						aParams.push("$filter=" + sFilterParams);
 					}
-				}*/
+				}
+				
 				if (this.sCustomParams) {
 					aParams.push(this.sCustomParams);
 				}
@@ -959,7 +967,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	};
 	
 	/**
-	 * Filtering is currently not supported.
+	 * Applying ControlFilters is currently not supported, see also: {@link sap.ui.model.FilterType}.
+	 * Only initial ApplicationFilters, given as constructor arguments, are supported.
+	 * Please see the constructor documentation for more information.
 	 * 
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters
 	 * @see sap.ui.model.TreeBinding.prototype.filter
@@ -967,12 +977,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @public
 	 */
 	ODataTreeBinding.prototype.filter = function(aFilters){
-		jQuery.sap.log.warning("Filtering is currently not possible in the ODataTreeBinding");
+		jQuery.sap.log.warning("The ODataTreeBinding only supports ApplicationFilters!");
 		return this;
 	};
 	
 	/**
-	 * Sorts the Tree according to the given Sorter(s)
+	 * Sorts the Tree according to the given Sorter(s).
 	 * 
 	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} aSorters the Sorter or an Array of sap.ui.model.Sorter instances
 	 * @return {sap.ui.model.odata.v2.ODataTreeBinding} returns <code>this</code> to facilitate method chaining
@@ -1392,8 +1402,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @returns {string} the concatenated OData filters
 	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
-		if (this.aFilters && this.aFilters.length > 0) {
-			if (!this.sFilterParams) {
+		if (this.aFilters) {
+			this.aFilters = jQuery.isArray(this.aFilters) ? this.aFilters : [this.aFilters];
+			if (this.aFilters.length > 0 && !this.sFilterParams) {
 				this.sFilterParams = ODataUtils._createFilterParams(this.aFilters, this.oModel.oMetadata, this.oEntityType);
 				this.sFilterParams = this.sFilterParams ? this.sFilterParams : "";
 			}

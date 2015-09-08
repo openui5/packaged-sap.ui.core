@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.32.0
+	 * @version 1.32.1
 	 *
 	 * @constructor
 	 * @public
@@ -169,7 +169,7 @@ sap.ui.define([
 			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {}; 
 			that._sortMessages(vMessages);
 			//push a copy
-			oProcessor.setMessages(vMessages);
+			oProcessor.setMessages(jQuery.extend(true, {}, vMessages));
 		});
 	};
 	
@@ -269,6 +269,10 @@ sap.ui.define([
 				}
 			}
 		}
+		// delete empty message array
+		if (mMessages[oMessage.getTarget()].length === 0) {
+			delete mMessages[oMessage.getTarget()];
+		}
 	};
 	
 	/**
@@ -289,9 +293,13 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.registerMessageProcessor = function(oProcessor) {
-		if (!this.mProcessors[oProcessor.getId()]) {
-			this.mProcessors[oProcessor.getId()] = oProcessor;
+		var sProcessorId = oProcessor.getId();
+		if (!this.mProcessors[sProcessorId]) {
+			this.mProcessors[sProcessorId] = oProcessor;
 			oProcessor.attachMessageChange(this.onMessageChange, this);
+			if (sProcessorId in this.mMessages) {
+				this._pushMessages();
+			}
 		}
 	};
 	
@@ -344,32 +352,12 @@ sap.ui.define([
 	};
 	
 	/**
-	 * destroy MessageManager 
+	 * destroy MessageManager
+	 * @deprecated 
 	 * @public
 	 */
 	MessageManager.prototype.destroy = function() {
-		var that = this;
-		//Detach handler
-		jQuery.each(this.mProcessors, function(sId, oProcessor) {
-			oProcessor.detachMessageChange(this.onMessageChange);
-		});
-		jQuery.each(this.mObjects, function(sId, oObject) {
-			oObject.detachValidationSuccess(that._handleSuccess);
-			oObject.detachValidationError(that._handleError);
-			oObject.detachParseError(that._handleError);
-			oObject.detachFormatError(that._handleError);
-			//TODO: delete Messages for Objects
-		});
-		if (sap.ui.getCore().getConfiguration().getHandleValidation()) { 
-			sap.ui.getCore().detachValidationSuccess(this._handleSuccess);
-			sap.ui.getCore().detachValidationError(this._handleError);
-			sap.ui.getCore().detachParseError(this._handleError);
-			sap.ui.getCore().detachFormatError(this._handleError);
-		}
-		this.mProcessors = undefined;
-		this.mMessages = undefined;
-		this.mObjects = undefined;
-		this.oMessageModel.destroy();
+		jQuery.sap.log.warning("Deprecated: Do not call destroy on a MessageManager");
 	};
 
 	/**

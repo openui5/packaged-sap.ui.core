@@ -204,15 +204,25 @@
 				]
 			},
 			{
+				"id" : "sap.ui.model.DataStateOData",
+				"name" : "OData Data State",
+				"category" : "Data Binding",
+				"since" : "1.32",
+				"samples" : [
+					"sap.ui.core.sample.DataStateOData"
+				]
+			},
+			{
 				"id": "sap.ui.core.tutorial.navigation",
 				"name": "Navigation",
 				"category": "Tutorial",
 				"since": "1.30",
 				"formFactors": "-",
-				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps.",
+				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps",
+				"docuLink": "#docs/guide/1b6dcd39a6a74f528b27ddb22f15af0d.html",
 				"samplesAsSteps": [
 					"Creating the initial app",
-					"Enable Routing in the app",
+					"Enable Routing in the appi",
 					"Catching invalid hashes similar to 'Not Found'",
 					"Adding a Back Button to the NotFound Page",
 					"Displaying a Target without changing the hash",
@@ -228,6 +238,32 @@
 					"Reusing an existing route",
 					"Handling invalid hashes by listening for bypassed events",
 					"Listening for matched events of any route"
+				]
+			},
+			{
+				"id": "sap.ui.core.tutorial.databinding",
+				"name": "Data Binding",
+				"category": "Tutorial",
+				"since": "1.30",
+				"formFactors": "-",
+				"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5",
+				"docuLink": "#docs/guide/e5310932a71f42daa41f3a6143efca9c.html",
+				"samplesAsSteps": [
+					"No Data Binding",
+					"Creating a Model",
+					"Create a PropertyBinding",
+					"Two-Way Data Binding",
+					"One-way Data Binding",
+					"Resource Models",
+					"Resource Bundles and Multiple Languages",
+					"Binding Paths – Accessing Properties in Hierarchically Structured Models",
+					"Formatting Values",
+					"Property Formatting Using Data Types",
+					"Validation Using the Message Manager",
+					"Aggregation Binding Using A Template",
+					"Element Binding",
+					"Expression Binding",
+					"Aggregation Binding Using A Factory Function"
 				]
 			}
 		],
@@ -268,6 +304,11 @@
 				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
 			},
 			{
+				"id": "sap.ui.core.sample.DataStateOData",
+				"name": "OData Data State",
+				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
+			},
+			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
 				"name": "Control Busy Indicator",
 				"description": "A control's busy indicator can be used to block parts of the screen until an operation has finished. In this example we block the content of only one out of two panels."
@@ -276,11 +317,6 @@
 				"id": "sap.ui.core.sample.FieldGroup",
 				"name": "Field Groups",
 				"description": "A control's field group id can be used to define a virtual group of fields that should be validated together. Field groups can be validated usinf the ValidateFieldGroup event if the user presses the enter key in a field belonging to the field group or focusses a control outside of the field group."
-			},
-			{
-				"id": "sap.ui.core.sample.DataState",
-				"name": "Data State",
-				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
 			},
 			{
 				"id": "sap.ui.core.sample.Html",

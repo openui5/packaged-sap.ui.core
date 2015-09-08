@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.32.0
+	 * @version 1.32.1
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -579,6 +579,15 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 		ResizeHandler.deregisterAllForControl(this.getId());
 
+		// Controls can have their visible-property set to "false" in which case the Element's destroy method will#
+		// fail to remove the placeholder content from the DOM. We have to remove it here in that case
+		if (!this.getVisible()) {
+			var oPlaceholder = document.getElementById(sap.ui.core.RenderManager.createInvisiblePlaceholderId(this));
+			if (oPlaceholder && oPlaceholder.parentNode) {
+				oPlaceholder.parentNode.removeChild(oPlaceholder);
+			}
+		}
+
 		Element.prototype.destroy.call(this, bSuppressInvalidate);
 	};
 
@@ -598,17 +607,23 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				var $this = this.$(this._sBusySection),
 					aForbiddenTags = ["area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "menuitem", "meta", "param", "source", "track", "wbr"];
 
-
 				//If there is a pending delayed call to append the busy indicator, we can clear it now
 				if (this._busyIndicatorDelayedCallId) {
 					jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
 					delete this._busyIndicatorDelayedCallId;
 				}
 
+				// if no busy section/control jquery instance could be retrieved -> the control is not part of the dom anymore
+				// this might happen in certain scenarios when e.g. a dialog is closed faster than the busyIndicatorDelay
+				if (!$this || $this.length === 0) {
+					jQuery.sap.log.warning("BusyIndicator could not be rendered. The outer control instance is not valid anymore.");
+					return;
+				}
+
 				//Check if DOM Element where the busy indicator is supposed to be placed can handle content
 				var sTag = $this.get(0) && $this.get(0).tagName;
 				if (sTag && jQuery.inArray(sTag.toLowerCase(), aForbiddenTags) >= 0) {
-					jQuery.sap.log.warning("Busy Indicator cannot be placed in elements with tag " + sTag);
+					jQuery.sap.log.warning("BusyIndicator cannot be placed in elements with tag '" + sTag + "'.");
 					return;
 				}
 
