@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 * The ScrollBar control can be used for virtual scrolling of a certain area.
 	 * This means: to simulate a very large scrollable area when technically the area is small and the control takes care of displaying the respective part only. E.g. a Table control can take care of only rendering the currently visible rows and use this ScrollBar control to make the user think he actually scrolls through a long list.
 	 * @extends sap.ui.core.Control
-	 * @version 1.28.17
+	 * @version 1.28.18
 	 *
 	 * @constructor
 	 * @public
@@ -228,10 +228,11 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 				var iSize = this._iSteps * this._iFactor;
 				
 				if (iSize > this._iMaxContentDivSize) {
-					this._iFactor = Math.ceil(this._iFactor / Math.ceil(iSize / this._iMaxContentDivSize));
+					this._iFactor = this._iFactor / (iSize / this._iMaxContentDivSize);
 				}
 				
-				var iContentSize = this._$ScrollDomRef.height() + this._iSteps * this._iFactor;
+				var iContentSize = this._$ScrollDomRef.height() + Math.ceil(this._iSteps * this._iFactor);
+				
 				// set the content size
 				this._$ScrollDomRef.find("div").height(iContentSize);
 			} else {

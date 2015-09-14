@@ -10819,10 +10819,10 @@ $.ui.position = {
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-/** 
+/**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.17
+ * @version 1.28.18
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,7 +10847,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.17";
+		var apiVersion = "1.28.18";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10905,7 +10905,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.17";
+		var v = "1.28.18";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -11258,6 +11258,14 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
+	 * If this flag is set to <code>true</code>, the Microsoft Edge browser is used.
+	 *
+	 * @name sap.ui.Device.browser#edge
+	 * @type boolean
+	 * @since 1.28.0
+	 * @public
+	 */
+	/**
 	 * Flag indicating the Firefox browser.
 	 * 
 	 * @name sap.ui.Device.browser#firefox
@@ -11302,6 +11310,14 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
+	 * Edge browser name.
+	 *
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#EDGE
+	 * @since 1.28.0
+	 * @public
+	 */
+	/**
 	 * Firefox browser name.
 	 * 
 	 * @see sap.ui.Device.browser#name
@@ -11329,9 +11345,10 @@ if (typeof window.sap.ui !== "object") {
 	 * @alias sap.ui.Device.browser.BROWSER#ANDROID
 	 * @public
 	 */
-	
+
 	var BROWSER = {
 		"INTERNET_EXPLORER": "ie",
+		"EDGE": "ed",
 		"FIREFOX": "ff",
 		"CHROME": "cr",
 		"SAFARI": "sf",
@@ -11361,12 +11378,13 @@ if (typeof window.sap.ui !== "object") {
 		var rwebkit = /(webkit)[ \/]([\w.]+)/;
 		var ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/;
 		var rmsie = /(msie) ([\w.]+)/;
-		//TODO this might needs to be adjusted in future IE version > 11
-		var rmsienew = /(trident)\/[\w.]+;.*rv:([\w.]+)/;
+		var rmsie11 = /(trident)\/[\w.]+;.*rv:([\w.]+)/;
+		var redge = /(edge)[ \/]([\w.]+)/;
 		var rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
 
 		// WinPhone IE11 userAgent contains "WebKit" and "Mozilla" and therefore must be checked first
-		var browserMatch = rmsienew.exec( _ua ) ||
+		var browserMatch = redge.exec( _ua ) ||
+					rmsie11.exec( _ua ) ||
 					rwebkit.exec( _ua ) ||
 					ropera.exec( _ua ) ||
 					rmsie.exec( _ua ) ||
@@ -11471,6 +11489,14 @@ if (typeof window.sap.ui !== "object") {
 				version: version,
 				msie: true,
 				mobile: false // TODO: really?
+			};
+		} else if ( b.edge ) {
+			var version = version = parseFloat(b.version);
+			return {
+				name: BROWSER.EDGE,
+				versionStr: "" + version,
+				version: version,
+				edge: true
 			};
 		}
 		return {
@@ -14645,7 +14671,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.17
+	 * @version 1.28.18
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -15064,7 +15090,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.17
+	 * @version 1.28.18
 	 * @namespace
 	 * @public
 	 * @static
@@ -17945,8 +17971,9 @@ return URI;
 				// redefine AJAX call
 				jQuery.ajax = function( url, options ){
 					jQuery.sap.measure.start(url.url, "Request for " + url.url);
-					fnAjax.apply(this,arguments);
+					var oXhr = fnAjax.apply(this,arguments);
 					jQuery.sap.measure.end(url.url);
+					return oXhr;
 				};
 			} else if (fnAjax) {
 				jQuery.ajax = fnAjax;

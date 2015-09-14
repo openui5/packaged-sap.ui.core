@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library', './theming/Paramet
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.28.17
+	 * @version 1.28.18
 	 *
 	 * @constructor
 	 * @public
@@ -80,10 +80,9 @@ sap.ui.define(['jquery.sap.global', './Element', './library', './theming/Paramet
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Message.prototype.getDefaultIcon = function(sSize) {
-		var sModulePath = jQuery.sap.getModulePath("sap.ui.core", '/');
-		var sTheme = "themes/" + sap.ui.getCore().getConfiguration().getTheme();
-	
-		var sImagesPath = "/img/message/";
+		var sModulePath = jQuery.sap.getModulePath("sap.ui.core.themes." + sap.ui.getCore().getConfiguration().getTheme());
+
+		var sImagesPath = sModulePath + "/img/message/";
 		if (sSize && sSize == "32x32") {
 			sImagesPath += "32x32/";
 		} else {
@@ -93,20 +92,20 @@ sap.ui.define(['jquery.sap.global', './Element', './library', './theming/Paramet
 	
 		switch (this.getProperty("level")) {
 		case sap.ui.core.MessageType.Error:
-			sUrl = sModulePath + sTheme + sImagesPath + "Message_Icon_Error.png";
+			sUrl = sImagesPath + "Message_Icon_Error.png";
 			break;
 	
 		case sap.ui.core.MessageType.Information:
-			sUrl = sModulePath + sTheme + sImagesPath
+			sUrl = sImagesPath
 					+ "Message_Icon_Information.png";
 			break;
 	
 		case sap.ui.core.MessageType.Warning:
-			sUrl = sModulePath + sTheme + sImagesPath + "Message_Icon_Warning.png";
+			sUrl = sImagesPath + "Message_Icon_Warning.png";
 			break;
 	
 		case sap.ui.core.MessageType.Success:
-			sUrl = sModulePath + sTheme + sImagesPath + "Message_Icon_Success.png";
+			sUrl = sImagesPath + "Message_Icon_Success.png";
 			break;
 	
 		case sap.ui.core.MessageType.None:

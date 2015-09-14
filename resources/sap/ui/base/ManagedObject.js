@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * 
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.28.17
+	 * @version 1.28.18
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -2212,6 +2212,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 		});
 
+		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
+			that.unbindObject(sName, /* _bSkipUpdateBindingContext */ true);
+		});
+
 		// reset suppress invalidate flag
 		if (bSuppressInvalidate) {
 			this.iSuppressInvalidate--;
@@ -2331,15 +2335,18 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * to resolve bound properties or aggregations of the object itself and all of its children
 	 * relatively to the given path.
 	 * If a relative binding path is used, this will be applied whenever the parent context changes.
-	 * @param {string} sPath the binding path
-	 * @param {object} [mParameters] map of additional parameters for this binding
+	 * @param {string|object} vPath the binding path or an object with more detailed binding options
+	 * @param {string} vPath.path the binding path
+	 * @param {object} [vPath.parameters] map of additional parameters for this binding
+	 * @param {string} [vPath.model] name of the model
+	 * @param {object} [vPath.events] map of event listeners for the binding events
+	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string)
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.bindObject = function(sPath, mParameters) {
 		var boundObject = {},
-			oldBoundObject,
 			sModelName,
 			iSeparatorPos;
 		// support object notation
@@ -2359,13 +2366,12 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			boundObject.sBindingPath = sPath.substr(iSeparatorPos + 1);
 		}
 
-		//if old binding exists detach handler
-		oldBoundObject = this.mBoundObjects[sModelName];
-		if (oldBoundObject && oldBoundObject.binding) {
-			oldBoundObject.binding.detachChange(oldBoundObject.fChangeHandler);
-			oldBoundObject.binding.detachEvents(oldBoundObject.events);
-			//clear elementContext
-			delete this.mElementBindingContexts[sModelName];
+		// if old binding exists, clean it up
+		if ( this.mBoundObjects[sModelName] ) {
+			this.unbindObject(sModelName, /* _bSkipUpdateBindingContext */ true);
+			// We don't push down context changes here
+			// Either this will happen with the _bindObject call below or the model
+			// is not available yet and wasn't available before -> no change of contexts
 		}
 
 		this.mBoundObjects[sModelName] = boundObject;
@@ -2422,7 +2428,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @public
 	 */
 	ManagedObject.prototype.bindContext = function(sPath) {
-		return this.bindElement(sPath);
+		return this.bindObject(sPath);
 	};
 
 	/**
@@ -2435,7 +2441,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @public
 	 */
 	ManagedObject.prototype.unbindContext = function(sModelName) {
-		return this.unbindElement(sModelName);
+		return this.unbindObject(sModelName);
 	};
 
 	/**
@@ -2446,16 +2452,19 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
-	ManagedObject.prototype.unbindObject = function(sModelName) {
+	ManagedObject.prototype.unbindObject = function(sModelName, /* internal use only */ _bSkipUpdateBindingContext) {
 		var oBoundObject = this.mBoundObjects[sModelName];
 		if (oBoundObject) {
 			if (oBoundObject.binding) {
 				oBoundObject.binding.detachChange(oBoundObject.fChangeHandler);
 				oBoundObject.binding.detachEvents(oBoundObject.events);
+				oBoundObject.binding.destroy();
 			}
 			delete this.mBoundObjects[sModelName];
 			delete this.mElementBindingContexts[sModelName];
-			this.updateBindingContext(false, false, sModelName);
+			if ( !_bSkipUpdateBindingContext ) {
+				this.updateBindingContext(false, false, sModelName);
+			}
 		}
 		return this;
 	};
@@ -2605,6 +2614,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				if (oBinding.getBindingMode() === sap.ui.model.BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
+					oBinding.destroy();
+					// TODO remove the binding from the binding info or mark it somehow as "deactivated"? 
 				}
 			},
 			fMessageChangeHandler = function(oEvent){
@@ -2704,6 +2715,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				oBindingInfo.binding.destroy();
 			}
 			delete this.mBindingInfos[sName];
 			if (!bSuppressReset) {
@@ -2999,6 +3011,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				oBindingInfo.binding.destroy();
 			}
 			// remove template if any
 			if (oBindingInfo.template ) {
@@ -3198,6 +3211,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
 				}
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				oBindingInfo.binding.destroy();
 				delete oBindingInfo.binding;
 			}
 

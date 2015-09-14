@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.28.17
+	 * @version 1.28.18
 	 *
 	 * @param {object} oData parameters used to initialize the ResourceModel; at least either bundleUrl or bundleName must be set on this object; if both are set, bundleName wins
 	 * @param {string} [oData.bundleUrl] the URL to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
@@ -46,11 +46,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 			
 			this.bAsync = !!(oData && oData.async);
 		
-			this.sDefaultBindingMode = this.bAsync ? sap.ui.model.BindingMode.OneWay : sap.ui.model.BindingMode.OneTime;
+			this.sDefaultBindingMode = oData.defaultBindingMode || sap.ui.model.BindingMode.OneWay;
+			
 			this.mSupportedBindingModes = {
 				"OneWay" : true,
 				"TwoWay" : false,
-				"OneTime" : true
+				"OneTime" : !this.bAsync
 			};
 			
 			if (this.bAsync && this.sDefaultBindingMode == sap.ui.model.BindingMode.OneTime) {
@@ -116,14 +117,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 			if (bundle instanceof Promise) {
 				bundle.then(function(customBundle){
 					that._oResourceBundle._enhance(customBundle);
+					that.checkUpdate(true);
 					fResolve(true);
 				}, function(){
 					fResolve(true);
 				});
 			} else if (bundle) {
 				that._oResourceBundle._enhance(bundle);
+				that.checkUpdate(true);
 			}
 		}
+
 		
 		if (this._oPromise) {
 			Promise.resolve(this._oPromise).then(doEnhance);
@@ -200,6 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 				});
 			} else {
 				oModel._oResourceBundle = res;
+				oModel.checkUpdate(true);
 			}
 		} else if (bThrowError) {
 			throw new Error("Neither bundleUrl nor bundleName are given. One of these is mandatory.");
