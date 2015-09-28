@@ -512,9 +512,5 @@
     "sapMeOverlapCalendarType07": "#ff9191",
     "sapMeOverlapCalendarIndicator": "#ffffff",
     "sapMeCalendarLegendIconCollapse": "collapse",
-    "sapMeCalendarLegendIconExpand": "expand",
-    "sapUiLocalBusyIndicatorBoxSize": "4rem",
-    "sapUiLocalBusyIndicatorBoxColor": "#ffffff",
-    "sapUiLocalBusyIndicatorBoxColorActive": "#000000",
-    "sapUiLocalBusyIndicatorBoxTransitionDuration": "125ms"
+    "sapMeCalendarLegendIconExpand": "expand"
 }

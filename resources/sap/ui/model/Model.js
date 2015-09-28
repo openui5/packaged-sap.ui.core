@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.32.1
+	 * @version 1.32.2
 	 *
 	 * @constructor
 	 * @public
@@ -782,7 +782,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @protected
 	 */
 	Model.prototype.getMessagesByPath = function(sPath) {
-		return this.mMessages[sPath];
+		if (this.mMessages) {
+			return this.mMessages[sPath] || [];
+		}
+		return null;
 	};
 
 	/**

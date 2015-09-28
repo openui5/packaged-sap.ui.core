@@ -903,19 +903,6 @@ html[data-sap-ui-browser=ie8] .sapUiShd {
 .sapUiBLy {
   background-color: rgba(0, 0, 0, 0.3);
 }
-.sapUiLocalBusyIndicatorAnimation > div {
-  top: 1.5em;
-  left: 0.5em;
-}
-.sapUiBusy {
-  margin: 0 auto 0;
-}
-.sapUiLocalBusyIndicatorAnimSmall > div:nth-child(3) {
-  left: -0.5em;
-}
-#sapUiBusyIndicator .sapUiLocalBusyIndicator {
-  display: none;
-}
 .sapUiBody {
   scrollbar-base-color: #000000;
   scrollbar-face-color: #ffffff;
@@ -988,37 +975,11 @@ html[data-sap-ui-browser=ie8] .sapUiShd {
 HTML[data-sap-ui-browser='ie8'] .sapUiLocalBusyIndicator {
   background-color: #000000;
 }
-.sapUiLocalBusyIndicatorAnimation {
-  background-color: #000000;
-  border: 0.125rem solid #ffffff;
-  border-radius: 1px;
-  box-shadow: 0 0 2.5rem 0.125rem rgba(255, 255, 255, 0.8);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 4rem;
-  height: 4rem;
-  margin: -2rem 0 0 -2rem;
+.sapUiBusy {
+  margin: 0 auto;
 }
-.sapUiLocalBusyIndicatorBox {
-  width: .5rem;
-  height: .5rem;
-  background-color: #000000;
-  border-radius: 1px;
-  -moz-border-radius: 1px;
-  -webkit-border-radius: 1px;
-  border: 1px solid #ffffff;
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  float: left;
-  margin: 1.75rem 0 0 .5rem;
-}
-.sapUiLocalBusyIndicatorBox.active {
-  background-color: #ffffff;
-}
-.sapUiLocalBusyIndicatorBox:first-child {
-  margin-left: .75rem;
+#sapUiBusyIndicator > .sapUiLocalBusyIndicator {
+  display: none;
 }
 /* HCB */
 .sapUiShd {

@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.32.1
+	 * @version 1.32.2
 	 *
 	 * @constructor
 	 * @public
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		constructor : function () {
 			EventProvider.apply(this, arguments);
 			
-			this.mMessages = {};
+			this.mMessages = null;
 			this.id = jQuery.sap.uid();
 			sap.ui.getCore().getMessageManager().registerMessageProcessor(this);
 		},

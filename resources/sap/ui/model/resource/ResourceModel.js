@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.32.1
+	 * @version 1.32.2
 	 *
 	 * @param {object} oData parameters used to initialize the ResourceModel; at least either bundleUrl or bundleName must be set on this object; if both are set, bundleName wins
 	 * @param {string} [oData.bundleUrl] the URL to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
@@ -46,11 +46,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 			
 			this.bAsync = !!(oData && oData.async);
 		
-			this.sDefaultBindingMode = this.bAsync ? BindingMode.OneWay : BindingMode.OneTime;
+			this.sDefaultBindingMode = oData.defaultBindingMode || BindingMode.OneWay;
+			
 			this.mSupportedBindingModes = {
 				"OneWay" : true,
 				"TwoWay" : false,
-				"OneTime" : true
+				"OneTime" : !this.bAsync
 			};
 			
 			if (this.bAsync && this.sDefaultBindingMode == BindingMode.OneTime) {
@@ -113,6 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		function doEnhance(){
 			if (jQuery.sap.resources.isBundle(oData)) {
 				that._oResourceBundle._enhance(oData);
+				that.checkUpdate(true);
 				if (oPromise) {
 					fResolve(true);
 				}
@@ -122,12 +124,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 				if (bundle instanceof Promise) {
 					bundle.then(function(customBundle){
 						that._oResourceBundle._enhance(customBundle);
+						that.checkUpdate(true);
 						fResolve(true);
 					}, function(){
 						fResolve(true);
 					});
 				} else if (bundle) {
 					that._oResourceBundle._enhance(bundle);
+					that.checkUpdate(true);
 				}
 			}
 		}
@@ -207,6 +211,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 				});
 			} else {
 				oModel._oResourceBundle = res;
+				oModel.checkUpdate(true);
 			}
 		} else if (bThrowError) {
 			throw new Error("Neither bundleUrl nor bundleName are given. One of these is mandatory.");

@@ -172,7 +172,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.32.1
+	 * @version 1.32.2
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -2570,7 +2570,7 @@ sap.ui.define([
 				var oDataState = oBinding.getDataState();
 				if (oDataState) {
 					var oControlMessages = oDataState.getControlMessages();
-					if (oControlMessages.length > 0) {
+					if (oControlMessages && oControlMessages.length > 0) {
 						var oMessageManager = sap.ui.getCore().getMessageManager();
 						oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid DataStateChange event to fire
 						if (oControlMessages) {

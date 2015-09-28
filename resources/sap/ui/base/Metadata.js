@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 *
 	 * @class Metadata for a class.
 	 * @author Frank Weigel
-	 * @version 1.32.1
+	 * @version 1.32.2
 	 * @since 0.8.6
 	 * @public
 	 * @alias sap.ui.base.Metadata

@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	 * @see sap.ui.core.LabelEnablement#enrich
 	 *
 	 * @author SAP SE
-	 * @version 1.32.1
+	 * @version 1.32.2
 	 * @protected
 	 * @alias sap.ui.core.LabelEnablement
 	 * @namespace

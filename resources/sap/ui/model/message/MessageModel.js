@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.32.1
+	 * @version 1.32.2
 	 *
 	 * @param {sap.ui.core.message.MessageManager} oMessageManager The MessageManager instance
 	 * @constructor
@@ -123,7 +123,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 		
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
+		} else if (oContext) {
+			oNode = oContext;
 		}
+		
 		if (!sPath) {
 			return oNode;
 		}
