@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 * @class This class provides the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 	 *
 	 * @extends sap.ui.base.EventProvider
-	 * @version 1.28.18
+	 * @version 1.28.19
 	 * @constructor
 	 * @private
 	 * @alias sap.ui.core.support.Support
@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 
 
 	function getSupportArea() {
-		var $support = jQuery("#" + ID_SUPPORT_AREA);
+		var $support = jQuery.sap.byId(ID_SUPPORT_AREA);
 		if ($support.length === 0) {
 			$support = jQuery("<DIV/>", {id:ID_SUPPORT_AREA}).
 				addClass("sapUiHidden").

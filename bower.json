@@ -1,7 +1,7 @@
 {
   "name": "openui5-sap.ui.core",
   "description": "OpenUI5 Core Library sap.ui.core",
-  "version": "1.28.18",
+  "version": "1.28.19",
   "license": "Apache-2.0",
   "ignore": [],
   "keywords": [
