@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.32.2
+	 * @version 1.32.3
 	 *
 	 * @constructor
 	 * @public
@@ -1266,9 +1266,10 @@ sap.ui.define([
 	 * @param {boolean} bForceUpdate force update of controls
 	 * @param {boolean} bAsync asynchronous execution
 	 * @param {map} mChangedEntities Map of changed entities
+	 * @param {boolean} bMetaModelOnly update metamodel bindings only
 	 * @private
 	 */
-	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities) {
+	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities, bMetaModelOnly) {
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
 				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
@@ -1283,9 +1284,11 @@ sap.ui.define([
 		}
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-			oBinding.checkDataState(bForceUpdate);
-		});
+			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
+				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
+				oBinding.checkDataState(bForceUpdate);
+			}
+		}.bind(this));
 		//handle calls after update
 		var aCallAfterUpdate = this.aCallAfterUpdate;
 		this.aCallAfterUpdate = [];
@@ -1679,7 +1682,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the key from the given collection name and property map
+	 * Creates the key from the given collection name and property map. Please make sure that the metadata document is loaded before using this function.
 	 *
 	 * @param {string} sCollection The name of the collection
 	 * @param {object} oKeyProperties The object containing at least all the key properties of the entity type
@@ -1769,9 +1772,9 @@ sap.ui.define([
 
 		//check for metadata path
 		if (this.oMetadata && this.oMetadata.isLoaded() && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
-			iSeparator = sResolvedPath.indexOf('/##');
-			if (iSeparator >= 0) {
+			if (this.isMetaModelPath(sResolvedPath)) {
 				// Metadata binding resolved by ODataMetaModel
+				iSeparator = sResolvedPath.indexOf('/##');
 				oMetaModel = this.getMetaModel();
 				if (!this.bMetaModelLoaded) {
 					return null;
@@ -4212,6 +4215,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks if path points to a metamodel property
+	 * @param {string} sPath The binding path
+	 * @returns {boolean}
+	 * @private
+	 */
+	ODataModel.prototype.isMetaModelPath = function(sPath) {
+		return sPath.indexOf("##") == 0 || sPath.indexOf("/##") > -1;
+	};
+
+	/**
 	 * Wraps the OData.request method and keeps track of pending requests
 	 *
 	 * @param {object} oRequest The request object
@@ -4501,7 +4514,18 @@ sap.ui.define([
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
-				that.checkUpdate();
+				// Update metamodel bindings only
+				that.checkUpdate(false, false, null, true);
+			})["catch"](function (oError) {
+				var sMessage = oError.message,
+					sDetails;
+
+				if (!sMessage && oError.xmlDoc && oError.xmlDoc.parseError) {
+					sMessage = oError.xmlDoc.parseError.reason;
+					sDetails = oError.xmlDoc.parseError.srcText;
+				}
+				jQuery.sap.log.error("error in ODataMetaModel.loaded(): " + sMessage, sDetails,
+					"sap.ui.model.odata.v2.ODataModel");
 			});
 		}
 		return this.oMetaModel;

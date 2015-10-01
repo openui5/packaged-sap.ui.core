@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.2
+	 * @version 1.32.3
 	 *
 	 * @constructor
 	 * @public
