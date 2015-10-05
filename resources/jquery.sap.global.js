@@ -88,7 +88,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.30.9
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -511,7 +511,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.30.8
+	 * @version 1.30.9
 	 * @namespace
 	 * @public
 	 * @static
@@ -3671,8 +3671,9 @@
 				// redefine AJAX call
 				jQuery.ajax = function( url, options ){
 					jQuery.sap.measure.start(url.url, "Request for " + url.url);
-					fnAjax.apply(this,arguments);
+					var oXhr = fnAjax.apply(this,arguments);
 					jQuery.sap.measure.end(url.url);
+					return oXhr;
 				};
 			} else if (fnAjax) {
 				jQuery.ajax = fnAjax;

@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @experimental Since 1.9.2. The Component concept is still under construction, so some implementation details can be changed in future.
 	 * @class
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.30.9
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -112,11 +112,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		this._bInitialized = false;
 		this._iInstanceCount = 0;
 
-		// get the parent component
-		var oParent = this.getParent(),
-		    bIsComponentBaseClass = /^sap\.ui\.core\.(UI)?Component$/.test(sName),
-		    sParentName = bIsComponentBaseClass && oParent && oParent._sComponentName;
-
 		// extract the manifest
 		var oManifest = oStaticInfo["manifest"];
 
@@ -168,9 +163,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 			"id": sPackage // use the "package" namespace instead of the classname (without ".Component")
 		};
 		oManifest["sap.ui5"] = oManifest["sap.ui5"] || {};
-		if (sParentName) {
+		// the extends property will be added when the component is not a base class
+		var bIsComponentBaseClass = /^sap\.ui\.core\.(UI)?Component$/.test(sName);
+		if (!bIsComponentBaseClass) {
 			oManifest["sap.ui5"]["extends"] = oManifest["sap.ui5"]["extends"] || {};
-			oManifest["sap.ui5"]["extends"].component = oManifest["sap.ui5"]["extends"].component || sParentName;
 		}
 
 		// convert the old legacy metadata and merge with the new manifest

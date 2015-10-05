@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.30.9
 	 *
 	 * @constructor
 	 * @public
@@ -204,10 +204,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				}
 				
 				if (this.sAnnotationURI) {
-					this.pAnnotationsLoaded = Promise.all([
-						this.pAnnotationsLoaded,
-						oAnnotations.addUrl(this.sAnnotationURI)
-					]);
+					if (this.bLoadMetadataAsync) {
+						this.pAnnotationsLoaded = this.pAnnotationsLoaded
+							.then(oAnnotations.addUrl.bind(oAnnotations, this.sAnnotationURI));
+					} else {
+						this.pAnnotationsLoaded = Promise.all([
+							this.pAnnotationsLoaded,
+							oAnnotations.addUrl(this.sAnnotationURI)
+						]);
+					}
 				}
 			}
 
@@ -961,10 +966,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @param {boolean} bForceUpdate
 	 * @param {boolean} bAsync
 	 * @param {object} mChangedEntities
+	 * @param {boolean} bMetaModelOnly update metamodel bindings only
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities) {
+	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities, bMetaModelOnly) {
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
 				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
@@ -979,10 +985,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		}
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-		});
+			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
+				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
+			}
+		}.bind(this));
 	};
-
 
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
@@ -1422,9 +1429,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 		//check for metadata path
 		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
-			iSeparator = sResolvedPath.indexOf('/##');
-			if (iSeparator >= 0) {
+			if (this.isMetaModelPath(sResolvedPath)) {
 				// Metadata binding resolved by ODataMetaModel
+				iSeparator = sResolvedPath.indexOf('/##');
 				oMetaModel = this.getMetaModel();
 				if (!this.bMetaModelLoaded) {
 					return null;
@@ -3078,10 +3085,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			for (var i = 0; i < oEntityMetadata.property.length; i++) {
 				var oPropertyMetadata = oEntityMetadata.property[i];
 
-				var aType = oPropertyMetadata.type.split('.');
 				var bPropertyInArray = jQuery.inArray(oPropertyMetadata.name,vProperties) > -1;
 				if (!vProperties || bPropertyInArray)  {
-					oEntity[oPropertyMetadata.name] = this._createPropertyValue(aType);
+					oEntity[oPropertyMetadata.name] = this._createPropertyValue(oPropertyMetadata.type);
 					if (bPropertyInArray) {
 						vProperties.splice(vProperties.indexOf(oPropertyMetadata.name),1);
 					}
@@ -3115,20 +3121,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 	/**
 	 * Return value for a property. This can also be a ComplexType property
-	 * @param {array} aType Type splitted by dot and passed as array
+	 * @param {string} full qualified Type name
+	 * @returns {any} vValue The property value
 	 * @private
 	 */
-	ODataModel.prototype._createPropertyValue = function(aType) {
-		var sNamespace = aType[0];
-		var sTypeName = aType[1];
+	ODataModel.prototype._createPropertyValue = function(sType) {
+		var aTypeName = this.oMetadata._splitName(sType); // name, namespace
+		var sNamespace = aTypeName[1];
+		var sTypeName = aTypeName[0];
 		if (sNamespace.toUpperCase() !== 'EDM') {
 			var oComplexType = {};
 			var oComplexTypeMetadata = this.oMetadata._getObjectMetadata("complexType",sTypeName,sNamespace);
-			jQuery.sap.assert(oComplexTypeMetadata, "Compley type " + sTypeName + " not found in the metadata !");
+			jQuery.sap.assert(oComplexTypeMetadata, "Complex type " + sType + " not found in the metadata !");
 			for (var i = 0; i < oComplexTypeMetadata.property.length; i++) {
 				var oPropertyMetadata = oComplexTypeMetadata.property[i];
-				var aType = oPropertyMetadata.type.split('.');
-				oComplexType[oPropertyMetadata.name] = this._createPropertyValue(aType);
+				oComplexType[oPropertyMetadata.name] = this._createPropertyValue(oPropertyMetadata.type);
 			}
 			return oComplexType;
 		} else {
@@ -3178,6 +3185,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	ODataModel.prototype.isList = function(sPath, oContext) {
 		var sPath = this.resolve(sPath, oContext);
 		return sPath && sPath.substr(sPath.lastIndexOf("/")).indexOf("(") === -1;
+	};
+
+	/**
+	 * Checks if path points to a metamodel property
+	 * @param {string} sPath The binding path
+	 * @returns {boolean}
+	 * @private
+	 */
+	ODataModel.prototype.isMetaModelPath = function(sPath) {
+		return sPath.indexOf("##") == 0 || sPath.indexOf("/##") > -1;
 	};
 
 	/**
@@ -3400,7 +3417,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
-				that.checkUpdate();
+				that.checkUpdate(false, false, null, true);
 			});
 		}
 		return this.oMetaModel;

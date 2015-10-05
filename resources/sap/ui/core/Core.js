@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.30.9
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -866,10 +866,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		log.info("Plugins started",null,METHOD);
 
 		this._createUIAreas();
+		
+		this.oThemeCheck.fireThemeChangedEvent(true);
 
 		this._executeOnInit();
-
-		this.oThemeCheck.fireThemeChangedEvent(true);
 
 		this._setupRootComponent();
 
@@ -2531,6 +2531,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this.oMessageManager = oMessageManager;
 	};
 
+	/**
+	 * Returns the active <code>MessageManager</code> instance.
+	 *
+	 * @return {sap.ui.core.message.MessageManager}
+	 * @public
+	 * @since 1.33.0
+	 */
 	Core.prototype.getMessageManager = function() {
 		if (!this.oMessageManager) {
 			this.oMessageManager = new MessageManager();

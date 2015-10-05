@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.30.8
+		 * @version 1.30.9
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
@@ -823,7 +823,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 				if (!(this._oPullDown && this._oPullDown._bTouchMode)
 					&& !this._fnScrollLoadCallback
-					&& !!!Device.browser.internet_explorer) {
+					&& !Device.browser.internet_explorer) {
 					// for IE the resize listener must remain in place for the case when navigating away and coming back.
 					// For the other browsers it seems to work fine without.
 					sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);

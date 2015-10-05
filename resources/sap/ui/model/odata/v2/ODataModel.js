@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.30.9
 	 *
 	 * @constructor
 	 * @public
@@ -217,10 +217,8 @@ sap.ui.define([
 				}
 				
 				if (this.sAnnotationURI) {
-					this.pAnnotationsLoaded = Promise.all([
-						this.pAnnotationsLoaded,
-						oAnnotations.addUrl(this.sAnnotationURI)
-					]);
+					this.pAnnotationsLoaded = this.pAnnotationsLoaded
+						.then(oAnnotations.addUrl.bind(oAnnotations, this.sAnnotationURI));
 				}
 			}
 
@@ -257,10 +255,8 @@ sap.ui.define([
 				} else {
 					this.oHeaders["Accept"] = "application/json";
 				}
-				this.oHeaders["Content-Type"] = "application/json";
 			} else {
 				this.oHeaders["Accept"] = "application/atom+xml,application/atomsvc+xml,application/xml";
-				this.oHeaders["Content-Type"] = "application/atom+xml";
 			}
 
 			// Get CSRF token, if already available
@@ -1267,9 +1263,10 @@ sap.ui.define([
 	 * @param {boolean} bForceUpdate force update of controls
 	 * @param {boolean} bAsync asynchronous execution
 	 * @param {map} mChangedEntities Map of changed entities
+	 * @param {boolean} bMetaModelOnly update metamodel bindings only
 	 * @private
 	 */
-	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities) {
+	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities, bMetaModelOnly) {
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
 				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
@@ -1284,8 +1281,10 @@ sap.ui.define([
 		}
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-		});
+			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
+				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
+			}
+		}.bind(this));
 		//handle calls after update
 		var aCallAfterUpdate = this.aCallAfterUpdate;
 		this.aCallAfterUpdate = [];
@@ -1666,7 +1665,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the key from the given collection name and property map
+	 * Creates the key from the given collection name and property map. Please make sure that the metadata document is loaded before using this function.
 	 *
 	 * @param {string} sCollection The name of the collection
 	 * @param {object} oKeyProperties The object containing at least all the key properties of the entity type
@@ -1755,9 +1754,9 @@ sap.ui.define([
 
 		//check for metadata path
 		if (this.oMetadata && this.oMetadata.isLoaded() && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
-			iSeparator = sResolvedPath.indexOf('/##');
-			if (iSeparator >= 0) {
+			if (this.isMetaModelPath(sResolvedPath)) {
 				// Metadata binding resolved by ODataMetaModel
+				iSeparator = sResolvedPath.indexOf('/##');
 				oMetaModel = this.getMetaModel();
 				if (!this.bMetaModelLoaded) {
 					return null;
@@ -2816,8 +2815,12 @@ sap.ui.define([
 		/* make sure to set content type header for POST/PUT requests when using JSON
 		 * format to prevent datajs to add "odata=verbose" to the content-type header
 		 * may be removed as later gateway versions support this */
-		if (this.bJSON && sMethod !== "DELETE" && this.sMaxDataServiceVersion === "2.0") {
-			mHeaders["Content-Type"] = "application/json";
+		if (sMethod !== "DELETE" && sMethod !== "GET") {
+			if (this.bJSON) {
+				mHeaders["Content-Type"] = "application/json";
+			} else {
+				mHeaders["Content-Type"] = "application/atom+xml";
+			}
 		}
 
 		// Set Accept header for $count requests
@@ -3928,10 +3931,9 @@ sap.ui.define([
 				for (var i = 0; i < oEntityMetadata.property.length; i++) {
 					var oPropertyMetadata = oEntityMetadata.property[i];
 
-					var aType = oPropertyMetadata.type.split('.');
 					var bPropertyInArray = jQuery.inArray(oPropertyMetadata.name,vProperties) > -1;
 					if (!vProperties || bPropertyInArray)  {
-						oEntity[oPropertyMetadata.name] = that._createPropertyValue(aType);
+						oEntity[oPropertyMetadata.name] = that._createPropertyValue(oPropertyMetadata.type);
 						if (bPropertyInArray) {
 							vProperties.splice(vProperties.indexOf(oPropertyMetadata.name),1);
 						}
@@ -3996,21 +3998,21 @@ sap.ui.define([
 
 	/**
 	 * Return value for a property. This can also be a ComplexType property
-	 * @param {array} aType Type splitted by dot and passed as array
+	 * @param {string} full qualified Type name
 	 * @returns {any} vValue The property value
 	 * @private
 	 */
-	ODataModel.prototype._createPropertyValue = function(aType) {
-		var sNamespace = aType[0];
-		var sTypeName = aType[1];
+	ODataModel.prototype._createPropertyValue = function(sType) {
+		var aTypeName = this.oMetadata._splitName(sType); // name, namespace
+		var sNamespace = aTypeName[1];
+		var sTypeName = aTypeName[0];
 		if (sNamespace.toUpperCase() !== 'EDM') {
 			var oComplexType = {};
 			var oComplexTypeMetadata = this.oMetadata._getObjectMetadata("complexType",sTypeName,sNamespace);
-			jQuery.sap.assert(oComplexTypeMetadata, "Compley type " + sTypeName + " not found in the metadata !");
+			jQuery.sap.assert(oComplexTypeMetadata, "Complex type " + sType + " not found in the metadata !");
 			for (var i = 0; i < oComplexTypeMetadata.property.length; i++) {
 				var oPropertyMetadata = oComplexTypeMetadata.property[i];
-				aType = oPropertyMetadata.type.split('.');
-				oComplexType[oPropertyMetadata.name] = this._createPropertyValue(aType);
+				oComplexType[oPropertyMetadata.name] = this._createPropertyValue(oPropertyMetadata.type);
 			}
 			return oComplexType;
 		} else {
@@ -4068,6 +4070,16 @@ sap.ui.define([
 	ODataModel.prototype.isList = function(sPath, oContext) {
 		sPath = this.resolve(sPath, oContext);
 		return sPath && sPath.substr(sPath.lastIndexOf("/")).indexOf("(") === -1;
+	};
+
+	/**
+	 * Checks if path points to a metamodel property
+	 * @param {string} sPath The binding path
+	 * @returns {boolean}
+	 * @private
+	 */
+	ODataModel.prototype.isMetaModelPath = function(sPath) {
+		return sPath.indexOf("##") == 0 || sPath.indexOf("/##") > -1;
 	};
 
 	/**
@@ -4303,7 +4315,18 @@ sap.ui.define([
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
-				that.checkUpdate();
+				// Update metamodel bindings only
+				that.checkUpdate(false, false, null, true);
+			})["catch"](function (oError) {
+				var sMessage = oError.message,
+					sDetails;
+
+				if (!sMessage && oError.xmlDoc && oError.xmlDoc.parseError) {
+					sMessage = oError.xmlDoc.parseError.reason;
+					sDetails = oError.xmlDoc.parseError.srcText;
+				}
+				jQuery.sap.log.error("error in ODataMetaModel.loaded(): " + sMessage, sDetails,
+					"sap.ui.model.odata.v2.ODataModel");
 			});
 		}
 		return this.oMetaModel;
