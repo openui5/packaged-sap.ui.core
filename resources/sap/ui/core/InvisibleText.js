@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.9
+	 * @version 1.30.10
 	 *
 	 * @constructor
 	 * @public
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 			var oRM = oCore.createRenderManager();
 			oRM.render(this, oStatic);
 			oRM.destroy();
-		} catch(e) {
+		} catch (e) {
 			this.placeAt("sap-ui-static");
 		}
 		

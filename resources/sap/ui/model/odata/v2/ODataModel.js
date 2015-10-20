@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.30.9
+	 * @version 1.30.10
 	 *
 	 * @constructor
 	 * @public
@@ -1790,11 +1790,12 @@ sap.ui.define([
 					oNode = this.oData;
 				}
 			}
+			
 			while (oNode && aParts[iIndex]) {
 				oNode = oNode[aParts[iIndex]];
 				if (oNode) {
 					if (oNode.__ref) {
-						oNode = this.oData[oNode.__ref];
+						oNode = this.mChangedEntities[oNode.__ref] ? this.mChangedEntities[oNode.__ref] : this.oData[oNode.__ref];
 					} else if (oNode.__list) {
 						oNode = oNode.__list;
 					} else if (oNode.__deferred) {
@@ -2470,6 +2471,10 @@ sap.ui.define([
 				delete this.mChangedEntities[oRequest.context.sPath.substr(1)];
 				delete this.oData[oRequest.context.sPath.substr(1)];
 				oRequest.context.sPath = '/' + sKey;
+				//delete created flag after successfull creation
+				if (this.oData[sKey]) {
+					delete this.oData[sKey].__metadata.created;
+				}
 			}
 		}
 
@@ -2549,7 +2554,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod) {
-		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, sType, oUnModifiedEntry, that = this;
+		var oPayload, oEntityType, sETag, mParams, aUrlParams, sMethod, sUrl, mHeaders, oRequest, sType, oUnModifiedEntry, that = this;
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
@@ -2562,6 +2567,7 @@ sap.ui.define([
 		if (oData.__metadata && oData.__metadata.created){
 			sMethod = "POST";
 			sKey = oData.__metadata.created.key;
+			mParams = oData.__metadata.created;
 		} else if (sUpdateMethod === "MERGE") {
 			sMethod = "MERGE";
 			// get original unmodified entry for diff
@@ -2624,9 +2630,14 @@ sap.ui.define([
 
 		// remove any yet existing references which should already have been deleted
 		oPayload = this._removeReferences(oPayload);
-
-		sUrl = this._createRequestUrl('/' + sKey);
-		mHeaders = this._getHeaders();
+		
+		//get additional request info for created entries 
+		aUrlParams = mParams && mParams.urlParameters ? ODataUtils._createUrlParamsArray(mParams.urlParameters) : undefined;
+		mHeaders = mParams && mParams.headers ? this._getHeaders(mParams.headers) : this._getHeaders();
+		sETag = mParams && mParams.eTag ? mParams.eTag : this.getETag(oPayload);
+		
+		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
+	
 		oRequest = this._createRequest(sUrl, sMethod, mHeaders, oPayload, sETag);
 
 		if (this.bUseBatch) {
@@ -2646,10 +2657,15 @@ sap.ui.define([
 	 * @function
 	 */
 	ODataModel.prototype._resolveGroup = function(sKey) {
-		var oChangeGroup, oEntityType, sBatchGroupId, sChangeSetId;
+		var oChangeGroup, oEntityType, mParams, sBatchGroupId, sChangeSetId, oData;
 
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
-
+		oData = this._getObject('/' + sKey);
+		mParams = oData.__metadata.created;
+		//for created entries the group information is retrieved from the params
+		if (mParams) {
+			return {batchGroupId: mParams.batchGroupId, changeSetId: mParams.changeSetId};
+		}
 		//resolve batchGroupId/changeSetId
 		if (this.mChangeBatchGroups[oEntityType.name]) {
 			oChangeGroup = this.mChangeBatchGroups[oEntityType.name];
@@ -3486,6 +3502,7 @@ sap.ui.define([
 		var oRequest, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
 			oRequestHandle, vRequestHandleInternal,
 			bAborted = false, sMethod,
+			mParams,
 			that = this;
 
 		if (mParameters) {
@@ -3508,8 +3525,10 @@ sap.ui.define([
 				if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
 					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
 					oRequest.key = sKey;
+					//get params for created entries: could contain success/error handler
+					mParams = oData.__metadata && oData.__metadata.created ? oData.__metadata.created : {};
 					if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
-						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
+						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error);
 					}
 				}
 			});
@@ -3609,7 +3628,7 @@ sap.ui.define([
 		var sProperty, mRequests, oRequest, oEntry = { }, oData = { },
 		sResolvedPath = this.resolve(sPath, oContext),
 		aParts,	sKey, oGroupInfo, oRequestHandle,
-		mChangedEntities = {},
+		mChangedEntities = {}, mParams,
 		sEntryPath;
 
 		// check if path / context is valid
@@ -3658,7 +3677,18 @@ sap.ui.define([
 			oChangeObject = oChangeObject[aParts[i]];
 		}
 		oChangeObject[sProperty] = oValue;
+		
 
+		if (jQuery.sap.equal(oEntry, this.oData[sKey])) {
+			delete this.mChangedEntities[sKey];
+			mChangedEntities[sKey] = true;
+			if (this.mChangeHandles[sKey]) {
+				this.mChangeHandles[sKey].abort();
+			}
+			this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
+			return true;
+		}
+		
 		oGroupInfo = this._resolveGroup(sKey);
 
 		mRequests = this.mRequests;
@@ -3670,7 +3700,10 @@ sap.ui.define([
 		} else {
 			oRequest = this._processChange(sKey, oEntry);
 		}
-
+		
+		//get params for created entries: could contain success/error handler
+		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};
+		
 		if (!this.mChangeHandles[sKey]) {
 			oRequestHandle = {
 					abort: function() {
@@ -3681,7 +3714,7 @@ sap.ui.define([
 			this.mChangeHandles[sKey] = oRequestHandle;
 		}
 
-		this._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
+		this._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error);
 
 		if (this.bUseBatch) {
 			if (!this.oRequestTimer) {
@@ -3943,15 +3976,27 @@ sap.ui.define([
 					jQuery.sap.assert(vProperties.length === 0, "No metadata for the following properties found: " + vProperties.join(","));
 				}
 			}
-			// remove starting / for key only
-			sKey = sPath.substring(1) + "('" + jQuery.sap.uid() + "')";
+			var oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
+			sKey = oEntitySetMetadata.name + "('" + jQuery.sap.uid() + "')";
 
 			that.oData[sKey] = oEntity;
 
-			oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: that.sServiceUrl + '/' + sKey, created: {key: sPath.substring(1)}};
+			oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: that.sServiceUrl + '/' + sKey, created: {
+				//store path for later POST
+				key: sPath.substring(1),
+				success: fnSuccess, 
+				error: fnError, 
+				headers: mHeaders, 
+				urlParameters: mUrlParams, 
+				batchGroupId: sBatchGroupId,
+				changeSetId: sChangeSetId,
+				eTag: sETag}};
+			
+			that.oData[sKey] = jQuery.sap.extend(true, {}, oEntity);
+			that.mChangedEntities[sKey] = oEntity;
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oEntity, undefined, sETag);
+			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oEntity, sETag);
 
 			oCreatedContext = that.getContext("/" + sKey); // context wants a path
 			oRequest.context = oCreatedContext;

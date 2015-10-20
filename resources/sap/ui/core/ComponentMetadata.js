@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @experimental Since 1.9.2. The Component concept is still under construction, so some implementation details can be changed in future.
 	 * @class
 	 * @author SAP SE
-	 * @version 1.30.9
+	 * @version 1.30.10
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @private
 	 */
 	ComponentMetadata.prototype.onExitComponent = function() {
-		this._iInstanceCount--;
+		this._iInstanceCount = Math.max(this._iInstanceCount - 1, 0);
 		var oUI5Manifest = this.getManifestEntry("sap.ui5", true),
 			mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
 		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {

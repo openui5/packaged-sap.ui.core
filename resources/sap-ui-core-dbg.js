@@ -10822,7 +10822,7 @@ $.ui.position = {
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.30.9
+ * @version 1.30.10
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,7 +10847,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.30.9";
+		var apiVersion = "1.30.10";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10905,7 +10905,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.30.9";
+		var v = "1.30.10";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15472,7 +15472,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.30.9
+	 * @version 1.30.10
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -15895,7 +15895,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.30.9
+	 * @version 1.30.10
 	 * @namespace
 	 * @public
 	 * @static
@@ -17639,6 +17639,19 @@ return URI;
 				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
 			} else {
 				vUrlPrefix.url = String(vUrlPrefix.url);
+
+				// remove query parameters
+				var iQueryIndex = vUrlPrefix.url.indexOf("?");
+				if (iQueryIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iQueryIndex);
+				}
+
+				// remove hash
+				var iHashIndex = vUrlPrefix.url.indexOf("#");
+				if (iHashIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iHashIndex);
+				}
+
 				// ensure that the prefix ends with a '/'
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
@@ -19413,7 +19426,7 @@ return URI;
 					if (bOk) {
 						this._applyState(true, true);
 					}
-				} catch(e) {
+				} catch (e) {
 					// access to the top window is not possible
 					this._sendRequireMessage();
 				}
