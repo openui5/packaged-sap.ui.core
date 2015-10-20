@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.32.3
+		 * @version 1.32.4
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
@@ -791,7 +791,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 				}
 
 				// Let container scroll into the configured directions
-				if (Device.os.ios) {
+				if (Device.os.ios || Device.os.blackberry) {
 					$Container
 						.css("overflow-x", this._bHorizontal ? "scroll" : "hidden")
 						.css("overflow-y", this._bVertical ? "scroll" : "hidden")

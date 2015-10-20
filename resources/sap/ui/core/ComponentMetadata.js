@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @public
 	 * @class
 	 * @author SAP SE
-	 * @version 1.32.3
+	 * @version 1.32.4
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @private
 	 */
 	ComponentMetadata.prototype.onExitComponent = function() {
-		this._iInstanceCount--;
+		this._iInstanceCount = Math.max(this._iInstanceCount - 1, 0);
 		var oUI5Manifest = this.getManifestEntry("sap.ui5", true),
 			mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
 		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {

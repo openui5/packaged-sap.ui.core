@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.32.3
+ * @version 1.32.4
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -36,7 +36,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.32.3";
+		var apiVersion = "1.32.4";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -94,7 +94,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.32.3";
+		var v = "1.32.4";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -1508,10 +1508,10 @@ if (typeof window.sap.ui !== "object") {
 		var isWin7 = device.os.windows && device.os.version === 7;
 
 		var s = {};
-		s.tablet = ((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t;
-		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
-		s.desktop = (!s.tablet && !s.phone) || isWin8Upwards || isWin7;
-		s.combi = (s.desktop && s.tablet);
+		s.tablet = !!(((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t);
+		s.phone = !!(device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t);
+		s.desktop = !!((!s.tablet && !s.phone) || isWin8Upwards || isWin7);
+		s.combi = !!(s.desktop && s.tablet);
 		s.SYSTEMTYPE = SYSTEMTYPE;
 
 		for (var type in SYSTEMTYPE) {
@@ -4947,7 +4947,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.3
+	 * @version 1.32.4
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -5370,7 +5370,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.32.3
+	 * @version 1.32.4
 	 * @namespace
 	 * @public
 	 * @static
@@ -7115,6 +7115,19 @@ return URI;
 				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
 			} else {
 				vUrlPrefix.url = String(vUrlPrefix.url);
+
+				// remove query parameters
+				var iQueryIndex = vUrlPrefix.url.indexOf("?");
+				if (iQueryIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iQueryIndex);
+				}
+
+				// remove hash
+				var iHashIndex = vUrlPrefix.url.indexOf("#");
+				if (iHashIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iHashIndex);
+				}
+
 				// ensure that the prefix ends with a '/'
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
@@ -8889,7 +8902,7 @@ return URI;
 					if (bOk) {
 						this._applyState(true, true);
 					}
-				} catch(e) {
+				} catch (e) {
 					// access to the top window is not possible
 					this._sendRequireMessage();
 				}

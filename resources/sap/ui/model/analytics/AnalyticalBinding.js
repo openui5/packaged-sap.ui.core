@@ -1923,7 +1923,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		try {
 			oAnalyticalQueryRequest.getFilterExpression().checkValidity(); // fails if false
-		} catch(e){
+		} catch (e) {
 			jQuery.sap.log.fatal("filter expression is not valid", e.toString());
 			return undefined;
 		}
@@ -2009,10 +2009,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				this.mServiceFinalLength[sGroupId] = true;
 				this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 				this.bNeedsUpdate = true;
-				// simulate the async behavior for the root context in case of having no sums (TODO: reconsider!)
-				if (aRequestDetails.length == 1) { // since no other request will be issued, send the received event at this point
-					setTimeout(triggerDataReceived);
-				}
+				// simulate the async behavior, dataRequested and dataReceived have to be fired in pairs
+				setTimeout(triggerDataReceived);
+				
 				this.bArtificalRootContext = true;
 				// return immediately - no need to load data...
 				continue;
@@ -4019,7 +4018,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.refresh = function(bForceUpdate) {
-		this._refresh(bForceUpdate);
+		// apply is used here to be compatible to ODataModel v1, where the signature is like the private _refresh()
+		AnalyticalBinding.prototype._refresh.apply(this, arguments);
 	};
 	
 	/**

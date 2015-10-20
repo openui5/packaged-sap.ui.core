@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.32.3
+	 * @version 1.32.4
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -556,7 +556,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			// error gets catched to continue creating the other models and not breaking the execution here
 			try {
 				jQuery.sap.require(oModelConfig.type);
-			} catch(oError) {
+			} catch (oError) {
 				jQuery.sap.log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", this);
 				continue;
 			}

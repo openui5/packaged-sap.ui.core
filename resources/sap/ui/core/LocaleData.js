@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.32.3
+	 * @version 1.32.4
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.LocaleData
@@ -382,7 +382,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				sPattern = this._get("dateField-" + sType + "-relative-" + iDiff);
 				if (!sPattern) {
 					if (iDiff === 0) {
-						jQuery.sap.log.warning("sap.ui.core.LocaleData: there's no pattern defined for '" + sType + "' with 0 difference, please adjust the scale.");
 						return null;
 					} else {
 						sPattern = this._get("dateField-" + sType + "-relative-" + (iDiff < 0 ? "past" : "future") + "-one");

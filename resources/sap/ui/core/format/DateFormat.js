@@ -208,27 +208,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		}
 
 		// If fallback DateFormats have not been created yet, do it now
-		if (!oInfo.aFallbackFormats) {
+		if (!oInfo.oFallbackFormats) {
+			oInfo.oFallbackFormats = {};
+		}
+		// Store fallback formats per locale and calendar type
+		var sLocale = oLocale.toString(),
+			sCalendarType = oFormat.oFormatOptions.calendarType,
+			sKey = sLocale + "-" + sCalendarType,
+			aFallbackFormats = oInfo.oFallbackFormats[sKey];
+		if (!aFallbackFormats) {
+			aFallbackFormats = [];
+			oInfo.oFallbackFormats[sKey] = aFallbackFormats;
+			var aFallbackFormatOptions = oInfo.aFallbackFormatOptions.slice(0);
 			// Add two fallback patterns for locale-dependent short format without delimiters
-			if (oInfo.bShortFallbackFormatOptions && oInfo.aFallbackFormatOptions) {
-				var sPattern = oInfo.getPattern(oFormat.oLocaleData, "short").replace(/[^dMyU]/g, ""); // U for chinese year
+			if (oInfo.bShortFallbackFormatOptions) {
+				var sPattern = oInfo.getPattern(oFormat.oLocaleData, "short").replace(/[^dMyGU]/g, ""); // U for chinese year
 				sPattern = sPattern.replace(/d+/g, "dd"); // disallow 1 digit day entries
 				sPattern = sPattern.replace(/M+/g, "MM"); // disallow 1 digit month entries
-				oInfo.aFallbackFormatOptions.push({
+				aFallbackFormatOptions.push({
 					pattern: sPattern.replace(/[yU]+/g, "yyyy"), strictParsing: true // e.g. ddMMyyyy
 				});
-				oInfo.aFallbackFormatOptions.push({
+				aFallbackFormatOptions.push({
 					pattern: sPattern.replace(/[yU]+/g, "yy"), strictParsing: true // e.g. ddMMyy
 				});
 			}
-			oInfo.aFallbackFormats = [];
-			jQuery.each(oInfo.aFallbackFormatOptions, function(i, oFormatOptions) {
+			jQuery.each(aFallbackFormatOptions, function(i, oFormatOptions) {
+				oFormatOptions.calendarType = sCalendarType;
 				var oFallbackFormat = DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
 				oFallbackFormat.bIsFallback = true;
-				oInfo.aFallbackFormats.push(oFallbackFormat);
+				aFallbackFormats.push(oFallbackFormat);
 			});
 		}
-		oFormat.aFallbackFormats = oInfo.aFallbackFormats;
+		oFormat.aFallbackFormats = aFallbackFormats;
+
 		oFormat.oRequiredParts = oInfo.oRequiredParts;
 		oFormat.aRelativeScales = oInfo.aRelativeScales;
 		oFormat.aRelativeParseScales = oInfo.aRelativeParseScales;
@@ -729,7 +741,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					iYear = parseInt(sPart, 10);
 					// Find the right century for two-digit years
 					if (sPart.length <= 2) {
-						var iCurrentYear = this._now(bUTC).getFullYear(),
+						var iCurrentYear = this._now().getFullYear(),
 							iCurrentCentury = Math.floor(iCurrentYear / 100),
 							iYearDiff = iCurrentCentury * 100 + iYear - iCurrentYear;
 						if (iYearDiff < -70) {
@@ -1016,8 +1028,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		return aFormatArray;
 	};
 
-	DateFormat.prototype._now = function(bUTC) {
-		return bUTC ? new Date(DateFormat.createUTCDate(this.oFormatOptions.calendarType)) : DateFormat.createDate(this.oFormatOptions.calendarType);
+	DateFormat.prototype._now = function() {
+		return DateFormat.createDate(this.oFormatOptions.calendarType);
 	};
 
 	DateFormat.createDate = function(sCalendarType) {
@@ -1104,7 +1116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 		function computeRelativeDate(iDiff, sScale){
 			var iDate, iToday,
-			oToday = that._now(bUTC),
+			oToday = that._now(),
 			oDate,
 			iDiffMillis = iDiff * that._mScales[sScale] * 1000;
 
@@ -1140,7 +1152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 	 */
 	DateFormat.prototype.formatRelative = function(oDate, bUTC, aRange) {
 
-		var oToday = this._now(bUTC),
+		var oToday = this._now(),
 			sCalendarType = this.oFormatOptions.calendarType,
 			sScale = this.oFormatOptions.relativeScale || "day",
 			iDate, iDiff, sPattern, iDiffSeconds, sMethodName;
@@ -1174,6 +1186,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 		sMethodName = "getRelative" + sScale[0].toUpperCase() + sScale.substr(1);
 		sPattern = this.oLocaleData[sMethodName](iDiff);
+		if (!sPattern) {
+			return null;
+		}
 		return jQuery.sap.formatMessage(sPattern, [Math.abs(iDiff)]);
 
 	};

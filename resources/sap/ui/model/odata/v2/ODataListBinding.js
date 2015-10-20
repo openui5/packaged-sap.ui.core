@@ -394,6 +394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 						this._fireChange();
 					} else if (!this.oModel.resolve(this.sPath, this.oContext) || oRef === null){
 						// if path does not resolve, or data is known to be null (e.g. expanded list)
+						this.aAllKeys = null;
 						this.aKeys = [];
 						this.iLength = 0;
 						this.bLengthFinal = true;
@@ -419,6 +420,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		var that = this,
 		bInlineCountRequested = false,
+		sUrl, sGuid = jQuery.sap.uid(),
 		sGroupId;
 
 		// create range parameters and store start index for sort/filter requests
@@ -474,7 +476,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 						that.bThresholdRejected = true;
 						
 						//clean up successful request
-						delete that.mRequestHandles[sPath];
+						delete that.mRequestHandles[sGuid];
 						that.bPendingRequest = false;
 						
 						// If request is originating from this binding, change must be fired afterwards
@@ -530,7 +532,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				that.bLengthFinal = true;
 			}
 
-			delete that.mRequestHandles[sPath];
+			delete that.mRequestHandles[sGuid];
 			that.bPendingRequest = false;
 
 			// If request is originating from this binding, change must be fired afterwards
@@ -546,7 +548,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		function fnError(oError) {
 			var bAborted = oError.statusCode == 0;
-			delete that.mRequestHandles[sPath];
+			delete that.mRequestHandles[sGuid];
 			that.bPendingRequest = false;
 			if (that.bFaultTolerant) {
 				// In case of fault tolerance, don't reset data, but keep the already loaded
@@ -575,7 +577,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		if (sPath) {
 			if (bPretend) {
 				// Pretend to send a request by firing the appropriate events
-				var sUrl = this.oModel._createRequestUrl(sPath, aParams);
+				sUrl = this.oModel._createRequestUrl(sPath, aParams);
 				this.fireDataRequested();
 				this.oModel.fireRequestSent({url: sUrl, method: "GET", async: true});
 				setTimeout(function() {
@@ -591,7 +593,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				this.fireDataRequested();
 				//if load is triggered by a refresh we have to check the refreshGroup
 				sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
-				this.mRequestHandles[sPath] = this.oModel.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
+				this.mRequestHandles[sGuid] = this.oModel.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
 			}
 		}
 
@@ -1037,7 +1039,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 
 		aFilters = this.aFilters.concat(this.aApplicationFilters);
-
+		
 		if (!aFilters || !jQuery.isArray(aFilters) || aFilters.length === 0) {
 			this.aFilters = [];
 			this.aApplicationFilters = [];

@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.32.3
+	 * @version 1.32.4
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -556,17 +556,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			}
 
 		} else { // only partial update (invalidated controls)
+			
+			var isPopup = function(oControl) {
+				return !!(oControl.getMetadata && oControl.getMetadata().isInstanceOf("sap.ui.core.PopupInterface"));
+			};
 
 			var isAncestorInvalidated = function(oAncestor) {
 				while ( oAncestor && oAncestor !== that ) {
 					if ( mInvalidatedControls.hasOwnProperty(oAncestor.getId()) ) {
 						return true;
 					}
+
 					// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
 					// Therefore the search for invalid ancestors must be stopped when such a control is reached.
-					if ( oAncestor && oAncestor.getMetadata && oAncestor.getMetadata().isInstanceOf("sap.ui.core.PopupInterface") ) {
+					if ( isPopup(oAncestor) ) {
 						break;
 					}
+
 					oAncestor = oAncestor.getParent();
 				}
 				return false;
@@ -574,8 +580,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 			for (var n in mInvalidatedControls) { // TODO for in skips some names in IE8!
 				var oControl = this.oCore.byId(n);
-				// CSN 0000834961 2011: control may have been destroyed since invalidation happened
-				if ( oControl && !isAncestorInvalidated(oControl.getParent()) ) {
+				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
+				// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
+				//  -> Therefore these controls must be rerendered 
+				if ( oControl && (isPopup(oControl) || !isAncestorInvalidated(oControl.getParent())) ) {
 					oControl.rerender();
 					bUpdated = true;
 				}

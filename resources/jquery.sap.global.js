@@ -88,7 +88,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.3
+	 * @version 1.32.4
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -511,7 +511,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.32.3
+	 * @version 1.32.4
 	 * @namespace
 	 * @public
 	 * @static
@@ -2256,6 +2256,19 @@
 				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
 			} else {
 				vUrlPrefix.url = String(vUrlPrefix.url);
+
+				// remove query parameters
+				var iQueryIndex = vUrlPrefix.url.indexOf("?");
+				if (iQueryIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iQueryIndex);
+				}
+
+				// remove hash
+				var iHashIndex = vUrlPrefix.url.indexOf("#");
+				if (iHashIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iHashIndex);
+				}
+
 				// ensure that the prefix ends with a '/'
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
@@ -4030,7 +4043,7 @@
 					if (bOk) {
 						this._applyState(true, true);
 					}
-				} catch(e) {
+				} catch (e) {
 					// access to the top window is not possible
 					this._sendRequireMessage();
 				}
