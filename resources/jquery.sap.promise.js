@@ -3,6 +3,7 @@
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
+/*eslint-disable no-extend-native */
 
 // Provides ECMA Script 6 Polyfill
 (function(jQuery) {
