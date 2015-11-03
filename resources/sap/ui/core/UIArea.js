@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.32.4
+	 * @version 1.32.5
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -534,12 +534,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					}
 					return len;
 				};
+				
+				var oFocusRef_Initial = document.activeElement;
+				var oStoredFocusInfo = this.oCore.oFocusHandler.getControlFocusInfo();
 
 				//First remove the old Dom nodes and then render the controls again
 				cleanUpDom(aContentToRemove);
 
 				var aContent = this.getContent();
 				var len = cleanUpDom(aContent, true);
+				
+				var oFocusRef_AfterCleanup = document.activeElement;
 
 				for (var i = 0; i < len; i++) {
 					if (aContent[i] && aContent[i].getParent() === this) {
@@ -547,6 +552,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					}
 				}
 				bUpdated = true;
+				
+				/* Try restoring focus when focus ref is changed due to cleanup operations and not changed anymore by the rendering logic */
+				if (oFocusRef_Initial != oFocusRef_AfterCleanup && oFocusRef_AfterCleanup === document.activeElement) {
+					try {
+						this.oCore.oFocusHandler.restoreFocus(oStoredFocusInfo);
+					} catch (e) {
+						jQuery.sap.log.warning("Problems while restoring the focus after full UIArea rendering: " + e, null, this);
+					}
+				}
 
 			} else {
 
