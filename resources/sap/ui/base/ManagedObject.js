@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * 
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.28.21
+	 * @version 1.28.22
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -2973,7 +2973,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			};
 			var oModel = this.getModel(oBindingInfo.model);
 			if (this.isTreeBinding(sName)) {
-				oBinding = oModel.bindTree(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.filters, oBindingInfo.parameters);
+				oBinding = oModel.bindTree(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.filters, oBindingInfo.parameters, oBindingInfo.sorter);
 			} else {
 				oBinding = oModel.bindList(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
 			}

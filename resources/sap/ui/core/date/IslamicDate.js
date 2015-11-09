@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * @class
 		 * @see [CLDR calendar types]{@link http://www.unicode.org/reports/tr35/#Key_And_Type_Definitions_}
 		 * @author SAP SE
-		 * @version 1.28.21
+		 * @version 1.28.22
 		 * @since 1.28.6
 		 * @extends sap.ui.base.Object
 		 * @alias sap.ui.core.date.IslamicDate
@@ -566,10 +566,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				arguments[4],
 				arguments[5],
 				arguments[6]
-			);
-			var oGregorianDate = oIslamicDate._toGregorian(true);
-			var oIslamicDateUTC = new IslamicDate()._fromGregorian(oGregorianDate);
-			return oIslamicDateUTC.getTime();
+				),
+				oGregorianDate = oIslamicDate._toGregorian(true);
+
+			return oGregorianDate.getTime();
 		};
 
 		IslamicDate.prototype.toString = function (bUTC) {

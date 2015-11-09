@@ -36,7 +36,7 @@ var mSeverityMap = {
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
- * @version 1.28.21
+ * @version 1.28.22
  * @public
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
@@ -357,6 +357,18 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 	} else {
 		// JSON response
 		this._parseBodyJSON(/* ref: */ aMessages, oResponse, sRequestUri);
+	}
+	
+	// Messages from an error response should contain duplicate messages - the main error should be the
+	// same as the first errordetail error. If this is the case, remove the first one.
+	// TODO: Check if this is actually correct, and if so, check if the below check can be improved
+	if (aMessages.length > 1) {
+		if (
+			aMessages[0].getCode()    == aMessages[1].getCode()    &&
+			aMessages[0].getMessage() == aMessages[1].getMessage()
+		) {
+			aMessages.shift();
+		}
 	}
 };
 

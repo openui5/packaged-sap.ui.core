@@ -10822,7 +10822,7 @@ $.ui.position = {
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.21
+ * @version 1.28.22
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,7 +10847,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.21";
+		var apiVersion = "1.28.22";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10905,7 +10905,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.21";
+		var v = "1.28.22";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -14673,7 +14673,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.21
+	 * @version 1.28.22
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -14855,19 +14855,44 @@ return URI;
 		}(window.navigator.userAgent));
 	}
 
-	// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
-	// (e.g. SAPUI5 script) from other domains for IE browsers.
-	// The CORS check in jQuery filters out such browsers who do not have the
-	// property "withCredentials" which is the IE and Opera and prevents those
-	// browsers to request data from other domains with jQuery.ajax. The CORS
-	// requests are simply forbidden nevertheless if it works. In our case we
-	// simply load our script resources from another domain when using the CDN
-	// variant of SAPUI5. The following fix is also recommended by jQuery:
+	// XHR overrides for IE
 	if (!!sap.ui.Device.browser.internet_explorer) {
+
+		// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
+		// (e.g. SAPUI5 script) from other domains for IE browsers.
+		// The CORS check in jQuery filters out such browsers who do not have the
+		// property "withCredentials" which is the IE and Opera and prevents those
+		// browsers to request data from other domains with jQuery.ajax. The CORS
+		// requests are simply forbidden nevertheless if it works. In our case we
+		// simply load our script resources from another domain when using the CDN
+		// variant of SAPUI5. The following fix is also recommended by jQuery:
 		jQuery.support = jQuery.support || {};
 		jQuery.support.cors = true;
-	}
 
+		// Fixes XHR factory issue (introduced by jQuery 1.11). In case of IE
+		// it uses by mistake the ActiveXObject XHR. In the list of XHR supported
+		// HTTP methods PATCH and MERGE are missing which are required for OData.
+		// The related ticket is: #2068 (no downported to jQuery 1.x planned)
+		var oJQV = Version(jQuery.fn.jquery);
+		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
+		if (window.ActiveXObject !== undefined && oJQV.getMajor() == 1 && oJQV.getMinor() >= 11) {
+			var fnCreateStandardXHR = function() { 
+				try {
+					return new window.XMLHttpRequest();
+				} catch (e) { /* ignore */ }
+			};
+			var fnCreateActiveXHR = function() { 
+				try {
+					return new window.ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e) { /* ignore */ }
+			};
+			jQuery.ajaxSettings = jQuery.ajaxSettings || {};
+			jQuery.ajaxSettings.xhr = function() {
+				return !this.isLocal ? fnCreateStandardXHR() : fnCreateActiveXHR();
+			};
+		}
+
+	}
 
 	/**
 	 * Find the script URL where the SAPUI5 is loaded from and return an object which
@@ -15092,7 +15117,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.21
+	 * @version 1.28.22
 	 * @namespace
 	 * @public
 	 * @static
@@ -17459,8 +17484,8 @@ return URI;
 
 				var oScript = window.document.createElement('SCRIPT');
 				oScript.src = sUrl;
-				oScript.dataset.sapUiModule = sResource;
-				oScript.dataset.sapUiModuleError = '';
+				oScript.setAttribute("data-sap-ui-module", sResource); // IE9/10 don't support dataset :-(
+				// oScript.setAttribute("data-sap-ui-module-error", '');
 				oScript.addEventListener('load', function(e) {
 					jQuery.sap.log.info("Javascript resource loaded: " + sResource);
 // TODO either find a cross-browser solution to detect and assign execution errros or document behavior
