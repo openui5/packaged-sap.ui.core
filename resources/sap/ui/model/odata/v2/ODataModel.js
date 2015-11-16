@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.32.5
+	 * @version 1.32.6
 	 *
 	 * @constructor
 	 * @public
@@ -154,7 +154,10 @@ sap.ui.define([
 			this.oMetadata = null;
 			this.oAnnotations = null;
 			this.aUrlParams = [];
-
+			
+			// Promise for request chaining
+			this.pReadyForRequest = Promise.resolve();
+			
 			// determine the service base url and the url parameters
 			this.sServiceUrl = sServiceUrl;
 			var aUrlParts = sServiceUrl.split("?");
@@ -1721,7 +1724,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the value for the property with the given <code>sPath</code>
+	 * Returns the value for the property with the given <code>sPath</code>.
+	 * If the path points to a navigation property which has been loaded via $expand then the <code>bIncludeExpandEntries</code>
+	 * parameter determines if the navigation property should be included in the returned value or not. 
+	 * Please note that this currently works for 1..1 navigation properties only.
 	 *
 	 * @param {string} sPath the path/name of the property
 	 * @param {object} [oContext] the context if available to access the property value
@@ -2004,7 +2010,7 @@ sap.ui.define([
 				if (!oRequest.bTokenReset && oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
 					that.resetSecurityToken();
 					oRequest.bTokenReset = true;
-					_submit();
+					_submitWithToken();
 					return;
 				}
 			}
@@ -2013,40 +2019,78 @@ sap.ui.define([
 				fnError(oError);
 			}
 		}
-
-		function _submit() {
-			//handler only needed for $batch; datajs gets the handler from the accept header
-			oHandler = that._getODataHandler(oRequest.requestUri);
-			
+		
+		function _readyForRequest(oRequest) {
+			if (that.bTokenHandling && oRequest.method !== "GET") {
+				that.pReadyForRequest = that.securityTokenAvailable();
+			}
+			return that.pReadyForRequest;
+		}
+		
+		function _submitWithToken() {
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
-			if (that.bTokenHandling && oRequest.method !== "GET") {
-				that.securityTokenAvailable().then(function(sToken) {
-					// Check bTokenHandling again, as updating the token might disable token handling
-					if (that.bTokenHandling) {
-						oRequest.headers["x-csrf-token"] = sToken;
-					}
-					oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
-					if (bAborted) {
-						oRequestHandle.abort();
+			_readyForRequest(oRequest).then(function(sToken) {	
+				// Check bTokenHandling again, as updating the token might disable token handling
+				if (that.bTokenHandling) {
+					oRequest.headers["x-csrf-token"] = sToken;
+				}
+				_submit();
+			}, function() {
+				_submit();
+			});
+		}
+		
+		var fireEvent = function(sType, oRequest, oError) {
+			var oEventInfo,
+				aRequests = oRequest.eventInfo.requests;
+			if (aRequests) {
+				jQuery.each(aRequests, function(i, oRequest) {
+					if (jQuery.isArray(oRequest)) {
+						jQuery.each(oRequest, function(i, oRequest) {
+							oEventInfo = that._createEventInfo(oRequest.request, oError);
+							that["fireRequest" + sType](oEventInfo);
+						});
+					} else {
+						oEventInfo = that._createEventInfo(oRequest.request, oError);
+						that["fireRequest" + sType](oEventInfo);
 					}
 				});
-				return {
-					abort: function() {
-						if (oRequestHandle) {
-							oRequestHandle.abort();
-						}
-						bAborted = true;
-					}
-				};
+				
+				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
+				that["fireBatchRequest" + sType](oEventInfo);
 			} else {
-				return that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
+				that["fireRequest" + sType](oEventInfo);
+			}
+		};
+		
+		function _submit() {
+			oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+			if (oRequest.eventInfo) {
+				fireEvent("Sent", oRequest, null);
+				delete oRequest.eventInfo;
+			}
+			if (bAborted) {
+				oRequestHandle.abort();
 			}
 		}
+		
+		//handler only needed for $batch; datajs gets the handler from the accept header
+		oHandler = that._getODataHandler(oRequest.requestUri);
 
-		return _submit();
+		_submitWithToken();
+		
+		return {
+			abort: function() {
+				if (oRequestHandle) {
+					oRequestHandle.abort();
+				}
+				bAborted = true;
+			}
+		};
 	};
-
+	
 	/**
 	 * submit of a single request
 	 *
@@ -2061,9 +2105,8 @@ sap.ui.define([
 			oRequestHandle,
 			mChangeEntities = {},
 			mGetEntities = {},
-			mEntityTypes = {},
-			oEventInfo;
-
+			mEntityTypes = {};
+		
 		var handleSuccess = function(oData, oResponse) {
 			var fnSingleSuccess = function(oData, oResponse) {
 				if (fnSuccess) {
@@ -2085,11 +2128,8 @@ sap.ui.define([
 				that._processError(oRequest, oError, fnError);
 			}
 		};
+		oRequest.eventInfo = {};
 		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
-
-		oEventInfo = this._createEventInfo(oRequest);
-
-		this.fireRequestSent(oEventInfo);
 
 		return oRequestHandle;
 	};
@@ -2202,28 +2242,13 @@ sap.ui.define([
 				that.fireBatchRequestFailed(oEventInfo);
 			}
 		};
-
-		var fireEvent = function(sType, oBatchRequest, oError, aRequests) {
-			var oEventInfo;
-			jQuery.each(aRequests, function(i, oRequest) {
-				if (jQuery.isArray(oRequest)) {
-					jQuery.each(oRequest, function(i, oRequest) {
-						oEventInfo = that._createEventInfo(oRequest.request, oError);
-						that["fireRequest" + sType](oEventInfo);
-					});
-				} else {
-					oEventInfo = that._createEventInfo(oRequest.request, oError);
-					that["fireRequest" + sType](oEventInfo);
-				}
-			});
-
-			oEventInfo = that._createEventInfo(oBatchRequest, oError, aRequests);
-			that["fireBatchRequest" + sType](oEventInfo);
+		
+		oBatchRequest.eventInfo = {
+				requests: aRequests,
+				batch: true
 		};
-
+		
 		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
-
-		fireEvent("Sent", oBatchRequest, null, aRequests);
 
 		return oRequestHandle;
 	};
@@ -4555,7 +4580,7 @@ sap.ui.define([
 				that.bMetaModelLoaded = true;
 				// Update metamodel bindings only
 				that.checkUpdate(false, false, null, true);
-			})["catch"](function (oError) {
+			}, function (oError) {
 				var sMessage = oError.message,
 					sDetails;
 

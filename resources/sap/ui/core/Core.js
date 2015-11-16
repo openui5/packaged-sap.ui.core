@@ -5,14 +5,14 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 
-		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object', 
-		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', 
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
+		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object',
+		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager',
 		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
-	function(jQuery, Device, Global, 
-		DataType, EventProvider, BaseObject, 
-		Component, Configuration, Control, Element, ElementMetadata, FocusHandler, 
+	function(jQuery, Device, Global,
+		DataType, EventProvider, BaseObject,
+		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
 		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
 		/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
 
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.32.5
+	 * @version 1.32.6
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -185,6 +185,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			log.info("Creating Core",null,METHOD);
 
+			jQuery.sap.measure.start("coreComplete", "Core.js - complete");
+			jQuery.sap.measure.start("coreBoot", "Core.js - boot");
+			jQuery.sap.measure.start("coreInit", "Core.js - init");
+
 			/**
 			 * Object holding the interpreted configuration
 			 * Initialized from the global "sap-ui-config" object and from Url parameters
@@ -192,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 */
 			this.oConfiguration = new Configuration(this);
 
-			// initialize frameOptions script (anti-clickjacking, ect.)
+			// initialize frameOptions script (anti-clickjacking, etc.)
 			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
 			oFrameOptionsConfig.mode = this.oConfiguration["frameOptions"];
 			oFrameOptionsConfig.whitelistService = this.oConfiguration["whitelistService"];
@@ -290,6 +294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot();
 				oSyncPoint1.finishTask(iCoreBootTask);
+				jQuery.sap.measure.end("coreBoot");
 			});
 
 			// a helper task to prevent the premature completion of oSyncPoint2
@@ -868,6 +873,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this.oThemeCheck = new ThemeCheck(this);
 
 		log.info("Initialized",null,METHOD);
+		jQuery.sap.measure.end("coreInit");
 
 		this.bInitialized = true;
 
@@ -877,7 +883,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		log.info("Plugins started",null,METHOD);
 
 		this._createUIAreas();
-		
+
 		this.oThemeCheck.fireThemeChangedEvent(true);
 
 		this._executeOnInit();
@@ -889,6 +895,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._executeInitListeners();
 
 		this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+
+		jQuery.sap.measure.end("coreComplete");
 	};
 
 	Core.prototype._createUIAreas = function() {
@@ -2238,7 +2246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the template for the given id
 	 * @public
-	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead. 
+	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead.
 	 */
 	Core.prototype.getTemplate = function(sId) {
 		jQuery.sap.require("sap.ui.core.tmpl.Template");
@@ -2571,7 +2579,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Returns a list of all controls with a field group ID.
 	 * See {@link sap.ui.core.Control#checkFieldGroupIds Control.prototype.checkFieldGroupIds} for a description of the
 	 * <code>vFieldGroupIds</code> parameter.
-	 * 
+	 *
 	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
 	 * @return {sap.ui.core.Control[]} The list of controls with matching field group IDs
 	 * @public
@@ -2972,6 +2980,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype.destroy = function() {
+		this._oFocusHandler.destroy();
 		_oEventProvider.destroy();
 		BaseObject.prototype.destroy.call(this);
 	};

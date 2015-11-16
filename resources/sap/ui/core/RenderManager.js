@@ -8,7 +8,7 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'../base/Interface', '../base/Object', 'sap/ui/core/LabelEnablement',
-		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom'
+		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom', 'jquery.sap.trace'
 	], function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 
 	"use strict";
@@ -38,7 +38,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.32.5
+	 * @version 1.32.6
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -208,7 +208,7 @@ sap.ui.define([
 		}
 		this.aRenderStack.unshift(oControl.getId());
 		// start performance measurement
-		jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName());
+		jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 
 		//Remember the current buffer size to check later whether the control produced output
 		var iBufferLength = this.aBuffer.length;
@@ -342,7 +342,7 @@ sap.ui.define([
 						// store the element on the event (aligned with jQuery syntax)
 						oEvent.srcControl = oControl;
 						// start performance measurement
-						jQuery.sap.measure.start(oControl.getId() + "---AfterRendering","AfterRendering of " + oControl.getMetadata().getName());
+						jQuery.sap.measure.start(oControl.getId() + "---AfterRendering","AfterRendering of " + oControl.getMetadata().getName(), ["rendering","after"]);
 						oControl._handleEvent(oEvent);
 						// end performance measurement
 						jQuery.sap.measure.end(oControl.getId() + "---AfterRendering");
@@ -464,6 +464,8 @@ sap.ui.define([
 			this.aStyleStack = [{}];
 
 			jQuery.sap.act.refresh();
+
+			jQuery.sap.interaction.notifyStepEnd();
 		};
 
 		/**
@@ -730,7 +732,7 @@ sap.ui.define([
 
 			}
 
-			jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id);
+			jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id, ["rendering","preserve"]);
 			if ( bPreserveRoot ) {
 				check(oRootNode);
 			} else {
@@ -1026,7 +1028,7 @@ sap.ui.define([
 		this.write(sPlaceholderHtml);
 		return this;
 	};
-	
+
 	/**
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of a element
@@ -1316,7 +1318,7 @@ sap.ui.define([
 
 	/**
 	 * Determines whether Dom Patching is enabled or not
-	 * @returns {Boolean} 
+	 * @returns {Boolean}
 	 * @private
 	 */
 	RenderManager.prototype._isDomPathingEnabled = function() {

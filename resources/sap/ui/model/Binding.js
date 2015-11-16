@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.Binding
+	 * @extends sap.ui.base.EventProvider
 	 */
 	var Binding = EventProvider.extend("sap.ui.model.Binding", /** @lends sap.ui.model.Binding.prototype */ {
 
@@ -228,9 +229,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Fire event dataReceived to attached listeners.
+	 * Fire event dataReceived to attached listeners. This event may also be fired when an error occured.
 
 	 * @param {Map} mArguments the arguments to pass along with the event.
+	 * @param {object} [mArguments.data] the data received. In error cases it will be undefined.
 	 * @protected
 	 */
 	Binding.prototype.fireDataReceived = function(mArguments) {

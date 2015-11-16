@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * @class This class provides the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 	 *
 	 * @extends sap.ui.base.EventProvider
-	 * @version 1.32.5
+	 * @version 1.32.6
 	 * @constructor
 	 * @private
 	 * @alias sap.ui.core.support.Support
@@ -119,8 +119,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * Support plugin registration
 	 * @private
 	 */
-	Support.TOOL_SIDE_PLUGINS = ["sap.ui.core.support.plugins.TechInfo", "sap.ui.core.support.plugins.ControlTree", "sap.ui.core.support.plugins.Debugging", "sap.ui.core.support.plugins.Trace", "sap.ui.core.support.plugins.Performance", "sap.ui.core.support.plugins.MessageTest"];
-	Support.APP_SIDE_PLUGINS = ["sap.ui.core.support.plugins.TechInfo", "sap.ui.core.support.plugins.ControlTree", "sap.ui.core.support.plugins.Trace", "sap.ui.core.support.plugins.Performance", "sap.ui.core.support.plugins.Selector", "sap.ui.core.support.plugins.Breakpoint", "sap.ui.core.support.plugins.LocalStorage"];
+	Support.TOOL_SIDE_PLUGINS = ["sap.ui.core.support.plugins.TechInfo", "sap.ui.core.support.plugins.ControlTree", "sap.ui.core.support.plugins.Debugging", "sap.ui.core.support.plugins.Trace", "sap.ui.core.support.plugins.Performance", "sap.ui.core.support.plugins.MessageTest", "sap.ui.core.support.plugins.Interaction"];
+	Support.APP_SIDE_PLUGINS = ["sap.ui.core.support.plugins.TechInfo", "sap.ui.core.support.plugins.ControlTree", "sap.ui.core.support.plugins.Trace", "sap.ui.core.support.plugins.Performance", "sap.ui.core.support.plugins.Selector", "sap.ui.core.support.plugins.Breakpoint", "sap.ui.core.support.plugins.LocalStorage", "sap.ui.core.support.plugins.Interaction"];
 
 
 	/**

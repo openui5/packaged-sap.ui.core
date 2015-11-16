@@ -5,7 +5,7 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings'],
+sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings', 'jquery.sap.trace'],
 	function(jQuery, BaseObject, ManagedObject, ElementMetadata/* , jQuerySap */) {
 	"use strict";
 
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.32.5
+	 * @version 1.32.6
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -550,7 +550,11 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
 
 		// remove this control from DOM, e.g. if there is no parent (e.g. Dialog or already removed control) or this.sParentAggregationName is not properly set
-		this.$().remove();
+		if (bSuppressInvalidate !== "KeepDom") {
+			this.$().remove();
+		} else {
+			jQuery.sap.log.debug("DOM is not removed on destroy of " + this);
+		}
 	};
 
 
@@ -564,6 +568,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @protected
 	 */
 	Element.prototype.fireEvent = function(sEventId, mParameters) {
+		if (this.hasListeners(sEventId)) {
+			jQuery.sap.interaction.notifyStepStart(this);
+		}
 		// clone 'arguments' and modify clone to be strict mode compatible
 		var aArgs = Array.prototype.slice.apply(arguments);
 		// TODO 'id' is somewhat redundant to getSource(), but it is commonly used - fade out with next major release?

@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.32.5
+ * @version 1.32.6
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -36,7 +36,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.32.5";
+		var apiVersion = "1.32.6";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -94,7 +94,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.32.5";
+		var v = "1.32.6";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -362,6 +362,13 @@ if (typeof window.sap.ui !== "object") {
 			} else if (result[0].match(bbDevices)) {
 				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
 			}
+		}
+		
+		//Firefox on Android
+		platform = /\((Android)[\s]?([\d][.\d]*)?;.*Firefox\/[\d][.\d]*/;
+		result = userAgent.match(platform);
+		if (result) {
+			return ({"name": OS.ANDROID, "versionStr": result.length == 3 ? result[2] : ""});
 		}
 
 		// Desktop
@@ -683,6 +690,16 @@ if (typeof window.sap.ui !== "object") {
 					webkit: true,
 					webkitVersion: webkitVersion
 				};
+			} else if ( _ua.match(/FxiOS\/(\d+\.\d+)/)) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.FIREFOX,
+					versionStr: "" + version,
+					version: version,
+					mobile: true,
+					webkit: true,
+					webkitVersion: webkitVersion
+				};
 			} else if ( _ua.match(/Android .+ Version\/(\d+\.\d+)/) ) {
 				var version = parseFloat(RegExp.$1);
 				return {
@@ -710,7 +727,7 @@ if (typeof window.sap.ui !== "object") {
 						webkitVersion: webkitVersion,
 						phantomJS: aParts[1] === "PhantomJS"
 					};
-				} else if (/iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua)) && (bStandalone === true || bStandalone === false)) {
+				} else if (/iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua)) && !(/FxiOS/.test(_ua)) && (bStandalone === true || bStandalone === false)) {
 					//WebView or Standalone mode on iOS
 					return {
 						name: BROWSER.SAFARI,
