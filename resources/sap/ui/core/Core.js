@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.32.6
+	 * @version 1.32.7
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -198,8 +198,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// initialize frameOptions script (anti-clickjacking, etc.)
 			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
-			oFrameOptionsConfig.mode = this.oConfiguration["frameOptions"];
-			oFrameOptionsConfig.whitelistService = this.oConfiguration["whitelistService"];
+			oFrameOptionsConfig.mode = this.oConfiguration.getFrameOptions();
+			oFrameOptionsConfig.whitelistService = this.oConfiguration.getWhitelistService();
 			this.oFrameOptions = new jQuery.sap.FrameOptions(oFrameOptionsConfig);
 
 			// enable complex bindings if configured

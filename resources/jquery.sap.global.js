@@ -88,7 +88,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.6
+	 * @version 1.32.7
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -536,7 +536,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.32.6
+	 * @version 1.32.7
 	 * @namespace
 	 * @public
 	 * @static
@@ -1754,8 +1754,8 @@
 						});
 						oPendingInteraction.navigation += iNavHi - iNavLo;
 						oPendingInteraction.roundtrip += iRtHi - iRtLo;
-						// calculate network time
-						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? oPendingInteraction.requestTime - oPendingInteraction.networkTime : 0;
+						// calculate average network time per request
+						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? ((oPendingInteraction.requestTime - oPendingInteraction.networkTime) / oPendingInteraction.requests.length) : 0;
 						// in case processing is not determined, which means no re-rendering occured, take start to iEnd
 						if (oPendingInteraction.duration === 0) {
 							oPendingInteraction.duration = oPendingInteraction.navigation + oPendingInteraction.roundtrip;
@@ -1829,7 +1829,8 @@
 					requestTime: 0, // summ over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
 					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
 					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
-					bytesReceived: 0 // sum over all response bytes, added by jQuery.sap.trace
+					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
+					requestCompression: undefined // true if all responses have been sent gzipped
 				};
 				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event);
 			};
@@ -1846,11 +1847,12 @@
 			 */
 			this.endInteraction = function(bForce) {
 				if (oPendingInteraction) {
-					// set provisionary processing time from start to end and calculate later if
+					// set provisionary processing time from start to end and calculate later
 					if (!bForce) {
 						oPendingInteraction.processing = jQuery.sap.now() - oPendingInteraction.start;
+					} else {
+						finalizeInteraction(jQuery.sap.now());
 					}
-					finalizeInteraction(jQuery.sap.now());
 				}
 			};
 

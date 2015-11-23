@@ -10826,7 +10826,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.32.6
+ * @version 1.32.7
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10851,7 +10851,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.32.6";
+		var apiVersion = "1.32.7";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10909,7 +10909,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.32.6";
+		var v = "1.32.7";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15780,7 +15780,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.6
+	 * @version 1.32.7
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -16228,7 +16228,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.32.6
+	 * @version 1.32.7
 	 * @namespace
 	 * @public
 	 * @static
@@ -17446,8 +17446,8 @@ return URI;
 						});
 						oPendingInteraction.navigation += iNavHi - iNavLo;
 						oPendingInteraction.roundtrip += iRtHi - iRtLo;
-						// calculate network time
-						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? oPendingInteraction.requestTime - oPendingInteraction.networkTime : 0;
+						// calculate average network time per request
+						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? ((oPendingInteraction.requestTime - oPendingInteraction.networkTime) / oPendingInteraction.requests.length) : 0;
 						// in case processing is not determined, which means no re-rendering occured, take start to iEnd
 						if (oPendingInteraction.duration === 0) {
 							oPendingInteraction.duration = oPendingInteraction.navigation + oPendingInteraction.roundtrip;
@@ -17521,7 +17521,8 @@ return URI;
 					requestTime: 0, // summ over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
 					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
 					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
-					bytesReceived: 0 // sum over all response bytes, added by jQuery.sap.trace
+					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
+					requestCompression: undefined // true if all responses have been sent gzipped
 				};
 				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event);
 			};
@@ -17538,11 +17539,12 @@ return URI;
 			 */
 			this.endInteraction = function(bForce) {
 				if (oPendingInteraction) {
-					// set provisionary processing time from start to end and calculate later if
+					// set provisionary processing time from start to end and calculate later
 					if (!bForce) {
 						oPendingInteraction.processing = jQuery.sap.now() - oPendingInteraction.start;
+					} else {
+						finalizeInteraction(jQuery.sap.now());
 					}
-					finalizeInteraction(jQuery.sap.now());
 				}
 			};
 
