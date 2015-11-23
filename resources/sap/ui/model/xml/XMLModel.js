@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.28.22
+	 * @version 1.28.23
 	 *
 	 * @param {object} oData either the URL where to load the XML from or a XML
 	 * @constructor

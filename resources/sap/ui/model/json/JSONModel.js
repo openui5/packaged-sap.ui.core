@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
-	 * @version 1.28.22
+	 * @version 1.28.23
 	 *
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
 	 * @constructor

@@ -24,7 +24,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
  * @extends sap.ui.base.Object
  *
  * @author SAP SE
- * @version 1.28.22
+ * @version 1.28.23
  * @public
  * @abstract
  * @alias sap.ui.core.message.MessageParser

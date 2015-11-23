@@ -10822,7 +10822,7 @@ $.ui.position = {
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.22
+ * @version 1.28.23
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,7 +10847,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.22";
+		var apiVersion = "1.28.23";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10905,7 +10905,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.22";
+		var v = "1.28.23";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -11169,6 +11169,13 @@ if (typeof window.sap.ui !== "object") {
 			} else if (result[0].match(bbDevices)) {
 				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
 			}
+		}
+		
+		//Firefox on Android
+		platform = /\((Android)[\s]?([\d][.\d]*)?;.*Firefox\/[\d][.\d]*/;
+		result = userAgent.match(platform);
+		if (result) {
+			return ({"name": OS.ANDROID, "versionStr": result.length == 3 ? result[2] : ""});
 		}
 
 		// Desktop
@@ -11435,6 +11442,16 @@ if (typeof window.sap.ui !== "object") {
 					versionStr: "" + version,
 					version: version,
 					mobile: oExpMobile.test(_ua),
+					webkit: true,
+					webkitVersion: webkitVersion
+				};
+			} else if ( _ua.match(/FxiOS\/(\d+\.\d+)/)) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.FIREFOX,
+					versionStr: "" + version,
+					version: version,
+					mobile: true,
 					webkit: true,
 					webkitVersion: webkitVersion
 				};
@@ -14673,7 +14690,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.22
+	 * @version 1.28.23
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -15117,7 +15134,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.22
+	 * @version 1.28.23
 	 * @namespace
 	 * @public
 	 * @static
@@ -17945,20 +17962,6 @@ return URI;
 		jQuery.support.hasFlexBoxSupport = true;
 	} else {
 		jQuery.support.hasFlexBoxSupport = false;
-	}
-
-	// *********** fixes for (pending) jQuery bugs **********
-	if (!jQuery.support.opacity) {
-		(function() {
-			// jQuery cssHook for setOpacity[IE8] doesn't properly cleanup the CSS filter property
-			var oldSet = jQuery.cssHooks.opacity.set;
-			jQuery.cssHooks.opacity.set = function( elem, value ) {
-				oldSet.apply(this, arguments);
-				if ( !jQuery.trim(elem.style.filter) ) {
-					elem.style.removeAttribute("filter");
-				}
-			};
-		}());
 	}
 
 	// *** Performance measure ***

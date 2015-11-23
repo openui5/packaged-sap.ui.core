@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * @class Defines the different ready states for a WebSocket connection.
 	 *
-	 * @version 1.28.22
+	 * @version 1.28.23
 	 * @static
 	 * @public
 	 * @alias sap.ui.core.ws.ReadyState

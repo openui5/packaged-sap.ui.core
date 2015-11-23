@@ -83,7 +83,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.22
+	 * @version 1.28.23
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -527,7 +527,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.22
+	 * @version 1.28.23
 	 * @namespace
 	 * @public
 	 * @static
@@ -3355,20 +3355,6 @@
 		jQuery.support.hasFlexBoxSupport = true;
 	} else {
 		jQuery.support.hasFlexBoxSupport = false;
-	}
-
-	// *********** fixes for (pending) jQuery bugs **********
-	if (!jQuery.support.opacity) {
-		(function() {
-			// jQuery cssHook for setOpacity[IE8] doesn't properly cleanup the CSS filter property
-			var oldSet = jQuery.cssHooks.opacity.set;
-			jQuery.cssHooks.opacity.set = function( elem, value ) {
-				oldSet.apply(this, arguments);
-				if ( !jQuery.trim(elem.style.filter) ) {
-					elem.style.removeAttribute("filter");
-				}
-			};
-		}());
 	}
 
 	// *** Performance measure ***
