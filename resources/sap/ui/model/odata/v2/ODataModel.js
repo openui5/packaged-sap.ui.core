@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.8
 	 *
 	 * @constructor
 	 * @public
@@ -2330,6 +2330,12 @@ sap.ui.define([
 				// the aborted flag
 				if (oChangeRequest._aborted) {
 					delete oChangeRequest._aborted;
+					var oRequestHandle = {
+							abort: function() {
+								oChangeRequest._aborted = true;
+							}
+					};
+					this.mChangeHandles[oRequest.key] = oRequestHandle;
 				}
 				oChangeRequest.data = oRequest.data;
 
@@ -2403,10 +2409,6 @@ sap.ui.define([
 		var that = this, sPath,
 			oRequestHandle = [];
 
-		if (this.oRequestTimer && mRequests !== this.mDeferredRequests) {
-			jQuery.sap.clearDelayedCall(this.oRequestTimer);
-			this.oRequestTimer = undefined;
-		}
 		if (this.bUseBatch) {
 			//auto refresh for batch / for single requests we refresh after the request was successful
 			if (that.bRefreshAfterChange) {
@@ -2506,7 +2508,24 @@ sap.ui.define([
 		this.checkDataState();
 		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
-
+	
+	/**
+	 * Process request queue asynchronously 
+	 * 
+	 * @param {map} mRequestQueue The request queue to process
+	 * @private
+	 */
+	ODataModel.prototype._processRequestQueueAsync = function(mRequestQueue) {
+		var that = this;
+		if (!this.pCallAsnyc) {
+			this.pCallAsnyc = Promise.resolve();
+			this.pCallAsnyc.then(function() {
+				that._processRequestQueue(mRequestQueue);
+				that.pCallAsnyc = undefined;
+			});
+		}
+	};
+	
 	/**
 	 * process request response for successful requests
 	 *
@@ -3006,7 +3025,7 @@ sap.ui.define([
 		}
 		return bRefreshNeeded;
 	};
-
+	
 	/**
 	 * Executes the passed process request method when the metadata is available and takes care
 	 * of properly wrapping the response handler and allow request abortion
@@ -3022,10 +3041,8 @@ sap.ui.define([
 		this.oMetadata.loaded().then(function() {
 			oRequest = fnProcessRequest();
 
-			if (!that.oRequestTimer) {
-				that.oRequestTimer = jQuery.sap.delayedCall(0, that, that._processRequestQueue, [that.mRequests]);
-			}
-
+			that._processRequestQueueAsync(that.mRequests);
+			
 			if (bAborted) {
 				oRequestHandle.abort();
 			}
@@ -3513,7 +3530,8 @@ sap.ui.define([
 				annotationData: mAnnotationData,
 				url: null,
 				metadata: this.oMetadata,
-				async: this.bLoadMetadataAsync
+				async: this.bLoadMetadataAsync,
+				headers: this.mCustomHeaders
 			});
 			
 			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
@@ -3876,14 +3894,10 @@ sap.ui.define([
 							oRequest._aborted = true;
 						}
 				};
-	
 				that.mChangeHandles[sKey] = oRequestHandle;
 			}
-
 			that._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error);
-			if (!that.oRequestTimer) {
-				that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
-			}
+			that._processRequestQueueAsync(that.mRequests);
 		});
 		
 		mChangedEntities[sKey] = true;
@@ -3933,6 +3947,11 @@ sap.ui.define([
 				}
 			});
 			this.mCustomHeaders = mCheckedHeaders;
+		}
+
+		// Custom set headers should also be used when requesting annotations, but do not instantiate annotations just for this
+		if (this.oAnnotations) {
+			this.oAnnotations.setHeaders(this.mCustomHeaders);
 		}
 	};
 
@@ -4183,9 +4202,7 @@ sap.ui.define([
 	
 				that.mChangeHandles[sKey] = oRequestHandle;
 	
-				if (!that.oRequestTimer) {
-					that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
-				}
+				that._processRequestQueueAsync(that.mRequests);
 			});
 			return oCreatedContext;
 		}

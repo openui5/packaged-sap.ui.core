@@ -88,7 +88,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.8
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -536,7 +536,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.32.7
+	 * @version 1.32.8
 	 * @namespace
 	 * @public
 	 * @static
@@ -4142,14 +4142,14 @@
 			}
 
 			var fnError = function() {
-				jQuery(oLink).attr("sap-ui-ready", "false");
+				jQuery(oLink).attr("data-sap-ui-ready", "false");
 				if (fnErrorCallback) {
 					fnErrorCallback();
 				}
 			};
 
 			var fnLoad = function() {
-				jQuery(oLink).attr("sap-ui-ready", "true");
+				jQuery(oLink).attr("data-sap-ui-ready", "true");
 				if (fnLoadCallback) {
 					fnLoadCallback();
 				}
@@ -4208,7 +4208,7 @@
 				if (!oIEStyleSheetNode) {
 					// create a style sheet to add additional style sheet. But for this the Replace logic will not work any more
 					// the callback functions are not used in this case
-					// the sap-ui-ready attribute will not be set -> maybe problems with ThemeCheck
+					// the data-sap-ui-ready attribute will not be set -> maybe problems with ThemeCheck
 					oIEStyleSheetNode = document.createStyleSheet();
 				}
 				// add up to 30 style sheets to every of this style sheets. (result is a tree of style sheets)
@@ -4297,9 +4297,6 @@
 			});
 		});
 	}
-
-	// ************** Include Traces *****************
-	jQuery.sap.require("jquery.sap.trace" + "" /* Make dynamic dependency */);
 
 	// *********** feature detection, enriching jQuery.support *************
 	// this might go into its own file once there is more stuff added

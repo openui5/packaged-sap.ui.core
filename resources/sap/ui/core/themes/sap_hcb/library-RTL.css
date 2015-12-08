@@ -385,6 +385,7 @@
 /* CSS for control sap.ui.core/Icon.control      */
 /* ============================================= */
 .sapUiIcon {
+  cursor: default;
   text-align: center;
   display: inline-block;
   vertical-align: baseline;
