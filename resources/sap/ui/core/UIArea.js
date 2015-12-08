@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.30.10
+	 * @version 1.30.11
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -534,12 +534,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					}
 					return len;
 				};
+				
+				var oFocusRef_Initial = document.activeElement;
+				var oStoredFocusInfo = this.oCore.oFocusHandler.getControlFocusInfo();
 
 				//First remove the old Dom nodes and then render the controls again
 				cleanUpDom(aContentToRemove);
 
 				var aContent = this.getContent();
 				var len = cleanUpDom(aContent, true);
+				
+				var oFocusRef_AfterCleanup = document.activeElement;
 
 				for (var i = 0; i < len; i++) {
 					if (aContent[i] && aContent[i].getParent() === this) {
@@ -547,6 +552,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					}
 				}
 				bUpdated = true;
+				
+				/* Try restoring focus when focus ref is changed due to cleanup operations and not changed anymore by the rendering logic */
+				if (oFocusRef_Initial != oFocusRef_AfterCleanup && oFocusRef_AfterCleanup === document.activeElement) {
+					try {
+						this.oCore.oFocusHandler.restoreFocus(oStoredFocusInfo);
+					} catch (e) {
+						jQuery.sap.log.warning("Problems while restoring the focus after full UIArea rendering: " + e, null, this);
+					}
+				}
 
 			} else {
 
@@ -556,17 +570,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			}
 
 		} else { // only partial update (invalidated controls)
+			
+			var isPopup = function(oControl) {
+				return !!(oControl.getMetadata && oControl.getMetadata().isInstanceOf("sap.ui.core.PopupInterface"));
+			};
 
 			var isAncestorInvalidated = function(oAncestor) {
 				while ( oAncestor && oAncestor !== that ) {
 					if ( mInvalidatedControls.hasOwnProperty(oAncestor.getId()) ) {
 						return true;
 					}
+
 					// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
 					// Therefore the search for invalid ancestors must be stopped when such a control is reached.
-					if ( oAncestor && oAncestor.getMetadata && oAncestor.getMetadata().isInstanceOf("sap.ui.core.PopupInterface") ) {
+					if ( isPopup(oAncestor) ) {
 						break;
 					}
+
 					oAncestor = oAncestor.getParent();
 				}
 				return false;
@@ -574,8 +594,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 			for (var n in mInvalidatedControls) { // TODO for in skips some names in IE8!
 				var oControl = this.oCore.byId(n);
-				// CSN 0000834961 2011: control may have been destroyed since invalidation happened
-				if ( oControl && !isAncestorInvalidated(oControl.getParent()) ) {
+				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
+				// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
+				//  -> Therefore these controls must be rerendered 
+				if ( oControl && (isPopup(oControl) || !isAncestorInvalidated(oControl.getParent())) ) {
 					oControl.rerender();
 					bUpdated = true;
 				}

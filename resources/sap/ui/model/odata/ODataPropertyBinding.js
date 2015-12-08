@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 		
 		constructor : function(oModel, sPath, oContext, mParameters){
 			PropertyBinding.apply(this, arguments);
-		
+			this.bInitial = true;
 			this.oValue = this._getValue();
 		}
 	
@@ -42,8 +42,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 * @protected
 	 */
 	ODataPropertyBinding.prototype.initialize = function() {
-		if (this.oModel.oMetadata.isLoaded()) {
+		if (this.oModel.oMetadata.isLoaded() && this.bInitial) {
 			this.checkUpdate(true);
+			this.bInitial = false;
 		}
 	};
 	

@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.30.10
+	 * @version 1.30.11
 	 *
 	 * @constructor
 	 * @public
@@ -1917,7 +1917,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitRequest = function(oRequest, fnSuccess, fnError){
-		var that = this, /* oResponseData, mChangedEntities = {}, */ oHandler;
+		var that = this, /* oResponseData, mChangedEntities = {}, */ oHandler, oRequestHandle;
 
 		function _handleSuccess(oData, oResponse) {
 			//if batch the responses are handled by the batch success handler
@@ -1943,7 +1943,31 @@ sap.ui.define([
 				fnError(oError);
 			}
 		}
-
+		
+		var fireEvent = function(sType, oRequest, oError) {
+			var oEventInfo,
+				aRequests = oRequest.eventInfo.requests;
+			if (aRequests) {
+				jQuery.each(aRequests, function(i, oRequest) {
+					if (jQuery.isArray(oRequest)) {
+						jQuery.each(oRequest, function(i, oRequest) {
+							oEventInfo = that._createEventInfo(oRequest.request, oError);
+							that["fireRequest" + sType](oEventInfo);
+						});
+					} else {
+						oEventInfo = that._createEventInfo(oRequest.request, oError);
+						that["fireRequest" + sType](oEventInfo);
+					}
+				});
+				
+				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
+				that["fireBatchRequest" + sType](oEventInfo);
+			} else {
+				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
+				that["fireRequest" + sType](oEventInfo);
+			}
+		};
+		
 		function _submit() {
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
@@ -1957,7 +1981,15 @@ sap.ui.define([
 			//handler only needed for $batch; datajs gets the handler from the accept header
 			oHandler = that._getODataHandler(oRequest.requestUri);
 
-			return that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+			oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+			
+			if (oRequest.eventInfo) {
+				fireEvent("Sent", oRequest, null);
+				delete oRequest.eventInfo;
+			}
+			
+			return oRequestHandle;
+			
 		}
 
 		return _submit();
@@ -1977,8 +2009,7 @@ sap.ui.define([
 			oRequestHandle,
 			mChangeEntities = {},
 			mGetEntities = {},
-			mEntityTypes = {},
-			oEventInfo;
+			mEntityTypes = {};
 
 		var handleSuccess = function(oData, oResponse) {
 			var fnSingleSuccess = function(oData, oResponse) {
@@ -2002,12 +2033,10 @@ sap.ui.define([
 				that._processError(oRequest, oError, fnError);
 			}
 		};
+		
+		oRequest.eventInfo = {};
 		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
-
-		oEventInfo = this._createEventInfo(oRequest);
-
-		this.fireRequestSent(oEventInfo);
-
+		
 		return oRequestHandle;
 	};
 
@@ -2119,28 +2148,13 @@ sap.ui.define([
 				that.fireBatchRequestFailed(oEventInfo);
 			}
 		};
-
-		var fireEvent = function(sType, oBatchRequest, oError, aRequests) {
-			var oEventInfo;
-			jQuery.each(aRequests, function(i, oRequest) {
-				if (jQuery.isArray(oRequest)) {
-					jQuery.each(oRequest, function(i, oRequest) {
-						oEventInfo = that._createEventInfo(oRequest.request, oError);
-						that["fireRequest" + sType](oEventInfo);
-					});
-				} else {
-					oEventInfo = that._createEventInfo(oRequest.request, oError);
-					that["fireRequest" + sType](oEventInfo);
-				}
-			});
-
-			oEventInfo = that._createEventInfo(oBatchRequest, oError, aRequests);
-			that["fireBatchRequest" + sType](oEventInfo);
+		
+		oBatchRequest.eventInfo = {
+				requests: aRequests,
+				batch: true
 		};
-
+		
 		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
-
-		fireEvent("Sent", oBatchRequest, null, aRequests);
 
 		return oRequestHandle;
 	};
@@ -2415,7 +2429,7 @@ sap.ui.define([
 
 
 		// no data available
-		if (bContent && !oResultData && oResponse) {
+		if (bContent && oResultData === undefined && oResponse) {
 			// Parse error messages from the back-end
 			this._parseResponse(oResponse, oRequest);
 
@@ -2466,11 +2480,12 @@ sap.ui.define([
 				mEntityTypes[oEntityMetadata.entityType] = true;
 			}
 			// for createEntry entities change context path to new one
-			if (oRequest.context) {
+			if (oRequest.key) {
 				var sKey = this._getKey(oResultData);
-				delete this.mChangedEntities[oRequest.context.sPath.substr(1)];
-				delete this.oData[oRequest.context.sPath.substr(1)];
-				oRequest.context.sPath = '/' + sKey;
+				delete this.mChangedEntities[oRequest.key];
+				delete this.oData[oRequest.key];
+				var oContext = this.getContext("/" + oRequest.key);
+				oContext.sPath = '/' + sKey;
 				//delete created flag after successfull creation
 				if (this.oData[sKey]) {
 					delete this.oData[sKey].__metadata.created;
@@ -3391,7 +3406,8 @@ sap.ui.define([
 				annotationData: mAnnotationData,
 				url: null,
 				metadata: this.oMetadata,
-				async: this.bLoadMetadataAsync
+				async: this.bLoadMetadataAsync,
+				headers: this.mCustomHeaders
 			});
 			
 			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
@@ -3772,6 +3788,11 @@ sap.ui.define([
 			});
 			this.mCustomHeaders = mCheckedHeaders;
 		}
+
+		// Custom set headers should also be used when requesting annotations, but do not instantiate annotations just for this
+		if (this.oAnnotations) {
+			this.oAnnotations.setHeaders(this.mCustomHeaders);
+		}
 	};
 
 	ODataModel.prototype._getHeaders = function(mHeaders) {
@@ -3999,7 +4020,6 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oEntity, sETag);
 
 			oCreatedContext = that.getContext("/" + sKey); // context wants a path
-			oRequest.context = oCreatedContext;
 			oRequest.key = sKey;
 
 			mRequests = that.mRequests;
@@ -4362,7 +4382,7 @@ sap.ui.define([
 				that.bMetaModelLoaded = true;
 				// Update metamodel bindings only
 				that.checkUpdate(false, false, null, true);
-			})["catch"](function (oError) {
+			}, function (oError) {
 				var sMessage = oError.message,
 					sDetails;
 

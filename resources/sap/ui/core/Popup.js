@@ -796,6 +796,12 @@ sap.ui.define([
 		$Ref.toggleClass("sapUiShd", this._bShadow).hide().css("visibility", "visible");
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
 			fnOpened.apply(); // otherwise call after-opening functions directly
+			// fnOpened is called synchronously above, and the Popup could have been already closed after fnOpened (from one of the "opened" event handlers).
+			// If the state isn't OPEN after fnOpened, it's needed to directly return from here. Otherwise the later registered listener and modified flag can't
+			// be cleared.
+			if (this.eOpenState !== sap.ui.core.OpenState.OPEN) {
+				return;
+			}
 		} else if (this._animations.open) { // if custom animation is defined, call it
 			this._animations.open.call(null, $Ref, iRealDuration, fnOpened);
 		} else { // otherwise play the default animation
@@ -858,25 +864,6 @@ sap.ui.define([
 		var type = (oEvent.type == "focus" || oEvent.type == "activate") ? "focus" : "blur";
 		var bContains = false;
 
-		var fnAutoclose = function() {
-			// provide some additional event-parameters: closingDuration, where this delayed call comes from
-			var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
-			this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
-				this.close(iDuration, "autocloseBlur");
-				var oOf = this._oLastPosition && this._oLastPosition.of;
-				if (oOf) {
-					var sParentPopupId = this.getParentPopupId(oOf);
-					if (sParentPopupId) {
-						// Also inform the parent popup that the focus is lost from the child popup
-						// Parent popup can check whether the current focused element is inside the parent popup. If it's still inside the
-						// parent popup, it keeps open, otherwise parent popup is also closed.
-						var sEventId = "sap.ui.core.Popup.onFocusEvent-" + sParentPopupId;
-						sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
-					}
-				}
-			});
-		}.bind(this);
-
 		if (type == "focus") {
 			var oDomRef = this._$().get(0);
 			if (oDomRef) {
@@ -919,9 +906,6 @@ sap.ui.define([
 					// focus has returned, so it did only move inside the popup => clear timeout
 					jQuery.sap.clearDelayedCall(this._sTimeoutId);
 					this._sTimeoutId = null;
-				} else if (this._bAutoClose && !bContains && !this._sTimeoutId) {
-					// focus set somewhere outside the non-modal autoclose popup, it should be closed...
-					fnAutoclose();
 				}
 			}
 		} else if (type == "blur") { // an element inside the popup is loosing focus - remember in case we need to re-set
@@ -940,7 +924,22 @@ sap.ui.define([
 						return;
 					}
 
-					fnAutoclose();
+					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
+					// provide some additional event-parameters: closingDuration, where this delayed call comes from
+					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
+						this.close(iDuration, "autocloseBlur");
+						var oOf = this._oLastPosition && this._oLastPosition.of;
+						if (oOf) {
+							var sParentPopupId = this.getParentPopupId(oOf);
+							if (sParentPopupId) {
+								// Also inform the parent popup that the focus is lost from the child popup
+								// Parent popup can check whether the current focused element is inside the parent popup. If it's still inside the
+								// parent popup, it keeps open, otherwise parent popup is also closed.
+								var sEventId = "sap.ui.core.Popup.onFocusEvent-" + sParentPopupId;
+								sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
+							}
+						}
+					});
 				}
 			}
 		}
@@ -1981,13 +1980,25 @@ sap.ui.define([
 		var oDomRef = {};
 		var i = 0, l = 0;
 
-		document.addEventListener("focus", this.fEventHandler, true);
-		$PopupRoot.get(0).addEventListener("blur", this.fEventHandler, true);
+		if (document.addEventListener && !Device.browser.internet_explorer) { //FF, Safari
+			document.addEventListener("focus", this.fEventHandler, true);
+			$PopupRoot.get(0).addEventListener("blur", this.fEventHandler, true);
 
-		for (i = 0, l = aChildPopups.length; i < l; i++) {
-			oDomRef = jQuery.sap.domById(aChildPopups[i]);
-			if (oDomRef) {
-				oDomRef.addEventListener("blur", this.fEventHandler, true);
+			for (i = 0, l = aChildPopups.length; i < l; i++) {
+				oDomRef = jQuery.sap.domById(aChildPopups[i]);
+				if (oDomRef) {
+					oDomRef.addEventListener("blur", this.fEventHandler, true);
+				}
+			}
+		} else { // IE8
+			jQuery(document).bind("activate." + this._popupUID, this.fEventHandler);
+			$PopupRoot.bind("deactivate." + this._popupUID, this.fEventHandler);
+
+			for (i = 0, l = aChildPopups.length; i < l; i++) {
+				oDomRef = jQuery.sap.domById(aChildPopups[i]);
+				if (oDomRef) {
+					jQuery(oDomRef).bind("deactivate." + this._popupUID, this.fEventHandler);
+				}
 			}
 		}
 	};
@@ -2007,16 +2018,28 @@ sap.ui.define([
 		var oDomRef = {};
 		var i = 0, l = 0;
 
-		document.removeEventListener("focus", this.fEventHandler, true);
-		$PopupRoot.get(0).removeEventListener("blur", this.fEventHandler, true);
+		if (document.removeEventListener && !Device.browser.internet_explorer) { //FF, Safari
+			document.removeEventListener("focus", this.fEventHandler, true);
+			$PopupRoot.get(0).removeEventListener("blur", this.fEventHandler, true);
 
-		for (i = 0, l = aChildPopups.length; i < l; i++) {
-			oDomRef = jQuery.sap.domById(aChildPopups[i]);
-			if (oDomRef) {
-				oDomRef.removeEventListener("blur", this.fEventHandler, true);
+			for (i = 0, l = aChildPopups.length; i < l; i++) {
+				oDomRef = jQuery.sap.domById(aChildPopups[i]);
+				if (oDomRef) {
+					oDomRef.removeEventListener("blur", this.fEventHandler, true);
+				}
+
+				this.closePopup(aChildPopups[i]);
 			}
+		} else { // IE8
+			jQuery(document).unbind("activate." + this._popupUID, this.fEventHandler);
+			$PopupRoot.unbind("deactivate." + this._popupUID, this.fEventHandler);
 
-			this.closePopup(aChildPopups[i]);
+			for (i = 0, l = aChildPopups.length; i < l; i++) {
+				oDomRef = jQuery.sap.domById(aChildPopups[i]);
+				if (oDomRef) {
+					jQuery(oDomRef).unbind("deactivate." + this._popupUID, this.fEventHandler);
+				}
+			}
 		}
 		this.fEventHandler = null;
 	};

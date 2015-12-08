@@ -19,7 +19,9 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 		}
 		
 		var oControl = sap.ui.getCore().byId(sId);
-		if (oControl && bInvalidate) {
+		// a control must only be invalidated if there is already a DOM Ref. If there is no DOM Ref yet, it will get
+		// rendered later in any case. Elements must always be invalidated because they have no own renderer.
+		if (oControl && bInvalidate && (!(oControl instanceof sap.ui.core.Control) || oControl.getDomRef())) {
 			oControl.invalidate();
 		}
 		
@@ -96,7 +98,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	 * @see sap.ui.core.LabelEnablement#enrich
 	 *
 	 * @author SAP SE
-	 * @version 1.30.10
+	 * @version 1.30.11
 	 * @protected
 	 * @alias sap.ui.core.LabelEnablement
 	 * @namespace

@@ -88,7 +88,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.30.10
+	 * @version 1.30.11
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -270,19 +270,44 @@
 		}(window.navigator.userAgent));
 	}
 
-	// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
-	// (e.g. SAPUI5 script) from other domains for IE browsers.
-	// The CORS check in jQuery filters out such browsers who do not have the
-	// property "withCredentials" which is the IE and Opera and prevents those
-	// browsers to request data from other domains with jQuery.ajax. The CORS
-	// requests are simply forbidden nevertheless if it works. In our case we
-	// simply load our script resources from another domain when using the CDN
-	// variant of SAPUI5. The following fix is also recommended by jQuery:
+	// XHR overrides for IE
 	if (!!sap.ui.Device.browser.internet_explorer) {
+
+		// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
+		// (e.g. SAPUI5 script) from other domains for IE browsers.
+		// The CORS check in jQuery filters out such browsers who do not have the
+		// property "withCredentials" which is the IE and Opera and prevents those
+		// browsers to request data from other domains with jQuery.ajax. The CORS
+		// requests are simply forbidden nevertheless if it works. In our case we
+		// simply load our script resources from another domain when using the CDN
+		// variant of SAPUI5. The following fix is also recommended by jQuery:
 		jQuery.support = jQuery.support || {};
 		jQuery.support.cors = true;
-	}
 
+		// Fixes XHR factory issue (introduced by jQuery 1.11). In case of IE
+		// it uses by mistake the ActiveXObject XHR. In the list of XHR supported
+		// HTTP methods PATCH and MERGE are missing which are required for OData.
+		// The related ticket is: #2068 (no downported to jQuery 1.x planned)
+		var oJQV = Version(jQuery.fn.jquery);
+		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
+		if (window.ActiveXObject !== undefined && oJQV.getMajor() == 1 && oJQV.getMinor() >= 11) {
+			var fnCreateStandardXHR = function() { 
+				try {
+					return new window.XMLHttpRequest();
+				} catch (e) { /* ignore */ }
+			};
+			var fnCreateActiveXHR = function() { 
+				try {
+					return new window.ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e) { /* ignore */ }
+			};
+			jQuery.ajaxSettings = jQuery.ajaxSettings || {};
+			jQuery.ajaxSettings.xhr = function() {
+				return !this.isLocal ? fnCreateStandardXHR() : fnCreateActiveXHR();
+			};
+		}
+
+	}
 
 	/**
 	 * Find the script URL where the SAPUI5 is loaded from and return an object which
@@ -511,7 +536,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.30.10
+	 * @version 1.30.11
 	 * @namespace
 	 * @public
 	 * @static
@@ -3618,20 +3643,6 @@
 		jQuery.support.hasFlexBoxSupport = true;
 	} else {
 		jQuery.support.hasFlexBoxSupport = false;
-	}
-
-	// *********** fixes for (pending) jQuery bugs **********
-	if ( jQuery.support.opacity === false ) { // TODO check wether this can be removed for all jquery versions now (assumption: only needed in IE8)
-		(function() {
-			// jQuery cssHook for setOpacity[IE8] doesn't properly cleanup the CSS filter property
-			var oldSet = jQuery.cssHooks.opacity.set;
-			jQuery.cssHooks.opacity.set = function( elem, value ) {
-				oldSet.apply(this, arguments);
-				if ( !jQuery.trim(elem.style.filter) ) {
-					elem.style.removeAttribute("filter");
-				}
-			};
-		}());
 	}
 
 	// *** Performance measure ***

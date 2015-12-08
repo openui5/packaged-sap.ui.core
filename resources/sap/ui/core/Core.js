@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.30.10
+	 * @version 1.30.11
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -194,8 +194,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// initialize frameOptions script (anti-clickjacking, ect.)
 			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
-			oFrameOptionsConfig.mode = this.oConfiguration["frameOptions"];
-			oFrameOptionsConfig.whitelistService = this.oConfiguration["whitelistService"];
+			oFrameOptionsConfig.mode = this.oConfiguration.getFrameOptions();
+			oFrameOptionsConfig.whitelistService = this.oConfiguration.getWhitelistService();
 			this.oFrameOptions = new jQuery.sap.FrameOptions(oFrameOptionsConfig);
 
 			// enable complex bindings if configured
@@ -230,6 +230,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				log.info("Including LessSupport into declared modules");
 				aModules.push("sap.ui.core.plugin.LessSupport");
 			}
+
+			// determine preload mode (e.g. resolve default or auto)
+			var sPreloadMode = this.oConfiguration.preload;
+			// if debug sources are requested, then the preload feature must be deactivated
+			if ( window["sap-ui-debug"] ) {
+				sPreloadMode = "";
+			}
+			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
+			if ( sPreloadMode === "auto" ) {
+				sPreloadMode = (window["sap-ui-optimized"] && !this.oConfiguration['xx-loadAllMode']) ? "sync" : "";
+			}
+			// write back the determined mode for later evaluation (e.g. loadLibrary)
+			this.oConfiguration.preload = sPreloadMode;
 
 			log.info("Declared modules: " + aModules, METHOD);
 
@@ -281,7 +294,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// a helper task to prevent the premature completion of oSyncPoint2
 			var iCreateTasksTask = oSyncPoint2.startTask("create sp2 tasks task");
-			
+
+			// load the version info file in case of a custom theme to determine
+			// the distribution version which should be provided in library.css requests.
+			if (this.oConfiguration["versionedLibCss"]) {
+				var iVersionInfoTask = oSyncPoint2.startTask("load version info");
+
+				var fnCallback = function(oVersionInfo) {
+					if (oVersionInfo) {
+						log.trace("Loaded \"sap-ui-version.json\".");
+					} else {
+						log.error("Could not load \"sap-ui-version.json\".");
+					}
+					oSyncPoint2.finishTask(iVersionInfoTask);
+				};
+
+				// only use async mode if library prelaod is async
+				var bAsync = sPreloadMode === "async";
+				var vReturn = sap.ui.getVersionInfo({ async: bAsync, failOnError: false });
+				if (vReturn instanceof Promise) {
+					vReturn.then(fnCallback, function(oError) {
+						// this should only happen when there is a script error as "failOnError=false"
+						// prevents throwing a loading error (e.g. HTTP 404)
+						log.error("Unexpected error when loading \"sap-ui-version.json\": " + oError);
+						oSyncPoint2.finishTask(iVersionInfoTask);
+					});
+				} else {
+					fnCallback(vReturn);
+				}
+			}
+
 			// when a boot task is configured, add it to syncpoint2
 			var fnCustomBootTask = this.oConfiguration["xx-bootTask"];
 			if ( fnCustomBootTask ) {
@@ -302,19 +344,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				this.bBooted = true;
 				oSyncPoint2.finishTask(iBootstrapScriptTask);
 			};
-
-			// determine preload mode (e.g. resolve default or auto)
-			var sPreloadMode = this.oConfiguration.preload;
-			// if debug sources are requested, then the preload feature must be deactivated
-			if ( window["sap-ui-debug"] ) {
-				sPreloadMode = "";
-			}
-			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
-			if ( sPreloadMode === "auto" ) {
-				sPreloadMode = (window["sap-ui-optimized"] && !this.oConfiguration['xx-loadAllMode']) ? "sync" : "";
-			}
-			// write back the determined mode for later evaluation (e.g. loadLibrary)
-			this.oConfiguration.preload = sPreloadMode;
 
 			if ( sPreloadMode === "sync" || sPreloadMode === "async" ) {
 				var bAsyncPreload = sPreloadMode !== "sync";
@@ -1474,7 +1503,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if ( !oLibInfo.noLibraryCSS && jQuery.inArray(sLibName, this.oConfiguration['preloadLibCss']) < 0 ) {
-			this.includeLibraryTheme(sLibName);
+			var sQuery;
+
+			// append library and distribution version (if available) to allow on demand custom theme compilation
+			if (this.oConfiguration["versionedLibCss"]) {
+				sQuery = "?version=" + oLibInfo.version;
+
+				// distribution version may not be available (will be loaded in Core constructor syncpoint2)
+				if (sap.ui.versioninfo) {
+					sQuery += "&sap-ui-dist-version=" + sap.ui.versioninfo.version;
+				}
+			}
+			this.includeLibraryTheme(sLibName, undefined, sQuery);
 		}
 
 		// expose some legacy names

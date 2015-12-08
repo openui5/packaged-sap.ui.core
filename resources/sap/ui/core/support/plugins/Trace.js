@@ -10,16 +10,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 	"use strict";
 
 
-	
-	
-	
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.Trace.
 		 * @class This class represents the trace plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 *
 		 * @abstract
 		 * @extends sap.ui.base.Object
-		 * @version 1.30.10
+		 * @version 1.30.11
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Trace
@@ -166,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var sStyle = " style='color:" + aLevelInfo[1] + ";'";
 			var sResult = "<div class='sapUiSupportTraceEntry'><span class='sapUiSupportTraceEntryLevel'" + sStyle + ">" + aLevelInfo[0] +
 					"</span><span class='sapUiSupportTraceEntryTime'" + sStyle + ">" + oPlugin._oDateFormat.format(new Date(oEntry.timestamp)) +
-					"</span><span class='sapUiSupportTraceEntryMessage'>" + oEntry.message + "</div>";
+					"</span><span class='sapUiSupportTraceEntryMessage'>" + jQuery.sap.escapeHTML(oEntry.message || "") + "</div>";
 			return sResult;
 		}
 		
@@ -210,4 +207,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 	return Trace;
 
-});
+}, /* bExport= */ true);

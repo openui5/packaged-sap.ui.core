@@ -7,7 +7,7 @@
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.30.10
+ * @version 1.30.11
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.30.10";
+		var apiVersion = "1.30.11";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.30.10";
+		var v = "1.30.11";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -355,6 +355,13 @@ if (typeof window.sap.ui !== "object") {
 				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
 			}
 		}
+		
+		//Firefox on Android
+		platform = /\((Android)[\s]?([\d][.\d]*)?;.*Firefox\/[\d][.\d]*/;
+		result = userAgent.match(platform);
+		if (result) {
+			return ({"name": OS.ANDROID, "versionStr": result.length == 3 ? result[2] : ""});
+		}
 
 		// Desktop
 		return getDesktopOS();
@@ -612,6 +619,16 @@ if (typeof window.sap.ui !== "object") {
 					versionStr: "" + version,
 					version: version,
 					mobile: oExpMobile.test(_ua),
+					webkit: true,
+					webkitVersion: webkitVersion
+				};
+			} else if ( _ua.match(/FxiOS\/(\d+\.\d+)/)) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.FIREFOX,
+					versionStr: "" + version,
+					version: version,
+					mobile: true,
 					webkit: true,
 					webkitVersion: webkitVersion
 				};
