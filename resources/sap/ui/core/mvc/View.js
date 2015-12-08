@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * and provides lifecycle events. 
 	 *  
 	 * @extends sap.ui.core.Control
-	 * @version 1.28.23
+	 * @version 1.28.24
 	 *
 	 * @constructor
 	 * @public

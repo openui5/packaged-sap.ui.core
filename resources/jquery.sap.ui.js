@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global'],
 //	/**
 //	 * Root Namespace for the jQuery UI-Layer plugin provided by SAP SE.
 //	 *
-//	 * @version 1.28.23
+//	 * @version 1.28.24
 //	 * @namespace
 //	 * @public
 //	 */
