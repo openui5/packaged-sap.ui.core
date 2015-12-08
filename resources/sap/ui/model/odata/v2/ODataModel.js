@@ -62,7 +62,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 *
 	 * @constructor
 	 * @public
@@ -275,7 +275,7 @@ sap.ui.define([
 			if (this.bTokenHandling && this.oServiceData.securityToken) {
 				this.oHeaders["x-csrf-token"] = this.oServiceData.securityToken;
 			}
-			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguage();
+			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
 
 			// set version to 2.0 because 1.0 does not support e.g. skip/top, inlinecount...
 			// states the version of the Open Data Protocol used by the client to generate the request.
@@ -1140,6 +1140,9 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._removeReferences = function(oData){
 		var that = this, aList;
+		if (!oData) {
+			return oData;
+		}
 		if (oData.results) {
 			aList = [];
 			jQuery.each(oData.results, function(i, entry) {
@@ -1539,6 +1542,13 @@ sap.ui.define([
 					return true;
 				}
 				vNavData = oEntity[sExpand];
+				
+				// if nav property is null, no further checks are required
+				if (!vNavData) {
+					continue;
+				}
+				
+				// if nav property is deferred, it needs to be loaded
 				if (vNavData.__deferred) {
 					return true;
 				} 
@@ -2323,7 +2333,7 @@ sap.ui.define([
 			oRequestGroup.requests = [];
 			mRequests[sGroupId] = oRequestGroup;
 		}
-		if (oRequest.method !== "GET") {
+		if (oRequest.method !== "GET" || oRequest.key) {
 			if (!oRequestGroup.changes) {
 				oRequestGroup.changes = {};
 			}
@@ -2340,22 +2350,45 @@ sap.ui.define([
 				// the aborted flag
 				if (oChangeRequest._aborted) {
 					delete oChangeRequest._aborted;
+					var oRequestHandle = {
+							abort: function() {
+								oChangeRequest._aborted = true;
+							}
+					};
+					this.mChangeHandles[oRequest.key] = oRequestHandle;
 				}
-				oChangeRequest.data = oRequest.data;
+				if (oRequest.method !== "GET") {
+					oChangeRequest.data = oRequest.data;
+					// for POST function imports we also need to replace the URI
+					oChangeRequest.requestUri = oRequest.requestUri;
+				} else {
+					// used for GET function imports which have no payload 
+					// replace uri with new function import parameters
+					oChangeRequest.requestUri = oRequest.requestUri;
+					delete oChangeRequest.data;
+				} 
 
 			} else {
-				oChangeGroup = oRequestGroup.changes[sChangeSetId];
-				if (!oChangeGroup) {
-					oChangeGroup = [];
-					oRequestGroup.changes[sChangeSetId] = oChangeGroup;
+				if (oRequest.method !== "GET") {
+					oChangeGroup = oRequestGroup.changes[sChangeSetId];
+					if (!oChangeGroup) {
+						oChangeGroup = [];
+						oRequestGroup.changes[sChangeSetId] = oChangeGroup;
+					}
+					oRequest._changeSetId = sChangeSetId;
+					oChangeGroup.push({
+						request:	oRequest,
+						fnSuccess:	fnSuccess,
+						fnError:	fnError,
+						changeSetId: sChangeSetId
+					});
+				} else {
+					oRequestGroup.requests.push({
+						request:	oRequest,
+						fnSuccess:	fnSuccess,
+						fnError:	fnError
+					});
 				}
-				oRequest._changeSetId = sChangeSetId;
-				oChangeGroup.push({
-					request:	oRequest,
-					fnSuccess:	fnSuccess,
-					fnError:	fnError,
-					changeSetId: sChangeSetId
-				});
 				if (oRequest.key) {
 					oRequestGroup.map[oRequest.key] = oRequest;
 				}
@@ -2413,10 +2446,6 @@ sap.ui.define([
 		var that = this, sPath,
 			oRequestHandle = [];
 
-		if (this.oRequestTimer && mRequests !== this.mDeferredRequests) {
-			jQuery.sap.clearDelayedCall(this.oRequestTimer);
-			this.oRequestTimer = undefined;
-		}
 		if (this.bUseBatch) {
 			//auto refresh for batch / for single requests we refresh after the request was successful
 			if (that.bRefreshAfterChange) {
@@ -2516,7 +2545,24 @@ sap.ui.define([
 		this.checkDataState();
 		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
-
+	
+	/**
+	 * Process request queue asynchronously 
+	 * 
+	 * @param {map} mRequestQueue The request queue to process
+	 * @private
+	 */
+	ODataModel.prototype._processRequestQueueAsync = function(mRequestQueue) {
+		var that = this;
+		if (!this.pCallAsnyc) {
+			this.pCallAsnyc = Promise.resolve();
+			this.pCallAsnyc.then(function() {
+				that._processRequestQueue(mRequestQueue);
+				that.pCallAsnyc = undefined;
+			});
+		}
+	};
+	
 	/**
 	 * process request response for successful requests
 	 *
@@ -2565,7 +2611,22 @@ sap.ui.define([
 			oResultData = jQuery.sap.extend(true, {}, oResultData);
 			that._importData(oResultData, mLocalGetEntities);
 		}
-
+		
+		if (mLocalGetEntities && this.oData[oRequest.key] && this.oData[oRequest.key].__metadata.created && this.oData[oRequest.key].__metadata.created.functionImport) {
+			var aResults = [];
+			var oResult = this.oData[oRequest.key]["$result"];
+			if (oResult && oResult.__list) {
+				jQuery.each(mLocalGetEntities, function(sKey) {
+					aResults.push(sKey);
+				});
+				oResult.__list = aResults;
+			} else if (oResult && oResult.__ref){
+				//there should be only 1 entity in mLocalGetEntities
+				jQuery.each(mLocalGetEntities, function(sKey) {
+					oResult.__ref = sKey; 
+				});
+			}
+		}
 
 		//get change entities for update/remove
 		if (!bContent) {
@@ -2703,9 +2764,15 @@ sap.ui.define([
 		oPayload = jQuery.sap.extend(true, {}, this._getObject('/' + sKey, true), oData);
 		
 		if (oData.__metadata && oData.__metadata.created){
-			sMethod = "POST";
+			sMethod = oData.__metadata.created.method ? oData.__metadata.created.method : "POST";
 			sKey = oData.__metadata.created.key;
 			mParams = oData.__metadata.created;
+			if (oData.__metadata.created.functionImport){
+				// update request url params with changed data from payload
+				mParams.urlParameters = this._createFunctionImportParameters(oData.__metadata.created.key, sMethod, oPayload );
+				// clear data
+				oPayload = undefined;
+			}
 		} else if (sUpdateMethod === "MERGE") {
 			sMethod = "MERGE";
 			// get original unmodified entry for diff
@@ -2715,7 +2782,7 @@ sap.ui.define([
 		}
 
 		// remove metadata, navigation properties to reduce payload
-		if (oPayload.__metadata) {
+		if (oPayload && oPayload.__metadata) {
 			for (var n in oPayload.__metadata) {
 				if (n !== 'type' && n !== 'uri' && n !== 'etag') {
 					delete oPayload.__metadata[n];
@@ -2724,7 +2791,7 @@ sap.ui.define([
 		}
 
 		// delete nav props
-		if (oEntityType) {
+		if (oPayload && oEntityType) {
 			var aNavProps = this.oMetadata._getNavigationPropertyNames(oEntityType);
 			jQuery.each(aNavProps, function(iIndex, sNavPropName) {
 				delete oPayload[sNavPropName];
@@ -3016,7 +3083,7 @@ sap.ui.define([
 		}
 		return bRefreshNeeded;
 	};
-
+	
 	/**
 	 * Executes the passed process request method when the metadata is available and takes care
 	 * of properly wrapping the response handler and allow request abortion
@@ -3032,10 +3099,8 @@ sap.ui.define([
 		this.oMetadata.loaded().then(function() {
 			oRequest = fnProcessRequest();
 
-			if (!that.oRequestTimer) {
-				that.oRequestTimer = jQuery.sap.delayedCall(0, that, that._processRequestQueue, [that.mRequests]);
-			}
-
+			that._processRequestQueueAsync(that.mRequests);
+			
 			if (bAborted) {
 				oRequestHandle.abort();
 			}
@@ -3086,9 +3151,8 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.update = function(sPath, oData, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
-			oStoredEntry, sKey, aUrlParams, sGroupId, sChangeSetId,
+			aUrlParams, sGroupId, sChangeSetId,
 			mUrlParams, mHeaders, sMethod, mRequests,
-			oKeys = {},
 			that = this;
 
 		if (mParameters) {
@@ -3110,16 +3174,10 @@ sap.ui.define([
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = sMethod ? sMethod : this.sDefaultUpdateMethod;
 		sETag = sETag || this._getETag(sPath, oContext, oData);
-		oStoredEntry = that._getObject(sPath, oContext);
-		if (oStoredEntry) {
-			sKey = this._getKey(oStoredEntry);
-			oKeys[sKey] = true;
-		}
 
 		return this._processRequest(function() {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sETag);
-			oRequest.keys = oKeys;
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -3289,11 +3347,13 @@ sap.ui.define([
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
 	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.eTag] If the functionImport changes an entity, the eTag for this entity could be passed with this parameter 
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} oRequestHandle An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
+	 * 
 	 */
 	ODataModel.prototype.callFunction = function (sFunctionName, mParameters) {
 		var oRequest, sUrl,
@@ -3308,13 +3368,22 @@ sap.ui.define([
 			sGroupId,
 			sChangeSetId,
 			mHeaders,
-			that = this;
+			sETag,
+			that = this,
+			sKey,
+			oContext,
+			fnResolve,
+			fnReject,
+			pContextCreated,
+			oRequestHandle,
+			oData = {};
 
 		if (mParameters) {
 			sGroupId 		= mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId 	= mParameters.changeSetId;
 			sMethod			= mParameters.method ? mParameters.method : sMethod;
 			mUrlParams		= mParameters.urlParameters;
+			sETag				= mParameters.eTag;						
 			fnSuccess		= mParameters.success;
 			fnError			= mParameters.error;
 			mHeaders		= mParameters.headers;
@@ -3327,31 +3396,70 @@ sap.ui.define([
 
 		mHeaders = this._getHeaders(mHeaders);
 
-		return this._processRequest(function() {
+		pContextCreated = new Promise(function(resolve, reject) {
+				fnResolve = resolve;
+				fnReject = reject;
+		});
+		
+		oRequestHandle = this._processRequest(function() {
 			oFunctionMetadata = that.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
 			jQuery.sap.assert(oFunctionMetadata, that + ": Function " + sFunctionName + " not found in the metadata !");
 			if (!oFunctionMetadata) {
+				fnReject();
 				return;
 			}
-
+			/* 	check returnType and create $results navprop
+				we do not create $result when primitive/complex types will be returned */ 
+			var bReturnsEntity = oFunctionMetadata.entitySet || oFunctionMetadata.entitySetPath;
+			// default: $result is a collection of entities
+			if (bReturnsEntity) {
+				oData.$result = {__list: []};
+				// single entry?
+				if (oFunctionMetadata.returnType && oFunctionMetadata.returnType.indexOf("Collection") == -1) {
+					oData.$result = {__ref: {}};
+				}
+			}
 			if (oFunctionMetadata.parameter != null) {
-				jQuery.each(mUrlParams, function (sParameterName, oParameterValue) {
-					var matchingParams = jQuery.grep(oFunctionMetadata.parameter, function (oParameter) {
-						return oParameter.name === sParameterName &&
-								(!oParameter.mode || oParameter.mode === "In");
-					});
-					if (matchingParams != null && matchingParams.length > 0) {
-						mInputParams[sParameterName] = ODataUtils.formatValue(oParameterValue, matchingParams[0].type);
-					} else {
-						jQuery.sap.log.warning(that + " - Parameter '" + sParameterName + "' is not defined for function call '" + sFunctionName + "'!");
+				//jQuery.each(mUrlParams, function (sParameterName, oParameterValue) {
+				jQuery.each(oFunctionMetadata.parameter, function (iIndex, oParam) {
+					oData[oParam.name] = that._createPropertyValue(oParam.type);
+					if (mUrlParams && mUrlParams[oParam.name]) {
+						oData[oParam.name] = mUrlParams[oParam.name];
+						mInputParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
+						delete mUrlParams[oParam.name];
 					}
 				});
+				if (!jQuery.isEmptyObject(mUrlParams)) {
+					jQuery.each(mUrlParams, function (sParameterName) {
+						jQuery.sap.log.warning(that + " - Parameter '" + sParameterName + "' is not defined for function call '" + sFunctionName + "'!");
+					});
+				}
 			}
+			// add entry to model data
+			// remove starting / for key only
+			sKey = sFunctionName.substring(1) + "('" + jQuery.sap.uid() + "')";
+			oData.__metadata = {uri: that.sServiceUrl + '/' + sKey, created: {
+				key: sFunctionName.substring(1), 
+				success: fnSuccess, 
+				error: fnError, 
+				headers: mHeaders, 
+				method: sMethod,
+				groupId: sGroupId,
+				changeSetId: sChangeSetId,
+				eTag: sETag,
+				functionImport: true
+			}};
+			
+			that.oData[sKey] = oData;
+			oContext = that.getContext("/" + sKey);
+			fnResolve(oContext);
+			
 			aUrlParams = ODataUtils._createUrlParamsArray(mInputParams);
 
 			sUrl = that._createRequestUrl(sFunctionName, null, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined);
-
+			oRequest.key = sKey;
+			
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
@@ -3360,8 +3468,34 @@ sap.ui.define([
 
 			return oRequest;
 		});
-	};
+		
+		oRequestHandle.contextCreated = function() {
+				return pContextCreated;
+		};
+		
+		return oRequestHandle;
+	};	
 
+	ODataModel.prototype._createFunctionImportParameters = function(sFunctionName, sMethod, mParams) {
+		var mUrlParams = jQuery.extend(true, {}, mParams);
+		delete mUrlParams.__metadata;
+		delete mUrlParams["$result"];
+		var oFunctionMetadata = this.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
+		jQuery.sap.assert(oFunctionMetadata, this + ": Function " + sFunctionName + " not found in the metadata !");
+		if (!oFunctionMetadata) {
+			return;
+		}
+
+		if (oFunctionMetadata.parameter != null) {
+			jQuery.each(oFunctionMetadata.parameter, function (iIndex, oParam) {
+				if (mUrlParams[oParam.name]) {
+					mUrlParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
+				} 
+			});
+		}
+		return mUrlParams;
+	};
+	
 	/**
 	 * Trigger a GET request to the odata service that was specified in the model constructor.
 	 * The data will be stored in the model. The requested data is returned with the response.
@@ -3809,9 +3943,9 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 
-		var oOriginalValue, sPropertyPath, mRequests, oRequest, oEntry = { },
+		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry = { },
 		sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
-		mChangedEntities = {}, oEntityInfo = {}, mParams, that = this;
+		mChangedEntities = {}, oEntityInfo = {}, mParams, bFunction = false, that = this;
 		
 		sResolvedPath = this.resolve(sPath, oContext, true);
 		
@@ -3822,6 +3956,7 @@ sap.ui.define([
 		
 		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1); 
 		sKey = oEntityInfo.key;
+		oOriginalEntry = this._getObject('/' + sKey);
 		oOriginalValue = this._getObject(sPath, oContext, true);
 		
 		//clone property 
@@ -3843,8 +3978,10 @@ sap.ui.define([
 			oChangeObject = oChangeObject[aParts[i]];
 		}
 		
+		bFunction = oOriginalEntry.__metadata.created && oOriginalEntry.__metadata.created.functionImport;
+		
 		//reset clone if oValue equals the original value
-		if (oValue == oOriginalValue && !this.isLaundering('/' + sKey)) {
+		if (oValue == oOriginalValue && !this.isLaundering('/' + sKey) && !bFunction) {
 			delete oChangeObject[sPropertyPath];
 			//delete metadata to check if object has changes
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
@@ -3873,10 +4010,10 @@ sap.ui.define([
 		if (oGroupInfo.groupId in this.mDeferredGroups) {
 			mRequests = this.mDeferredRequests;
 			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata});
-			oRequest.key = sKey;
 		} else {
 			oRequest = this._processChange(sKey, this._getObject('/' + sKey));
 		}
+		oRequest.key = sKey;
 		//get params for created entries: could contain success/error handler
 		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};
 		
@@ -3887,14 +4024,10 @@ sap.ui.define([
 							oRequest._aborted = true;
 						}
 				};
-	
 				that.mChangeHandles[sKey] = oRequestHandle;
 			}
-
 			that._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error);
-			if (!that.oRequestTimer) {
-				that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
-			}
+			that._processRequestQueueAsync(that.mRequests);
 		});
 		
 		mChangedEntities[sKey] = true;
@@ -4208,9 +4341,7 @@ sap.ui.define([
 	
 				that.mChangeHandles[sKey] = oRequestHandle;
 	
-				if (!that.oRequestTimer) {
-					that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
-				}
+				that._processRequestQueueAsync(that.mRequests);
 			});
 			return oCreatedContext;
 		}

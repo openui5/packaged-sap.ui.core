@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.base.Object
-		 * @version 1.34.0
+		 * @version 1.34.1
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.MessageTest
@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		
 		function report(oPlugin, sMessageId, sMessage, bReceive){
 			jQuery(".sapUiSupportMessageCntnt", oPlugin.$()).append("<b style=\"color:" + (bReceive ? "green" : "blue") + ";\">Message '" + sMessageId + "' " + (bReceive ? "received" : "send") +
-					(sMessage ? ":</b> " + sMessage : "</b>") + "<br>");
+					(sMessage ? ":</b> " + jQuery.sap.escapeHTML(sMessage) : "</b>") + "<br>");
 		}
 	
 	

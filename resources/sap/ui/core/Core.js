@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -261,6 +261,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this._setupOS($html);
 
 			this._setupLang($html);
+
+			this._setupAnimation($html);
 
 			this._setupWeinre();
 
@@ -593,6 +595,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// listen to localization change event to update the lang info
 		this.attachLocalizationChanged(fnUpdateLangAttr, this);
 	};
+	
+	/**
+	 * Set the body's Animation-related attribute and configures jQuery accordingly.
+	 * @param $html - jQuery wrapped html object
+	 * @private
+	 */
+	Core.prototype._setupAnimation = function($html) {
+		$html = $html || jQuery("html");
+		
+		var bAnimation = this.oConfiguration.getAnimation();
+		$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
+		jQuery.fx.off = !bAnimation;
+	};
 
 	/**
 	 * Injects the Weinre remote debugger script, if required
@@ -750,7 +765,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 
 			// remove additional css files (ie9 rule limit fix)
-			if ($this.attr("sap-ui-css-count")) {
+			if ($this.attr("data-sap-ui-css-count")) {
 				$this.remove();
 			}
 
@@ -758,7 +773,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName;
 			if ( sHref != this.href ) {
 				this.href = sHref;
-				$this.removeAttr("sap-ui-ready");
+				$this.removeAttr("data-sap-ui-ready");
 			}
 		});
 	};

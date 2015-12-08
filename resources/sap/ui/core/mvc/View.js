@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 *
 	 * @constructor
 	 * @public
@@ -216,23 +216,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			};
 		}
 
-		var fnInitController = function() {
-			var oPromise = createAndConnectController(that, mSettings);
-			if (oPromise instanceof Promise) {
-				return oPromise.then(function() {
-					// the controller is connected now => notify the view implementations
-					if (that.onControllerConnected) {
-						that.onControllerConnected(that.oController);
-					}
-				});
-			} else {
-				// the controller is connected now => notify the view implementations
-				if (that.onControllerConnected) {
-					that.onControllerConnected(that.oController);
-				}
-			}
-		};
-
 		var fnPropagateOwner = function(fn) {
 			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
 
@@ -242,6 +225,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				return oOwnerComponent.runAsOwner(fn);
 			} else {
 				return fn.call();
+			}
+		};
+
+		var fnInitController = function() {
+			var oPromise = createAndConnectController(that, mSettings);
+			if (oPromise instanceof Promise) {
+				return oPromise.then(function() {
+					// the controller is connected now => notify the view implementations
+					if (that.onControllerConnected) {
+						// make sure that in case of async callback for controller
+						// creation the owner is propagated properly
+						fnPropagateOwner(function() {
+							that.onControllerConnected(that.oController);
+						});
+					}
+				});
+			} else {
+				// the controller is connected now => notify the view implementations
+				if (that.onControllerConnected) {
+					that.onControllerConnected(that.oController);
+				}
 			}
 		};
 

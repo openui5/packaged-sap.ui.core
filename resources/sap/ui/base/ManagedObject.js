@@ -172,7 +172,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -692,10 +692,11 @@ sap.ui.define([
 	 * by a type information in the oKeyInfo object
 	 * @param {sap.ui.base.ManagedObject|object} vData the data to create the object from
 	 * @param {object} oKeyInfo
+	 * @param {object} [oScope] Scope object to resolve types and formatters in bindings
 	 * @public
 	 * @static
 	 */
-	ManagedObject.create = function(vData, oKeyInfo) {
+	ManagedObject.create = function(vData, oKeyInfo, oScope) {
 		if ( !vData || vData instanceof ManagedObject || typeof vData !== "object" || vData instanceof String) {
 			return vData;
 		}
@@ -711,7 +712,7 @@ sap.ui.define([
 
 		var fnClass = getClass(vData.Type) || getClass(oKeyInfo && oKeyInfo.type);
 		if ( typeof fnClass === "function" ) {
-			return new fnClass(vData);
+			return new fnClass(vData, oScope);
 		}
 
 		// we don't know how to create the ManagedObject from vData, so fail
@@ -813,7 +814,7 @@ sap.ui.define([
 				if ( jQuery.isArray(vObject) ) {
 					addAllToAggregation(vObject);
 				} else {
-					that[oKeyInfo._sMutator](makeObject(vObject, oKeyInfo));
+					that[oKeyInfo._sMutator](makeObject(vObject, oKeyInfo, oScope));
 				}
 			}
 		}
@@ -893,7 +894,7 @@ sap.ui.define([
 							}
 							oValue = oValue[0];
 						}
-						this[oKeyInfo._sMutator](makeObject(oBindingInfo || oValue, oKeyInfo));
+						this[oKeyInfo._sMutator](makeObject(oBindingInfo || oValue, oKeyInfo, oScope));
 					}
 					break;
 				case 2: // MULTIPLE_AGGREGATION
@@ -2173,7 +2174,7 @@ sap.ui.define([
 				that.unbindProperty(sName, true);
 			}
 		});
-		
+
 		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
 			that.unbindObject(sName, /* _bSkipUpdateBindingContext */ true);
 		});
@@ -2651,7 +2652,7 @@ sap.ui.define([
 		if (this.refreshDataState) {
 			oBinding.attachDataStateChange(fDataStateChangeHandler);
 		}
-	
+
 		// set only one formatter function if any
 		// because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility
 		// for formatter function which is now called by the property binding

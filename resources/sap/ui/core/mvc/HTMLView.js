@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/De
 	 * @extends sap.ui.core.mvc.View
 	 *
 	 * @author SAP SE
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 *
 	 * @constructor
 	 * @public

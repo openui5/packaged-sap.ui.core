@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 * @extends sap.ui.core.Component
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 * @alias sap.ui.core.UIComponent
 	 * @since 1.9.2
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -359,14 +359,15 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 * feature is not activated.
 	 *
 	 * You can overwrite this function and return <code>true</code> to activate the automatic
-	 * prefixing.
+	 * prefixing. In addition the default behavior can be configured in the manifest 
+	 * by specifying the entry <code>sap.ui5/autoPrefixId</code>.
 	 *
 	 * @since 1.15.1
 	 * @return {boolean} true, if the Controls IDs should be prefixed automatically
 	 * @protected
 	 */
 	UIComponent.prototype.getAutoPrefixId = function() {
-		return false;
+		return !!this.getManifestObject().getEntry("/sap.ui5/autoPrefixId");
 	};
 
 	/**

@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 *
 	 * @constructor
 	 * @public
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			this.sUser = sUser;
 			this.sPassword = sPassword;
 
-			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguage();
+			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
 
 			if (!this.oServiceData.oMetadata) {
 				//create Metadata object

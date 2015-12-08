@@ -32,7 +32,7 @@
 			 *        feature - DO NOT USE IN PRODUCTIVE SCENARIOS!!
 			 *
 			 * @author Peter Muessig
-			 * @version 1.34.0
+			 * @version 1.34.1
 			 * @private
 			 * @alias sap.ui.core.plugin.LessSupport
 			 */
@@ -132,7 +132,7 @@
 					for (var i = 0; i < aLibs.length; i++) {
 						check = sap.ui.core.ThemeCheck.checkStyle("less:" + aLibs[i], true);
 						if (check) {
-							jQuery.sap.byId("sap-ui-theme-" + aLibs[i]).attr("sap-ui-ready", "true");
+							jQuery.sap.byId("sap-ui-theme-" + aLibs[i]).attr("data-sap-ui-ready", "true");
 						}
 						ok = ok && check;
 					}

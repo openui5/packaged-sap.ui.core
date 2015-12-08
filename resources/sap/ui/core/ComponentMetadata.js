@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * @public
 	 * @class
 	 * @author SAP SE
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -141,8 +141,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		this._convertLegacyMetadata(oStaticInfo, oManifest);
 
 		this._oStaticInfo = oStaticInfo;
-		
-		this._oManifest = new Manifest(oManifest, oStaticInfo.__metadataVersion === 2);
+
+		this._oManifest = new Manifest(oManifest, {
+			componentName: this._sComponentName,
+			baseUrl: jQuery.sap.getModulePath(this._sComponentName) + "/",
+			process: oStaticInfo.__metadataVersion === 2
+		});
 
 	};
 

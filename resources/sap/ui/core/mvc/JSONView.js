@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/li
 	 * @class
 	 * A View defined using JSON.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.34.0
+	 * @version 1.34.1
 	 *
 	 * @constructor
 	 * @public
@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/li
 			// use preprocessors to fix IDs, associations and event handler references
 			ManagedObject.runWithPreprocessors(function() {
 					// parse
-					that.applySettings({ content : that._oJSONView.content});
+					that.applySettings({ content : that._oJSONView.content}, oController);
 				},
 
 				{
