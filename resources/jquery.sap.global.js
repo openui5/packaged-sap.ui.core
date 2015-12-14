@@ -88,7 +88,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.8
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -536,7 +536,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.32.8
+	 * @version 1.32.9
 	 * @namespace
 	 * @public
 	 * @static
@@ -1303,6 +1303,13 @@
 
 				var iTime = jQuery.sap.now(),
 					oMeasurement = new Measurement( sId, sInfo, iTime, 0, aCategories);
+
+				// create timeline entries if available
+				/*eslint-disable no-console */
+				if (console.time) {
+					console.time(sInfo + " - " + sId);
+				}
+				/*eslint-enable no-console */
 	//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
 
 				if (oMeasurement) {
@@ -1399,6 +1406,7 @@
 				}
 
 				var iTime = jQuery.sap.now();
+
 				var oMeasurement = this.mMeasurements[sId];
 	//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
 
@@ -1426,6 +1434,12 @@
 				}
 
 				if (oMeasurement) {
+					// end timeline entry
+					/*eslint-disable no-console */
+					if (console.time && oMeasurement) {
+						console.timeEnd(oMeasurement.info + " - " + sId);
+					}
+					/*eslint-enable no-console */
 					return this.getMeasurement(sId);
 				} else {
 					return false;
@@ -1870,10 +1884,10 @@
 				if (!window.performance) {
 					return;
 				}
-				if (window.performance.webkitSetResourceTimingBufferSize) {
-					window.performance.webkitSetResourceTimingBufferSize(iSize);
-				} else if (window.performance.setResourceTimingBufferSize){
+				if (window.performance.setResourceTimingBufferSize){
 					window.performance.setResourceTimingBufferSize(iSize);
+				} else if (window.performance.webkitSetResourceTimingBufferSize) {
+					window.performance.webkitSetResourceTimingBufferSize(iSize);
 				}
 			};
 

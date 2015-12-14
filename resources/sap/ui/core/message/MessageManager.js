@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.32.8
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -311,7 +311,7 @@ sap.ui.define([
 	MessageManager.prototype.unregisterMessageProcessor = function(oProcessor) {
 		this.removeMessages(this.mMessages[oProcessor.getId()]);
 		delete this.mProcessors[oProcessor.getId()];
-		oProcessor.detachMessageChange(this.onMessageChange);
+		oProcessor.detachMessageChange(this.onMessageChange, this);
 	};
 	
 	/**

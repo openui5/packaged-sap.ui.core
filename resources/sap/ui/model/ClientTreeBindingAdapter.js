@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				return ClientTreeBinding.prototype.hasChildren.call(this, oNode.context);
 			}
 		};
-
+		
 		ClientTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
 			var vReturn = ClientTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 
@@ -102,7 +102,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			var sGroupId;
 			if (oNode.context) {
 				var sContextPath = oNode.context.getPath();
-				sGroupId = sContextPath.split(sBindingPath)[1];
+				// only split the contextpath along the binding path, if it is not the top-level ("/"),
+				// otherwise the "_" replace regex, will replace wrongly substitute the context-path
+				if (sBindingPath != "/") {
+					sGroupId = sContextPath.split(sBindingPath)[1];
+				}
 				if (!sGroupId) {
 					sGroupId = sContextPath;
 				}

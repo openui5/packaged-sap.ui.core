@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.8
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		if (CustomizingConfiguration && CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
 			this._fnSettingsPreprocessor = function(mSettings) {
 				var sId = this.getId();
-				if (sap.ui.core.CustomizingConfiguration && sId) {
+				if (CustomizingConfiguration && sId) {
 					if (that.isPrefixedId(sId)) {
 						sId = sId.substring((that.getId() + "--").length);
 					}
@@ -327,6 +327,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				// get optional default controller name
 				var defaultController = oThis.getControllerName();
 				if (defaultController) {
+					// check for controller replacement
+					var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+					var sControllerReplacement = CustomizingConfiguration && CustomizingConfiguration.getControllerReplacement(defaultController, ManagedObject._sOwnerId);
+					if (sControllerReplacement) {
+						defaultController = sControllerReplacement;
+					}
 					// create controller
 					oController = sap.ui.controller(defaultController);
 				}
@@ -621,8 +627,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 
 		// view replacement
-		if (sap.ui.core.CustomizingConfiguration) {
-			var customViewConfig = sap.ui.core.CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
+		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+		if (CustomizingConfiguration) {
+			var customViewConfig = CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
 			if (customViewConfig) {
 				jQuery.sap.log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
 				jQuery.extend(oView, customViewConfig);

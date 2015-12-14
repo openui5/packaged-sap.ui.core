@@ -12,10 +12,11 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 	
 		
 		// keys for configuration sections  
-		var CONFIG_VIEW_REPLACEMENTS  = "sap.ui.viewReplacements",
-			CONFIG_VIEW_EXTENSIONS    = "sap.ui.viewExtensions",
-			CONFIG_VIEW_MODIFICATIONS = "sap.ui.viewModifications",
-			CONFIG_CONTROLLER_EXTENSIONS = "sap.ui.controllerExtensions";
+		var CONFIG_VIEW_REPLACEMENTS       = "sap.ui.viewReplacements",
+			CONFIG_VIEW_EXTENSIONS         = "sap.ui.viewExtensions",
+			CONFIG_VIEW_MODIFICATIONS      = "sap.ui.viewModifications",
+			CONFIG_CONTROLLER_EXTENSIONS   = "sap.ui.controllerExtensions",
+			CONFIG_CONTROLLER_REPLACEMENTS = "sap.ui.controllerReplacements";
 		
 		// map of component configurations
 		var mComponentConfigs = {};
@@ -58,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 		 * gets removed again.
 		 *
 		 * @author SAP SE
-		 * @version 1.32.8
+		 * @version 1.32.9
 		 * @constructor
 		 * @private
 		 * @since 1.15.1
@@ -139,6 +140,20 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 			getControllerExtension: function(sControllerName, vObject) {
 				var oResultConfig;
 				findConfig(CONFIG_CONTROLLER_EXTENSIONS, vObject, function(oConfig) {
+					oResultConfig = oConfig[sControllerName];
+					return !!oResultConfig;
+				});
+				return oResultConfig;
+			},
+			
+			/**
+			 * returns the configuration of the controller replacement for the given
+			 * controller name
+			 * @private
+			 */
+			getControllerReplacement: function(sControllerName, vObject) {
+				var oResultConfig;
+				findConfig(CONFIG_CONTROLLER_REPLACEMENTS, vObject, function(oConfig) {
 					oResultConfig = oConfig[sControllerName];
 					return !!oResultConfig;
 				});
