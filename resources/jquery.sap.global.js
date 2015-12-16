@@ -83,7 +83,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.24
+	 * @version 1.28.25
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -527,7 +527,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.24
+	 * @version 1.28.25
 	 * @namespace
 	 * @public
 	 * @static
