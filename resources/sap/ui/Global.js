@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -18,7 +18,7 @@
  * sap.ui.lazyRequire("sap.ui.core.Control");
  * sap.ui.lazyRequire("sap.ui.commons.Button");
  *
- * @version 1.34.1
+ * @version 1.34.2
  * @author  Martin Schaus, Daniel Brinkmann
  * @public
  */
@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.trace', 'jquery.sap.dom'],
 	 * The <code>sap</code> namespace is automatically registered with the
 	 * OpenAjax hub if it exists.
 	 *
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @namespace
 	 * @public
 	 * @name sap
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.trace', 'jquery.sap.dom'],
 	 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
 	 * point for UI related JavaScript functionality provided by SAP.
 	 *
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @namespace
 	 * @name sap.ui
 	 * @public
@@ -66,8 +66,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.trace', 'jquery.sap.dom'],
 			 * The version of the SAP UI Library
 			 * @type string
 			 */
-			version: "1.34.1",
-			buildinfo : { lastchange : "9b365a364ccf0b5ca07969af77aad11c319f15ea", buildtime : "20151208075807" }
+			version: "1.34.2",
+			buildinfo : { lastchange : "59ee46377dfbcac153856771c853c3d3e104e565", buildtime : "20160104145412" }
 		});
 
 	/**

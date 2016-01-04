@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @namespace
 	 * @name sap.ui.core
 	 * @author SAP SE
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @public
 	 */
 
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.core",
-		version: "1.34.1",
+		version: "1.34.2",
 		types: [
 
 			// builtin types
@@ -504,7 +504,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		TreeItem : "TreeItem"
 
 	};
-	
+
 	/**
 	 * Defines the accessible landmark roles for ARIA support. This enumeration is used with the AccessibleRole control property.
 	 * For more information, goto "Roles for Accessible Rich Internet Applications (WAI-ARIA Roles)" at the www.w3.org homepage.
@@ -517,7 +517,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 		/**
 		 * No explicit role is applicable.
-		 * 
+		 *
 		 * The interpretation of this value depends on the control / element which defines a property with this type.
 		 * Normally this value means that no accessible landmark should be written.
 		 *
@@ -527,7 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 		/**
 		 * Represents the ARIA role <code>banner</code>.
-		 * 
+		 *
 		 * A banner usually appears at the top of the page and typically spans the full width.
 		 *
 		 * @public
@@ -536,7 +536,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 		/**
 		 * Represents the ARIA role <code>main</code>.
-		 * 
+		 *
 		 * The main content of a page.
 		 *
 		 * @public
@@ -545,7 +545,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 		/**
 		 * Represents the ARIA role <code>region</code>.
-		 * 
+		 *
 		 * A section of a page, that is important enough to be included in a page summary or table of contents.
 		 *
 		 * @public
@@ -554,7 +554,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 		/**
 		 * Represents the ARIA role <code>navigation</code>.
-		 * 
+		 *
 		 * A region that contains a collection of items and objects that, as a whole, combine to create a navigation facility.
 		 *
 		 * @public
@@ -563,7 +563,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 		/**
 		 * Represents the ARIA role <code>search</code>.
-		 * 
+		 *
 		 * A region that contains a collection of items and objects that, as a whole, combine to create a search facility.
 		 *
 		 * @public
@@ -572,7 +572,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 		/**
 		 * Represents the ARIA role <code>complementary</code>.
-		 * 
+		 *
 		 * A section of the page, designed to be complementary to the main content at a similar level in the DOM hierarchy.
 		 *
 		 * @public
@@ -636,7 +636,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		 * @public
 		 */
 		Islamic: "Islamic",
-		
+
 		/**
 		 * The Japanese emperor calendar
 		 * @public

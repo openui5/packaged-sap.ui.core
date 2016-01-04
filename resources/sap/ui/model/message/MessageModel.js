@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -22,12 +22,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 	 * Constructor for a new JSONModel.
 	 *
 	 * @class
-	 * Model implementation for Messages 
+	 * Model implementation for Messages
 	 * 	 *
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 *
 	 * @param {sap.ui.core.message.MessageManager} oMessageManager The MessageManager instance
 	 * @constructor
@@ -35,21 +35,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 	 * @alias sap.ui.model.message.MessageModel
 	 */
 	var MessageModel = ClientModel.extend("sap.ui.model.message.MessageModel", /** @lends sap.ui.model.message.MessageModel.prototype */ {
-		
+
 		constructor : function(oMessageManager) {
 			ClientModel.apply(this, arguments);
-			
+
 			this.sDefaultBindingMode = BindingMode.OneWay;
 			this.mSupportedBindingModes = {
 				"OneWay" : true,
 				"TwoWay" : false,
 				"OneTime" : false
 			};
-			
+
 			this.oMessageManager = oMessageManager;
 		}
 	});
-	
+
 	/**
 	 * Sets the message data to the model.
 	 *
@@ -61,12 +61,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 		this.oData = oData;
 		this.checkUpdate();
 	};
-	
+
 	MessageModel.prototype.fireMessageChange = function(mArguments) {
 		this.fireEvent("messageChange", mArguments);
 		return this;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 *
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 		var oBinding = new MessagePropertyBinding(this, sPath, oContext, mParameters);
 		return oBinding;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindList
 	 *
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 		var oBinding = new MessageListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 		return oBinding;
 	};
-	
+
 	/**
 	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
 	 * If the model value changed all interested parties are informed.
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 		//not implemented: Only 'OneWay' binding mode supported
 		jQuery.sap.log.error(this + "not implemented: Only 'OneWay' binding mode supported");
 	};
-	
+
 	/**
 	* Returns the value for the property with the given <code>sPropertyName</code>
 	*
@@ -110,9 +110,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 	*/
 	MessageModel.prototype.getProperty = function(sPath, oContext) {
 		return this._getObject(sPath, oContext);
-	
+
 	};
-	
+
 	/**
 	 * @param {string} sPath
 	 * @param {object} [oContext]
@@ -120,13 +120,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 	 */
 	MessageModel.prototype._getObject = function (sPath, oContext) {
 		var oNode;
-		
+
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		} else if (oContext) {
 			oNode = oContext;
 		}
-		
+
 		if (!sPath) {
 			return oNode;
 		}
@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 		}
 		return oNode;
 	};
-	
+
 	return MessageModel;
 
 });

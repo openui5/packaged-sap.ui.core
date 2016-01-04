@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -70,8 +70,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		var $Style = jQuery(oStyle);
 
 		try {
-			var res = !oStyle || !!((oStyle.sheet && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0) ||
-							!!(oStyle.styleSheet && oStyle.styleSheet.cssText && oStyle.styleSheet.cssText.length > 0) ||
+			var res = !oStyle || !!((oStyle.sheet && oStyle.sheet.href === oStyle.href && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0) ||
+							!!(oStyle.styleSheet && oStyle.styleSheet.href === oStyle.href && oStyle.styleSheet.cssText && oStyle.styleSheet.cssText.length > 0) ||
 							!!(oStyle.innerHTML && oStyle.innerHTML.length > 0));
 			var res2 = $Style.attr("data-sap-ui-ready");
 			res2 = !!(res2 === "true" || res2 === "false");
@@ -182,8 +182,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				 */
 				if (oThemeCheck._themeCheckedForCustom != sThemeName) {
 					if (checkCustom(oThemeCheck, lib)) {
-							//load custom css available at sap/ui/core/themename/library.css
-						jQuery.sap.includeStyleSheet(sPath, oThemeCheck._CUSTOMID);
+						// load custom css available at sap/ui/core/themename/custom.css
+						var sCustomCssPath = sPath;
+
+						// check for configured query parameters and add them if available
+						var sLibCssQueryParams = oThemeCheck._oCore._getLibraryCssQueryParams(mLibs["sap.ui.core"]);
+						if (sLibCssQueryParams) {
+							sCustomCssPath += sLibCssQueryParams;
+						}
+
+						jQuery.sap.includeStyleSheet(sCustomCssPath, oThemeCheck._CUSTOMID);
 						oThemeCheck._customCSSAdded = true;
 						jQuery.sap.log.warning("ThemeCheck delivered custom CSS needs to be loaded, Theme not yet applied");
 						oThemeCheck._themeCheckedForCustom = sThemeName;

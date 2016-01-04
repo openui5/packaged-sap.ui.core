@@ -1,6 +1,6 @@
 /*
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16,8 +16,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 	/**
 	 * Removes the version suffix
-	 * 
-	 * @param {string} sVersion Version 
+	 *
+	 * @param {string} sVersion Version
 	 * @return {string} Version without suffix
 	 */
 	function getVersionWithoutSuffix(sVersion) {
@@ -55,16 +55,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 	/**
 	 * Utility function to access a child member by a given path
-	 * 
+	 *
 	 * @param {object} oObject Object
 	 * @param {string} sPath Path starting with a slash (/)
-	 * @return {any|null} value of a member specified by its path; 
+	 * @return {any|null} value of a member specified by its path;
 	 *         if the path doesn't start with a slash it returns the value for the given path of the object
 	 */
 	function getObject(oObject, sPath) {
-		// if the incoming sPath is a path we do a nested lookup in the 
+		// if the incoming sPath is a path we do a nested lookup in the
 		// manifest object and return the concrete value, e.g. "/sap.ui5/extends"
-		if (oObject && sPath && typeof sPath === "string" && sPath.substring(0, 1) === "/") {
+		if (oObject && sPath && typeof sPath === "string" && sPath[0] === "/") {
 			var aPaths = sPath.substring(1).split("/");
 			for (var i = 0, l = aPaths.length; i < l; i++) {
 				oObject = oObject[aPaths[i]] || null;
@@ -75,26 +75,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			return oObject;
 		}
 
-		// if no path starting with slash is specified we access and 
+		// if no path starting with slash is specified we access and
 		// return the value directly from the manifest
-		return oObject && oObject[sPath];
+		return oObject && oObject[sPath] || null;
 	}
 
 
 	/**
 	 * Freezes the object and nested objects to avoid later manipulation
-	 * 
+	 *
 	 * @param oObject the object to deep freeze
 	 */
 	function deepFreeze(oObject) {
-		var oInnerObject, sKey;
-		Object.freeze(oObject);
-		for (sKey in oObject) {
-			oInnerObject = oObject[sKey];
-			if (!oObject.hasOwnProperty(sKey) || !(typeof oInnerObject === 'object') || Object.isFrozen(oInnerObject)) {
-				continue;
+		if (oObject && typeof oObject === 'object' && !Object.isFrozen(oObject)) {
+			Object.freeze(oObject);
+			for (var sKey in oObject) {
+				if (oObject.hasOwnProperty(sKey)) {
+					deepFreeze(oObject[sKey]);
+				}
 			}
-			deepFreeze(oInnerObject);
 		}
 	}
 
@@ -121,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * @class The Manifest class.
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @alias sap.ui.core.Manifest
 	 * @since 1.33.0
 	 */
@@ -140,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			// component name is passed via options (overrides the one defined in manifest)
 			this._sComponentName = mOptions && mOptions.componentName;
 
-			// resolve the base URL of the component depending of given base 
+			// resolve the base URL of the component depending of given base
 			// URL or the module path of the component
 			var sComponentName = this.getComponentName(),
 			    sBaseUrl = mOptions && mOptions.baseUrl || sComponentName && jQuery.sap.getModulePath(sComponentName, "/");
@@ -199,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 * @public
 		 */
 		getJson: function() {
-			// check if the manifest was already processed 
+			// check if the manifest was already processed
 			// since the processing is done lazy (performance!)
 			if (!this._oManifest) {
 				// clone the frozen raw manifest to enable changes
@@ -233,7 +232,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 *       "dependencies": {
 		 *         "libs": {
 		 *           "sap.m": {}
-		 *         }, 
+		 *         },
 		 *         "components": {
 		 *           "my.component.a": {}
 		 *         }
@@ -241,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 *   });
 		 * </code>
 		 *
-		 * The configuration above can be accessed in the following ways: 
+		 * The configuration above can be accessed in the following ways:
 		 * <ul>
 		 * <li><b>By section/namespace</b>: <code>oManifest.getEntry("sap.ui5")</code></li>
 		 * <li><b>By path</b>: <code>oManifest.getEntry("/sap.ui5/dependencies/libs")</code></li>
@@ -256,8 +255,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 * @public
 		 */
 		getEntry: function(sPath) {
+			if (!sPath || sPath.indexOf(".") <= 0) {
+				jQuery.sap.log.warning("Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sPath + ", Component: " + this.getComponentName());
+				return null;
+			}
+
 			var oManifest = this.getJson();
-			return getObject(oManifest, sPath);
+			var oEntry = getObject(oManifest, sPath);
+
+			// top-level manifest section must be an object (e.g. sap.ui5)
+			if (sPath && sPath[0] !== "/" && !jQuery.isPlainObject(oEntry)) {
+				jQuery.sap.log.warning("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
+				return null;
+			}
+
+			return oEntry;
 		},
 
 		/**
@@ -269,12 +281,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 */
 		checkUI5Version: function() {
 
-			// version check => only if minVersion is available a warning 
-			// will be logged and the debug mode is turned on 
+			// version check => only if minVersion is available a warning
+			// will be logged and the debug mode is turned on
 			// TODO: enhance version check also for libraries and components
 			var sMinUI5Version = this.getEntry("/sap.ui5/dependencies/minUI5Version");
-			if (sMinUI5Version && 
-				jQuery.sap.log.isLoggable(jQuery.sap.log.LogLevel.WARNING) && 
+			if (sMinUI5Version &&
+				jQuery.sap.log.isLoggable(jQuery.sap.log.LogLevel.WARNING) &&
 				sap.ui.getCore().getConfiguration().getDebug()) {
 				sap.ui.getVersionInfo({async: true}).then(function(oVersionInfo) {
 					var oMinVersion = getVersionWithoutSuffix(sMinUI5Version);
@@ -411,9 +423,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 
 		/**
-		 * Returns the Component name which is defined in the manifest as 
+		 * Returns the Component name which is defined in the manifest as
 		 * <code>sap.ui5/componentName</code> or <code>sap.app/id</code>
-		 * 
+		 *
 		 * @return {string} the component name
 		 * @public
 		 */

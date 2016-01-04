@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -24,7 +24,7 @@ sap.ui.define(function() {
 	 * @public
 	 */
 	var TreeBindingUtils = function() {};
-	
+
 	/**
 	 * Merges together oNewSection into a set of other sections (aSections)
 	 * The array/objects are not modified, the function returns a new section array.
@@ -36,19 +36,19 @@ sap.ui.define(function() {
 		// Iterate over all known/loaded sections of the node
 		var aNewSections = [];
 		for (var i = 0; i < aSections.length; i++) {
-			
+
 			var oCurrentSection = aSections[i];
 			var iCurrentSectionEndIndex = oCurrentSection.startIndex + oCurrentSection.length;
 			var iNewSectionEndIndex = oNewSection.startIndex + oNewSection.length;
-			
-			if (oNewSection.startIndex <= iCurrentSectionEndIndex && iNewSectionEndIndex >= iCurrentSectionEndIndex 
+
+			if (oNewSection.startIndex <= iCurrentSectionEndIndex && iNewSectionEndIndex >= iCurrentSectionEndIndex
 					&& oNewSection.startIndex >= oCurrentSection.startIndex) {
 				//new section expands to the left
-				oNewSection.startIndex = oCurrentSection.startIndex; 
+				oNewSection.startIndex = oCurrentSection.startIndex;
 				oNewSection.length = iNewSectionEndIndex - oCurrentSection.startIndex;
 			} else if (oNewSection.startIndex <= oCurrentSection.startIndex && iNewSectionEndIndex >= oCurrentSection.startIndex
 					&& iNewSectionEndIndex <= iCurrentSectionEndIndex) {
-				//new section expands to the right 
+				//new section expands to the right
 				oNewSection.length = iCurrentSectionEndIndex - oNewSection.startIndex;
 			} else if (oNewSection.startIndex >= oCurrentSection.startIndex && iNewSectionEndIndex <= iCurrentSectionEndIndex) {
 				//new section is contained in old one
@@ -59,11 +59,11 @@ sap.ui.define(function() {
 				aNewSections.push(oCurrentSection);
 			}
 		}
-		
+
 		aNewSections.push(oNewSection);
-		
+
 		return aNewSections;
 	};
-	
+
 	return TreeBindingUtils;
 });

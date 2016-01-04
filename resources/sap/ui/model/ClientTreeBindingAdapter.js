@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -102,7 +102,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			var sGroupId;
 			if (oNode.context) {
 				var sContextPath = oNode.context.getPath();
-				sGroupId = sContextPath.split(sBindingPath)[1];
+				// only split the contextpath along the binding path, if it is not the top-level ("/"),
+				// otherwise the "_" replace regex, will replace wrongly substitute the context-path
+				if (sBindingPath != "/") {
+					sGroupId = sContextPath.split(sBindingPath)[1];
+				}
 				if (!sGroupId) {
 					sGroupId = sContextPath;
 				}

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.34.1
+ * @version 1.34.2
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.34.1";
+		var apiVersion = "1.34.2";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.34.1";
+		var v = "1.34.2";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -364,7 +364,7 @@ if (typeof window.sap.ui !== "object") {
 				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
 			}
 		}
-		
+
 		//Firefox on Android
 		platform = /\((Android)[\s]?([\d][.\d]*)?;.*Firefox\/[\d][.\d]*/;
 		result = userAgent.match(platform);
@@ -1967,8 +1967,8 @@ if (typeof window.sap.ui !== "object") {
         // AMD. Register as an anonymous module.
       // ##### BEGIN: MODIFIED BY SAP
       // define(['./punycode', './IPv6', './SecondLevelDomains'], factory);
-      // we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code 
-      // and define() doesn't execute synchronously. So the UI5 code executed after URI.js 
+      // we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code
+      // and define() doesn't execute synchronously. So the UI5 code executed after URI.js
       // fails as it is missing the URI.js code.
       // Instead we use the standard init code and only expose the result via define()
       // The (optional) dependencies are lost or must be loaded in advance
@@ -2055,7 +2055,7 @@ function filterArrayValues(data, value) {
 
 function arrayContains(list, value) {
     var i, length;
-    
+
     // value may be string, number, array, regexp
     if (isArray(value)) {
         // Note: this can be optimized to O(n) (instead of current O(m * n))
@@ -2064,10 +2064,10 @@ function arrayContains(list, value) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     var _type = getType(value);
     for (i = 0, length = list.length; i < length; i++) {
         if (_type === 'RegExp') {
@@ -2086,7 +2086,7 @@ function arraysEqual(one, two) {
     if (!isArray(one) || !isArray(two)) {
         return false;
     }
-    
+
     // arrays can't be equal if they have different amount of content
     if (one.length !== two.length) {
         return false;
@@ -2100,7 +2100,7 @@ function arraysEqual(one, two) {
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -2170,13 +2170,13 @@ URI.getDomAttribute = function(node) {
     if (!node || !node.nodeName) {
         return undefined;
     }
-    
+
     var nodeName = node.nodeName.toLowerCase();
     // <input> should only expose src for type="image"
     if (nodeName === 'input' && node.type !== 'image') {
         return undefined;
     }
-    
+
     return URI.domAttributes[nodeName];
 };
 
@@ -2408,8 +2408,8 @@ URI.parseAuthority = function(string, parts) {
 URI.parseUserinfo = function(string, parts) {
     // extract username:password
     var firstSlash = string.indexOf('/');
-    var pos = firstSlash > -1 
-        ? string.lastIndexOf('@', firstSlash) 
+    var pos = firstSlash > -1
+        ? string.lastIndexOf('@', firstSlash)
         : string.indexOf('@');
     var t;
 
@@ -2595,7 +2595,7 @@ URI.addQuery = function(data, name, value) {
 };
 URI.removeQuery = function(data, name, value) {
     var i, length, key;
-    
+
     if (isArray(name)) {
         for (i = 0, length = name.length; i < length; i++) {
             data[name[i]] = undefined;
@@ -2629,7 +2629,7 @@ URI.hasQuery = function(data, name, value, withinArray) {
                 }
             }
         }
-        
+
         return true;
     } else if (typeof name !== "string") {
         throw new TypeError("URI.hasQuery() accepts an object, string as the name parameter");
@@ -2703,7 +2703,7 @@ URI.commonPath = function(one, two) {
     if (pos < 1) {
         return one.charAt(0) === two.charAt(0) && one.charAt(0) === '/' ? '/' : '';
     }
-    
+
     // revert to last /
     if (one.charAt(pos) !== '/' || two.charAt(pos) !== '/') {
         pos = one.substring(0, pos).lastIndexOf('/');
@@ -2797,7 +2797,7 @@ generateAccessor = function(_part){
     };
 };
 
-for (_part in _parts) {                                                                                                                                                                                        
+for (_part in _parts) {
     p[_part] = generateAccessor(_parts[_part]);
 }
 
@@ -2852,7 +2852,7 @@ p.pathname = function(v, build) {
 p.path = p.pathname;
 p.href = function(href, build) {
     var key;
-    
+
     if (href === undefined) {
         return this.toString();
     }
@@ -2867,13 +2867,13 @@ p.href = function(href, build) {
         href = href[attribute] || "";
         _object = false;
     }
-    
+
     // window.location is reported to be an object, but it's not the sort
-    // of object we're looking for: 
+    // of object we're looking for:
     // * location.protocol ends with a colon
     // * location.query != object.search
     // * location.hash != object.fragment
-    // simply serializing the unknown object should do the trick 
+    // simply serializing the unknown object should do the trick
     // (for location, not for everything...)
     if (!_URI && _object && href.pathname !== undefined) {
         href = href.toString();
@@ -3068,11 +3068,11 @@ p.userinfo = function(v, build) {
 };
 p.resource = function(v, build) {
     var parts;
-    
+
     if (v === undefined) {
         return this.path() + this.search() + this.hash();
     }
-    
+
     parts = URI.parse(v);
     this._parts.path = parts.path;
     this._parts.query = parts.query;
@@ -3184,7 +3184,7 @@ p.tld = function(v, build) {
         return tld;
     } else {
         var replace;
-        
+
         if (!v) {
             throw new TypeError("cannot set TLD empty");
         } else if (v.match(/[^a-zA-Z0-9-]/)) {
@@ -3267,7 +3267,7 @@ p.filename = function(v, build) {
         return v ? URI.decodePathSegment(res) : res;
     } else {
         var mutatedDirectory = false;
-        
+
         if (v.charAt(0) === '/') {
             v = v.substring(1);
         }
@@ -3377,11 +3377,11 @@ p.segment = function(segment, v, build) {
                 if (!v[i].length && (!segments.length || !segments[segments.length -1].length)) {
                     continue;
                 }
-                
+
                 if (segments.length && !segments[segments.length -1].length) {
                     segments.pop();
                 }
-                
+
                 segments.push(v[i]);
             }
         } else if (v || (typeof v === "string")) {
@@ -3461,7 +3461,7 @@ p.query = function(v, build) {
 };
 p.setQuery = function(name, value, build) {
     var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
-    
+
     if (typeof name === "object") {
         for (var key in name) {
             if (hasOwn.call(name, key)) {
@@ -3473,7 +3473,7 @@ p.setQuery = function(name, value, build) {
     } else {
         throw new TypeError("URI.addQuery() accepts an object, string as the name parameter");
     }
-    
+
     this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
     if (typeof name !== "string") {
         build = value;
@@ -3724,11 +3724,11 @@ p.absoluteTo = function(base) {
     if (!(base instanceof URI)) {
         base = new URI(base);
     }
-    
+
     if (!resolved._parts.protocol) {
         resolved._parts.protocol = base._parts.protocol;
     }
-    
+
     if (this._parts.hostname) {
         return resolved;
     }
@@ -3736,7 +3736,7 @@ p.absoluteTo = function(base) {
     for (i = 0; p = properties[i]; i++) {
         resolved._parts[p] = base._parts[p];
     }
-    
+
     properties = ['query', 'path'];
     for (i = 0; p = properties[i]; i++) {
         if (!resolved._parts[p] && base._parts[p]) {
@@ -3798,7 +3798,7 @@ p.relativeTo = function(base) {
         relativeParts.path = '';
         return relative.build();
     }
-    
+
     // determine common sub path
     common = URI.commonPath(relative.path(), base.path());
 
@@ -4840,9 +4840,9 @@ return URI;
       var P = local.Promise;
 
       // ##### BEGIN: MODIFIED BY SAP
-      // Original line: 
+      // Original line:
       //    if (P && Object.prototype.toString.call(P.resolve()) === '[object Promise]' && !P.cast) {
-      // This lead to the polyfill replacing the native promise object in 
+      // This lead to the polyfill replacing the native promise object in
       // - Chrome, where "[object Object]" is returned instead of '[object Promise]'
       // - Safari, where native promise contains a definition for Promise.cast
       if (P && Object.prototype.toString.call(P.resolve()).indexOf('[object ') === 0) {
@@ -4878,7 +4878,7 @@ return URI;
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -4967,7 +4967,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -5415,7 +5415,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @namespace
 	 * @public
 	 * @static
@@ -6029,9 +6029,9 @@ return URI;
 		jQuery.sap.log.getLog = jQuery.sap.log.getLogEntries;
 
 		// *** Performance measure ***
-		function PerfMeasurement(){
+		function PerfMeasurement() {
 
-			function Measurement( sId, sInfo, iStart, iEnd, aCategories){
+			function Measurement(sId, sInfo, iStart, iEnd, aCategories) {
 				this.id = sId;
 				this.info = sInfo;
 				this.start = iStart;
@@ -6088,7 +6088,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this.getActive = function(){
+			this.getActive = function() {
 				return bActive;
 			};
 
@@ -6104,7 +6104,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this.setActive = function(bOn, aCategories){
+			this.setActive = function(bOn, aCategories) {
 				//set restricted categories
 				if (!aCategories) {
 					aCategories = null;
@@ -6140,7 +6140,7 @@ return URI;
 						options.complete = function() {
 							jQuery.sap.measure.end(sMeasureId);
 							if (fnComplete) {
-								fnComplete.call(this, arguments);
+								fnComplete.apply(this, arguments);
 							}
 						};
 
@@ -6170,7 +6170,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this._start = function( sId, sInfo, aCategories){
+			this._start = function(sId, sInfo, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -6182,6 +6182,13 @@ return URI;
 
 				var iTime = jQuery.sap.now(),
 					oMeasurement = new Measurement( sId, sInfo, iTime, 0, aCategories);
+
+				// create timeline entries if available
+				/*eslint-disable no-console */
+				if (window.console && console.time) {
+					console.time(sInfo + " - " + sId);
+				}
+				/*eslint-enable no-console */
 	//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
 
 				if (oMeasurement) {
@@ -6201,7 +6208,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this._pause = function( sId ){
+			this._pause = function(sId) {
 				if (!bActive) {
 					return;
 				}
@@ -6241,7 +6248,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this._resume = function( sId ){
+			this._resume = function(sId) {
 				if (!bActive) {
 					return;
 				}
@@ -6272,12 +6279,13 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this._end = function( sId ){
+			this._end = function(sId) {
 				if (!bActive) {
 					return;
 				}
 
 				var iTime = jQuery.sap.now();
+
 				var oMeasurement = this.mMeasurements[sId];
 	//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
 
@@ -6305,6 +6313,12 @@ return URI;
 				}
 
 				if (oMeasurement) {
+					// end timeline entry
+					/*eslint-disable no-console */
+					if (window.console && console.timeEnd) {
+						console.timeEnd(oMeasurement.info + " - " + sId);
+					}
+					/*eslint-enable no-console */
 					return this.getMeasurement(sId);
 				} else {
 					return false;
@@ -6318,7 +6332,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this._clear = function( ){
+			this._clear = function() {
 				this.mMeasurements = {};
 			};
 
@@ -6330,7 +6344,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this._remove = function( sId ){
+			this._remove = function(sId) {
 				delete this.mMeasurements[sId];
 			};
 			/**
@@ -6349,7 +6363,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this._add = function( sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories ){
+			this._add = function(sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -6382,7 +6396,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this._average = function( sId, sInfo, aCategories){
+			this._average = function(sId, sInfo, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -6417,7 +6431,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this.getMeasurement = function( sId ){
+			this.getMeasurement = function(sId) {
 
 				var oMeasurement = this.mMeasurements[sId];
 
@@ -6448,7 +6462,7 @@ return URI;
 			 * @function
 			 * @public
 			 */
-			this.getAllMeasurements = function(bCompleted){
+			this.getAllMeasurements = function(bCompleted) {
 				return this.filterMeasurements(function(oMeasurement) {
 					return oMeasurement;
 				}, bCompleted);
@@ -6655,28 +6669,28 @@ return URI;
 			 * Start an interaction measurements
 			 *
 			 * @param {string} sType type of the event which triggered the interaction
-			 * @param {object} oSrcControl the control on which the interaction was triggered
+			 * @param {object} oSrcElement the control on which the interaction was triggered
 			 *
 			 * @name jQuery.sap.measure#startInteraction
 			 * @function
 			 * @public
 			 * @since 1.34.0
 			 */
-			this.startInteraction = function(sType, oSrcControl) {
+			this.startInteraction = function(sType, oSrcElement) {
 				// component determination - heuristic
-				function identifyOwnerComponent(oSrcControl) {
-					if (oSrcControl) {
+				function identifyOwnerComponent(oSrcElement) {
+					if (oSrcElement) {
 						var Component, oComponent;
 						Component = sap.ui.require("sap/ui/core/Component");
-						while (Component && oSrcControl && oSrcControl.getParent) {
-							oComponent = Component.getOwnerComponentFor(oSrcControl);
-							if (oComponent || oSrcControl instanceof Component) {
-								oComponent = oComponent || oSrcControl;
+						while (Component && oSrcElement && oSrcElement.getParent) {
+							oComponent = Component.getOwnerComponentFor(oSrcElement);
+							if (oComponent || oSrcElement instanceof Component) {
+								oComponent = oComponent || oSrcElement;
 								var oApp = oComponent.getManifestEntry("sap.app");
 								// get app id or module name for FESR
 								return oApp && oApp.id || oComponent.getMetadata().getName();
 							}
-							oSrcControl = oSrcControl.getParent();
+							oSrcElement = oSrcElement.getParent();
 						}
 					}
 					return "undetermined";
@@ -6694,8 +6708,8 @@ return URI;
 				// setup new pending interaction
 				oPendingInteraction = {
 					event: sType, // event which triggered interaction
-					trigger: oSrcControl && oSrcControl.getId ? oSrcControl.getId() : "undetermined", // control which triggered interaction
-					component: identifyOwnerComponent(oSrcControl), // component or app identifier
+					trigger: oSrcElement && oSrcElement.getId ? oSrcElement.getId() : "undetermined", // control which triggered interaction
+					component: identifyOwnerComponent(oSrcElement), // component or app identifier
 					start : iTime, // interaction start
 					end: 0, // interaction end
 					navigation: 0, // sum over all navigation times
@@ -6749,10 +6763,10 @@ return URI;
 				if (!window.performance) {
 					return;
 				}
-				if (window.performance.webkitSetResourceTimingBufferSize) {
-					window.performance.webkitSetResourceTimingBufferSize(iSize);
-				} else if (window.performance.setResourceTimingBufferSize){
+				if (window.performance.setResourceTimingBufferSize) {
 					window.performance.setResourceTimingBufferSize(iSize);
+				} else if (window.performance.webkitSetResourceTimingBufferSize) {
+					window.performance.webkitSetResourceTimingBufferSize(iSize);
 				}
 			};
 
@@ -6784,10 +6798,10 @@ return URI;
 				if (!window.performance) {
 					return;
 				}
-				if (window.performance.webkitClearResourceTimings) {
-					window.performance.webkitClearResourceTimings();
-				} else if (window.performance.clearResourceTimings){
+				if (window.performance.clearResourceTimings) {
 					window.performance.clearResourceTimings();
+				} else if (window.performance.webkitClearResourceTimings){
+					window.performance.webkitClearResourceTimings();
 				}
 			};
 

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global'],
 	var rCamelCase = /-(.)/ig;
 
 	/**
-	 * Transforms a hyphen separated string to an camel case string. 
+	 * Transforms a hyphen separated string to an camel case string.
 	 *
 	 * @param {string} sString Hyphen separated string
 	 * @return The transformed string
@@ -176,12 +176,12 @@ sap.ui.define(['jquery.sap.global'],
 		});
 	};
 
-	
+
 	var rHyphen = /([A-Z])/g;
-	
+
 	/**
 	 * Transforms a camel case string into a hyphen separated string.
-	 * 
+	 *
 	 * @param {string} sString camel case string
 	 * @return The transformed string
 	 * @type {string}
@@ -195,7 +195,7 @@ sap.ui.define(['jquery.sap.global'],
 		});
 	};
 
-	
+
 	var rEscapeRegExp = /[-[\]{}()*+?.,\\^$|#\s]/g;
 
 	/**
@@ -214,43 +214,43 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Creates a string from a pattern by replacing placeholders with concrete values.
 	 *
-	 * The syntax of the pattern is inspired by (but not fully equivalent to) the 
+	 * The syntax of the pattern is inspired by (but not fully equivalent to) the
 	 * java.util.MessageFormat.
 	 *
-	 * Placeholders have the form <code>{ integer }</code>, where any occurrence of 
+	 * Placeholders have the form <code>{ integer }</code>, where any occurrence of
 	 * <code>{0}</code> is replaced by the value with index 0 in <code>aValues</code>,
 	 * <code>{1}</code> y the value with index 1 in <code>aValues</code> etc.
 	 *
-	 * To avoid interpretation of curly braces as placeholders, any non-placeholder fragment 
-	 * of the pattern can be enclosed in single quotes. The surrounding single quotes will be 
-	 * omitted from the result. Single quotes that are not meant to escape a fragment and 
-	 * that should appear in the result, need to be doubled. In the result, only a single 
+	 * To avoid interpretation of curly braces as placeholders, any non-placeholder fragment
+	 * of the pattern can be enclosed in single quotes. The surrounding single quotes will be
+	 * omitted from the result. Single quotes that are not meant to escape a fragment and
+	 * that should appear in the result, need to be doubled. In the result, only a single
 	 * single quote will occur.
 	 *
 	 * Example Pattern Strings:
 	 * <pre>
 	 *   jQuery.sap.formatMessage("Say {0}", ["Hello"]) -> "Say Hello"  // normal use case
 	 *   jQuery.sap.formatMessage("Say '{0}'", ["Hello"]) -> "Say {0}"  // escaped placeholder
-	 *   jQuery.sap.formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'" // doubled single quote 
+	 *   jQuery.sap.formatMessage("Say ''{0}''", ["Hello"]) -> "Say 'Hello'" // doubled single quote
 	 *   jQuery.sap.formatMessage("Say '{0}'''", ["Hello"]) -> "Say {0}'" // doubled single quote in quoted fragment
 	 * </pre>
-	 * 
-	 * In contrast to java.util.MessageFormat, format types or format styles are not supported. 
+	 *
+	 * In contrast to java.util.MessageFormat, format types or format styles are not supported.
 	 * Everything after the argument index and up to the first closing curly brace is ignored.
 	 * Nested placeholders (as supported by java.lang.MessageFormat for the format type choice)
-	 * are not ignored but reported as a parse error. 
+	 * are not ignored but reported as a parse error.
 	 *
-	 * This method throws an Error when the pattern syntax is not fulfilled (e.g. unbalanced curly 
+	 * This method throws an Error when the pattern syntax is not fulfilled (e.g. unbalanced curly
 	 * braces, nested placeholders or a non-numerical argument index).
 	 *
-	 * This method can also be used as a formatter within a binding. The first part of a composite binding 
+	 * This method can also be used as a formatter within a binding. The first part of a composite binding
 	 * will be used as pattern, the following parts as aValues. If there is only one value and this
 	 * value is an array it will be handled like the default described above.
-	 *  
-	 * @param {string} sPattern A pattern string in the described syntax 
+	 *
+	 * @param {string} sPattern A pattern string in the described syntax
 	 * @param {any[]} [aValues=[]] The values to be used instead of the placeholders.
-	 * 										 
-	 * @return {string} The formatted result string 
+	 *
+	 * @return {string} The formatted result string
 	 * @since 1.12.5
 	 * @SecPassthrough {*|return}
 	 * @public
@@ -263,33 +263,33 @@ sap.ui.define(['jquery.sap.global'],
 		aValues = aValues || [];
 		return sPattern.replace(rMessageFormat, function($0,$1,$2,$3,offset) {
 			if ( $1 ) {
-				// a doubled single quote in a normal string fragment 
+				// a doubled single quote in a normal string fragment
 				//   --> emit a single quote
 				return "'";
 			} else if ( $2 ) {
-				// a quoted sequence of chars, potentially containing doubled single quotes again 
-				//   --> emit with doubled single quotes replaced by a single quote 
+				// a quoted sequence of chars, potentially containing doubled single quotes again
+				//   --> emit with doubled single quotes replaced by a single quote
 				return $2.replace(/''/g, "'");
 			} else if ( $3 ) {
 				// a welformed curly brace
-				//   --> emit the argument but ignore other parameters 
+				//   --> emit the argument but ignore other parameters
 				return String(aValues[parseInt($3, 10)]);
 			}
-			// e.g. malformed curly braces 
-			//   --> throw Error 
+			// e.g. malformed curly braces
+			//   --> throw Error
 			throw new Error("formatMessage: pattern syntax error at pos. " + offset);
 		});
 	};
-	
+
 	/**
 	 * Pattern to analyze MessageFormat strings.
-	 * 
+	 *
 	 * Group 1: captures doubled single quotes within the string
-	 * Group 2: captures quoted fragments within the string. 
-	 *            Note that java.util.MessageFormat silently forgives a missing single quote at 
-	 *            the end of a pattern. This special case is handled by the RegEx as well.  
+	 * Group 2: captures quoted fragments within the string.
+	 *            Note that java.util.MessageFormat silently forgives a missing single quote at
+	 *            the end of a pattern. This special case is handled by the RegEx as well.
 	 * Group 3: captures placeholders
-	 *            Checks only for numerical argument index, any remainder is ignored up to the next 
+	 *            Checks only for numerical argument index, any remainder is ignored up to the next
 	 *            closing curly brace. Nested placeholdes are not accepted!
 	 * Group 4: captures any remaining curly braces and indicates syntax errors
 	 *

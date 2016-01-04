@@ -1,6 +1,6 @@
 /*
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 * @extends sap.ui.core.Component
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @alias sap.ui.core.UIComponent
 	 * @since 1.9.2
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -74,9 +74,9 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	}, /* Metadata constructor */ UIComponentMetadata);
 
 	/**
-	 * Creates a new subclass of class <code>sap.ui.core.UIComponent</code> with name 
+	 * Creates a new subclass of class <code>sap.ui.core.UIComponent</code> with name
 	 * <code>sClassName</code> and enriches it with the information contained in <code>oClassInfo</code>.
-	 * <code>oClassInfo</code> might contain the same kind of information as described in 
+	 * <code>oClassInfo</code> might contain the same kind of information as described in
 	 * {@link sap.ui.core.Element.html#.extend}.
 	 *
 	 * @alias {sap.ui.core.UIComponent.extend}
@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 *             "controlId": "App",
 	 *             "controlAggregation": "pages",
 	 *             "viewNamespace": "myApplication.namespace",
-	 *             // If you are using the mobile library, you have to use a sap.m.Router, to get support for 
+	 *             // If you are using the mobile library, you have to use a sap.m.Router, to get support for
 	 *             // the controls sap.m.App, sap.m.SplitApp, sap.m.NavContainer and sap.m.SplitContainer.
 	 *             "routerClass": "sap.m.routing.Router"
 	 *             // What happens if no route matches the hash?
@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 * @since 1.20
 	 * The namespace of the router that is used in the component.
 	 * If you are using an own router extension, it has to be required before the constructor of the component is invoked.
-	 * If you use "sap.m.routing.Router" the component will automatically create a {@link sap.m.routing.Targets} instance.
+	 * If you use <code>sap.m.routing.Router</code> the component will automatically create a {@link sap.m.routing.Targets} instance.
 	 * If you pass a function, it has to be a constructor function extending a router.
 	 *
 	 * @param {string|function} [oClassInfo.metadata.routing.config.targetsClass]
@@ -207,9 +207,8 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 		}
 
 		// create the routing
-		var oMetadata = this.getMetadata(),
-			// extend the metadata config, so that the metadata object cannot be modified afterwards
-			oRoutingManifestEntry = oMetadata._getRoutingSection() || {},
+		// extend the metadata config, so that the metadata object cannot be modified afterwards
+		var oRoutingManifestEntry = this._getManifestEntry("/sap.ui5/routing", true) || {},
 			oRoutingConfig = oRoutingManifestEntry.config || {},
 			vRoutes = oRoutingManifestEntry.routes;
 
@@ -359,7 +358,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 * feature is not activated.
 	 *
 	 * You can overwrite this function and return <code>true</code> to activate the automatic
-	 * prefixing. In addition the default behavior can be configured in the manifest 
+	 * prefixing. In addition the default behavior can be configured in the manifest
 	 * by specifying the entry <code>sap.ui5/autoPrefixId</code>.
 	 *
 	 * @since 1.15.1
@@ -407,14 +406,14 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	};
 
 	/**
-	 * The method to create the Content (UI Control Tree) of the Component.
+	 * The method to create the content (UI Control Tree) of the Component.
 	 * This method has to be overwritten in the implementation of the component
 	 * if the root view is not declared in the component metadata.
 	 *
 	 * @public
 	 */
 	UIComponent.prototype.createContent = function() {
-		var oRootView = this.getMetadata().getRootView();
+		var oRootView = this._getManifestEntry("/sap.ui5/rootView", true);
 		if (oRootView && typeof oRootView === "string") {
 			// This is a duplication of the logic in UIComponentMetadata#_convertLegacyMetadata
 			// to convert the string into a configuration object for the view factory in
@@ -424,8 +423,14 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 				viewName: oRootView,
 				type: sap.ui.core.mvc.ViewType.XML
 			});
-		} else if (oRootView) {
+		} else if (oRootView && typeof oRootView === "object") {
+			// make sure to prefix the ID of the rootView
+			if (oRootView.id) {
+				oRootView.id = this.createId(oRootView.id);
+			}
 			return sap.ui.view(oRootView);
+		} else if (oRootView) {
+			throw new Error("Configuration option 'rootView' of component '" + this.getMetadata().getName() + "' is invalid! 'rootView' must be type of string or object!");
 		}
 		return null;
 	};

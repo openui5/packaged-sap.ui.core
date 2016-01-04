@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -24,28 +24,28 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * @class Base class for all SAPUI5 Objects
 	 * @abstract
 	 * @author Malte Wedel
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @public
 	 * @alias sap.ui.base.Object
 	 */
 	var BaseObject = Metadata.createClass("sap.ui.base.Object", {
-	
+
 		constructor : function() {
 			// complain if 'this' is not an instance of a subclass
 			if ( !(this instanceof BaseObject) ) {
 				throw Error("Cannot instantiate object: \"new\" is missing!");
 			}
 		}
-	
+
 	});
-	
+
 	/**
 	 * Destructor method for objects
 	 * @public
 	 */
 	BaseObject.prototype.destroy = function() {
 	};
-	
+
 	/**
 	 * Returns the public interface of the object.
 	 *
@@ -66,11 +66,11 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 		// return the created interface as well.
 		return oInterface;
 	};
-	
+
 	/**
 	 * Returns the metadata for the class that this object belongs to.
-	 * 
-	 * This method is only defined when metadata has been declared by using {@link sap.ui.base.Object.defineClass} 
+	 *
+	 * This method is only defined when metadata has been declared by using {@link sap.ui.base.Object.defineClass}
 	 * or {@link sap.ui.base.Object.extend}.
 	 *
 	 * @return {sap.ui.base.Metadata] metadata for the class of the object
@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * @function
 	 * @public
 	 */
-	
+
 	/**
 	 * Creates a subclass of class sap.ui.base.Object with name <code>sClassName</code>
 	 * and enriches it with the information contained in <code>oClassInfo</code>.
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * @function
 	 * @since 1.3.1
 	 */
-	
+
 	/**
 	 * Creates metadata for a given class and attaches it to the constructor and prototype of that class.
 	 *
@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 		jQuery.sap.log.debug("defined class '" + sClassName + "'" + (oMetadata.getParent() ? " as subclass of " + oMetadata.getParent().getName() : "") );
 		return oMetadata;
 	};
-	
+
 
 	return BaseObject;
 

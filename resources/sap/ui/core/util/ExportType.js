@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	/**
 	 * Constructor for a new ExportType.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 * @since 1.22.0
 	 *
 	 * @constructor
@@ -36,12 +36,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				 *  File extension.
 				 */
 				fileExtension: 'string',
-				
+
 				/**
 				 * MIME type.
 				 */
 				mimeType: 'string',
-				
+
 				/**
 				 * Charset.
 				 */

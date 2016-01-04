@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 *
 	 * @constructor
 	 * @public
@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		if (CustomizingConfiguration && CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
 			this._fnSettingsPreprocessor = function(mSettings) {
 				var sId = this.getId();
-				if (sap.ui.core.CustomizingConfiguration && sId) {
+				if (CustomizingConfiguration && sId) {
 					if (that.isPrefixedId(sId)) {
 						sId = sId.substring((that.getId() + "--").length);
 					}
@@ -340,6 +340,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				// get optional default controller name
 				var defaultController = oThis.getControllerName();
 				if (defaultController) {
+					// check for controller replacement
+					var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+					var sControllerReplacement = CustomizingConfiguration && CustomizingConfiguration.getControllerReplacement(defaultController, ManagedObject._sOwnerId);
+					if (sControllerReplacement) {
+						defaultController = sControllerReplacement;
+					}
 					// create controller
 					oController = sap.ui.controller(defaultController);
 					sName = defaultController;
@@ -363,7 +369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 					oController.connectToView(oThis);
 				}
 			}
-			
+
 		} else {
 			oThis.oController = {};
 		}
@@ -648,8 +654,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 
 		// view replacement
-		if (sap.ui.core.CustomizingConfiguration) {
-			var customViewConfig = sap.ui.core.CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
+		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+		if (CustomizingConfiguration) {
+			var customViewConfig = CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
 			if (customViewConfig) {
 				jQuery.sap.log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
 				jQuery.extend(oView, customViewConfig);
@@ -734,7 +741,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			switch (sName.indexOf('.')) {
 				case 0:
 					// starts with a dot, must be a controller local handler
-					fnHandler = oController && oController[sName.slice(1)];
+					// usage of jQuery.sap.getObject to allow addressing functions in properties
+					fnHandler = oController && jQuery.sap.getObject(sName.slice(1), undefined, oController);
 					break;
 				case -1:
 					// no dot at all: first check for a controller local, then for a global handler

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -103,10 +103,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 	 *            ReferenceWithWorkaround for locating the OData service.
 	 * @param {object}
 	 * 	          [mParameter] Additional parameters for controlling the model construction. Currently supported are:
-	 *            <li> sAnnotationJSONDoc - A JSON document providing extra annotations to the elements of the 
+	 *            <li> sAnnotationJSONDoc - A JSON document providing extra annotations to the elements of the
 	 *                 structure of the given service
 	 *            </li>
-	 *            <li> modelVersion - Parameter to define which ODataModel version should be used, in you use 
+	 *            <li> modelVersion - Parameter to define which ODataModel version should be used, in you use
 	 *                 'odata4analytics.Model.ReferenceByURI': 1 (default), 2
 	 *                 see also: AnalyticalVersionInfo constants
 	 *            </li>
@@ -205,7 +205,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				throw "Deprecated second argument: Adjust your invocation by passing an object with a property sAnnotationJSONDoc as a second argument instead";
 			}
 			this._mParameter = mParameter;
-			
+
 			var that = this;
 			/*
 			 * get access to OData model
@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 			if (this._oModel.getServiceMetadata().dataServices == undefined) {
 				throw "Model could not be loaded";
 			}
-	
+
 			/**
 			 * Check if the metadata is already available, if not defere the interpretation of the Metadata
 			 */
@@ -273,22 +273,22 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				if (that.bIsInitialized) {
 					return;
 				}
-				
+
 				//mark analytics model as initialized
 				that.bIsInitialized = true;
-				
+
 				/*
 				 * add extra annotations if provided
 				 */
 				if (mParameter && mParameter.sAnnotationJSONDoc) {
 					that.mergeV2Annotations(mParameter.sAnnotationJSONDoc);
 				}
-				
+
 				that._interpreteMetadata(that._oModel.getServiceMetadata().dataServices);
 			}
 
 		},
-		
+
 		/**
 		 * @private
 		 */
@@ -4416,7 +4416,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 *            bReturnNoEntities Indicates whether or not the result shall
 		 *            be empty. This will translate to $top=0 in the OData request and override
 		 *            any setting done with setResultPageBoundaries. The default is not to
-		 *            suppress entities in the result. Pass null to keep current setting. 
+		 *            suppress entities in the result. Pass null to keep current setting.
 		 *            The main use case for this option is to create a request
 		 *            with $inlinecount returning an entity count.
 		 * @public

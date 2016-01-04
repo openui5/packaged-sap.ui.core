@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -21,22 +21,22 @@ sap.ui.define(['sap/ui/model/PropertyBinding', 'sap/ui/model/ChangeReason'],
 	 * @alias sap.ui.model.resource.ResourcePropertyBinding
 	 */
 	var ResourcePropertyBinding = PropertyBinding.extend("sap.ui.model.resource.ResourcePropertyBinding", /** @lends sap.ui.model.resource.ResourcePropertyBinding.prototype */ {
-		
+
 		constructor : function(oModel, sPath){
 			PropertyBinding.apply(this, arguments);
-		
+
 			this.oValue = this.oModel.getProperty(sPath);
 		}
-		
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.getValue
 	 */
 	ResourcePropertyBinding.prototype.getValue = function(){
 		return this.oValue;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.checkUpdate
 	 */

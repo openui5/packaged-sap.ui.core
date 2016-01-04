@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -13,10 +13,10 @@ sap.ui.define(['./library'], function(library) {
 	var RenderPrefixes = library.RenderPrefixes;
 
 	var HTMLRenderer = {
-	
+
 		/**
 		 * Renders either the configured content or a dummy div that will be replaced after rendering
-		 * 
+		 *
 		 * @param {sap.ui.core.RenderManager} [oRM] The RenderManager instance
 		 * @param {sap.ui.core.Control} [oControl] The instance of the invisible control
 		 */

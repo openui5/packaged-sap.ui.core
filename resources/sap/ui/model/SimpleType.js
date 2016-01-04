@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', 
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new SimpleType.
 	 *
@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', 
 	 * @extends sap.ui.model.Type
 	 *
 	 * @author SAP SE
-	 * @version 1.34.1
+	 * @version 1.34.2
 	 *
 	 * @constructor
 	 * @param {object} [oFormatOptions] options as provided by concrete subclasses
@@ -30,23 +30,23 @@ sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', 
 	 * @alias sap.ui.model.SimpleType
 	 */
 	var SimpleType = Type.extend("sap.ui.model.SimpleType", /** @lends sap.ui.model.SimpleType.prototype */ {
-	
+
 		constructor : function(oFormatOptions, oConstraints) {
 			Type.apply(this, arguments);
 			this.setFormatOptions(oFormatOptions || {});
 			this.setConstraints(oConstraints || {});
 			this.sName = "SimpleType";
 		},
-	
+
 	  metadata : {
 			"abstract" : true,
 			publicMethods : [
 			"setConstraints", "setFormatOptions", "formatValue", "parseValue", "validateValue"
 		  ]
 	  }
-		
+
 	});
-	
+
 	/**
 	 * Format the given value in model representation to an output value in the given
 	 * internal type. This happens according to the format options, if target type is 'string'.
@@ -60,7 +60,7 @@ sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', 
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Parse a value of an internal type to the expected value of the model type.
 	 *
@@ -72,7 +72,7 @@ sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', 
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Validate whether a given value in model representation is valid and meets the
 	 * defined constraints (if any).
@@ -83,7 +83,7 @@ sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', 
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Sets constraints for this type. This is meta information used when validating the
 	 * value, to ensure it meets certain criteria, e.g. maximum length, minimal amount
@@ -93,7 +93,7 @@ sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', 
 	SimpleType.prototype.setConstraints = function(oConstraints) {
 		this.oConstraints = oConstraints;
 	};
-	
+
 	/**
 	 * Set format options for this type. This is meta information used when formatting and
 	 * parsing values, such as patterns for number and date formatting or maximum length
@@ -113,7 +113,7 @@ sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', 
 	SimpleType.prototype.getPrimitiveType = function(sInternalType) {
 		// Avoid dealing with type objects, unless really necessary
 		switch (sInternalType) {
-			case "any": 
+			case "any":
 			case "boolean":
 			case "int":
 			case "float":

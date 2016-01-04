@@ -1,11 +1,11 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 /* =========================== */
@@ -18,11 +18,11 @@
 /* TMP during LESS convertion ---- to be deleted */
 /* may be required by SubstitutionRulesManager.css in inbox lib */
 /* ---------------------------------------------------------------------------------------- */
-/** 
+/**
   * This parameter is used in the Shell control to calculate the size when it grows.
-  * !!! ONLY PX-VALUES ARE ALLOWED HERE. 
+  * !!! ONLY PX-VALUES ARE ALLOWED HERE.
   */
-/** 
+/**
   * This parameter is used in the Shell control to calculate the size of the margin when showing
   * an overflow button in the right pane. As of 1.18.0 this value contains the _maximum_ height
   * of the overflow button, if the text inside the button is smaller, the button shrinks with it.
@@ -39,20 +39,20 @@
 /*make small margin themable*/
 /*make medium margin themable*/
 /*make large margin themable*/
-/* 
+/*
  * This is a mixin for creating the predefined container content padding
  * classes:
  * sapUiNoContainerContentPadding
  * sapUiContainerContentPadding
  * sapUiResponsiveContainerContentPadding
- * These classes can be set on many UI5 containers and will 
- * add padding inside the container's content padding based 
+ * These classes can be set on many UI5 containers and will
+ * add padding inside the container's content padding based
  * on the selectors that are arguments for this mixin.
  *
  * Arguments to this function-like mixin are the rootClass selector and
  * the content selector where the padding should be applied.
  */
-/* 
+/*
   * the sapLess-parser has problems with an escaped string as default value for the parameterized mixin
   * therefore we need to temporarily use a parameter assigning the default value
   */
@@ -71,10 +71,10 @@
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
 }
-/* 
- * used for static (Core) and hidden (HTML) area 
+/*
+ * used for static (Core) and hidden (HTML) area
  * (TODO: think about renaming static area also to hidden since static is not
- *        required for newer browsers anymore => position: static) 
+ *        required for newer browsers anymore => position: static)
  */
 .sapUiHidden {
   position: absolute;
@@ -172,19 +172,19 @@
   left: 0;
 }
 /*
- * Enforces 'auto' width. To be used in combination 
+ * Enforces 'auto' width. To be used in combination
  * with pre-defined margin classes to remove any '100%'
  * width's that might be set.
  */
 .sapUiForceWidthAuto {
   width: auto !important;
 }
-/* 
+/*
  * Pre-defined margins classes. These contain css margin
  * properties which are flagged 'important' to make sure
  * margins that come with a control are overwritten (an
  * example for a control with a pre defined margin is the
- * sap.m.List). 
+ * sap.m.List).
  *
  * In case your control comes with width '100%', horizontal
  * margins will not work properly. If your control has a
@@ -192,8 +192,8 @@
  * set that property to 'auto'.
  *
  * There are some control's though which do not have a width
- * property but still have a default width of '100%' 
- * (one example would be the SimpleForm). For these cases,  
+ * property but still have a default width of '100%'
+ * (one example would be the SimpleForm). For these cases,
  * please use css class 'sapUiForceWidthAuto' to which replace
  * your control's default width with value 'auto'.
  */
@@ -292,7 +292,7 @@
 .sapUiLargeMarginEnd {
   margin-left: 3rem !important;
 }
-/* 
+/*
  * Class for responsive margins which adapts to the screen size of the currently used device
  */
 @media (max-width: 599px) {
@@ -322,7 +322,7 @@
   margin: 0 0 1rem 0 !important;
 }
 /*
- * Content of SplitContainer Detail 
+ * Content of SplitContainer Detail
  * (Right hand-side of SplitContainer)
  */
 .sapMSplitContainerDetail .sapUiResponsiveMargin {
