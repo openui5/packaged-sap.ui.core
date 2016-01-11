@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10,11 +10,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new mvc/HTMLView.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 	 * @extends sap.ui.core.mvc.View
 	 *
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 *
 	 * @constructor
 	 * @public
@@ -31,12 +31,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HTMLView = View.extend("sap.ui.core.mvc.HTMLView", /** @lends sap.ui.core.mvc.HTMLView.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core"
 	}});
-	
-	
-	
+
+
+
 		/**
 		 * Defines or creates an instance of a declarative HTML view.
 		 *
@@ -61,27 +61,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		sap.ui.htmlview = function(sId, vView) {
 			return sap.ui.view(sId, vView, sap.ui.core.mvc.ViewType.HTML);
 		};
-		
+
 		/**
-		 * The type of the view used for the <code>sap.ui.view</code> factory 
-		 * function. This property is used by the parsers to define the specific 
+		 * The type of the view used for the <code>sap.ui.view</code> factory
+		 * function. This property is used by the parsers to define the specific
 		 * view type.
 		 * @private
 		 */
 		HTMLView._sType = sap.ui.core.mvc.ViewType.HTML;
-		
+
 		/**
 		 * The template cache. Templates are only loaded once.
-		 * 
+		 *
 		 * @private
 		 * @static
 		 */
 		HTMLView._mTemplates = {};
-	
-	
+
+
 		/**
 		 * A map with the allowed settings for the view.
-		 * 
+		 *
 		 * @private
 		 * @static
 		 */
@@ -95,11 +95,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				"resourceBundleLocale" : true,
 				"resourceBundleAlias" : true
 		};
-		
-		
+
+
 		/**
 		 * Loads and returns a template for the given template name. Templates are only loaded once {@link sap.ui.core.mvc.HTMLView._mTemplates}.
-		 * 
+		 *
 		 * @param {string} sTemplateName The name of the template
 		 * @return {string} the template data
 		 * @private
@@ -108,18 +108,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		HTMLView._getTemplate = function(sTemplateName) {
 			var sUrl = this._getViewUrl(sTemplateName);
 			var sHTML = this._mTemplates[sUrl];
-			
+
 			if (!sHTML) {
 				sHTML = this._loadTemplate(sTemplateName);
-				// TODO discuss 
+				// TODO discuss
 				// a) why caching at all (more precise: why for HTMLView although we refused to do it for other view types - risk of a memory leak!)
 				// b) why cached via URL instead of via name? Any special scenario in mind?
 				this._mTemplates[sUrl] = sHTML;
 			}
 			return sHTML;
 		};
-	
-	
+
+
 		/**
 		 * Abstract method implementation. Returns the name of the controller.
 		 * @return {string} the name of the set controller. Returns undefined when no controller is set.
@@ -128,11 +128,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		HTMLView.prototype.getControllerName = function() {
 			return this._controllerName;
 		};
-	
-	
+
+
 		/**
 		 * Returns the view URL for a given template name in respect of the module path.
-		 * 
+		 *
 		 * @param {string} sTemplateName The name of the template
 		 * @return {string} the view url
 		 * @private
@@ -141,11 +141,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 		HTMLView._getViewUrl = function(sTemplateName) {
 			return jQuery.sap.getModulePath(sTemplateName, ".view.html");
 		};
-	
-	
+
+
 		/**
 		 * Loads and returns the template from a given URL.
-		 * 
+		 *
 		 * @param {string} sTemplateName The name of the template
 		 * @return {string} the template data
 		 * @private
@@ -155,30 +155,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 			var sResourceName = jQuery.sap.getResourceName(sTemplateName, ".view.html");
 			return jQuery.sap.loadResource(sResourceName);
 		};
-	
-	
+
+
 		/**
 		 * Abstract method implementation.
-		 * 
+		 *
 		 * @see sap.ui.core.mvc.View#initViewSettings
-		 * 
+		 *
 		 * @private
 		 */
 		HTMLView.prototype.initViewSettings = function (mSettings) {
 			if (!mSettings) {
 				throw new Error("mSettings must be given");
 			}
-	
+
 			// View template handling - no JSON template given
 			if (mSettings.viewName && mSettings.viewContent) {
 				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
 			} else if (!mSettings.viewName && !mSettings.viewContent) {
 				throw new Error("Neither view name nor view content is given. One of them is required.");
 			}
-	
+
 			var vHTML = mSettings.viewContent || HTMLView._getTemplate(mSettings.viewName);
 			this._oTemplate = document.createElement("div");
-	
+
 			if (typeof vHTML === "string") {
 				this._oTemplate.innerHTML = vHTML;
 			} else {
@@ -189,10 +189,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				}
 				this._oTemplate.appendChild(oFragment);
 			}
-	
+
 			var oMetaElement = this._oTemplate.getElementsByTagName("template")[0];
 			var oProperties = this.getMetadata().getAllProperties();
-	
+
 			if (oMetaElement) {
 				var that = this;
 				var DeclarativeSupport = DeclarativeSupport1;
@@ -210,7 +210,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				});
 				this._oTemplate = oMetaElement;
 			}
-	
+
 			// This is a fix for browsers that support web components
 			if (this._oTemplate.content) {
 				var oFragment = this._oTemplate.content;
@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				// Make the shadow DOM available in the DOM
 				this._oTemplate.appendChild(oFragment);
 			}
-	
+
 			if (mSettings.controllerName) {
 			  this._controllerName = mSettings.controllerName;
 			}
@@ -228,13 +228,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				this.setModel(model, mSettings.resourceBundleAlias);
 			}
 		};
-	
-		
+
+
 		/**
 		 * Abstract method implementation.
-		 * 
+		 *
 		 * @see sap.ui.core.mvc.View#onControllerConnected
-		 * 
+		 *
 		 * @private
 		 */
 		HTMLView.prototype.onControllerConnected = function(oController) {
@@ -246,8 +246,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				settings: this._fnSettingsPreprocessor
 			});
 		};
-		
-		
+
+
 		/**
 		 * Called when the control is destroyed. Use this one to free resources and finalize activities.
 		 */
@@ -262,10 +262,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				this._connectedControls = null;
 			}
 		};
-	
-	
+
+
 		/**
-		 * Internal method to connect unassociated controls to the view. All controls will be destroyed when the view is destroyed. 
+		 * Internal method to connect unassociated controls to the view. All controls will be destroyed when the view is destroyed.
 		 *
 		 * @param {sap.ui.core.Control} oControl reference to a Control
 		 * @private
@@ -274,7 +274,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 			this._connectedControls = this._connectedControls || [];
 			this._connectedControls.push(oControl);
 		};
-	
+
 
 	return HTMLView;
 

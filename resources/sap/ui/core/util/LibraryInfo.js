@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @constructor
 	 * @private
 	 * @alias sap.ui.core.util.LibraryInfo
@@ -26,28 +26,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			BaseObject.apply(this);
 			this._oLibInfos = {};
 		},
-		
+
 		destroy : function() {
 			BaseObject.prototype.destroy.apply(this, arguments);
 			this._oLibInfos = {};
 		},
-		
+
 		getInterface : function() {
 			return this;
 		}
 	});
-	
-	
+
+
 	LibraryInfo.prototype._loadLibraryMetadata = function(sLibraryName, fnCallback) {
 		sLibraryName = sLibraryName.replace(/\//g, ".");
-		
+
 		if (this._oLibInfos[sLibraryName]) {
 			jQuery.sap.delayedCall(0, window, fnCallback, [this._oLibInfos[sLibraryName]]);
 			return;
 		}
-		
-		var that = this, 
-		    sUrl, 
+
+		var that = this,
+		    sUrl,
 		    sLibraryType,
 		    aParts = /themelib_(.*)/i.exec(sLibraryName);
 		if (!aParts) {
@@ -57,9 +57,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 		} else {
 			// theme library
 			sLibraryType = ".theme";
-			sUrl = jQuery.sap.getModulePath("sap.ui.core", '/themes/' + aParts[1] + "/");	
+			sUrl = jQuery.sap.getModulePath("sap.ui.core", '/themes/' + aParts[1] + "/");
 		}
-		
+
 		jQuery.ajax({
 			url : sUrl + sLibraryType,
 			dataType : "xml",
@@ -74,12 +74,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			}
 		});
 	};
-	
-	
+
+
 	LibraryInfo.prototype._getLibraryInfo = function(sLibraryName, fnCallback) {
 		this._loadLibraryMetadata(sLibraryName, function(oData){
 			var result = {libs: [], library: oData.name, libraryUrl: oData.url};
-	
+
 			if (oData.data) {
 				var $data = jQuery(oData.data);
 				result.vendor = $data.find("vendor").text();
@@ -89,16 +89,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				result.releasenotes = $data.find("releasenotes").attr("url"); // in the appdata section
 				result.componentInfo = LibraryInfo.prototype._getLibraryComponentInfo($data);
 			}
-			
+
 			fnCallback(result);
 		});
 	};
-	
-	
+
+
 	LibraryInfo.prototype._getThirdPartyInfo = function(sLibraryName, fnCallback) {
 		this._loadLibraryMetadata(sLibraryName, function(oData){
 			var result = {libs: [], library: oData.name, libraryUrl: oData.url};
-	
+
 			if (oData.data) {
 				var $Libs = jQuery(oData.data).find("appData").find("thirdparty").children();
 				$Libs.each(function(i, o){
@@ -117,35 +117,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 					}
 				});
 			}
-			
+
 			fnCallback(result);
 		});
 	};
-	
-	
+
+
 	LibraryInfo.prototype._getDocuIndex = function(sLibraryName, fnCallback) {
 		this._loadLibraryMetadata(sLibraryName, function(oData){
 			var lib = oData.name,
 				libUrl = oData.url,
 				result = {"docu": {}, library: lib, libraryUrl: libUrl};
-	
+
 			if (!oData.data) {
 				fnCallback(result);
 				return;
 			}
-				
+
 			var $Doc = jQuery(oData.data).find("appData").find("documentation");
 			var sUrl = $Doc.attr("indexUrl");
-			
+
 			if (!sUrl) {
 				fnCallback(result);
 				return;
 			}
-				
+
 			if ($Doc.attr("resolve") == "lib") {
 				sUrl = oData.url + sUrl;
 			}
-			
+
 			jQuery.ajax({
 				url : sUrl,
 				dataType : "json",
@@ -161,30 +161,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			});
 		});
 	};
-	
+
 	LibraryInfo.prototype._getReleaseNotes = function(sLibraryName, sVersion, fnCallback) {
 		this._loadLibraryMetadata(sLibraryName, function(oData){
-	
+
 			if (!oData.data) {
 				fnCallback({});
 				return;
 			}
-			
+
 			var oVersion = jQuery.sap.Version(sVersion);
-			
+
 			var iMajor = oVersion.getMajor();
 			var iMinor = oVersion.getMinor();
 			var iPatch = oVersion.getPatch();
-			
+
 			var $Doc = jQuery(oData.data).find("appData").find("releasenotes");
 			var sUrl = $Doc.attr("url");
-			
+
 			if (!sUrl) {
 				jQuery.sap.log.warning("failed to load release notes for library " + sLibraryName );
 				fnCallback({});
 				return;
 			}
-			
+
 			// for SNAPSHOT versions we fallback to the next minor version, e.g.:
 			// 1.27.1-SNAPSHOT => 1.28.0
 			if (oVersion.getSuffix() === "-SNAPSHOT") {
@@ -194,18 +194,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				}
 				sVersion = iMajor + "." + iMinor + "." + iPatch;
 			}
-			
+
 			// replace the placeholders for major, minor and patch
 			sUrl = sUrl.replace("{major}", iMajor);
 			sUrl = sUrl.replace("{minor}", iMinor);
 			sUrl = sUrl.replace("{patch}", iPatch);
-			
+
 			// if the URL should be resolved against the library the URL
 			// is relative to the library root path
 			if ($Doc.attr("resolve") == "lib") {
 				sUrl = oData.url + sUrl;
 			}
-			
+
 			// load the changelog/releasenotes
 			jQuery.ajax({
 				url : sUrl,
@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 					fnCallback(oData, sVersion);
 				}
 			});
-			
+
 		});
 	};
 

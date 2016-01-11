@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -8,7 +8,7 @@
 
 	// If running in top window redirect to testrunner
 	if (!parent.jsUnitTestSuite) {
-		
+
 		//extract base URL from script to attach the qunit-redirect script
 		var aScripts = document.getElementsByTagName("script"),
 				sBaseUrl = null,
@@ -29,10 +29,10 @@
 		if (sBaseUrl === null) {
 			throw new Error("qunit-redirect.js: The script tag seems to be malformed!");
 		}
-		
+
 		// forward the testpage to the testrunner
 		window.location = sBaseUrl + "test-resources/sap/ui/qunit/testrunner.html?testpage=" + encodeURIComponent(sTestUrl) + "&autostart=true";
 
 	}
-	
+
 })();

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -11,10 +11,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 
 	/**
-	 * @class Static class for enabling declarative UI support.  
+	 * @class Static class for enabling declarative UI support.
 	 *
 	 * @author Peter Muessig, Tino Butz
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @since 1.7.0
 	 * @public
 	 * @alias sap.ui.core.DeclarativeSupport
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	/**
 	 * Defines the attributes of an element that should be handled differently.
 	 * Set key/value pairs. The key indicates the attribute. The value can be of type <code>Boolean</code> or <code>Function</code>.
-	 * When the value is of type <code>Function</code> it will receive three arguments: 
+	 * When the value is of type <code>Function</code> it will receive three arguments:
 	 * <code>sValue</code> the value of the attribute,
 	 * <code>mSettings</code> the settings of the control
 	 * <code>fnClass</code> the control class
@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		"data-sap-ui-default-aggregation" : true,
 		"data-sap-ui-binding" : function(sValue, mSettings) {
 			var oBindingInfo = ManagedObject.bindingParser(sValue);
-			// TODO reject complex bindings, types, formatters; enable 'parameters'? 
+			// TODO reject complex bindings, types, formatters; enable 'parameters'?
 			mSettings.objectBindings = mSettings.objectBindings || {};
 			mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
 		},
@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	/**
 	 * Enhances the given DOM element by parsing the Control and Elements info and creating
 	 * the SAPUI5 controls for them.
-	 * 
+	 *
 	 * @param {Element} oElement the DOM element to compile
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use
 	 * @param {boolean} [isRecursive] Whether the call of the function is recursive.
@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 	/**
 	 * Enhances the given element by parsing the attributes and child elements.
-	 * 
+	 *
 	 * @param {Element} oElement the element to compile
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use
 	 * @param {boolean} [isRecursive] Whether the call of the function is recursive.
@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 		// in case of the root control is not a UIArea we remove all HTML attributes
 		// for a UIArea we remove only the data HTML attributes and keep the others
-		// also marks the control as parsed (by removing data-sap-ui-type) 
+		// also marks the control as parsed (by removing data-sap-ui-type)
 		var aAttr = [];
 		jQuery.each(oElement.attributes, function(iIndex, oAttr) {
 			var sName = oAttr.name;
@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 	/**
 	 * Adds all defined attributes to the settings object of a control.
-	 * 
+	 *
 	 * @param {object} mSettings reference of the settings of the control
 	 * @param {function} fnClass reference to a Class
 	 * @param {Element} oElement reference to a DOM element
@@ -324,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 	/**
 	 * Adds all defined aggregations to the settings object of a control.
-	 * 
+	 *
 	 * @param {object} mSettings reference of the settings of the control
 	 * @param {function} fnClass reference to a Class
 	 * @param {Element} oElement reference to a DOM element
@@ -449,7 +449,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 			sValue = oType.parseValue(sValue);
 		}
 		// else return original sValue (e.g. for enums)
-		// Note: to avoid double resolution of binding expressions, we have to escape string values once again 
+		// Note: to avoid double resolution of binding expressions, we have to escape string values once again
 		return typeof sValue === "string" ? ManagedObject.bindingParser.escape(sValue) : sValue;
 	};
 

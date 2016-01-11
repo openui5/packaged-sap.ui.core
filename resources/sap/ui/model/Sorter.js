@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -22,14 +22,14 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {String} sPath the binding path used for sorting
 	 * @param {boolean} [bDescending=false] whether the sort order should be descending
 	 * @param {boolean|function} vGroup configure grouping of the content, can either be true to enable grouping
-	 *        based on the raw model property value, or a function which calculates the group value out of the 
+	 *        based on the raw model property value, or a function which calculates the group value out of the
 	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
 	 *        implement the grouping behaviour for the aggregation which you want to group.
 	 * @public
 	 * @alias sap.ui.model.Sorter
 	 */
 	var Sorter = sap.ui.base.Object.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
-		
+
 		constructor : function(sPath, bDescending, vGroup){
 			if (typeof sPath === "object") {
 				var oSorterData = sPath;
@@ -38,13 +38,13 @@ sap.ui.define(['jquery.sap.global'],
 				vGroup = oSorterData.group;
 			}
 			this.sPath = sPath;
-	
+
 			// if a model separator is found in the path, extract model name
 			var iSeparatorPos = this.sPath.indexOf(">");
 			if (iSeparatorPos > 0) {
 				this.sPath = this.sPath.substr(iSeparatorPos + 1);
 			}
-	
+
 			this.bDescending = bDescending;
 			this.vGroup = vGroup;
 			if (typeof vGroup == "boolean" && vGroup) {
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global'],
 				this.fnGroup = vGroup;
 			}
 		}
-	
+
 	});
 
 	return Sorter;

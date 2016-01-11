@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * focused item. So if the control containing the items gets the focus (e.g. via tab navigation),
 	 * it is always the focused items which will be focused.
 	 *
-	 * <b>Note:</b> If the <code>ItemNavigation</code> is nested in another <code>ItemNavigation</code> 
+	 * <b>Note:</b> If the <code>ItemNavigation</code> is nested in another <code>ItemNavigation</code>
 	 * (e.g. <code>SegmentedButton</code> in <code>Toolbar</code>), the <code>RootDomRef</code> will always have <code>tabindex</code> -1.
 	 *
 	 * Per default the <code>ItemNavigation</code> cycles over the items.
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {Element[]} aItemDomRefs Array of DOM references representing the items for the navigation
 	 * @param {boolean} [bNotInTabChain=false] Whether the selected element should be in the tab chain or not
 	 *
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @constructor
 	 * @alias sap.ui.core.delegate.ItemNavigation
 	 * @public

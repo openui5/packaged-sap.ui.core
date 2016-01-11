@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -18,7 +18,7 @@
  * sap.ui.lazyRequire("sap.ui.core.Control");
  * sap.ui.lazyRequire("sap.ui.commons.Button");
  *
- * @version 1.28.25
+ * @version 1.28.26
  * @author  Martin Schaus, Daniel Brinkmann
  * @public
  */
@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * The <code>sap</code> namespace is automatically registered with the
 	 * OpenAjax hub if it exists.
 	 *
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @namespace
 	 * @public
 	 * @name sap
@@ -48,12 +48,12 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	if ( typeof window.sap !== "object" && typeof window.sap !== "function"  ) {
 	  window.sap = {};
 	}
-	
+
 	/**
 	 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
 	 * point for UI related JavaScript functionality provided by SAP.
 	 *
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @namespace
 	 * @name sap.ui
 	 * @public
@@ -66,8 +66,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 			 * The version of the SAP UI Library
 			 * @type string
 			 */
-			version: "1.28.25",
-			buildinfo : { lastchange : "5e7de90561789fc40a1660fdad376d02a75aed7d", buildtime : "20151216220641" }
+			version: "1.28.26",
+			buildinfo : { lastchange : "fa6531ded059a6c4e3fb5b52f3a56ec5be327397", buildtime : "20160111153701" }
 		});
 
 	/**
@@ -78,13 +78,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	var oVersionInfoPromise = null;
 
 	/**
-	 * Loads the version info file (resources/sap-ui-version.json) and returns 
-	 * it or if a library name is specified then the version info of the individual 
+	 * Loads the version info file (resources/sap-ui-version.json) and returns
+	 * it or if a library name is specified then the version info of the individual
 	 * library will be returned.
-	 * 
+	 *
 	 * In case of the version info file is not available an error will occur when
 	 * calling this function.
-	 * 
+	 *
 	 * @param {string|object} [mOptions] name of the library (e.g. "sap.ui.core") or a object map (see below)
 	 * @param {boolean} [mOptions.library] name of the library (e.g. "sap.ui.core")
 	 * @param {boolean} [mOptions.async=false] whether "sap-ui-version.json" should be loaded asynchronously
@@ -191,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 			return mOptions.async ? Promise.resolve(oResult) : oResult;
 		}
 	};
-	
+
 	/**
 	 * Ensures that a given a namespace or hierarchy of nested namespaces exists in the
 	 * current <code>window</code>.
@@ -203,12 +203,12 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * @deprecated Use jQuery.sap.declare or jQuery.sap.getObject(...,0) instead
 	 */
 	sap.ui.namespace = function(sNamespace){
-	
+
 		jQuery.sap.assert(false, "sap.ui.namespace is long time deprecated and shouldn't be used");
-	
+
 		return jQuery.sap.getObject(sNamespace, 0);
 	};
-	
+
 	/**
 	 * Creates a lazy loading stub for a given class <code>sClassName</code>.
 	 *
@@ -238,10 +238,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * @static
 	 */
 	sap.ui.lazyRequire = function(sClassName, sMethods, sModuleName) {
-	
+
 		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "lazyRequire: sClassName must be a non-empty string");
 		jQuery.sap.assert(!sMethods || typeof sMethods === "string", "lazyRequire: sMethods must be empty or a string");
-	
+
 		var sFullClass = sClassName.replace(/\//gi,"\."),
 			iLastDotPos = sFullClass.lastIndexOf("."),
 			sPackage = sFullClass.substr(0, iLastDotPos),
@@ -250,13 +250,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 			oClass = oPackage[sClass],
 			aMethods = (sMethods || "new").split(" "),
 			iConstructor = jQuery.inArray("new", aMethods);
-	
+
 		sModuleName = sModuleName || sFullClass;
-	
+
 		if (!oClass) {
-	
+
 			if ( iConstructor >= 0 ) {
-	
+
 				// Create dummy constructor which loads the class on demand
 				oClass = function() {
 					jQuery.sap.log.debug("lazy stub for '" + sFullClass + "' (constructor) called.");
@@ -266,7 +266,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 					if ( oRealClass._sapUiLazyLoader ) {
 						throw new Error("lazyRequire: stub '" + sFullClass + "'has not been replaced by module '" + sModuleName + "'");
 					}
-	
+
 					// create a new instance and invoke the constructor
 					var oInstance = jQuery.sap.newObject(oRealClass.prototype);
 					var oResult = oRealClass.apply(oInstance, arguments);
@@ -277,22 +277,22 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 				};
 				// mark the stub as lazy loader
 				oClass._sapUiLazyLoader = true;
-	
+
 				aMethods.splice(iConstructor,1);
-	
+
 			} else {
-	
+
 				// Create dummy object
 				oClass = {};
-	
+
 			}
-	
+
 			// remember the stub
 			oPackage[sClass] = oClass;
-	
+
 		}
-	
-	
+
+
 		// add stub methods to it
 		jQuery.each(aMethods, function (i,sMethod) {
 			// check whether method is already available
@@ -311,9 +311,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 				oClass[sMethod]._sapUiLazyLoader = true;
 			}
 		});
-	
+
 	};
-	
+
 	/**
 	 * Returns the URL of a resource that belongs to the given library and has the given relative location within the library.
 	 * This is mainly meant for static resources like images that are inside the library.
@@ -332,17 +332,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	sap.ui.resource = function(sLibraryName, sResourcePath) {
 		jQuery.sap.assert(typeof sLibraryName === "string", "sLibraryName must be a string");
 		jQuery.sap.assert(typeof sResourcePath === "string", "sResourcePath must be a string");
-	
+
 		// special handling for theme-dependent resources: move theme folder into module name
 		var match = sResourcePath.match(/^themes\/([^\/]+)\//);
 		if (match) {
 			sLibraryName += ".themes." + match[1];
 			sResourcePath = sResourcePath.substr(match[0].length);
 		}
-	
+
 		return jQuery.sap.getModulePath(sLibraryName, '/') + sResourcePath;
 	};
-	
+
 	/**
 	 * Redirects access to resources that are part of the given namespace to a location
 	 * relative to the assumed <b>application root folder</b>.

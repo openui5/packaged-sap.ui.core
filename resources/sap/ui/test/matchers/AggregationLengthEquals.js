@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -42,7 +42,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Getter for property <code>name</code>.
-		 * 
+		 *
 		 * The name of the aggregation that is used for matching
 		 *
 		 * @return {string} the name of the aggregation <code>name</code>
@@ -53,17 +53,17 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Setter for property <code>name</code>.
-		 * 
+		 *
 		 * @param {string} sName the name of the aggregation <code>name</code>
 		 * @return {sap.ui.test.matchers.AggregationLengthEquals} <code>this</code> to allow method chaining
 		 * @public
 		 * @name sap.ui.test.matchers.AggregationLengthEquals#setName
 		 * @function
 		 */
-		
+
 		/**
 		 * Getter for property <code>length</code>.
-		 * 
+		 *
 		 * The length that aggregation <code>name</code> should have
 		 *
 		 * @return {int} the length that aggregation <code>name</code> should have
@@ -74,7 +74,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Setter for property <code>length</code>.
-		 * 
+		 *
 		 * @param {int} iLength length that aggregation <code>name</code> should have
 		 * @return {sap.ui.test.matchers.AggregationLengthEquals} <code>this</code> to allow method chaining
 		 * @public
@@ -84,7 +84,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Checks if the control's aggregation <code>name</code> has length <code>length</code>
-		 * 
+		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the length of aggregation <code>name</code> is the same as <code>length</code>, false if it is not.
 		 * @public
@@ -99,8 +99,8 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 				jQuery.sap.log.error("Control " + oControl.sId + " does not have an aggregation called: " + sAggregationName);
 				return false;
 			}
-			var bIsMatch = fnAggregation.call(oControl).length === this.getLength(); 
-			jQuery.sap.log.info("Control " + oControl.sId + " does have an aggregation '" 
+			var bIsMatch = fnAggregation.call(oControl).length === this.getLength();
+			jQuery.sap.log.info("Control " + oControl.sId + " does have an aggregation '"
 					+ sAggregationName + "' and its length " + fnAggregation.call(oControl).length + (bIsMatch ? "matches." : "does not match."));
 			return bIsMatch;
 		}

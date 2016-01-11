@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -534,7 +534,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					}
 					return len;
 				};
-				
+
 				var oFocusRef_Initial = document.activeElement;
 				var oStoredFocusInfo = this.oCore.oFocusHandler.getControlFocusInfo();
 
@@ -543,7 +543,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 				var aContent = this.getContent();
 				var len = cleanUpDom(aContent, true);
-				
+
 				var oFocusRef_AfterCleanup = document.activeElement;
 
 				for (var i = 0; i < len; i++) {
@@ -552,7 +552,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					}
 				}
 				bUpdated = true;
-				
+
 				/* Try restoring focus when focus ref is changed due to cleanup operations and not changed anymore by the rendering logic */
 				if (oFocusRef_Initial != oFocusRef_AfterCleanup && oFocusRef_AfterCleanup === document.activeElement) {
 					try {
@@ -570,7 +570,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			}
 
 		} else { // only partial update (invalidated controls)
-			
+
 			var isPopup = function(oControl) {
 				return !!(oControl.getMetadata && oControl.getMetadata().isInstanceOf("sap.ui.core.PopupInterface"));
 			};
@@ -596,7 +596,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				var oControl = this.oCore.byId(n);
 				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
 				// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
-				//  -> Therefore these controls must be rerendered 
+				//  -> Therefore these controls must be rerendered
 				if ( oControl && (isPopup(oControl) || !isAncestorInvalidated(oControl.getParent())) ) {
 					oControl.rerender();
 					bUpdated = true;

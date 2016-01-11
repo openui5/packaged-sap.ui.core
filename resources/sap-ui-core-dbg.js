@@ -10815,14 +10815,14 @@ $.ui.position = {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.25
+ * @version 1.28.26
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,11 +10847,11 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.25";
+		var apiVersion = "1.28.26";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
-	
+
 	var device = {};
 
 ////-------------------------- Logging -------------------------------------
@@ -10896,16 +10896,16 @@ if (typeof window.sap.ui !== "object") {
 				return oLogEntry;
 		};
 	};
-// instantiate new logger		
+// instantiate new logger
 	var logger = new deviceLogger();
 	logger.log(INFO, "Device API logging initialized");
-	
-	
+
+
 //******** Version Check ********
-	
+
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.25";
+		var v = "1.28.26";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -10925,7 +10925,7 @@ if (typeof window.sap.ui !== "object") {
 
 	function detachEvent(sEventId, fnFunction, oListener) {
 		var aEventListeners = mEventRegistry[sEventId];
-		
+
 		if (!aEventListeners) {
 			return this;
 		}
@@ -10954,23 +10954,23 @@ if (typeof window.sap.ui !== "object") {
 
 //******** OS Detection ********
 
-	/** 
+	/**
 	 * Contains information about the operating system of the device.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.os
 	 * @public
 	 */
 	/**
 	 * Enumeration containing the names of known operating systems.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.os.OS
 	 * @public
 	 */
 	/**
 	 * The name of the operating system.
-	 * 
+	 *
 	 * @see sap.ui.Device.os#OS
 	 * @name sap.ui.Device.os#name
 	 * @type String
@@ -10978,118 +10978,118 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * The version as string. Might be empty if no version can be determined.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#versionStr
 	 * @type String
 	 * @public
 	 */
 	/**
 	 * The version as float. Might be -1 if no version can be determined.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#version
 	 * @type float
 	 * @public
 	 */
 	/**
 	 * Flag indicating the Windows operating system.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#windows
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the Linux operating system.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#linux
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the MAC operating system.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#macintosh
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the iOS operating system.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#ios
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the Android operating system.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#android
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the Blackberry operating system.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#blackberry
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the Windows Phone operating system.
-	 * 
+	 *
 	 * @name sap.ui.Device.os#windows_phone
 	 * @type boolean
 	 * @public
 	 */
-	
+
 	/**
 	 * Windows operating system name.
-	 * 
+	 *
 	 * @see sap.ui.Device.os#name
 	 * @name sap.ui.Device.os.OS#WINDOWS
 	 * @public
 	 */
 	/**
 	 * MAC operating system name.
-	 * 
+	 *
 	 * @see sap.ui.Device.os#name
 	 * @name sap.ui.Device.os.OS#MACINTOSH
 	 * @public
 	 */
 	/**
 	 * Linux operating system name.
-	 * 
+	 *
 	 * @see sap.ui.Device.os#name
 	 * @name sap.ui.Device.os.OS#LINUX
 	 * @public
 	 */
 	/**
 	 * iOS operating system name.
-	 * 
+	 *
 	 * @see sap.ui.Device.os#name
 	 * @name sap.ui.Device.os.OS#IOS
 	 * @public
 	 */
 	/**
 	 * Android operating system name.
-	 * 
+	 *
 	 * @see sap.ui.Device.os#name
 	 * @name sap.ui.Device.os.OS#ANDROID
 	 * @public
 	 */
 	/**
 	 * Blackberry operating system name.
-	 * 
+	 *
 	 * @see sap.ui.Device.os#name
 	 * @name sap.ui.Device.os.OS#BLACKBERRY
 	 * @public
 	 */
 	/**
 	 * Windows Phone operating system name.
-	 * 
+	 *
 	 * @see sap.ui.Device.os#name
 	 * @alias sap.ui.Device.os.OS#WINDOWS_PHONE
 	 * @public
 	 */
-	
+
 	var OS = {
 		"WINDOWS": "win",
 		"MACINTOSH": "mac",
@@ -11170,7 +11170,7 @@ if (typeof window.sap.ui !== "object") {
 				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
 			}
 		}
-		
+
 		//Firefox on Android
 		platform = /\((Android)[\s]?([\d][.\d]*)?;.*Firefox\/[\d][.\d]*/;
 		result = userAgent.match(platform);
@@ -11181,7 +11181,7 @@ if (typeof window.sap.ui !== "object") {
 		// Desktop
 		return getDesktopOS();
 	}
-	
+
 	function setOS(customUA) {
 		device.os = getOS(customUA) || {};
 		device.os.OS = OS;
@@ -11202,26 +11202,26 @@ if (typeof window.sap.ui !== "object") {
 
 
 //******** Browser Detection ********
-	
-	/** 
+
+	/**
 	 * Contains information about the used browser.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.browser
 	 * @public
 	 */
-	
+
 	/**
 	 * Enumeration containing the names of known browsers.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.browser.BROWSER
 	 * @public
 	 */
-	
+
 	/**
 	 * The name of the browser.
-	 * 
+	 *
 	 * @see sap.ui.Device.browser#BROWSER
 	 * @name sap.ui.Device.browser#name
 	 * @type String
@@ -11229,28 +11229,28 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * The version as string. Might be empty if no version can be determined.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#versionStr
 	 * @type String
 	 * @public
 	 */
 	/**
 	 * The version as float. Might be -1 if no version can be determined.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#version
 	 * @type float
 	 * @public
 	 */
 	/**
 	 * Flag indicating whether the mobile variant of the browser is used.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#mobile
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the Internet Explorer browser.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#internet_explorer
 	 * @type boolean
 	 * @deprecated since 1.20: use sap.ui.Device.browser.msie
@@ -11258,7 +11258,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * Flag indicating the Internet Explorer browser.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#msie
 	 * @type boolean
 	 * @since 1.20.0
@@ -11274,28 +11274,28 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * Flag indicating the Firefox browser.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#firefox
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the Chrome browser.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#chrome
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating the Safari browser.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#safari
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating a Webkit browser.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#webkit
 	 * @type boolean
 	 * @since 1.20.0
@@ -11303,7 +11303,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * Flag indicating a Mozilla browser.
-	 * 
+	 *
 	 * @name sap.ui.Device.browser#mozilla
 	 * @type boolean
 	 * @since 1.20.0
@@ -11311,7 +11311,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * Internet Explorer browser name.
-	 * 
+	 *
 	 * @see sap.ui.Device.browser#name
 	 * @name sap.ui.Device.browser.BROWSER#INTERNET_EXPLORER
 	 * @public
@@ -11326,28 +11326,28 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * Firefox browser name.
-	 * 
+	 *
 	 * @see sap.ui.Device.browser#name
 	 * @name sap.ui.Device.browser.BROWSER#FIREFOX
 	 * @public
 	 */
 	/**
 	 * Chrome browser name.
-	 * 
+	 *
 	 * @see sap.ui.Device.browser#name
 	 * @name sap.ui.Device.browser.BROWSER#CHROME
 	 * @public
 	 */
 	/**
 	 * Safari browser name.
-	 * 
+	 *
 	 * @see sap.ui.Device.browser#name
 	 * @name sap.ui.Device.browser.BROWSER#SAFARI
 	 * @public
 	 */
 	/**
 	 * Android stock browser name.
-	 * 
+	 *
 	 * @see sap.ui.Device.browser#name
 	 * @alias sap.ui.Device.browser.BROWSER#ANDROID
 	 * @public
@@ -11524,11 +11524,11 @@ if (typeof window.sap.ui !== "object") {
 		};
 	}
 	device._testUserAgent = getBrowser; // expose the user-agent parsing (mainly for testing), but don't let it be overwritten
-	
+
 	function setBrowser() {
 		device.browser = getBrowser();
 		device.browser.BROWSER = BROWSER;
-		
+
 		if (device.browser.name) {
 			for (var b in BROWSER) {
 				if (BROWSER[b] === device.browser.name) {
@@ -11540,70 +11540,70 @@ if (typeof window.sap.ui !== "object") {
 	setBrowser();
 
 
-	
+
 
 //******** Support Detection ********
-	
-	/** 
+
+	/**
 	 * Contains information about detected capabilities of the used browser or device.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.support
 	 * @public
 	 */
-	
+
 	/**
 	 * Flag indicating whether touch events are supported.
-	 * 
+	 *
 	 * @name sap.ui.Device.support#touch
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating whether pointer events are supported.
-	 * 
+	 *
 	 * @name sap.ui.Device.support#pointer
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating whether media queries via JavaScript are supported.
-	 * 
+	 *
 	 * @name sap.ui.Device.support#matchmedia
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating whether events on JavaScript media queries are supported.
-	 * 
+	 *
 	 * @name sap.ui.Device.support#matchmedialistener
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating whether the native orientationchange event is supported.
-	 * 
+	 *
 	 * @name sap.ui.Device.support#orientation
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating whether the device has a Retina display.
-	 * 
+	 *
 	 * @name sap.ui.Device.support#retina
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating whether WebSockets are supported.
-	 * 
+	 *
 	 * @name sap.ui.Device.support#websocket
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating whether placeholder on input tags are supported.
-	 * 
+	 *
 	 * @name sap.ui.Device.support#input.placeholder
 	 * @type boolean
 	 * @public
@@ -11641,39 +11641,39 @@ if (typeof window.sap.ui !== "object") {
 	device.support.input.placeholder = ('placeholder' in document.createElement("input"));
 
 //******** Match Media ********
-	
-	/** 
+
+	/**
 	 * Event API for Screen width media queries.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.media
 	 * @public
 	 */
 	device.media = {};
-	
+
 	/**
 	 * Enumeration containing the names of predefined Screen width media query range sets.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.media.RANGESETS
 	 * @public
 	 */
-	
+
 	/**
 	 * A 3 step range set (S-L).
-	 * 
+	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_3STEPS
 	 * @public
 	 */
 	/**
 	 * A 4 step range set (S-XL).
-	 * 
+	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_4STEPS
 	 * @public
 	 */
 	/**
 	 * A 6 step range set (XS-XXL).
-	 * 
+	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_6STEPS
 	 * @public
 	 */
@@ -11697,7 +11697,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @alias sap.ui.Device.media.RANGESETS#SAP_STANDARD
 	 * @public
 	 */
-	
+
 	var RANGESETS = {
 		"SAP_3STEPS": "3Step",
 		"SAP_4STEPS": "4Step",
@@ -11705,18 +11705,18 @@ if (typeof window.sap.ui !== "object") {
 		"SAP_STANDARD": "Std"
 	};
 	device.media.RANGESETS = RANGESETS;
-	
+
 	device.media._predefinedRangeSets = {};
 	device.media._predefinedRangeSets[RANGESETS.SAP_3STEPS] = {points: [520, 960], unit: "px", name: RANGESETS.SAP_3STEPS, names: ["S", "M", "L"]};
 	device.media._predefinedRangeSets[RANGESETS.SAP_4STEPS] = {points: [520, 760, 960], unit: "px", name: RANGESETS.SAP_4STEPS, names: ["S", "M", "L", "XL"]};
 	device.media._predefinedRangeSets[RANGESETS.SAP_6STEPS] = {points: [241, 400, 541, 768, 960], unit: "px", name: RANGESETS.SAP_6STEPS, names: ["XS", "S", "M", "L", "XL", "XXL"]};
 	device.media._predefinedRangeSets[RANGESETS.SAP_STANDARD] = {points: [600, 1024], unit: "px", name: RANGESETS.SAP_STANDARD, names: ["Phone", "Tablet", "Desktop"]};
-	
+
 	var _defaultRangeSet = RANGESETS.SAP_STANDARD;
 	var media_timeout = device.support.matchmedialistener ? 0 : 100;
 	var _querysets = {};
 	var media_currentwidth = null;
-	
+
 	function getQuery(from, to, unit){
 		unit = unit || "px";
 		var q = "all";
@@ -11728,17 +11728,17 @@ if (typeof window.sap.ui !== "object") {
 		}
 		return q;
 	}
-	
+
 	function handleChange(name){
 		if (!device.support.matchmedialistener && media_currentwidth == windowSize()[0]) {
 			return; //Skip unnecessary resize events
 		}
-		
+
 		if (_querysets[name].timer) {
 			clearTimeout(_querysets[name].timer);
 			_querysets[name].timer = null;
 		}
-		
+
 		_querysets[name].timer = setTimeout(function() {
 			var mParams = checkQueries(name, false);
 			if (mParams) {
@@ -11746,7 +11746,7 @@ if (typeof window.sap.ui !== "object") {
 			}
 		}, media_timeout);
 	}
-	
+
 	function getRangeInfo(sSetName, iRangeIdx){
 		var q = _querysets[sSetName].queries[iRangeIdx];
 		var info = {from: q.from, unit: _querysets[sSetName].unit};
@@ -11758,7 +11758,7 @@ if (typeof window.sap.ui !== "object") {
 		}
 		return info;
 	}
-	
+
 	function checkQueries(name, infoOnly){
 		if (_querysets[name]) {
 			var aQueries = _querysets[name].queries;
@@ -11775,18 +11775,18 @@ if (typeof window.sap.ui !== "object") {
 					info = getRangeInfo(name, i);
 				}
 			}
-			
+
 			return info;
 		}
 		logger.log(WARNING, "No queryset with name " + name + " found", 'DEVICE.MEDIA');
 		return null;
 	}
-	
+
 	function refreshCSSClasses(sSetName, sRangeName, bRemove){
 		 var sClassPrefix = "sapUiMedia-" + sSetName + "-";
 		 changeRootCSSClass(sClassPrefix + sRangeName, bRemove, sClassPrefix);
 	}
-	
+
 	function changeRootCSSClass(sClassName, bRemove, sPrefix){
 		var oRoot = document.documentElement;
 		if (oRoot.className.length == 0) {
@@ -11807,11 +11807,11 @@ if (typeof window.sap.ui !== "object") {
 			oRoot.className = sNewClasses;
 		}
 	}
-	
+
 	function windowSize(){
 		return [document.documentElement.clientWidth, document.documentElement.clientHeight];
 	}
-	
+
 	function convertToPx(val, unit){
 		if (unit === "em" || unit === "rem") {
 			var s = window.getComputedStyle || function(e) {
@@ -11827,7 +11827,7 @@ if (typeof window.sap.ui !== "object") {
 	function match_legacy(from, to, unit){
 		from = convertToPx(from, unit);
 		to = convertToPx(to, unit);
-		
+
 		var width = windowSize()[0];
 		var a = from < 0 || from <= width;
 		var b = to < 0 || width <= to;
@@ -11841,10 +11841,10 @@ if (typeof window.sap.ui !== "object") {
 	}
 
 	device.media.matches = device.support.matchmedia ? match : match_legacy;
-	
+
 	/**
 	 * Registers the given handler to the range change event, which is fired when a new range of the set is entered.
-	 * 
+	 *
 	 * The handler has one map parameter <code>mParams</code>:
 	 * <ul>
 	 * <li>mParams.from: the range start value</li>
@@ -11852,7 +11852,7 @@ if (typeof window.sap.ui !== "object") {
 	 * <li>mParams.unit: the used unit, e.g. px</li>
 	 * <li>mParams.name: the range name if defined</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param {Function} fnFunction The function to call, when the range change event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
 	 * @param {String} sName The name of the range set to listen to.
@@ -11867,7 +11867,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Deregisters a previously registered handler from the range change event.
-	 * 
+	 *
 	 * @param {Function} fnFunction The function to call, when the range change event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
 	 * @param {String} sName The name of the range set to listen to.
@@ -11879,13 +11879,13 @@ if (typeof window.sap.ui !== "object") {
 		var name = sName || _defaultRangeSet;
 		detachEvent("media_" + name, fnFunction, oListener);
 	};
-	
-	/** 
+
+	/**
 	 * Initializes a Screen width media query range set.
-	 * 
+	 *
 	 * This function can either be called only with the name parameter to initialize a predefined range set,
 	 * e.g. <code>sap.ui.Device.media.initRangeSet(sap.ui.Device.media.RANGESETS.SAP_3STEPS)</code>.
-	 * 
+	 *
 	 * Or it is possible to define a custom range set as in the following example:
 	 * <code>sap.ui.Device.media.initRangeSet("MyRangeSet", [200, 400], "px", ["Small", "Medium", "Large"])</code> defines 3 ranges:
 	 * <ul>
@@ -11893,10 +11893,10 @@ if (typeof window.sap.ui !== "object") {
 	 * <li>200px-399.999px with name "Medium"</li>
 	 * <li>400px-INFINITY with name "Large"</li>
 	 * </ul>
-	 * 
+	 *
 	 * The range names are optional. If they are specified also a CSS class (e.g. sapUiMedia-MyRangeSet-Small) is added to the document root
 	 * depending on the current active range. This can be suppressed via parameter <code>bSuppressClasses</code>.
-	 * 
+	 *
 	 * @param {String} sName The name of the range set. Either a predefined or custom one. The name must be a valid id (consist of letters and digits).
 	 * @param {int[]} aRangeBorders The range borders
 	 * @param {String} [sUnit] The unit which should be used. Allowed values are px (default), em or rem.
@@ -11916,12 +11916,12 @@ if (typeof window.sap.ui !== "object") {
 		} else {
 			oConfig = {name: sName, unit: (sUnit || "px").toLowerCase(), points: aRangeBorders || [], names: aRangeNames, noClasses: !!bSuppressClasses};
 		}
-		
+
 		if (device.media.hasRangeSet(oConfig.name)) {
 			logger.log(INFO, "Range set " + oConfig.name + " hase already been initialized", 'DEVICE.MEDIA');
 			return;
 		}
-		
+
 		sName = oConfig.name;
 		oConfig.queries = [];
 		oConfig.timer = null;
@@ -11929,7 +11929,7 @@ if (typeof window.sap.ui !== "object") {
 		oConfig.listener = function(){
 			return handleChange(sName);
 		};
-			
+
 		var from, to, query;
 		var aPoints = oConfig.points;
 		for (var i = 0, len = aPoints.length; i <= len; i++) {
@@ -11942,13 +11942,13 @@ if (typeof window.sap.ui !== "object") {
 				to: to
 			});
 		}
-		
+
 		if (oConfig.names && oConfig.names.length != oConfig.queries.length) {
 			oConfig.names = null;
 		}
-		
+
 		_querysets[oConfig.name] = oConfig;
-			
+
 		if (device.support.matchmedialistener) { //FF, Safari, Chrome, IE10?
 			var queries = oConfig.queries;
 			for (var i = 0; i < queries.length; i++) {
@@ -11956,7 +11956,7 @@ if (typeof window.sap.ui !== "object") {
 				q.media = window.matchMedia(q.query);
 				q.media.addListener(oConfig.listener);
 			}
-		} else { //IE, Safari (<6?)	
+		} else { //IE, Safari (<6?)
 			if (window.addEventListener) {
 				window.addEventListener("resize", oConfig.listener, false);
 				window.addEventListener("orientationchange", oConfig.listener, false);
@@ -11964,13 +11964,13 @@ if (typeof window.sap.ui !== "object") {
 				window.attachEvent("onresize", oConfig.listener);
 			}
 		}
-		
+
 		oConfig.listener();
 	};
-	
+
 	/**
 	 * Returns information about the current active range of the range set with the given name.
-	 * 
+	 *
 	 * @param {String} sName The name of the range set.
 	 * @name sap.ui.Device.media#getCurrentRange
 	 * @return {Map} the information about the current active range (same structure like the handler parameters (@see sap.ui.Device.media#attachHandler))
@@ -11983,10 +11983,10 @@ if (typeof window.sap.ui !== "object") {
 		}
 		return checkQueries(sName, true);
 	};
-	
+
 	/**
 	 * Returns whether a range set with the given name is initialized.
-	 * 
+	 *
 	 * @param {String} sName The name of the range set.
 	 * @name sap.ui.Device.media#hasRangeSet
 	 * @return {boolean}
@@ -11996,12 +11996,12 @@ if (typeof window.sap.ui !== "object") {
 	device.media.hasRangeSet = function(sName){
 		return sName && !!_querysets[sName];
 	};
-	
+
 	/**
 	 * Removes a previously initialized range set and detaches all registered handlers.
-	 * 
+	 *
 	 * Initialized predefined range sets (@see sap.ui.Device.media#RANGESETS) cannot be removed.
-	 * 
+	 *
 	 * @param {String} sName The name of the range set.
 	 * @name sap.ui.Device.media#removeRangeSet
 	 * @function
@@ -12019,14 +12019,14 @@ if (typeof window.sap.ui !== "object") {
 				return;
 			}
 		}
-		
+
 		var oConfig = _querysets[sName];
 		if (device.support.matchmedialistener) { //FF, Safari, Chrome, IE10?
 			var queries = oConfig.queries;
 			for (var i = 0; i < queries.length; i++) {
 				queries[i].media.removeListener(oConfig.listener);
 			}
-		} else { //IE, Safari (<6?)	
+		} else { //IE, Safari (<6?)
 			if (window.removeEventListener) {
 				window.removeEventListener("resize", oConfig.listener, false);
 				window.removeEventListener("orientationchange", oConfig.listener, false);
@@ -12034,7 +12034,7 @@ if (typeof window.sap.ui !== "object") {
 				window.detachEvent("onresize", oConfig.listener);
 			}
 		}
-		
+
 		refreshCSSClasses(sName, "", true);
 		delete mEventRegistry["media_" + sName];
 		delete _querysets[sName];
@@ -12042,49 +12042,49 @@ if (typeof window.sap.ui !== "object") {
 
 //******** System Detection ********
 
-	/** 
+	/**
 	 * Contains information about the system.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.system
 	 * @public
 	 */
 	/**
 	 * Enumeration containing the names of known types of the devices.
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.Device.system.SYSTEMTYPE
 	 * @public
 	 */
 	/**
 	 * Flag indicating if the device is a tablet.
-	 * 
+	 *
 	 * @name sap.ui.Device.system#tablet
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating if the device is a phone.
-	 * 
+	 *
 	 * @name sap.ui.Device.system#phone
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating if the device is a desktop.
-	 * 
+	 *
 	 * @name sap.ui.Device.system#desktop
 	 * @type boolean
 	 * @public
 	 */
 	/**
 	 * Flag indicating if the device is a combination of desktop and tablet.
-	 * 
+	 *
 	 * This property is mainly targeting the windows 8 devices where the mouse and touch event may supported
 	 * natively by the browser.
-	 * 
+	 *
 	 * This property is set to true only when both mouse and touch event are natively supported.
-	 * 
+	 *
 	 * @alias sap.ui.Device.system#combi
 	 * @type boolean
 	 * @public
@@ -12177,7 +12177,7 @@ if (typeof window.sap.ui !== "object") {
 			}
 		}
 	}
-	
+
 	function setSystem(_simMobileOnDesktop) {
 		device.system = getSystem(_simMobileOnDesktop);
 		if (device.system.tablet || device.system.phone) {
@@ -12190,7 +12190,7 @@ if (typeof window.sap.ui !== "object") {
 
 //******** Orientation Detection ********
 
-	/** 
+	/**
 	 * Orientation Change Event API.
 	 *
 	 * @namespace
@@ -12200,7 +12200,7 @@ if (typeof window.sap.ui !== "object") {
 
 	device.orientation = {};
 
-	/** 
+	/**
 	 * Resize Event API.
 	 *
 	 * @namespace
@@ -12208,7 +12208,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	device.resize = {};
-	
+
 	/**
 	 * Registers the given handler to the orientation change event.
 	 *
@@ -12323,7 +12323,7 @@ if (typeof window.sap.ui !== "object") {
 	// when changing the orientation while keyboard is shown.
 	var bSkipFirstResize = device.os.ios && device.browser.name === "sf" &&
 		((device.system.phone && device.os.version >= 7 && device.os.version < 7.1) || (device.system.tablet && device.os.version >= 7));
-	
+
 	function isLandscape(bFromOrientationChange){
 		if (device.support.touch && device.support.orientation) {
 			//if on screen keyboard is open and the call of this method is from orientation change listener, reverse the last value.
@@ -12428,7 +12428,7 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 //********************************************************
-	
+
 	setResizeInfo(device.resize);
 	setOrientationInfo(device.orientation);
 
@@ -12484,8 +12484,8 @@ if (typeof window.sap.ui !== "object") {
         // AMD. Register as an anonymous module.
       // ##### BEGIN: MODIFIED BY SAP
       // define(['./punycode', './IPv6', './SecondLevelDomains'], factory);
-      // we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code 
-      // and define() doesn't execute synchronously. So the UI5 code executed after URI.js 
+      // we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code
+      // and define() doesn't execute synchronously. So the UI5 code executed after URI.js
       // fails as it is missing the URI.js code.
       // Instead we use the standard init code and only expose the result via define()
       // The (optional) dependencies are lost or must be loaded in advance
@@ -12572,7 +12572,7 @@ function filterArrayValues(data, value) {
 
 function arrayContains(list, value) {
     var i, length;
-    
+
     // value may be string, number, array, regexp
     if (isArray(value)) {
         // Note: this can be optimized to O(n) (instead of current O(m * n))
@@ -12581,10 +12581,10 @@ function arrayContains(list, value) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     var _type = getType(value);
     for (i = 0, length = list.length; i < length; i++) {
         if (_type === 'RegExp') {
@@ -12603,7 +12603,7 @@ function arraysEqual(one, two) {
     if (!isArray(one) || !isArray(two)) {
         return false;
     }
-    
+
     // arrays can't be equal if they have different amount of content
     if (one.length !== two.length) {
         return false;
@@ -12617,7 +12617,7 @@ function arraysEqual(one, two) {
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -12687,13 +12687,13 @@ URI.getDomAttribute = function(node) {
     if (!node || !node.nodeName) {
         return undefined;
     }
-    
+
     var nodeName = node.nodeName.toLowerCase();
     // <input> should only expose src for type="image"
     if (nodeName === 'input' && node.type !== 'image') {
         return undefined;
     }
-    
+
     return URI.domAttributes[nodeName];
 };
 
@@ -12925,8 +12925,8 @@ URI.parseAuthority = function(string, parts) {
 URI.parseUserinfo = function(string, parts) {
     // extract username:password
     var firstSlash = string.indexOf('/');
-    var pos = firstSlash > -1 
-        ? string.lastIndexOf('@', firstSlash) 
+    var pos = firstSlash > -1
+        ? string.lastIndexOf('@', firstSlash)
         : string.indexOf('@');
     var t;
 
@@ -13112,7 +13112,7 @@ URI.addQuery = function(data, name, value) {
 };
 URI.removeQuery = function(data, name, value) {
     var i, length, key;
-    
+
     if (isArray(name)) {
         for (i = 0, length = name.length; i < length; i++) {
             data[name[i]] = undefined;
@@ -13146,7 +13146,7 @@ URI.hasQuery = function(data, name, value, withinArray) {
                 }
             }
         }
-        
+
         return true;
     } else if (typeof name !== "string") {
         throw new TypeError("URI.hasQuery() accepts an object, string as the name parameter");
@@ -13220,7 +13220,7 @@ URI.commonPath = function(one, two) {
     if (pos < 1) {
         return one.charAt(0) === two.charAt(0) && one.charAt(0) === '/' ? '/' : '';
     }
-    
+
     // revert to last /
     if (one.charAt(pos) !== '/' || two.charAt(pos) !== '/') {
         pos = one.substring(0, pos).lastIndexOf('/');
@@ -13314,7 +13314,7 @@ generateAccessor = function(_part){
     };
 };
 
-for (_part in _parts) {                                                                                                                                                                                        
+for (_part in _parts) {
     p[_part] = generateAccessor(_parts[_part]);
 }
 
@@ -13369,7 +13369,7 @@ p.pathname = function(v, build) {
 p.path = p.pathname;
 p.href = function(href, build) {
     var key;
-    
+
     if (href === undefined) {
         return this.toString();
     }
@@ -13384,13 +13384,13 @@ p.href = function(href, build) {
         href = href[attribute] || "";
         _object = false;
     }
-    
+
     // window.location is reported to be an object, but it's not the sort
-    // of object we're looking for: 
+    // of object we're looking for:
     // * location.protocol ends with a colon
     // * location.query != object.search
     // * location.hash != object.fragment
-    // simply serializing the unknown object should do the trick 
+    // simply serializing the unknown object should do the trick
     // (for location, not for everything...)
     if (!_URI && _object && href.pathname !== undefined) {
         href = href.toString();
@@ -13585,11 +13585,11 @@ p.userinfo = function(v, build) {
 };
 p.resource = function(v, build) {
     var parts;
-    
+
     if (v === undefined) {
         return this.path() + this.search() + this.hash();
     }
-    
+
     parts = URI.parse(v);
     this._parts.path = parts.path;
     this._parts.query = parts.query;
@@ -13701,7 +13701,7 @@ p.tld = function(v, build) {
         return tld;
     } else {
         var replace;
-        
+
         if (!v) {
             throw new TypeError("cannot set TLD empty");
         } else if (v.match(/[^a-zA-Z0-9-]/)) {
@@ -13784,7 +13784,7 @@ p.filename = function(v, build) {
         return v ? URI.decodePathSegment(res) : res;
     } else {
         var mutatedDirectory = false;
-        
+
         if (v.charAt(0) === '/') {
             v = v.substring(1);
         }
@@ -13894,11 +13894,11 @@ p.segment = function(segment, v, build) {
                 if (!v[i].length && (!segments.length || !segments[segments.length -1].length)) {
                     continue;
                 }
-                
+
                 if (segments.length && !segments[segments.length -1].length) {
                     segments.pop();
                 }
-                
+
                 segments.push(v[i]);
             }
         } else if (v || (typeof v === "string")) {
@@ -13978,7 +13978,7 @@ p.query = function(v, build) {
 };
 p.setQuery = function(name, value, build) {
     var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
-    
+
     if (typeof name === "object") {
         for (var key in name) {
             if (hasOwn.call(name, key)) {
@@ -13990,7 +13990,7 @@ p.setQuery = function(name, value, build) {
     } else {
         throw new TypeError("URI.addQuery() accepts an object, string as the name parameter");
     }
-    
+
     this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
     if (typeof name !== "string") {
         build = value;
@@ -14241,11 +14241,11 @@ p.absoluteTo = function(base) {
     if (!(base instanceof URI)) {
         base = new URI(base);
     }
-    
+
     if (!resolved._parts.protocol) {
         resolved._parts.protocol = base._parts.protocol;
     }
-    
+
     if (this._parts.hostname) {
         return resolved;
     }
@@ -14253,7 +14253,7 @@ p.absoluteTo = function(base) {
     for (i = 0; p = properties[i]; i++) {
         resolved._parts[p] = base._parts[p];
     }
-    
+
     properties = ['query', 'path'];
     for (i = 0; p = properties[i]; i++) {
         if (!resolved._parts[p] && base._parts[p]) {
@@ -14315,7 +14315,7 @@ p.relativeTo = function(base) {
         relativeParts.path = '';
         return relative.build();
     }
-    
+
     // determine common sub path
     common = URI.commonPath(relative.path(), base.path());
 
@@ -14411,7 +14411,7 @@ return URI;
 }));
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 /*eslint-disable no-extend-native */
@@ -14419,18 +14419,18 @@ return URI;
 // Provides ECMA Script 6 Polyfill
 (function(jQuery) {
 	"use strict";
-	
+
 	/*
 	 * No Documentation by intention.
 	 * This class represents a polyfill for ECMA Script 6 Promises
 	 * see http://www.html5rocks.com/en/tutorials/es6/promises/
 	 */
-	
+
 	var Promise = function(fAction) {
 		if (typeof (fAction) != "function") {
 			throw new TypeError("Argument is not a function");
 		}
-		
+
 		this._deferred = new jQuery.Deferred();
 
 		try {
@@ -14444,9 +14444,9 @@ return URI;
 			_finalize(this, e, false);
 		}
 	};
-	
+
 	// *** Instance Promise functions ***
-	
+
 	Promise.prototype.then = function(fOnFulfilled, fOnRejected){
 		var oFollowUpPromise = new Promise(_dummy);
 		setTimeout(function(){
@@ -14454,14 +14454,14 @@ return URI;
 		}.bind(this), 0);
 		return oFollowUpPromise;
 	};
-	
+
 	Promise.prototype["catch"] = function(fOnRejected){
 		return this.then(undefined, fOnRejected);
 	};
-	
-	
+
+
 	// *** Static Promise functions ***
-	
+
 	Promise.all = function(aPromises){
 		return new Promise(function(fResolve, fReject){
 			if (!jQuery.isArray(aPromises)) {
@@ -14472,11 +14472,11 @@ return URI;
 				fResolve([]);
 				return;
 			}
-			
+
 			var bFailed = false,
 				aValues = new Array(aPromises.length),
 				iCount = 0;
-			
+
 			function _check(iIdx){
 				Promise.resolve(aPromises[iIdx]).then(function(oObj){
 					if (!bFailed) {
@@ -14493,21 +14493,21 @@ return URI;
 					}
 				});
 			}
-			
+
 			for (var i = 0; i < aPromises.length; i++) {
 				_check(i);
 			}
 		});
 	};
-	
+
 	Promise.race = function(aPromises){
 		return new Promise(function(fResolve, fReject){
 			if (!jQuery.isArray(aPromises)) {
 				fReject(new TypeError("invalid argument"));
 			}
-			
+
 			var bFinal = false;
-			
+
 			for (var i = 0; i < aPromises.length; i++) {
 				/*eslint-disable no-loop-func */
 				Promise.resolve(aPromises[i]).then(function(oObj){
@@ -14525,24 +14525,24 @@ return URI;
 			}
 		});
 	};
-	
+
 	Promise.resolve = function(oObj){
 		return oObj instanceof Promise ? oObj : _resolve(new Promise(_dummy), oObj);
 	};
-	
+
 	Promise.reject = function(oObj){
 		return _finalize(new Promise(_dummy), oObj, false);
 	};
-	
-	
+
+
 	// *** Helper functions ***
-	
+
 	function _dummy(){}
-	
+
 	function _isThenable(oObj){
 		return oObj && oObj.then && typeof (oObj.then) == "function";
 	}
-	
+
 	function _finalize(oPromise, oObj, bResolve){
 		setTimeout(function(){
 			if (_isThenable(oObj) && bResolve) { //Assimilation
@@ -14553,7 +14553,7 @@ return URI;
 		}, 0);
 		return oPromise;
 	}
-	
+
 	function _resolve(oPromise, oObj){
 		if (_isThenable(oObj)) {
 			var bFinal = false;
@@ -14577,7 +14577,7 @@ return URI;
 		}
 		return oPromise;
 	}
-	
+
 	function _doWrap(fAction, oPromise, bResolve){
 		return function(oObj){
 			if (!fAction) {
@@ -14591,10 +14591,10 @@ return URI;
 			}
 		};
 	}
-	
-	
+
+
 	// *** Polyfill ***
-	
+
 	if (!window.Promise) {
 		window.Promise = Promise;
 	}
@@ -14602,12 +14602,12 @@ return URI;
 	if (window.sap && window.sap.__ui5PublishPromisePolyfill) { //For testing purposes
 		window._UI5Promise = Promise;
 	}
-	
+
 })(jQuery);
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -14690,7 +14690,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -14893,12 +14893,12 @@ return URI;
 		var oJQV = Version(jQuery.fn.jquery);
 		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
 		if (window.ActiveXObject !== undefined && oJQV.getMajor() == 1 && oJQV.getMinor() >= 11) {
-			var fnCreateStandardXHR = function() { 
+			var fnCreateStandardXHR = function() {
 				try {
 					return new window.XMLHttpRequest();
 				} catch (e) { /* ignore */ }
 			};
-			var fnCreateActiveXHR = function() { 
+			var fnCreateActiveXHR = function() {
 				try {
 					return new window.ActiveXObject("Microsoft.XMLHTTP");
 				} catch (e) { /* ignore */ }
@@ -15134,7 +15134,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @namespace
 	 * @public
 	 * @static
@@ -16804,7 +16804,7 @@ return URI;
 
 		var rDotsAnywhere = /(?:^|\/)\.+/;
 		var r2DotsAnywhere = /(?:^|\/)\.{2,}/;
-		
+
 		/**
 		 * Defines a Javascript module with its name, its dependencies and a module value or factory.
 		 *
@@ -16848,16 +16848,16 @@ return URI;
 		 *
 		 *   });
 		 * </pre>
-		 * 
+		 *
 		 * In another module or in an application HTML page, the {@link sap.ui.require} API can be used
 		 * to load the Something module and to work with it:
-		 * 
+		 *
 		 * <pre>
 		 * sap.ui.require(['sap/mylib/Something'], function(Something) {
-		 * 
-		 *   // instantiate a Something and call foo() on it 
+		 *
+		 *   // instantiate a Something and call foo() on it
 		 *   new Something().foo();
-		 *   
+		 *
 		 * });
 		 * </pre>
 		 *
@@ -17020,7 +17020,7 @@ return URI;
 		 *     The exact details of how this works might be changed in future implementations and are not
 		 *     yet part of the API contract</li>
 		 * </ul>
-		 * @param {string} [sModuleName] name of the module in simplified resource name syntax. 
+		 * @param {string} [sModuleName] name of the module in simplified resource name syntax.
 		 *        When omitted, the loader determines the name from the request.
 		 * @param {string[]} [aDependencies] list of dependencies of the module
 		 * @param {function|any} vFactory the module value or a function that calculates the value
@@ -17044,7 +17044,7 @@ return URI;
 				aDependencies = sModuleName;
 				sResourceName = _execStack[_execStack.length - 1];
 			}
-			
+
 			// convert module name to UI5 module name syntax (might fail!)
 			sModuleName = urnToUI5(sResourceName);
 
@@ -17062,7 +17062,7 @@ return URI;
 						log.error(
 							"In UI5 1.28, relative module names using '../' are not supported by sap.ui.define. " +
 							"Code that uses them might fail with release 1.30 or later even if that code seems to work now. " +
-							"In 1.28, the browser might resolve the '../', but that resolution differs significantly from the " + 
+							"In 1.28, the browser might resolve the '../', but that resolution differs significantly from the " +
 							"AMD compliant resolution implemented in 1.30 and later. " +
 							"It is therefore strongly discouraged in version 1.28 to use '../' in the module dependencies for a sap.ui.define call.");
 					}

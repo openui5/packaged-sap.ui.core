@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16,9 +16,9 @@ sap.ui.define(['jquery.sap.global'],
 	 * @static
 	 * @alias sap.ui.core.support.PerformanceRecorder
 	 */
-	
+
 	var PerformanceRecorder = {};
-	
+
 	/**
 	 * Initialize and start the recording of performance measurements
 	 *
@@ -32,12 +32,12 @@ sap.ui.define(['jquery.sap.global'],
 		PerformanceRecorder.interactionSteps = aInteractionSteps;
 		PerformanceRecorder.interactionPointer = 0;
 		PerformanceRecorder.stepPointer = 0;
-	
+
 		jQuery.sap.measure.setActive(true);
-	
+
 		PerformanceRecorder.processStepStart();
 	};
-	
+
 	/**
 	 * Process a step's start trigger
 	 *
@@ -48,41 +48,41 @@ sap.ui.define(['jquery.sap.global'],
 		// Get the relevant steps
 		var currentInteraction = PerformanceRecorder.interactionSteps[PerformanceRecorder.interactionPointer];
 		var currentStep = currentInteraction.steps[PerformanceRecorder.stepPointer];
-	
+
 		// Start timer or attach trigger event or delegate
 		if (currentStep.startTriggerEvent == "immediate") {
-	
+
 			// Start timer for interaction step if it's the first measuring step
 			if (PerformanceRecorder.stepPointer == 0) {
 				jQuery.sap.measure.start(currentInteraction.id, currentInteraction.description);
 			}
-	
+
 			// Start timer for measuring step
 			jQuery.sap.measure.start(currentStep.id, currentInteraction.id);
-	
+
 			// Continue to stop event processing
 			PerformanceRecorder.processStepStop();
-	
+
 		} else if (currentStep.startTriggerEvent == "UIUpdated") {
-	
+
 			sap.ui.getCore().attachEvent(sap.ui.core.Core.M_EVENTS.UIUpdated, function() {
 				// Start timer for interaction step if it's the first measuring step
 				if (sap.ui.core.support.stepPointer == 0) {
 					jQuery.sap.measure.start(currentInteraction.id, currentInteraction.description);
 				}
-	
+
 				// Start timer for measuring step
 				jQuery.sap.measure.start(currentStep.id, currentInteraction.id);
-	
+
 				// Continue to stop event processing
 				PerformanceRecorder.processStepStop();
 			});
-	
+
 		} else if (currentStep.startTriggerId && currentStep.startTriggerEvent) {	// Trigger by element event
-	
+
 			// Get the trigger element
 			var oTrigger = sap.ui.getCore().byId(currentStep.startTriggerId);
-	
+
 			// Prepare trigger event
 			PerformanceRecorder.oTriggerEvent = {};
 			PerformanceRecorder.oTriggerEvent[currentStep.startTriggerEvent] = function() {
@@ -90,20 +90,20 @@ sap.ui.define(['jquery.sap.global'],
 				if (PerformanceRecorder.stepPointer == 0) {
 					jQuery.sap.measure.start(currentInteraction.id, currentInteraction.description);
 				}
-	
+
 				// Start timer for measuring step
 				jQuery.sap.measure.start(currentStep.id, currentInteraction.id);
-	
+
 				// Continue to stop event processing
 				PerformanceRecorder.processStepStop();
 			};
-	
+
 			// Add trigger event as a delegate to the element
 			oTrigger.addDelegate(PerformanceRecorder.oTriggerEvent, true);
-	
+
 		}
 	};
-	
+
 	/**
 	 * Process a step's stop trigger
 	 *
@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global'],
 		// Get the relevant steps
 		var currentInteraction = PerformanceRecorder.interactionSteps[PerformanceRecorder.interactionPointer];
 		var currentStep = currentInteraction.steps[PerformanceRecorder.stepPointer];
-	
+
 		// Detach start trigger event or delegate
 		if (currentStep.startTriggerEvent == "UIUpdated") {
 			// Detach from this function from UIUpdated event
@@ -124,29 +124,29 @@ sap.ui.define(['jquery.sap.global'],
 			var oTrigger = sap.ui.getCore().byId(currentStep.startTriggerId);
 			oTrigger.removeDelegate(PerformanceRecorder.oTriggerEvent);
 		}
-	
+
 		// Register the stop event
 		if (currentStep.stopTriggerEvent == "UIUpdated") {
 			sap.ui.getCore().attachEvent(sap.ui.core.Core.M_EVENTS.UIUpdated, PerformanceRecorder.concludeStep);
 		} else if (currentStep.stopTriggerId && currentStep.stopTriggerEvent) {	// Trigger by element event
-	
+
 			// Get the trigger element
 			var oTrigger = sap.ui.getCore().byId(currentStep.stopTriggerId);
-	
+
 			// Prepare trigger event
 			PerformanceRecorder.oTriggerEvent = {};
 			PerformanceRecorder.oTriggerEvent[currentStep.stopTriggerEvent] = function() {
-	
+
 				// Continue to stop event processing
 				PerformanceRecorder.concludeStep();
 			};
-	
+
 			// Add trigger event as a delegate to the element
 			oTrigger.addDelegate(PerformanceRecorder.oTriggerEvent, true);
-	
+
 		}
 	};
-	
+
 	/**
 	 * Conclude step/interaction/recording
 	 *
@@ -158,20 +158,20 @@ sap.ui.define(['jquery.sap.global'],
 		var currentStep = currentInteraction.steps[PerformanceRecorder.stepPointer];
 		var lastInteraction = PerformanceRecorder.interactionSteps.length - 1;
 		var lastStep = currentInteraction.steps.length - 1;
-	
+
 		// Record stop time for measuring step
 		jQuery.sap.measure.end(currentStep.id);
-	
+
 		// Detach trigger event
 		if (currentStep.stopTriggerEvent == "UIUpdated") {
 			sap.ui.getCore().detachEvent(sap.ui.core.Core.M_EVENTS.UIUpdated, PerformanceRecorder.concludeStep);
 		}
-	
+
 		// Stop timer for interaction step if it's the last measuring step
 		if (PerformanceRecorder.stepPointer == lastStep) {
 			jQuery.sap.measure.end(currentInteraction.id);
 		}
-	
+
 		// Advance pointers or end recording
 		if (PerformanceRecorder.interactionPointer < lastInteraction) {
 			if (PerformanceRecorder.stepPointer < lastStep) {
@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global'],
 			PerformanceRecorder.endRecording();
 		}
 	};
-	
+
 	/**
 	 * End recording and beacon results
 	 *
@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global'],
 					}
 			}
 		};
-	
+
 		var pages = [];
 		var entries = [];
 		for (var i in measurements) {
@@ -221,16 +221,16 @@ sap.ui.define(['jquery.sap.global'],
 								onLoad: measurements[i].time
 					}
 				};
-	
+
 				pages.push(page);
 			} else {
 				entries.push(measurements[i]);
 			}
 		}
-	
+
 		data.log.pages = pages;
 		data.log.entries = entries;
-	
+
 		jQuery.ajax({
 			type: 'POST',
 			url: PerformanceRecorder.config.beaconUrl,
@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global'],
 			dataType: 'text'
 		});
 	};
-	
+
 	/**
 	 * Gets all performance measurements in HAR format
 	 *
@@ -251,11 +251,11 @@ sap.ui.define(['jquery.sap.global'],
 		var oFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
 			pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 		});
-	
+
 		//TODO Improve the data that is being written into the fields
 		jQuery.each(origMeasurements, function(sId, oMeasurement){
 			var isoDate = oFormat.format(new Date(oMeasurement.start), true);
-	
+
 			aMeasurements.push({
 				id: oMeasurement.id,
 				pageref: oMeasurement.info,
@@ -335,7 +335,7 @@ sap.ui.define(['jquery.sap.global'],
 		});
 		return aMeasurements;
 	};
-	
+
 
 	return PerformanceRecorder;
 

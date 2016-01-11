@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -617,7 +617,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			}
 		}
 	};
-	
+
 	/**
 	 * Creates the ID to be used for the invisible Placeholder DOM element.
 	 * This method can be used to get direct access to the placeholder DOM element.
@@ -1183,14 +1183,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 	/**
 	 * Writes either an img tag for normal URI or an span tag with needed properties for icon URI.
-	 * 
+	 *
 	 * Additional classes and attributes can be added to the tag by given the second and third parameter.
 	 * All of the given attributes are escaped for security consideration.
-	 * 
+	 *
 	 * when img tag is rendered, the following two attributes are added by default which can be overwritten by the provided mAttributes parameter:
 	 * 1. role: presentation
 	 * 2. alt: ""
-	 * 
+	 *
 	 * @param {sap.ui.core.URI} sURI is the URI of an image or an icon registered in sap.ui.core.IconPool.
 	 * @param {array|string} aClasses are additional classes that are added to the rendered tag.
 	 * @param {object} mAttributes are additional attributes that are added to the rendered tag.
@@ -1198,23 +1198,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
 		jQuery.sap.require("sap.ui.core.IconPool");
-	
+
 		var bIconURI = sap.ui.core.IconPool.isIconURI(sURI),
 			sStartTag = bIconURI ? "<span " : "<img ",
 			sClasses, sProp, oIconInfo;
-	
+
 		if (typeof aClasses === "string") {
 			aClasses = [aClasses];
 		}
-	
+
 		if (bIconURI) {
 			oIconInfo = sap.ui.core.IconPool.getIconInfo(sURI);
-	
+
 			if (!oIconInfo) {
 				jQuery.sap.log.error("An unregistered icon: " + sURI + " is used in sap.ui.core.RenderManager's writeIcon method.");
 				return this;
 			}
-	
+
 			if (!aClasses) {
 				aClasses = [];
 			}
@@ -1223,14 +1223,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				aClasses.push("sapUiIconMirrorInRTL");
 			}
 		}
-	
+
 		this.write(sStartTag);
-	
+
 		if (jQuery.isArray(aClasses) && aClasses.length) {
 			sClasses = aClasses.join(" ");
 			this.write("class=\"" + sClasses + "\" ");
 		}
-	
+
 		if (bIconURI) {
 			if (!mAttributes) {
 				mAttributes = {};
@@ -1246,7 +1246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				src: sURI
 			}, mAttributes);
 		}
-	
+
 		if (typeof mAttributes === "object") {
 			for (sProp in mAttributes) {
 				if (mAttributes.hasOwnProperty(sProp)) {
@@ -1254,9 +1254,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				}
 			}
 		}
-	
+
 		this.write(bIconURI ? "></span>" : "/>");
-	
+
 		return this;
 	};
 

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10,17 +10,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new mvc/XMLView.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * A View defined using (P)XML and HTML markup.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 *
 	 * @constructor
 	 * @public
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var XMLView = View.extend("sap.ui.core.mvc.XMLView", /** @lends sap.ui.core.mvc.XMLView.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core",
 		specialSettings : {
 			/**
@@ -44,10 +44,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			xmlNode : true
 		}
 	}});
-	
-	
-	
-	
+
+
+
+
 		/**
 		 * Instantiates an XMLView of the given name and with the given id.
 		 *
@@ -55,11 +55,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		 * via the module system (viewName + suffix ".view.xml") and which defines the view or it must
 		 * be a configuration object for a view.
 		 * The configuration object can have a viewName, viewContent and a controller property. The viewName
-		 * behaves as described above. ViewContent is optional and can hold a view description as XML string or as 
+		 * behaves as described above. ViewContent is optional and can hold a view description as XML string or as
 		 * already parsed XML Document. If not given, the view content definition is loaded by the module system.
-		 * 
+		 *
 		 * <strong>Note</strong>: if a Document is given, it might be modified during view construction.
-		 *   
+		 *
 		 * The controller property can hold an controller instance. If a controller instance is given,
 		 * it overrides the controller defined in the view.
 		 *
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		 * @param {string | object} vView name of the view or a view configuration object as described above.
 		 * @param {string} [vView.viewName] name of the view resource in module name notation (without suffix)
 		 * @param {string|Document} [vView.viewContent] XML string or XML document that defines the view.
-		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view 
+		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 		 * @public
 		 * @static
 		 * @return {sap.ui.core.mvc.XMLView} the created XMLView instance
@@ -77,20 +77,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		sap.ui.xmlview = function(sId, vView) {
 			return sap.ui.view(sId, vView, sap.ui.core.mvc.ViewType.XML);
 		};
-	
+
 		/**
-		 * The type of the view used for the <code>sap.ui.view</code> factory 
-		 * function. This property is used by the parsers to define the specific 
+		 * The type of the view used for the <code>sap.ui.view</code> factory
+		 * function. This property is used by the parsers to define the specific
 		 * view type.
 		 * @private
 		 */
 		XMLView._sType = sap.ui.core.mvc.ViewType.XML;
-		
+
 		XMLView.prototype.initViewSettings = function(mSettings) {
 			if (!mSettings) {
 				throw new Error("mSettings must be given");
 			}
-	
+
 			// View template handling - either template name or XML node is given
 			if (mSettings.viewName && mSettings.viewContent) {
 				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			} else if (!(mSettings.viewName || mSettings.viewContent) && !mSettings.xmlNode) {
 				throw new Error("Neither view name/content nor an XML node is given. One of them is required.");
 			}
-	
+
 			if (mSettings.viewName) {
 				this._xContent = XMLTemplateProcessor.loadTemplate(mSettings.viewName);
 			} else if (mSettings.viewContent) {
@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 				} else {
 					this._xContent = this._xContent.documentElement;
 				}
-	
+
 			} else if (mSettings.xmlNode) {
 				this._xContent = mSettings.xmlNode;
 			} // else does not happen, already checked
@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			this._xContent = this.runPreprocessor("xml", this._xContent);
 
 			this._oContainingView = mSettings.containingView || this;
-	
+
 			// extract the properties of the view from the XML element
 			if ( !this.isSubView() ) {
 				// for a real XMLView, we need to parse the attributes of the root node
@@ -131,12 +131,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 				// when used as fragment: prevent connection to controller, only top level XMLView must connect
 				delete mSettings.controller;
 			}
-	
+
 			if ((this._resourceBundleName || this._resourceBundleUrl) && (!mSettings.models || !mSettings.models[this._resourceBundleAlias])) {
 				var model = new ResourceModel({bundleName:this._resourceBundleName, bundleUrl:this._resourceBundleUrl, bundleLocale:this._resourceBundleLocale});
 				this.setModel(model,this._resourceBundleAlias);
 			}
-	
+
 			// Delegate for after rendering notification before onAfterRendering of child controls
 			var that = this;
 			this.oAfterRenderingNotifier = new sap.ui.core.mvc.XMLAfterRenderingNotifier();
@@ -146,12 +146,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 				}
 			});
 		};
-	
+
 		XMLView.prototype.exit = function() {
 			this.oAfterRenderingNotifier.destroy();
 			View.prototype.exit.apply(this, arguments);
 		};
-	
+
 		XMLView.prototype.onControllerConnected = function(oController) {
 			var that = this;
 			// unset any preprocessors (e.g. from an enclosing JSON view)
@@ -162,26 +162,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 				settings: this._fnSettingsPreprocessor
 			});
 		};
-	
+
 		XMLView.prototype.getControllerName = function() {
 			return this._controllerName;
 		};
-	
-	
+
+
 		XMLView.prototype.isSubView = function() {
 			return this._oContainingView != this;
 		};
-	
+
 		/**
 		 * If the HTML doesn't contain own content, it tries to reproduce existing content
 		 * This is executed before the onAfterRendering of the child controls, to ensure that
 		 * the HTML is already at its final position, before additional operations are executed.
 		 */
 		XMLView.prototype.onAfterRenderingBeforeChildren = function() {
-	
+
 			if ( this._$oldContent.length !== 0 ) {
 				// jQuery.sap.log.debug("after rendering for " + this);
-	
+
 				// move DOM of children into correct place in preserved DOM
 				var aChildren = this.getAggregation("content");
 				if ( aChildren ) {
@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			}
 			this._$oldContent = undefined;
 		};
-		
+
 		XMLView.prototype._onChildRerenderedEmpty = function(oControl, oElement) {
 			// when the render manager notifies us about an empty child rendering, we replace the old DOM with a dummy
 			jQuery(oElement).replaceWith('<div id="' + sap.ui.core.RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden"/>');
@@ -217,9 +217,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 				oRM.write(""); // onAfterRendering is only called if control produces output
 			}
 		});
-	
-	
-	
+
+
+
 
 	return XMLView;
 

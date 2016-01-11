@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -25,28 +25,28 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 * @param {array}
 	 *         [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object}
-	 *         [mParameters=null] additional model specific parameters (optional) 
+	 *         [mParameters=null] additional model specific parameters (optional)
 	 * @public
 	 * @alias sap.ui.model.TreeBinding
 	 */
 	var TreeBinding = Binding.extend("sap.ui.model.TreeBinding", /** @lends sap.ui.model.TreeBinding.prototype */ {
-		
+
 		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
 			Binding.call(this, oModel, sPath, oContext, mParameters);
 			this.aFilters = aFilters;
 			this.bDisplayRootNode = mParameters && mParameters.displayRootNode === true;
 		},
-	
+
 		metadata : {
 			"abstract" : true,
 			publicMethods : [
 				"getRootContexts", "getNodeContexts", "hasChildren", "filter"
 			]
 		}
-		
+
 	});
-	
-	
+
+
 	// the 'abstract methods' to be implemented by child classes
 	/**
 	 * Returns the current value of the bound target
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Returns the current value of the bound target
 	 *
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Returns if the node has child nodes
 	 *
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Returns the number of child nodes of a specific context
 	 *
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 		}
 		return this.getNodeContexts(oContext).length;
 	};
-	
+
 	/**
 	 * Filters the tree according to the filter definitions.
 	 *
@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 *
 	 * @public
 	 */
-	
+
 	/**
 	 * Attach event-handler <code>fnFunction</code> to the '_filter' event of this <code>sap.ui.model.TreeBinding</code>.<br/>
 	 * @param {function} fnFunction The function to call, when the event occurs.
@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	TreeBinding.prototype.attachFilter = function(fnFunction, oListener) {
 		this.attachEvent("_filter", fnFunction, oListener);
 	};
-	
+
 	/**
 	 * Detach event-handler <code>fnFunction</code> from the '_filter' event of this <code>sap.ui.model.TreeBinding</code>.<br/>
 	 * @param {function} fnFunction The function to call, when the event occurs.
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	TreeBinding.prototype.detachFilter = function(fnFunction, oListener) {
 		this.detachEvent("_filter", fnFunction, oListener);
 	};
-	
+
 	/**
 	 * Fire event _filter to attached listeners.
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	TreeBinding.prototype._fireFilter = function(mArguments) {
 		this.fireEvent("_filter", mArguments);
 	};
-	
+
 
 	return TreeBinding;
 

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 *
 	 * @constructor
 	 * @public
@@ -29,10 +29,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	 *           converting to string with the primary format object. Vice versa, this 'source' format is also used to format an already parsed
 	 *           external value (e.g. user input) into the string format expected by the data source.
 	 *           Supports the same set of options as {@link sap.ui.core.format.FileSizeFormat.getInstance FileSizeFormat.getInstance}.
-	 * @param {object} [oConstraints] value constraints. 
-	 * @param {float} [oConstraints.minimum] smallest value allowed for this type  
-	 * @param {float} [oConstraints.maximum] largest value allowed for this type  
-	 * @alias sap.ui.model.type.FileSize 
+	 * @param {object} [oConstraints] value constraints.
+	 * @param {float} [oConstraints.minimum] smallest value allowed for this type
+	 * @param {float} [oConstraints.maximum] largest value allowed for this type
+	 * @alias sap.ui.model.type.FileSize
 	 */
 	var FileSize = SimpleType.extend("sap.ui.model.type.FileSize", /** @lends sap.ui.model.type.FileSize.prototype  */ {
 

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -83,7 +83,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -286,12 +286,12 @@
 		var oJQV = Version(jQuery.fn.jquery);
 		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
 		if (window.ActiveXObject !== undefined && oJQV.getMajor() == 1 && oJQV.getMinor() >= 11) {
-			var fnCreateStandardXHR = function() { 
+			var fnCreateStandardXHR = function() {
 				try {
 					return new window.XMLHttpRequest();
 				} catch (e) { /* ignore */ }
 			};
-			var fnCreateActiveXHR = function() { 
+			var fnCreateActiveXHR = function() {
 				try {
 					return new window.ActiveXObject("Microsoft.XMLHTTP");
 				} catch (e) { /* ignore */ }
@@ -527,7 +527,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @namespace
 	 * @public
 	 * @static
@@ -2197,7 +2197,7 @@
 
 		var rDotsAnywhere = /(?:^|\/)\.+/;
 		var r2DotsAnywhere = /(?:^|\/)\.{2,}/;
-		
+
 		/**
 		 * Defines a Javascript module with its name, its dependencies and a module value or factory.
 		 *
@@ -2241,16 +2241,16 @@
 		 *
 		 *   });
 		 * </pre>
-		 * 
+		 *
 		 * In another module or in an application HTML page, the {@link sap.ui.require} API can be used
 		 * to load the Something module and to work with it:
-		 * 
+		 *
 		 * <pre>
 		 * sap.ui.require(['sap/mylib/Something'], function(Something) {
-		 * 
-		 *   // instantiate a Something and call foo() on it 
+		 *
+		 *   // instantiate a Something and call foo() on it
 		 *   new Something().foo();
-		 *   
+		 *
 		 * });
 		 * </pre>
 		 *
@@ -2413,7 +2413,7 @@
 		 *     The exact details of how this works might be changed in future implementations and are not
 		 *     yet part of the API contract</li>
 		 * </ul>
-		 * @param {string} [sModuleName] name of the module in simplified resource name syntax. 
+		 * @param {string} [sModuleName] name of the module in simplified resource name syntax.
 		 *        When omitted, the loader determines the name from the request.
 		 * @param {string[]} [aDependencies] list of dependencies of the module
 		 * @param {function|any} vFactory the module value or a function that calculates the value
@@ -2437,7 +2437,7 @@
 				aDependencies = sModuleName;
 				sResourceName = _execStack[_execStack.length - 1];
 			}
-			
+
 			// convert module name to UI5 module name syntax (might fail!)
 			sModuleName = urnToUI5(sResourceName);
 
@@ -2455,7 +2455,7 @@
 						log.error(
 							"In UI5 1.28, relative module names using '../' are not supported by sap.ui.define. " +
 							"Code that uses them might fail with release 1.30 or later even if that code seems to work now. " +
-							"In 1.28, the browser might resolve the '../', but that resolution differs significantly from the " + 
+							"In 1.28, the browser might resolve the '../', but that resolution differs significantly from the " +
 							"AMD compliant resolution implemented in 1.30 and later. " +
 							"It is therefore strongly discouraged in version 1.28 to use '../' in the module dependencies for a sap.ui.define call.");
 					}

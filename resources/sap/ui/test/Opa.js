@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -17,10 +17,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		context = {};
 
 	function internalWait (fnCallback, oOptions, oDeferred) {
-		
+
 		// Increase the wait timeout in debug mode, to allow debugging the waitFor without getting timeouts
 		if (window["sap-ui-debug"]){
-			oOptions.timeout = 300; 
+			oOptions.timeout = 300;
 		}
 
 		var startTime = new Date();
@@ -126,12 +126,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	 * @class One Page Acceptance testing.
 	 * This class will help you write acceptance tests in one page or single page applications.
 	 * You can wait for certain conditions to be met.
-	 * 
+	 *
 	 * @public
 	 * @alias sap.ui.test.Opa
 	 * @author SAP SE
 	 * @since 1.22
-	 * 
+	 *
 	 * @param extensionObject An object containing properties and functions. The newly created Opa will be extended by these properties and functions - see jQuery.extend.
 	 */
 	var Opa = function(extensionObject) {
@@ -183,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 			queue.push({
 				callback : jQuery.proxy(function () {
 					var bResult = true;
-					
+
 					//no check - all ok
 					if (options.check) {
 						bResult = options.check.apply(this, arguments);
@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 						return { result : true, arguments : arguments };
 					}
-	
+
 					return {result : false, arguments : arguments };
 				}, this),
 				options : options
@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 			return this;
 		},
-		
+
 		/**
 		 * Calls the static extendConfig function in the Opa namespace
 		 * @returns
@@ -279,11 +279,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 			}
 			return sResult;
 		}
-		
+
 		var deferred = $.Deferred();
 
 		internalEmpty(deferred);
-		
+
 		return deferred.promise().fail(function(oOptions){
 			oOptions.errorMessage = oOptions.errorMessage || "Failed to wait for check";
 			oOptions.errorMessage += addStacks(oOptions);

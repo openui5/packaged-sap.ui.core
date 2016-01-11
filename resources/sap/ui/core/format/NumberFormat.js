@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -533,15 +533,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			iGroupSize = 0,
 			bNegative = oValue < 0,
 			iDotPos = -1,
-			oOptions = jQuery.extend({}, this.oFormatOptions), 
+			oOptions = jQuery.extend({}, this.oFormatOptions),
 			aPatternParts,
 			oShortFormat;
 
 		if (oOptions.decimals !== undefined) {
 			oOptions.minFractionDigits = oOptions.decimals;
 			oOptions.maxFractionDigits = oOptions.decimals;
-		}	
-		
+		}
+
 		if (oOptions.shortLimit === undefined || Math.abs(oValue) >= oOptions.shortLimit) {
 			oShortFormat = getShortenedFormat(oValue, oOptions.style, oOptions.precision, oOptions.shortDecimals || oOptions.maxFractionDigits, this.oLocaleData);
 			if (oShortFormat && oShortFormat.formatString != "0") {
@@ -555,7 +555,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 				oOptions.roundingMode = NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
 			}
 		}
-		
+
 		// Must be done after calculating the short value, as it depends on the value
 		if (oOptions.precision !== undefined) {
 			oOptions.minFractionDigits = 0;
@@ -937,8 +937,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 
 		var oShortFormat, iKey,
 			bPrecisionDefined = iPrecision !== undefined;
-		
-		// In case precision is not defined 
+
+		// In case precision is not defined
 		if (!bPrecisionDefined) {
 			iPrecision = 2;
 		}
@@ -958,7 +958,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		var fShortNumber = fValue / iKey,
 			iDecimals = bPrecisionDefined ? getDecimals(fShortNumber, iPrecision) : iDecimals,
 			fRoundedNumber = rounding(Math.abs(fShortNumber), iDecimals);
-			
+
 		var sPlural = "other";
 		if (fRoundedNumber == 0) {
 			sPlural = "zero";
@@ -1122,7 +1122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	function quote(sRegex) {
 		return sRegex.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
 	}
-	
+
 	function getDecimals(fValue, iPrecision) {
 		var iIntegerDigits = Math.floor(Math.log(Math.abs(fValue)) / Math.LN10);
 		return Math.max(0, iPrecision - iIntegerDigits - 1);

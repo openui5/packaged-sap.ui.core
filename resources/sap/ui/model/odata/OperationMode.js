@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global'],
 			 * @public
 			 */
 			Server: "Server",
-	
+
 			/**
 			 * Operations are executed on the client, all entries must be avilable to be able to do so.
 			 * The initial request fetches the complete collection, filtering and sorting does not trigger further requests

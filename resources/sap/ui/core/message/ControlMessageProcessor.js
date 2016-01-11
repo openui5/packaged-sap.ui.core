@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 
 
 	/**
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.core.message
 	 * @public
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 *
 	 * @constructor
 	 * @public
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		metadata : {
 		}
 	});
-	
+
 	/**
 	 * Set Messages to check
 	 * @param {map}
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		this.checkMessages();
 		delete this.mOldMessages;
 	};
-	
+
 	/**
 	 * Check Messages and update controls with messages
 	 * @protected
@@ -62,21 +62,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	ControlMessageProcessor.prototype.checkMessages = function() {
 		var aMessages,
 			that = this;
-		
+
 		jQuery.each(this.mOldMessages, function(sTarget, aOldMessages) {
 			var oBinding;
 			var aParts = sTarget.split('/');
 			var oControl = sap.ui.getCore().byId(aParts[0]);
-			
+
 			//if control does not exist: nothing to do
 			if  (!oControl) {
 				return;
 			}
-			
+
 			oBinding = oControl.getBinding(aParts[1]);
-			
+
 			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
-			
+
 			if (oBinding) {
 				oBinding._fireMessageChange({messageSource: 'control', messages:aMessages});
 			} else {
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			}
 		});
 	};
-	
+
 	return ControlMessageProcessor;
 
 }, /* bExport= */ true);

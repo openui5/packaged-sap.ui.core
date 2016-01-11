@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -20,19 +20,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 *
 	 * @class
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @since 0.8.6
 	 * @alias sap.ui.core.ElementMetadata
 	 */
 	var ElementMetadata = function(sClassName, oClassInfo) {
-	
+
 		// call super constructor
 		ManagedObjectMetadata.apply(this, arguments);
 	};
-	
+
 	//chain the prototypes
 	ElementMetadata.prototype = jQuery.sap.newObject(ManagedObjectMetadata.prototype);
-	
+
 	/**
 	 * Calculates a new id based on a prefix.
 	 *
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @function
 	 */
 	ElementMetadata.uid = ManagedObjectMetadata.uid;
-	
+
 	/**
 	 * By default, the element name is equal to the class name
 	 * @return {string} the qualified name of the UIElement class
@@ -50,53 +50,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	ElementMetadata.prototype.getElementName = function() {
 		return this._sClassName;
 	};
-	
+
 	/**
 	 * Determines the class name of the renderer for the described control class.
 	 */
 	ElementMetadata.prototype.getRendererName = function() {
 		return this._sRendererName;
 	};
-	
+
 	/**
 	 * Retrieves the renderer for the described control class
 	 */
 	ElementMetadata.prototype.getRenderer = function() {
-	
+
 		// determine name via function for those legacy controls that override getRendererName()
 		var sRendererName = this.getRendererName();
-	
+
 		if ( !sRendererName ) {
 			return;
 		}
-	
+
 		// check if renderer class exists already
 		var fnRendererClass = jQuery.sap.getObject(sRendererName);
 		if (fnRendererClass) {
 			return fnRendererClass;
 		}
-	
+
 		// if not, try to load a module with the same name
 		jQuery.sap.require(sRendererName);
 		return jQuery.sap.getObject(sRendererName);
 	};
-	
+
 	ElementMetadata.prototype.applySettings = function(oClassInfo) {
-	
+
 		var oStaticInfo = oClassInfo.metadata;
-	
+
 		this._sVisibility = oStaticInfo["visibility"] || "public";
-	
+
 		// remove renderer stuff before calling super.
 		var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
 		delete oClassInfo.renderer;
-	
+
 		ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);
-	
+
 		this._sRendererName = this.getName() + "Renderer";
-	
+
 		if ( typeof vRenderer !== "undefined" ) {
-	
+
 			if ( typeof vRenderer === "string" ) {
 				this._sRendererName = vRenderer || undefined;
 				return;
@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			if ( typeof vRenderer === "function" ) {
 				vRenderer = { render : vRenderer };
 			}
-	
+
 			var oParent = this.getParent();
 			var oBaseRenderer;
 			if ( oParent && oParent instanceof ElementMetadata ) {
@@ -127,21 +127,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		}
 
 	};
-	
+
 	ElementMetadata.prototype.afterApplySettings = function() {
 		ManagedObjectMetadata.prototype.afterApplySettings.apply(this, arguments);
 		this.register && this.register(this);
 	};
-	
+
 	ElementMetadata.prototype.isHidden = function() {
 		return this._sVisibility === "hidden";
 	};
-	
+
 	ElementMetadata.prototype.loadDesignTime = function() {
-		
+
 		var that = this;
 		return new Promise(function(fnResolve, fnReject) {
-			
+
 			if (!that._oDesignTime && that._bHasDesignTime) {
 				var sModule = jQuery.sap.getResourceName(that.getElementName(), ".designtime");
 				sap.ui.require([sModule], function(oDesignTime) {
@@ -151,9 +151,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			} else {
 				fnResolve(that._oDesignTime);
 			}
-			
+
 		});
-		
+
 	};
 
 	return ElementMetadata;

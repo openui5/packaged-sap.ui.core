@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		NavigationPropertyPath: true,
 		AnnotationPath: true
 	};
-	
+
 	var mMultipleArgumentDynamicExpressions = {
 		And: true,
 		Or: true,
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		Le: true,
 		If: true,
 		Collection: true
-	};	
+	};
 
 	/**
 	 * !!! EXPERIMENTAL !!!
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.28.25
+	 * 1.28.26
 	 *
 	 * @constructor
 	 * @public
@@ -122,9 +122,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * returns the raw annotation data
-	 * 
+	 *
 	 * @public
-	 * @returns {object} returns annotations data 
+	 * @returns {object} returns annotations data
 	 */
 	ODataAnnotations.prototype.getAnnotationsData = function() {
 		return this.oAnnotations;
@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Checks whether annotations is available
-	 * 
+	 *
 	 * @public
 	 * @returns {boolean} returns whether annotations is already loaded
 	 */
@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Fire event loaded to attached listeners.
-	 * 
+	 *
 	 * @param {map} [mArguments] Map of arguments that will be given as parameters to teh event handler
 	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
 	 * @protected
@@ -260,7 +260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Parses the alias definitions of the annotation document and fills the internal oAlias object.
-	 * 
+	 *
 	 * @param {object} [oXMLDoc] The document containing the alias definitions
 	 * @param {object} [oAnnotationReferences] The annotation reference object (output)
 	 * @param {object} [oAlias] The alias reference object (output)
@@ -364,9 +364,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			if (annotationTarget.indexOf("/") > 0) {
 				annotation = annotationTarget.split("/")[0];
 				// check sAnnotation is EntityContainer: if yes, something in there is annotated - EntitySet, FunctionImport, ..
-				var bSchemaExists = 
-					this.oServiceMetadata.dataServices && 
-					this.oServiceMetadata.dataServices.schema && 
+				var bSchemaExists =
+					this.oServiceMetadata.dataServices &&
+					this.oServiceMetadata.dataServices.schema &&
 					this.oServiceMetadata.dataServices.schema.length;
 
 				if (bSchemaExists) {
@@ -488,8 +488,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					expandNode = this.xPath.nextNode(expandNodesApplFunc, i);
 					path = this.xPath.getNodeText(expandNode);
 					if (
-						mappingList.propertyAnnotations && 
-						mappingList.propertyAnnotations[annotation] && 
+						mappingList.propertyAnnotations &&
+						mappingList.propertyAnnotations[annotation] &&
 						mappingList.propertyAnnotations[annotation][path]
 					) {
 						continue;
@@ -569,15 +569,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Sets an XML document
-	 * 
+	 *
 	 * @param {object} oXMLDocument The XML document to parse for annotations
 	 * @param {string} sXMLContent The XML content as string to parse for annotations
 	 * @param {map} mOptions Additional options
-	 * @param {fuction} mOptions.success Success callback gets an objec as argument with the 
+	 * @param {fuction} mOptions.success Success callback gets an objec as argument with the
 	 *                  properties "annotations" containing the parsed annotations and "xmlDoc"
 	 *                  containing the XML-Document that was returned by the request.
-	 * @param {fuction} mOptions.error Error callback gets an objec as argument with the 
-	 *                  property "xmlDoc" containing the XML-Document that was returned by the 
+	 * @param {fuction} mOptions.error Error callback gets an objec as argument with the
+	 *                  property "xmlDoc" containing the XML-Document that was returned by the
 	 *                  request and could not be correctly parsed.
 	 * @returns {bool} Whether or not parsing was successful
 	 * @public
@@ -597,7 +597,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			// TODO: Check when IE will support evaluate-method
 			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
 			oXMLDoc.preserveWhiteSpace = true;
-			
+
 			// The MSXML implementation does not parse documents with the technically correct "xmlns:xml"-attribute
 			// So if a document contains 'xmlns:xml="http://www.w3.org/XML/1998/namespace"', IE will stop working.
 			// This hack removes the XML namespace declaration which is then implicitly set to the default one.
@@ -606,7 +606,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					.replace(' xmlns:xml="http://www.w3.org/XML/1998/namespace"', "")
 					.replace(" xmlns:xml='http://www.w3.org/XML/1998/namespace'", "");
 			}
-			
+
 			oXMLDoc.loadXML(sXMLContent);
 			this.xmlCompatVersion = true;
 		} else if (oXMLDocument) {
@@ -617,7 +617,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 		if (
 			// All browsers including IE
-			oXMLDoc.getElementsByTagName("parsererror").length > 0 
+			oXMLDoc.getElementsByTagName("parsererror").length > 0
 			// IE 11 special case
 			|| (oXMLDoc.parseError && oXMLDoc.parseError.errorCode !== 0)
 		) {
@@ -903,7 +903,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		if (iPos > -1) {
 			var sPropertyName = sPath.substr(0, iPos);
 			var mNavProperty = this.findNavProperty(sTarget, sPropertyName, this.oServiceMetadata);
-			
+
 			if (mNavProperty) {
 				var mToEntityType = this.oMetadata._getEntityTypeByNavPropertyObject(mNavProperty);
 
@@ -913,7 +913,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				}
 			}
 		}
-		
+
 		if ((sPath.charAt(0) === "@") && (sPath.indexOf(oSchema.Alias) === 1)) {
 			sPath = sPath.slice(oSchema.Alias.length + 2);
 		}
@@ -931,7 +931,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 	ODataAnnotations.prototype.enrichFromPropertyValueAttributes = function(propertyValueAttributes, documentNode, oAlias) {
 		var sKey = "", sValue = "", i;
-		
+
 		var fnReplaceAlias = function(sValue) {
 			return this.replaceWithAlias(sValue, oAlias);
 		}.bind(this);
@@ -944,7 +944,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				sValue = documentNode.attributes[i].value;
 			}
 			if (sKey) {
-				
+
 				// Special case: EnumMember can contain a space separated list of properties that must all have their
 				// aliases replaced
 				if (sKey === "EnumMember" && sValue.indexOf(" ") > -1) {
@@ -981,10 +981,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 		return oValue;
 	};
-	
+
 	/**
 	 * Returns the text value of a given node and does an alias replacement if neccessary.
-	 * 
+	 *
 	 * @param {Node} oNode - The Node of which the text value should be determined
 	 * @param {map} mAlias - The alias map
 	 * @return {string} The text content
@@ -1003,7 +1003,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		return sValue;
 	};
 
-	
+
 	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, oAlias) {
 		var recordNodes, recordNodeCnt, nodeIndex, recordNode, propertyValues, urlValueNodes, urlValueNode, pathNode, oPath = {}, annotationNodes, annotationNode, nodeIndexValue, termValue, collectionNodes;
 		var propertyValue = documentNode.nodeName === "Collection" ? [] : {};
@@ -1076,21 +1076,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 									if (oOtherNode.nodeName !== "Annotation") {
 										var sNodeName = oOtherNode.nodeName;
 										var sParentName = oOtherNode.parentNode.nodeName;
-										
+
 										var vValue;
 										if (sNodeName === "Apply") {
 											vValue = this.getApplyFunctions(xmlDoc, oOtherNode, oAlias);
 										} else {
-											vValue = this.getPropertyValue(xmlDoc, oOtherNode, oAlias);									
+											vValue = this.getPropertyValue(xmlDoc, oOtherNode, oAlias);
 										}
-										
-										// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
+
+										// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in
 										// their order within the document
 										if (mMultipleArgumentDynamicExpressions[sParentName]) {
 											if (!Array.isArray(propertyValue)) {
 												propertyValue = [];
 											}
-											
+
 											var mValue = {};
 											mValue[sNodeName] = vValue;
 											propertyValue.push(mValue);
@@ -1111,7 +1111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							} else if (documentNode.nodeName in mTextNodeWhitelist) {
 								propertyValue = this._getTextValue(documentNode, oAlias);
 							}
-							
+
 							this.enrichFromPropertyValueAttributes(propertyValue, documentNode, oAlias);
 						}
 					}
@@ -1128,7 +1128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Returns a map with all Annotation- and PropertyValue-elements of the given Node. The properties of the returned
 	 * map consist of the PropertyValue's "Property" attribute or the Annotation's "Term" attribute.
-	 * 
+	 *
 	 * @param {Document} oXmlDocument - The document to use for the node search
 	 * @param {Element} oParentElement - The parent element in which to search
 	 * @param {map} mAlias - The alias map used in {@link ODataAnnotations#replaceWithAlias}
@@ -1154,7 +1154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				var oPropertyValueNode = this.xPath.nextNode(oPropertyValueNodes, i);
 				var sPropertyName = oPropertyValueNode.getAttribute("Property");
 				mProperties[sPropertyName] = this.getPropertyValue(oXmlDocument, oPropertyValueNode, mAlias);
-				
+
 				var oApplyNodes = this.xPath.selectNodes(oXmlDocument, "./d:Apply", oPropertyValueNode);
 				for (var n = 0; n < oApplyNodes.length; n += 1) {
 					var oApplyNode = this.xPath.nextNode(oApplyNodes, n);
@@ -1165,45 +1165,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		return mProperties;
-	};	
+	};
 
 	ODataAnnotations.prototype.getApplyFunctions = function(xmlDoc, applyNode, mAlias) {
 		var apply = {}, parameterNodes, paraNode = null, parameters = [], i;
 		parameterNodes = this.xPath.selectNodes(xmlDoc, "./d:*", applyNode);
 		for (i = 0; i < parameterNodes.length; i += 1) {
 			paraNode = this.xPath.nextNode(parameterNodes, i);
-			
+
 			var mParameter = {
 				Type:  paraNode.nodeName
 			};
-			
+
 			if (paraNode.nodeName === "Apply") {
 				mParameter.Value = this.getApplyFunctions(xmlDoc, paraNode);
-				
+
 			} else if (paraNode.nodeName === "LabeledElement") {
 				var vValue = this.getPropertyValue(xmlDoc, paraNode, mAlias);
-				
+
 				mParameter.Name = vValue.Name;
 				delete vValue.Name;
 				mParameter.Value = vValue;
-				
+
 			} else if (mMultipleArgumentDynamicExpressions[paraNode.nodeName]) {
 				mParameter.Value = this.getPropertyValue(xmlDoc, paraNode, mAlias);
-				
+
 			} else {
 				mParameter.Value = this.xPath.getNodeText(paraNode);
 			}
 
 			parameters.push(mParameter);
-			
-			
+
+
 		}
 		apply['Name'] = applyNode.getAttribute('Function');
 		apply['Parameters'] = parameters;
 		return apply;
 	};
-	
-	
+
+
 	/**
 	 * Returns true if the given path combined with the given entity-type is found in the
 	 * given metadata

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -39,7 +39,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Getter for property <code>name</code>.
-		 * 
+		 *
 		 * The name of the aggregation that is used for matching
 		 *
 		 * @return {string} the name of the aggregation <code>name</code>
@@ -50,7 +50,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Setter for property <code>name</code>.
-		 * 
+		 *
 		 * @param {string} sName the name of the aggregation <code>name</code>
 		 * @return {sap.ui.test.matchers.AggregationFilled} <code>this</code> to allow method chaining
 		 * @public
@@ -60,7 +60,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Checks if the control has a filled aggregation
-		 * 
+		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the Aggregation set in the property aggregationName is filled, false if it is not.
 		 * @public

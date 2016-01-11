@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @extends sap.ui.base.EventProvider
 	 * @final
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			Element.prototype.deregister = function() {
 				that.deregisterElement(this);
 			};
-			
+
 			// grant Element "friend" access to Core / FocusHandler to update the given elements focus info
 			Element._updateFocusInfo = function(oElement) {
 				if (that.oFocusHandler) {
@@ -1366,17 +1366,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 		// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if ( !oLibInfo.noLibraryCSS && jQuery.inArray(sLibName, this.oConfiguration['preloadLibCss']) < 0 ) {
-			var sQuery;
 
-			// append library and distribution version (if available) to allow on demand custom theme compilation
-			if (this.oConfiguration["versionedLibCss"]) {
-				sQuery = "?version=" + oLibInfo.version;
+			// check for configured query parameters and use them
+			var sQuery = this._getLibraryCssQueryParams(oLibInfo);
 
-				// distribution version may not be available (will be loaded in Core constructor syncpoint2)
-				if (sap.ui.versioninfo) {
-					sQuery += "&sap-ui-dist-version=" + sap.ui.versioninfo.version;
-				}
-			}
 			this.includeLibraryTheme(sLibName, undefined, sQuery);
 		}
 
@@ -1443,6 +1436,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			}
 		}
 
+	};
+
+	/**
+	 * Returns a string containing query parameters for theme specific files.
+	 *
+	 * Used in Core#initLibrary and ThemeCheck#checkStyle.
+	 *
+	 * @param {object} oLibInfo Library info object (containing a "version" property)
+	 * @return {string|undefined} query parameters or undefined if "versionedLibCss" config is "false"
+	 * @private
+	 */
+	Core.prototype._getLibraryCssQueryParams = function(oLibInfo) {
+		var sQuery;
+		if (this.oConfiguration["versionedLibCss"] && oLibInfo) {
+			sQuery = "?version=" + oLibInfo.version;
+
+			// distribution version may not be available (will be loaded in Core constructor syncpoint2)
+			if (sap.ui.versioninfo) {
+				sQuery += "&sap-ui-dist-version=" + sap.ui.versioninfo.version;
+			}
+		}
+		return sQuery;
 	};
 
 	/**
@@ -1925,10 +1940,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		// if library has not been loaded yet, create empty 'adhoc' library
 		// don't set 'loaded' marker, so it might be loaded later
 		if ( !oLibrary ) {
-			
+
 			// ensure namespace
 			jQuery.sap.getObject(sLibraryName, 0);
-			
+
 			oLibrary = this.mLibraries[sLibraryName] = {
 				name: sLibraryName,
 				dependencies : [],

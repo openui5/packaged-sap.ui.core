@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -42,7 +42,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Getter for property <code>name</code>.
-		 * 
+		 *
 		 * The Name of the property that is used for matching.
 		 *
 		 * @return {string} the value of property <code>name</code>
@@ -53,7 +53,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Setter for property <code>name</code>.
-		 * 
+		 *
 		 * @param {string} sValue the value for the property <code>name</code>
 		 * @return {sap.ui.test.matchers.PropertyStrictEquals} <code>this</code> to allow method chaining
 		 * @public
@@ -63,7 +63,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Getter for property <code>value</code>.
-		 * 
+		 *
 		 * The value of the property that is used for matching.
 		 *
 		 * @return {string} the value of property <code>value</code>
@@ -74,7 +74,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Setter for property <code>value</code>.
-		 * 
+		 *
 		 * @param {string} sValue the value for the property <code>value</code>
 		 * @return {sap.ui.test.matchers.PropertyStrictEquals} <code>this</code> to allow method chaining
 		 * @public
@@ -84,7 +84,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Checks if the control has a property that matches the value
-		 * 
+		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the property has a strictly matching value.
 		 * @public

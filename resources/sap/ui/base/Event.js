@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -21,22 +21,22 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
 	 * @author Malte Wedel, Daniel Brinkmann
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @alias sap.ui.base.Event
 	 * @public
 	 */
 	var Event = BaseObject.extend("sap.ui.base.Event", /** @lends sap.ui.base.Event.prototype */ {
 		constructor : function(sId, oSource, mParameters) {
-		
+
 			BaseObject.apply(this);
-		
+
 			if (arguments.length > 0) {
 				this.init(sId, oSource, mParameters);
 			}
-		
+
 		}
 	});
-	
+
 	/**
 	 * Init this event with its data.
 	 *
@@ -54,14 +54,14 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	Event.prototype.init = function(sId, oSource, mParameters) {
 		jQuery.sap.assert(typeof sId === "string", "Event.init: sId must be a string");
 		jQuery.sap.assert(oSource instanceof sap.ui.base.EventProvider, "Event.init: oSource must be an EventProvider");
-	
+
 		this.sId = sId;
 		this.oSource = oSource;
 		this.mParameters = mParameters || {};
 		this.bCancelBubble = false;
 		this.bPreventDefault = false;
 	};
-	
+
 	/**
 	 * Reset event data, needed for pooling
 	 * @see sap.ui.base.Poolable.prototype#reset
@@ -73,40 +73,40 @@ sap.ui.define(['jquery.sap.global', './Object'],
 		this.bCancelBubble = false;
 		this.bPreventDefault = false;
 	};
-	
+
 	/**
 	 * Returns the id of the event
 	 * @return {string} The id of the event
 	 * @public
 	 */
 	Event.prototype.getId = function() {
-	
+
 		return this.sId;
-	
+
 	};
-	
+
 	/**
 	 * Returns the source of the event
 	 * @return {sap.ui.base.EventProvider} The source of the event
 	 * @public
 	 */
 	Event.prototype.getSource = function() {
-	
+
 		return this.oSource;
-	
+
 	};
-	
+
 	/**
 	 * Returns all parameter values of the event keyed by their names.
 	 * @return {map} All parameters of the event keyed by name
 	 * @public
 	 */
 	Event.prototype.getParameters = function() {
-	
+
 		return this.mParameters;
-	
+
 	};
-	
+
 	/**
 	 * Returns the value of the parameter with the given sName.
 	 *
@@ -115,34 +115,34 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 * @public
 	 */
 	Event.prototype.getParameter = function(sName) {
-	
+
 		jQuery.sap.assert(typeof sName === "string" && sName, "Event.getParameter: sName must be a non-empty string");
-	
+
 		return this.mParameters[sName];
-	
+
 	};
-	
+
 	/**
 	 * Cancel bubbling of the event.
 	 * @public
 	 */
 	Event.prototype.cancelBubble = function() {
-	
+
 		this.bCancelBubble = true;
-	
+
 	};
-	
+
 	/**
 	 * Prevent the default action of this event.
 	 * @public
 	 */
 	Event.prototype.preventDefault = function() {
-	
+
 		this.bPreventDefault = true;
-	
+
 	};
-	
-	
+
+
 
 	return Event;
 

@@ -1,6 +1,6 @@
 /*
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	"use strict";
 
 
-	
+
 	/**
 	 * HTML serializer delegate class. Called by the serializer instance.
 	 *
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @class HTML serializer delegate class.
 	 * @extends sap.ui.core.util.serializer.delegate.Delegate
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 * @alias sap.ui.core.util.serializer.delegate.HTML
 	 * @experimental Since 1.15.1. The HTML serializer delegate is still under construction, so some implementation details can be changed in future.
 	 */
@@ -32,11 +32,11 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 			this._fnGetEventHandlerName = fnGetEventHandlerName;
 		}
 	});
-	
-	
+
+
 	/**
 	 * Delegate method "startAggregation".
-	 * 
+	 *
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @return {string} the created string.
@@ -44,11 +44,11 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	HTML.prototype.startAggregation = function (oControl, sAggregationName) {
 		return '<div data-sap-ui-aggregation="' + sAggregationName + '">';
 	};
-	
-	
+
+
 	/**
 	 * Delegate method "endAggregation".
-	 * 
+	 *
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @return {string} the created string.
@@ -56,11 +56,11 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	HTML.prototype.endAggregation = function (oControl, sAggregationName) {
 		return '</div>';
 	};
-	
-	
+
+
 	/**
 	 * Delegate method "start".
-	 * 
+	 *
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
@@ -69,29 +69,29 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	HTML.prototype.start = function (oControl, sAggregationName, isDefaultAggregation) {
 		return "<div";
 	};
-	
-	
+
+
 	/**
 	 * Delegate method "middle".
-	 * 
+	 *
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
 	 * @return {string} the created string.
 	 */
 	HTML.prototype.middle = function (oControl, sAggregationName, isDefaultAggregation) {
-		
+
 		var aHtml = [];
-		
+
 		// write non-generated Ids
 		var sId = (this._fnGetControlId) ? this._fnGetControlId(oControl) : oControl.getId();
 		if (sId.indexOf("__") !== 0) {
 			aHtml.push(this._createAttribute("id", sId));
 		}
-		
+
 		// write type
 		aHtml.push(this._createAttribute("data-sap-ui-type", oControl.getMetadata()._sClassName));
-	
+
 		// write classes
 		if (oControl.aCustomStyleClasses) {
 			var aCustomClasses = oControl.aCustomStyleClasses;
@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 				aHtml.push(this._createAttribute("class", aCssClasses.join(" ")));
 			}
 		}
-	
+
 		// write events
 		if (this._fnGetEventHandlerName) {
 			var oEvents = oControl.getMetadata().getAllEvents();
@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 				}
 			}
 		}
-	
+
 		// write associations
 		var oAssociations = oControl.getMetadata().getAllAssociations();
 		this._createAttributes(aHtml, oControl, oAssociations, function (sName, oValue) {
@@ -134,13 +134,13 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 		}, function (sName, oValue) {
 			return (oValue !== null && typeof oValue !== undefined && oValue !== "");
 		});
-	
+
 		// write properties
 		var oProperties = oControl.getMetadata().getAllProperties();
 		this._createAttributes(aHtml, oControl, oProperties, null, function (sName, oValue) {
 			return (!!oControl.getBindingInfo(sName) || (oValue !== null && typeof oValue !== undefined && oValue !== ""));
 		});
-	
+
 		// write aggregations
 		var oAggregations = oControl.getMetadata().getAllAggregations();
 		this._createAttributes(aHtml, oControl, oAggregations, null, function (sName, oValue) {
@@ -149,15 +149,15 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 			}
 			return true;
 		});
-	
+
 		aHtml.push('>');
 		return aHtml.join('');
 	};
-	
-	
+
+
 	/**
 	 * Delegate method "end".
-	 * 
+	 *
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sAggregationName The current aggregation name.
 	 * @param {boolean} isDefaultAggregation Whether the aggregation is the default aggregation.
@@ -166,15 +166,15 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	HTML.prototype.end = function (oControl, sAggregationName, isDefaultAggregation) {
 		return "</div>";
 	};
-	
-	
+
+
 	/**
 	 * Serializes the attributes for a given control and properties
-	 * 
+	 *
 	 * @param {string[]} aHtml The serialized HTML.
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {object} oObj The object to serialize the properties from.
-	 * @param {function} [fnGetValue] A delegate function to retrieve the value. 
+	 * @param {function} [fnGetValue] A delegate function to retrieve the value.
 	 * @param {function} [fnValueCheck] A delegate function to check the value.
 	 * @private
 	 */
@@ -197,11 +197,11 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Creates a data binding attribute.
-	 * 
+	 *
 	 * @param {sap.ui.core.Control} oControl The current control to process.
 	 * @param {string} sName The name of the property
 	 * @param {object} oValue The value of the property.
@@ -209,11 +209,11 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @private
 	 */
 	HTML.prototype._createDataBindingAttribute = function (oControl, sName, oValue) {
-			
+
 		var oBindingInfo = oControl.getBindingInfo(sName);
 		var sBindingValue = null;
 		var oPath = oValue;
-	
+
 		if (!oBindingInfo.bindingString) {
 			if (oBindingInfo.binding) {
 				var sClassName = oBindingInfo.binding.getMetadata().getName();
@@ -221,13 +221,13 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 					sBindingValue = oBindingInfo.binding.getValue();
 				}
 			}
-	
+
 			if (oBindingInfo.parts) {
 				oBindingInfo = oBindingInfo.parts[0];
 			}
-	
+
 			var sModel = oBindingInfo.model;
-	
+
 			// TODO: Properties Panel should edit I18n Model directly!
 			if (sBindingValue === oValue || sBindingValue === null) {
 				oPath = "{" + (sModel ? (sModel + ">" + oBindingInfo.path) : oBindingInfo.path) + "}";
@@ -235,14 +235,14 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 		} else {
 			oPath = oBindingInfo.bindingString;
 		}
-	
+
 		return this._createAttribute("data-" + this._createHtmlAttributeName(sName), oPath);
 	};
-	
-	
+
+
 	/**
 	 * Creates an attribute string.
-	 * 
+	 *
 	 * @param {string} sAttribute The name of the attribute.
 	 * @param {object} oValue The value of the attribute.
 	 * @return {string} The created attribute string.
@@ -251,11 +251,11 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	HTML.prototype._createAttribute = function (sAttribute, oValue) {
 		return ' ' + sAttribute + '="' + oValue + '"';
 	};
-	
-	
+
+
 	/**
 	 * Creates the HTML attribute name.
-	 * 
+	 *
 	 * @param {string} sName The name of the attribute.
 	 * @return {string} The created attribute name.
 	 * @private

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global'],
 		// DataType is only a function to support the "instanceof" operator.
 		throw new Error();
 	};
-	
+
 	/**
 	 * The qualified name of the data type.
 	 * Note that this name usually equals the design time name of the type.
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global'],
 	DataType.prototype.getName = function() {
 		return undefined;
 	};
-	
+
 	/**
 	 * The base type of this type or undefined if this is a primitive type.
 	 * @return {sap.ui.base.DataType} base type or undefined
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global'],
 	DataType.prototype.getBaseType = function() {
 		return undefined;
 	};
-	
+
 	/**
 	 * The primitive base type of this type or the primitive type itself.
 	 * @return {sap.ui.base.DataType} the primitive type
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return oType;
 	};
-	
+
 	/**
 	 * The component type of this type or undefined if this is not an array.
 	 * @return {sap.ui.base.DataType} component type or undefined
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global'],
 	DataType.prototype.getComponentType = function() {
 		return undefined;
 	};
-	
+
 	/**
 	 * The default value for this type. Each type must define a default value.
 	 * @return {any} default value of the data type. The type of the returned value
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global'],
 	DataType.prototype.getDefaultValue = function() {
 		return undefined;
 	};
-	
+
 	/**
 	 * Whether this type is an array type.
 	 * @return {boolean} whether this type is an array type
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global'],
 	DataType.prototype.isArrayType = function() {
 		return undefined;
 	};
-	
+
 	/**
 	 * Parses the given string value and converts it into the specific data type.
 	 * @param {string} sValue string representation for a value of this type
@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global'],
 			return sValue;
 		}
 	};
-	
+
 	/**
 	 * A validation check. To be implemented by concrete types.
 	 * @param {any} vValue the value to be checked
@@ -119,10 +119,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @public
 	 */
 	DataType.prototype.isValid = undefined;
-	
+
 	/**
 	 * Sets the normalizer function for that data type
-	 * 
+	 *
 	 * @param {function} fnNormalizer the function to call for normalizing. Will be called with the value
 	 * as the first parameter. It must return the (normalized) value.
 	 * @public
@@ -131,10 +131,10 @@ sap.ui.define(['jquery.sap.global'],
 		jQuery.sap.assert(typeof fnNormalizer === "function", "DataType.setNormalizer: fnNormalizer must be a function");
 		this._fnNormalizer = fnNormalizer;
 	};
-	
+
 	/**
 	 * Changes a value using the normalizer specified for this datatype
-	 * 
+	 *
 	 * @param {object} oValue the value to be normalized
 	 * @return the normalized value
 	 * @public
@@ -146,25 +146,25 @@ sap.ui.define(['jquery.sap.global'],
 			return oValue;
 		}
 	};
-	
-	
+
+
 	(function() {
-	
+
 		function createType(name, s, base) {
-	
+
 			jQuery.sap.assert(typeof name === "string" && !!name, "DataType.<createType>: type name must be a string");
 			jQuery.sap.assert(!base || base instanceof DataType, "DataType.<createType>: base type must be empty or a DataType");
 			s = s || {};
-	
+
 			// create a new type object with the base type as prototype
 			var baseObject = base || DataType.prototype;
 			var type = jQuery.sap.newObject(baseObject);
-	
+
 			// getter for the name
 			type.getName = function() {
 				return name;
 			};
-	
+
 			// if a default value is specified, create a getter for it
 			if ( s.hasOwnProperty("defaultValue") ) {
 				var vDefault = s.defaultValue;
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global'],
 					return vDefault;
 				};
 			}
-	
+
 			// if a validator is specified either chain it with the base type validator
 			// or set it if no base validator exists
 			if ( s.hasOwnProperty("isValid") ) {
@@ -184,36 +184,36 @@ sap.ui.define(['jquery.sap.global'],
 					return fnIsValid(vValue);
 				} : fnIsValid;
 			}
-	
+
 			// not an array type
 			type.isArrayType = function() {
 				return false;
 			};
-			
+
 			// return the base type
 			type.getBaseType = function() {
 				return base;
 			};
-			
+
 			return type;
 		}
-	
+
 		function createArrayType(componentType) {
 			jQuery.sap.assert(componentType instanceof DataType, "DataType.<createArrayType>: componentType must be a DataType");
-	
+
 			// create a new type object with the base type as prototype
 			var type = jQuery.sap.newObject(DataType.prototype);
-	
+
 			// getter for the name
 			type.getName = function() {
 				return componentType.getName() + "[]";
 			};
-	
+
 			// getter for component type
 			type.getComponentType = function() {
 				return componentType;
 			};
-	
+
 			// array validator
 			type.isValid = function(aValues) {
 				if (aValues === null) {
@@ -229,7 +229,7 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				return false;
 			};
-	
+
 			// array parser
 			type.parseValue = function(sValue) {
 				var aValues = sValue.split(",");
@@ -238,22 +238,22 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				return aValues;
 			};
-	
+
 			// is an array type
 			type.isArrayType = function() {
 				return true;
 			};
-	
+
 			// return the base type
 			type.getBaseType = function() {
 				return ARRAY_TYPE;
 			};
-			
+
 			return type;
 		}
-	
+
 		var PREDEFINED_TYPES = {
-	
+
 			"any" :
 					createType("any", {
 						defaultValue : null,
@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global'],
 							return true;
 						}
 					}),
-	
+
 			"boolean" :
 				createType("boolean", {
 					defaultValue : false,
@@ -269,7 +269,7 @@ sap.ui.define(['jquery.sap.global'],
 						return typeof vValue === "boolean";
 					}
 				}),
-	
+
 			"int" :
 				createType("int", {
 					defaultValue : 0,
@@ -277,7 +277,7 @@ sap.ui.define(['jquery.sap.global'],
 						return typeof vValue === "number" && Math.floor(vValue) == vValue;
 					}
 				}),
-	
+
 			"float" :
 				createType("float", {
 					defaultValue : 0.0,
@@ -285,7 +285,7 @@ sap.ui.define(['jquery.sap.global'],
 						return typeof vValue === "number";
 					}
 				}),
-	
+
 			"string" :
 				createType("string", {
 					defaultValue : "",
@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				})
 		};
-		
+
 		// Array type is not part of predefined types to avoid direct usage as property type
 		var ARRAY_TYPE = createType("array", {
 			defaultValue : [],
@@ -309,11 +309,11 @@ sap.ui.define(['jquery.sap.global'],
 				return jQuery.isArray(vValue);
 			}
 		});
-	
+
 		/**
 		 * Returns the type object for the type with the given name.
-		 * 
-		 * @param {string} sTypeName name of the type to be retrieved 
+		 *
+		 * @param {string} sTypeName name of the type to be retrieved
 		 * @return the type object or undefined when no such type object exists.
 		 * @public
 		 */
@@ -326,7 +326,7 @@ sap.ui.define(['jquery.sap.global'],
 				return PREDEFINED_TYPES[sTypeName] || jQuery.sap.getObject(sTypeName);
 			}
 		};
-	
+
 		/**
 		 * Creates a new type as a subtype of a given type.
 		 * @param {string} sName the unique name of the new type
@@ -337,15 +337,15 @@ sap.ui.define(['jquery.sap.global'],
 		 * @public
 		 */
 		DataType.createType = createType;
-	
+
 		// ---- minimal support for interface types ----
-		
+
 		var mInterfaces = {};
-		
+
 		/**
 		 * Registers the given array of type names as known interface types.
 		 * Only purpose is to enable the {@link #isInterfaceType} check.
-		 * @param {string[]} aTypes interface types to be reigstered  
+		 * @param {string[]} aTypes interface types to be reigstered
 		 * @private
 		 */
 		DataType.registerInterfaceTypes = function(aTypes) {
@@ -353,16 +353,16 @@ sap.ui.define(['jquery.sap.global'],
 				jQuery.sap.setObject(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
 			}
 		};
-		
+
 		/**
 		 * @param {string} sType name of type to check
 		 * @return {boolean} whether the given type is known to be an interface type
-		 * @private 
+		 * @private
 		 */
 		DataType.isInterfaceType = function(sType) {
 			return mInterfaces.hasOwnProperty(sType) && jQuery.sap.getObject(sType) === mInterfaces[sType];
 		};
-	
+
 	}());
 
 	return DataType;

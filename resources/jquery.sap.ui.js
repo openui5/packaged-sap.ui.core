@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10,12 +10,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global'],
 	"use strict";
 
 //jQuery.sap.require("sap.ui.core.Core"); // cyclic
-	
+
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!
 	// !!     EXPERIMENTAL     !!
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!
-	
-	
+
+
 	// FIXME Too tough or just right?
 	if (!jQuery.sap) {
 		throw "Initialisation of jQuery.sap.ui failed. jQuery.sap plugin required!";
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global'],
 //	/**
 //	 * Root Namespace for the jQuery UI-Layer plugin provided by SAP SE.
 //	 *
-//	 * @version 1.28.25
+//	 * @version 1.28.26
 //	 * @namespace
 //	 * @public
 //	 */

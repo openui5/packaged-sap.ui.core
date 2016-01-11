@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * are one way, two way and one time. The default binding mode can be changed by the application for each model instance.
 	 * A model implementation should specify its supported binding modes and set the default binding mode accordingly
 	 * (e.g. if the model supports only one way binding the default binding mode should also be set to one way).
-	 * 
+	 *
 	 * This MessageProcessor is able to handle Messages with the normal binding syntax as target.
 	 *
 	 * @namespace
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.28.25
+	 * @version 1.28.26
 	 *
 	 * @constructor
 	 * @public
@@ -80,8 +80,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		}
 
 	});
-	
-	
+
+
 	/**
 	 * Map of event names, that are provided by the model.
 	 */
@@ -97,28 +97,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		 * Depending on the model implementation a RequestFailed should be fired if a request to a backend failed.
 		 * Contains the parameters:
 		 * message, statusCode, statusText and responseText
-		 * 
+		 *
 		 */
 		RequestFailed : "requestFailed",
 
 		/**
 		 * Depending on the model implementation a RequestSent should be fired when a request to a backend is sent.
 		 * Contains Parameters: url, type, async, info (<strong>deprecated</strong>), infoObject
-		 * 
+		 *
 		 */
 		RequestSent : "requestSent",
 
 		/**
 		 * Depending on the model implementation a RequestCompleted should be fired when a request to a backend is completed regardless if the request failed or succeeded.
 		 * Contains Parameters: url, type, async, info (<strong>deprecated</strong>), infoObject, success, errorobject
-		 * 
+		 *
 		 */
 		RequestCompleted : "requestCompleted"
 	};
 
 	/**
 	 * The 'requestFailed' event is fired, when data retrieval from a backend failed.
-	 * 
+	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
 	 * @name sap.ui.model.Model#requestFailed
@@ -269,7 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * The 'requestSent' event is fired, after a request has been sent to a backend.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
-	 * 
+	 *
 	 * @name sap.ui.model.Model#requestSent
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
@@ -340,9 +340,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	/**
 	 * The 'requestCompleted' event is fired, after a request has been completed (includes receiving a response),
 	 * no matter whether the request succeeded or not.
-	 * 
+	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
-	 * 
+	 *
 	 * @name sap.ui.model.Model#requestCompleted
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
@@ -417,12 +417,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		this.attachEvent("messageChange", oData, fnFunction, oListener);
 		return this;
 	};
-	
+
 	Model.prototype.detachMessageChange = function(fnFunction, oListener) {
 		this.detachEvent("messageChange", fnFunction, oListener);
 		return this;
 	};
-	
+
 	// the 'abstract methods' to be implemented by child classes
 
 	/**
@@ -761,7 +761,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 			oBinding.checkUpdate(bForceUpdate);
 		});
 	};
-	
+
 	/**
 	 * Sets messages
 	 *
@@ -782,7 +782,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	Model.prototype.getMessagesByPath = function(sPath) {
 		return this.mMessages[sPath];
 	};
-	
+
 	/**
 	 * Private method iterating the registered bindings of this model instance and initiating their check for messages
 	 * @private
@@ -793,7 +793,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 			oBinding.checkMessages();
 		});
 	};
-	
+
 	/**
 	 * Destroys the model and clears the model data.
 	 * A model implementation may override this function and perform model specific cleanup tasks e.g.

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -19,25 +19,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	 * @param {string} sPath
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {object} [mParameters]
-	 * 
+	 *
 	 * @alias sap.ui.model.odata.ODataPropertyBinding
 	 * @extends sap.ui.model.PropertyBinding
 	 */
 	var ODataPropertyBinding = PropertyBinding.extend("sap.ui.model.odata.ODataPropertyBinding", /** @lends sap.ui.model.odata.ODataPropertyBinding.prototype */ {
-		
+
 		constructor : function(oModel, sPath, oContext, mParameters){
 			PropertyBinding.apply(this, arguments);
-		
+
 			this.oValue = this._getValue();
 		}
-	
+
 	});
-	
+
 	/**
 	 * Initialize the binding. The message should be called when creating a binding.
 	 * If metadata is not yet available, do nothing, method will be called again when
 	 * metadata is loaded.
-	 * 
+	 *
 	 * @protected
 	 */
 	ODataPropertyBinding.prototype.initialize = function() {
@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 			this.checkUpdate(true);
 		}
 	};
-	
+
 	/**
 	 * Returns the current value of the bound target
 	 * @return {object} the current value of the bound target
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	ODataPropertyBinding.prototype.getValue = function(){
 		return this.oValue;
 	};
-	
+
 	/**
 	 * Returns the current value of the bound target (incl. re-evaluation)
 	 * @return {object} the current value of the bound target
@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	ODataPropertyBinding.prototype._getValue = function(){
 		return this.oModel._getObject(this.sPath, this.oContext);
 	};
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Setter for context
 	 */
@@ -85,13 +85,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
-	 * 
+	 *
 	 * @param {boolean} force no cache true/false: Default = false
-	 * 
+	 *
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function(bForceUpdate){
 		var oValue = this._getValue();
