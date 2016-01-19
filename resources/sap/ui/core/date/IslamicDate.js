@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * @class
 		 * @see [CLDR calendar types]{@link http://www.unicode.org/reports/tr35/#Key_And_Type_Definitions_}
 		 * @author SAP SE
-		 * @version 1.32.9
+		 * @version 1.32.10
 		 * @since 1.28.6
 		 * @extends sap.ui.base.Object
 		 * @alias sap.ui.core.date.IslamicDate

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager', '../li
 	 * @param {sap.ui.core.mvc.XMLView} oControl an object representation of the control that should be rendered
 	 */
 	XMLViewRenderer.render = function(rm, oControl) {
-		// make sure to preserve the content if not preserved yet 
+		// make sure to preserve the content if not preserved yet
 		var oDomRef = oControl.getDomRef();
 		if (oDomRef && !RenderManager.isPreservedContent(oDomRef)) {
 			RenderManager.preserveContent(oDomRef, /* bPreserveRoot= */ true);

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	"use strict";
 
 	/**
-	 * Adapter for TreeBindings to add the ListBinding functionality and use the 
+	 * Adapter for TreeBindings to add the ListBinding functionality and use the
 	 * tree structure in list based controls.
 	 *
 	 * @alias sap.ui.model.odata.ODataTreeBindingAdapter
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	 * @protected
 	 */
 	var ODataTreeBindingAdapter = function() {
-	
+
 		// ensure only TreeBindings are enhanced which have not been enhanced yet
 		if (!(this instanceof TreeBinding && this.getContexts === undefined)) {
 			return;
@@ -33,27 +33,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 				this[fn] = ODataTreeBindingAdapter.prototype[fn];
 			}
 		}
-		
+
 		// make sure we have a parameter object
 		this.mParameters = this.mParameters || {};
-		
+
 		// initialize the contexts
 		this._aRowIndexMap = [];
-		
+
 		//Store length and threshold for all requests
 		this._iThreshold = 0;
 		this._iPageSize = 0;
-		
+
 		//set the default auto expand mode
 		this.setAutoExpandMode(this.mParameters.autoExpandMode || TreeAutoExpandMode.Sequential);
-		
+
 		//default value for collapse recursive
 		if (this.mParameters.collapseRecursive === undefined) {
 			this.bCollapseRecursive = true;
 		} else {
 			this.bCollapseRecursive = !!this.mParameters.collapseRecursive;
 		}
-		
+
 		//create general tree structure
 		this._createTreeState();
 	};
@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 
 		return sGroupID;
 	};
-	
+
 	ODataTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
 		var vReturn = ODataTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 
@@ -143,5 +143,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	};
 
 	return ODataTreeBindingAdapter;
-	
+
 }, /* bExport= */ true);

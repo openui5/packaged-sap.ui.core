@@ -1,6 +1,6 @@
 /*
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 	 * @class XMLViewSerializer class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.32.9
+	 * @version 1.32.10
 	 * @alias sap.ui.core.util.serializer.XMLViewSerializer
 	 * @experimental Since 1.15.1. The XMLViewSerializer is still under construction, so some implementation details can be changed in future.
 	 */
@@ -36,16 +36,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 			this._fnGetEventHandlerName = fnGetEventHandlerName;
 		}
 	});
-	
-	
-	
+
+
+
 	/**
 	 * Serializes the given XML view.
-	 * 
+	 *
 	 * @returns {string} the serialized XML view.
 	 */
 	XMLViewSerializer.prototype.serialize = function () {
-	
+
 		// a function to memorize the control packages
 		var mPackages = [];
 		var fnMemorizePackage = function (oControl, sPackage) {
@@ -57,12 +57,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 				mPackages.push(sPackage);
 			}
 		};
-		
+
 		// a function to understand if to skip aggregations
 		var fnSkipAggregations = function (oControl) {
 			return (oControl instanceof this._oWindow.sap.ui.core.mvc.View);
 		};
-		
+
 		// create serializer
 		var oControlSerializer = new Serializer(
 			this._oView,
@@ -74,17 +74,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 			true,
 			this._oWindow,
 			fnSkipAggregations);
-		
+
 		// run serializer ... before writing namespaces
 		var sResult = oControlSerializer.serialize();
-		
+
 		// write view start
 		var sView = [];
 		sView.push('<sap.ui.core.mvc:View');
 		if (this._oView.getControllerName && this._oView.getControllerName()) {
 			sView.push(' controllerName="' + this._oView.getControllerName() + '"');
 		}
-		
+
 		// write view namespaces ... after running serializer
 		if (jQuery.inArray('sap.ui.core.mvc', mPackages) === -1) {
 			mPackages.push('sap.ui.core.mvc');
@@ -96,12 +96,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 				sView.push(' xmlns:' + mPackages[i] + '="' + mPackages[i] + '"');
 			}
 		}
-		
+
 		// write the main content
 		sView.push(" >");
 		sView.push(sResult);
 		sView.push("</sap.ui.core.mvc:View>");
-		
+
 		return vkbeautify.xml(sView.join(""));
 	};
 

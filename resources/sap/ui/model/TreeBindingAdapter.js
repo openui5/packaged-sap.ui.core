@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -236,7 +236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 					return;
 				}
 				var iMaxGroupSize = this._getMaxGroupSize(oNode);
-				
+
 				// adapt node sections if the page size increased since the last getcontexts call
 				// and only if we do not already have a count for the group
 				var oNodeState = oNode.nodeState;
@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			}
 			return iMaxGroupSize;
 		};
-		
+
 		/**
 		 * Retrieves the requested part from the tree.
 		 */
@@ -466,7 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 			// calculate magnitude/groupsize of (artificial) root node seperately
 			var iMaxGroupSize = this._getMaxGroupSize(oNode);
-			
+
 			// make sure the children array gets at least the requested length
 			if (iMaxGroupSize > 0) {
 				if (!oNode.children[iMaxGroupSize - 1]) {
@@ -481,7 +481,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 					length: iMaxGroupSize
 				}];
 			}
-			
+
 			//iterate all loaded (known) sections
 			for (var i = 0; i < oNodeState.sections.length; i++) {
 

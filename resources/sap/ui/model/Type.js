@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -20,19 +20,19 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.32.9
+	 * @version 1.32.10
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.Type
 	 */
 	var Type = BaseObject.extend("sap.ui.model.Type", /** @lends sap.ui.model.Type.prototype */ {
-		
+
 		constructor : function () {
 			BaseObject.apply(this, arguments);
 			this.sName = "Type";
 		},
-	
+
 		metadata : {
 			"abstract" : true,
 			publicMethods : [
@@ -40,10 +40,10 @@ sap.ui.define(['sap/ui/base/Object'],
 			"getName"
 		  ]
 		}
-		
+
 	});
-	
-	
+
+
 	/**
 	 * Returns the name of this type.
 	 *

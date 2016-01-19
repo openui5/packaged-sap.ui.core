@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.32.9
+	 * @version 1.32.10
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -633,14 +633,17 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @private
 	 */
 	Element.prototype.removeDelegate = function (oDelegate) {
-		for (var i = 0;i < this.aDelegates.length;i++) {
+		var i;
+		for (i = 0; i < this.aDelegates.length; i++) {
 			if (this.aDelegates[i].oDelegate == oDelegate) {
-				this.aDelegates.splice(i,1);
+				this.aDelegates.splice(i, 1);
+				i--; // One element removed means the next element now has the index of the current one
 			}
 		}
-		for (var i = 0;i < this.aBeforeDelegates.length;i++) {
+		for (i = 0; i < this.aBeforeDelegates.length; i++) {
 			if (this.aBeforeDelegates[i].oDelegate == oDelegate) {
-				this.aBeforeDelegates.splice(i,1);
+				this.aBeforeDelegates.splice(i, 1);
+				i--; // One element removed means the next element now has the index of the current one
 			}
 		}
 		return this;

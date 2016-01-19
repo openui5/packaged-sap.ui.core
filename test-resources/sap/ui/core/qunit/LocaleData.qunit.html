@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.LocaleData
   Author: d040216
 -->
@@ -64,7 +64,7 @@
 					"de_XX",
 					"xx_XX"
 	];
-	
+
 	var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$ US", "$US", "$", "US$", "US$", "$",
 		"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];
 
@@ -80,7 +80,7 @@
 	});
 
 	/*
-	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods", 
+	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods",
 	"getDatePattern", "getTimePattern", "getDateTimePattern", "getNumberSymbol"
 	*/
 	function genericTests(oLocaleData, sLocale) {
@@ -127,20 +127,26 @@
 			equal(typeof oLocaleData.getEra("wide", aCalendarTypes[i]), "string", "getEra(\"wide\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getEra("abbreviated", aCalendarTypes[i]), "string", "getEra(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getEra("narrow", aCalendarTypes[i]), "string", "getEra(\"narrow\", \"" + aCalendarTypes[i] + "\")");
-			for (j = -2 ; j <= 2 ; j++) {
-				equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + ")");
-				if (j === 0) {
-					strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + ")");
-					strictEqual(oLocaleData.getRelativeHour(j), null, "getRelativeHour(" + j + ")");
-				} else {
-					equal(typeof oLocaleData.getRelativeMinute(j), "string", "getRelativeMinute(" + j + ")");
-					equal(typeof oLocaleData.getRelativeHour(j), "string", "getRelativeHour(" + j + ")");
+			[undefined, "wide", "short", "narrow"].forEach(function(sStyle, index) {
+				if (sLocale === "xx_XX" && (sStyle !== "wide" && sStyle !== undefined)) {
+					return;
 				}
-				equal(typeof oLocaleData.getRelativeDay(j), "string", "getRelativeDay(" + j + ")");
-				equal(typeof oLocaleData.getRelativeWeek(j), "string", "getRelativeWeek(" + j + ")");
-				equal(typeof oLocaleData.getRelativeMonth(j), "string", "getRelativeMonth(" + j + ")");
-				equal(typeof oLocaleData.getRelativeYear(j), "string", "getRelativeYear(" + j + ")");
-			}
+
+				for (j = -2 ; j <= 2 ; j++) {
+					equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					if (j === 0) {
+						strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+						strictEqual(oLocaleData.getRelativeHour(j), null, "getRelativeHour(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					} else {
+						equal(typeof oLocaleData.getRelativeMinute(j), "string", "getRelativeMinute(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+						equal(typeof oLocaleData.getRelativeHour(j), "string", "getRelativeHour(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					}
+					equal(typeof oLocaleData.getRelativeDay(j), "string", "getRelativeDay(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					equal(typeof oLocaleData.getRelativeWeek(j), "string", "getRelativeWeek(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					equal(typeof oLocaleData.getRelativeMonth(j), "string", "getRelativeMonth(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					equal(typeof oLocaleData.getRelativeYear(j), "string", "getRelativeYear(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				}
+			});
 		}
 
 		equal(typeof oLocaleData.getNumberSymbol("decimal"), "string", "getNumberSymbol(\"decimal\")");
@@ -224,13 +230,13 @@
 		equal(oLocaleData.getEra("abbreviated"), "AD", "Abbreviated Era Name");
 		equal(oLocaleData.getEra("abbreviated", 0), "BC", "Abbreviated Era Name");
 	}
-	
+
 	function customTests_en_ZA(oLocaleData) {
 		equal(oLocaleData.getDatePattern("medium"), "dd MMM y", "date pattern \"medium\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 	}
-	
+
 	function customTests_en_US(oLocaleData) {
 		equal(oLocaleData.getDayPeriods("abbreviated")[0], "AM", "day periods \"abbreviated\"");
 	}
@@ -296,13 +302,13 @@
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 	}
-	
+
 	function customTests_pt_BR(oLocaleData) {
 		equal(oLocaleData.getFirstDayOfWeek(), 0, "first day of week");
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
-	
+
 	function customTests_pt_PT(oLocaleData) {
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");

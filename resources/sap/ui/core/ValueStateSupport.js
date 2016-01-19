@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -14,14 +14,14 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		 * Helper functionality for value state support.
 		 *
 		 * @author SAP SE
-		 * @version 1.32.9
+		 * @version 1.32.10
 		 * @public
 		 * @namespace sap.ui.core.ValueStateSupport
 		 */
 		var ValueStateSupport = {};
 		var mTexts = null;
-	
-	
+
+
 		var ensureTexts = function() {
 			if (!mTexts) { // initialize texts if required
 				mTexts = {};
@@ -31,8 +31,8 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				mTexts[sap.ui.core.ValueState.Success] = rb.getText("VALUE_STATE_SUCCESS");
 			}
 		};
-	
-	
+
+
 		/**
 		 * Appends a generic success, warning or error message to the given tooltip text if the given Element
 		 * has a property "valueState" with one of these three states.
@@ -47,20 +47,20 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		 */
 		ValueStateSupport.enrichTooltip = function(oElement, sTooltipText) {
 			jQuery.sap.assert(oElement instanceof Element, "oElement must be an Element");
-	
+
 			if (!sTooltipText && oElement.getTooltip()) {
 				return undefined; // this means there is no tooltip text configured, but a tooltip object like a RichTooltip
 			}
-	
+
 			var sText = sap.ui.core.ValueStateSupport.getAdditionalText(oElement);
 			if (sText) {
 				return (sTooltipText ? sTooltipText + " - " : "") + sText;
 			}
-	
+
 			return sTooltipText; // when there is no value state
 		};
-	
-	
+
+
 		/**
 		 * Returns a generic success, warning or error message if the given Element
 		 * has a property "valueState" with one of these three states or the given ValueState
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		 */
 		ValueStateSupport.getAdditionalText = function(vValue) {
 			var sState = null;
-			
+
 			if (vValue.getValueState) {
 				sState = vValue.getValueState();
 			} else if (sap.ui.core.ValueState[vValue]) {
@@ -86,13 +86,13 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				ensureTexts();
 				return mTexts[sState];
 			}
-			
+
 			return null;
 		};
-	
+
 		/**
 		 * Returns a ValueState object based on the given integer value
-		 * 
+		 *
 		 *  0 : ValueState.None
 		 *  1 : ValueState.Warning
 		 *  2 : ValueState.Success
@@ -118,7 +118,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 					return sap.ui.core.ValueState.None;
 			}
 		};
-	
+
 
 	return ValueStateSupport;
 

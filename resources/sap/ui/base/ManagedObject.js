@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -172,7 +172,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.32.9
+	 * @version 1.32.10
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -2173,7 +2173,7 @@ sap.ui.define([
 				that.unbindProperty(sName, true);
 			}
 		});
-		
+
 		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
 			that.unbindObject(sName, /* _bSkipUpdateBindingContext */ true);
 		});
@@ -2555,7 +2555,6 @@ sap.ui.define([
 		var oModel,
 			oContext,
 			oBinding,
-			oDataStateTimer,
 			sMode,
 			sCompositeMode = BindingMode.TwoWay,
 			oType,
@@ -2583,7 +2582,7 @@ sap.ui.define([
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
-					// TODO remove the binding from the binding info or mark it somehow as "deactivated"? 
+					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
 				}
 			},
 			fDataStateChangeHandler = function(){
@@ -2593,11 +2592,7 @@ sap.ui.define([
 				}
 				//inform generic refreshDataState method
 				if (that.refreshDataState) {
-					if (!oDataStateTimer) {
-						this.oDataStateTimer = jQuery.sap.delayedCall(0, this, function() {
-							that.refreshDataState(sName, oDataState);
-						});
-					}
+					that.refreshDataState(sName, oDataState);
 				}
 			};
 
@@ -2648,9 +2643,9 @@ sap.ui.define([
 
 		oBinding.attachChange(fModelChangeHandler);
 		if (this.refreshDataState) {
-			oBinding.attachDataStateChange(fDataStateChangeHandler);
+			oBinding.attachAggregatedDataStateChange(fDataStateChangeHandler);
 		}
-	
+
 		// set only one formatter function if any
 		// because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility
 		// for formatter function which is now called by the property binding
@@ -2681,7 +2676,7 @@ sap.ui.define([
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				if (this.refreshDataState) {
-					oBindingInfo.binding.detachDataStateChange(oBindingInfo.dataStateChangeHandler);
+					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
 				}
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
 				oBindingInfo.binding.destroy();
@@ -2770,7 +2765,7 @@ sap.ui.define([
 					}
 
 					// Only fire validation success, if a type is used
-					if (oBinding.getType()) {
+					if (oBinding.hasValidation()) {
 						this.fireValidationSuccess({
 							element: this,
 							property: sName,

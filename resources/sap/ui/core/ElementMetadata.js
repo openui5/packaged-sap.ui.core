@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -20,12 +20,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 *
 	 * @class
 	 * @author SAP SE
-	 * @version 1.32.9
+	 * @version 1.32.10
 	 * @since 0.8.6
 	 * @alias sap.ui.core.ElementMetadata
 	 */
 	var ElementMetadata = function(sClassName, oClassInfo) {
-	
+
 		// call super constructor
 		ManagedObjectMetadata.apply(this, arguments);
 	};
@@ -92,11 +92,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		delete oClassInfo.renderer;
 
 		ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);
-	
+
 		this._sRendererName = this.getName() + "Renderer";
-	
+
 		if ( typeof vRenderer !== "undefined" ) {
-	
+
 			if ( typeof vRenderer === "string" ) {
 				this._sRendererName = vRenderer || undefined;
 				return;
@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @return {map} The design time metadata
 	 * @since 1.30.0
 	 */
-	ElementMetadata.prototype.getDesignTime = function() {	
+	ElementMetadata.prototype.getDesignTime = function() {
 		if (!this._oDesignTime && this._bHasDesignTime) {
 			// the synchronous loading would be only relevant during the
 			// development time - for productive usage the design time metadata should
@@ -153,9 +153,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			// should be ignorable for now (async implementation will
 			// change the complete behavior of the constructor function)
 			jQuery.sap.require({modName: this.getElementName(), type: "designtime"});
-			this._oDesignTime = jQuery.sap.getObject(this.getElementName() + ".designtime");	
+			this._oDesignTime = jQuery.sap.getObject(this.getElementName() + ".designtime");
 		}
-		return this._oDesignTime;	
+		return this._oDesignTime;
 	};
 
 	/**

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -22,7 +22,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.32.9
+	 * 1.32.10
 	 *
 	 * @constructor
 	 * @public
@@ -35,17 +35,17 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 		// constructor : function(aAnnotationURI, oMetadata, mParams) {
 		constructor : function(mOptions) {
 			EventProvider.apply(this, arguments);
-			
+
 			if (arguments.length !== 1) {
 				// Old constructor argument syntax
 				if (typeof arguments[2] === "object") {
 					mOptions = arguments[2];
 				}
-				
+
 				mOptions.urls = arguments[0];
 				mOptions.metadata = arguments[1];
 			}
-			
+
 			this.oMetadata = {
 				metadata: mOptions.metadata,
 				references: null
@@ -83,10 +83,10 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 		}
 
 	});
-	
-	
+
+
 	///////////////////////////////////////////////// Prototype Members ////////////////////////////////////////////////
-	
+
 	/**
 	 * returns the raw annotation data
 	 *
@@ -227,7 +227,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 * Set custom headers which are provided in a key/value map. These headers are used for all requests.
 	 * The Accept-Language header cannot be modified and is set using the Core's language setting.
 	 *
-	 * To remove these headers simply set the mHeaders parameter to {}. Please also note that when calling this method 
+	 * To remove these headers simply set the mHeaders parameter to {}. Please also note that when calling this method
 	 * again all previous custom headers are removed unless they are specified again in the mCustomHeaders parameter.
 	 *
 	 * @param {map} mHeaders the header name/value map.
@@ -240,7 +240,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 
 	/**
 	 * Creates an XML document that can be used by this parser from the given XML content.
-	 * 
+	 *
 	 * @param {object|string} vXML - Either an XML Document to be used for parsing or a string that should be parsed as an XML document. In case the first parameter is an object, the second parameter must be set to ensure browser compatibility
 	 * @param {string} [sXMLContent] - Fallback XML content as string in case the first parameter was an object and could not be used
 	 * @returns {object} The compatible XML document object
@@ -252,7 +252,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			sXMLContent = vXML;
 			vXML = null;
 		}
-		
+
 		if (sap.ui.Device.browser.internet_explorer) {
 			// IE creates an XML Document, but we cannot use it since it does not support the
 			// evaluate-method. So we have to create a new document from the XML string every time.
@@ -277,11 +277,11 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 		} else {
 			jQuery.sap.log.fatal("The browser does not support XML parsing. Annotations are not available.");
 		}
-		
+
 
 		return oXMLDoc;
 	};
-	
+
 	/**
 	 * Checks the given XML document for parse errors
 	 *
@@ -296,11 +296,11 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			|| (oXMLDoc.parseError && oXMLDoc.parseError.errorCode !== 0)
 		);
 	};
-	
+
 	/**
 	 * Merges the newly parsed annotation data into the already existing one.
 	 * The merge operates on Terms and overwrites existing annotations on that level.
-	 * 
+	 *
 	 * @param {map} mAnnotations - The new annotations that should be merged into the ones in this instance
 	 * @param {boolean} [bSuppressEvents] - if set to true, the "loaded"-event is not fired
 	 * @returns {void}
@@ -334,7 +334,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 
 		var sTarget, sTerm;
 		var aSpecialCases = ["propertyAnnotations", "EntityContainer", "annotationReferences"];
-		
+
 		// First merge standard annotations
 		for (sTarget in mAnnotations) {
 			if (aSpecialCases.indexOf(sTarget) !== -1) {
@@ -367,8 +367,8 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 				annotations: mAnnotations
 			});
 		}
-	};	
-	
+	};
+
 	/**
 	 * Sets an XML document
 	 *
@@ -409,7 +409,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 				mOptions.success(mResult);
 				this._mergeAnnotationData(oAnnotations, !mOptions.fireEvents);
 			} else {
-				
+
 				mOptions.error(mResult);
 				if (mOptions.fireEvents) {
 					this.fireFailed(mResult);
@@ -513,14 +513,14 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			var i = 0;
 			if (that.bAsync) {
 				var promiseChain = Promise.resolve();
-				
+
 				for (i = 0; i < aUris.length; ++i) {
 					var fnLoadNext = that._loadFromUrl.bind(that, aUris[i]);
 					promiseChain = promiseChain
 						.then(fnLoadNext, fnLoadNext)
 						.then(fnRequestCompleted, fnRequestCompleted);
 				}
-				
+
 			} else {
 				for (i = 0; i < aUris.length; ++i) {
 					that._loadFromUrl(aUris[i]).then(fnRequestCompleted, fnRequestCompleted);

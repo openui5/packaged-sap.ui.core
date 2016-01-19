@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.32.9
+		 * @version 1.32.10
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.LocalStorage
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		var LocalStorage = Plugin.extend("sap.ui.core.support.plugins.LocalStorage", {
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportLocalStorage", "", oSupportStub]);
-				
+
 				if (this.isToolPlugin()) {
 					throw Error(); // only for application side
 				}
@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * Handler for sapUiSupportLocalStorageGetItem event
 		 * Calls the callback in any case with a string (might be an empty one if error occurred or item does not exist)
 		 * and passes on the "passThroughData" event parameter to the callback
-		 * 
+		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
 		 */
@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 		/**
 		 * Handler for sapUiSupportLocalStorageSetItem event
-		 * 
+		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
 		 */

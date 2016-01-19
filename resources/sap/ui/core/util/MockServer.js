@@ -1,6 +1,6 @@
 /*
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -34,7 +34,7 @@ sap.ui
 			 * @extends sap.ui.base.ManagedObject
 			 * @abstract
 			 * @author SAP SE
-			 * @version 1.32.9
+			 * @version 1.32.10
 			 * @public
 			 * @alias sap.ui.core.util.MockServer
 			 */
@@ -603,7 +603,7 @@ sap.ui
 					if (sValue.indexOf("datetime") === 0) {
 						sValue = that._getJsonDate(sValue);
 					} else if (sValue.indexOf("guid") === 0) {
-						// strip the "guid'" (5) from the front and the "'" (-1) from the back 
+						// strip the "guid'" (5) from the front and the "'" (-1) from the back
 						sValue = sValue.substring(5, sValue.length - 1);
 					} else if (sValue === "true") { // fix for filtering on boolean properties
 						sValue = true;
@@ -951,7 +951,7 @@ sap.ui
 				var fnResolveNavProp = function(sRole, aAssociation, aAssociationSet, bFrom) {
 					var sEntitySet = jQuery(aAssociationSet).find("End[Role=" + sRole + "]").attr("EntitySet");
 					var sMultiplicity = jQuery(aAssociation).find("End[Role=" + sRole + "]").attr("Multiplicity");
-					
+
 					var aPropRef = [];
 					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role=" + sRole + "]");
 					if (aConstraint && aConstraint.length > 0) {
@@ -969,7 +969,7 @@ sap.ui
 							}
 						});
 					}
-					
+
 					return {
 						"role": sRole,
 						"entitySet": sEntitySet,
@@ -1858,7 +1858,7 @@ sap.ui
 						return true;
 					}
 				});
-				
+
 				// add the service request (HEAD request for CSRF Token)
 				aRequests.push({
 					method: "HEAD",
@@ -3325,7 +3325,7 @@ sap.ui
 
 			window.sinon.FakeXMLHttpRequest.useFilters = true;
 
-			// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage 
+			// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage
 			// of jQuery.ajax function / sinon also needs to be synchronized with this
 			// adoption by applying the CORS support flag from jQuery to sinon!
 			window.sinon.xhr.supportsCORS = jQuery.support.cors;

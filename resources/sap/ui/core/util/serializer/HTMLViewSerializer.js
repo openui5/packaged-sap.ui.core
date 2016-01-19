@@ -1,6 +1,6 @@
 /*
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', '
 	 * @class HTMLViewSerializer class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.32.9
+	 * @version 1.32.10
 	 * @alias sap.ui.core.util.serializer.HTMLViewSerializer
 	 * @experimental Since 1.15.1. The HTMLViewSerializer is still under construction, so some implementation details can be changed in future.
 	 */
@@ -35,20 +35,20 @@ sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', '
 			this._fnGetEventHandlerName = fnGetEventHandlerName;
 		}
 	});
-	
-	
+
+
 	/**
 	 * Serializes the given HTML view.
-	 * 
+	 *
 	 * @returns {string} the serialized HTML view.
 	 */
 	HTMLViewSerializer.prototype.serialize = function () {
-	
+
 		// a function to understand if to skip aggregations
 		var fnSkipAggregations = function (oControl) {
 			return (oControl instanceof this._oWindow.sap.ui.core.mvc.View);
 		};
-	
+
 		// create serializer
 		var oControlSerializer = new Serializer(
 			this._oView,
@@ -58,10 +58,10 @@ sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', '
 			true,
 			this._oWindow,
 			fnSkipAggregations);
-		
+
 		// run serializer
 		var sResult = oControlSerializer.serialize();
-		
+
 		// wrap result with the template tag
 		var sView = [];
 		sView.push('<template');
@@ -71,7 +71,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', '
 		sView.push(" >");
 		sView.push(sResult);
 		sView.push("</template>");
-		
+
 		// done
 		return vkbeautify.xml(sView.join(""));
 	};

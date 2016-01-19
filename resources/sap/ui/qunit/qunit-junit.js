@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -51,7 +51,7 @@
 			var $qunitDetails = jQuery('#qunit-header,#qunit-banner,qunit-userAgent,#qunit-testrunner-toolbar,#qunit-tests');
 			var $qunitFixture = jQuery("#qunit-fixture");
 			if ( $qunit.size() === 0 && $qunitDetails.size() > 0 ) {
-				// create a "qunit" section and place it before the existing detail DOM 
+				// create a "qunit" section and place it before the existing detail DOM
 				$qunit = jQuery("<div id='qunit'></div>").insertBefore($qunitDetails[0]);
 				// move the existing DOM into the wrapper
 				$qunit.append($qunitDetails);

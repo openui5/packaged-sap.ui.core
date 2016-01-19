@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -17,11 +17,11 @@ sap.ui.define(function() {
 
 	/**
 	 * Constructor for a batch response collecting component
-	 * 
+	 *
 	 * Simple Response Collection Component, collects the responses for each sub-request inside a bigger batch request
 	 * Also handles clean-up after all responses (either success or error) have been collected.
 	 * Instantiated in AnalyticalBinding.prototype._executeBatchRequest()
-	 * 
+	 *
 	 * @name sap.ui.model.analytics.v2.BatchResponseCollector
 	 * @constructor
 	 * @public
@@ -44,13 +44,13 @@ sap.ui.define(function() {
 
 	/**
 	 * Setup-Function to initialize/reset the BatchResponseCollector
-	 * 
+	 *
 	 * @function
 	 * @public
 	 * @param {object} [mParams] optional Setup-Parameter
 	 * @param {array} mParams.executedRequests an Array with detail informations for all executed batch sub-requests
 	 * @param {object} mParams.binding a reference to the AnalyticalBinding which started the batch request
-	 * @param {int} mParams.lastAnalyticalInfoVersion the analyticalInfo version at the time of the creation of this 
+	 * @param {int} mParams.lastAnalyticalInfoVersion the analyticalInfo version at the time of the creation of this
 	 * 			BatchResponseCollector instance, this may change during the process of a pending request. Typically changed
 	 * 			via a call to AnalyticalBinding#updateAnalyticalInfo.
 	 * @param {function} mParam.success a success handler function, which is called after all requests in mParams.executedRequests
@@ -71,7 +71,7 @@ sap.ui.define(function() {
 	/**
 	 * Convenience function to collect a success response.
 	 * Internally BatchResponseCollector#collect is called with second parameter BatchResponseCollector.TYPE_SUCCESS
-	 * 
+	 *
 	 * @function
 	 * @public
 	 * @name BatchResponseCollector#success
@@ -84,7 +84,7 @@ sap.ui.define(function() {
 	/**
 	 * Convenience function to collect an error response.
 	 * Internally BatchResponseCollector#collect is called, the second parameter is set to BatchResponseCollector.TYPE_ERROR
-	 * 
+	 *
 	 * @function
 	 * @public
 	 * @name BatchResponseCollector#error
@@ -98,7 +98,7 @@ sap.ui.define(function() {
 	 * Collects responses of type BatchResponseCollector.TYPE_SUCCESS and BatchResponseCollector. TYPE_ERROR
 	 * Keeps track of all collected responses and fires the necessary events after all responses for the
 	 * requests, given in the constructor, have returned.
-	 * 
+	 *
 	 * @function
 	 * @public
 	 * @name BatchResponseCollector#collect
