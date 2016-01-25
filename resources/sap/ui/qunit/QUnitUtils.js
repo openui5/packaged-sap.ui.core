@@ -18,7 +18,7 @@
  * The <code>sap.ui.test.qunit</code> namespace contains helper functionality for
  * QUnit tests.
  *
- * @version 1.28.26
+ * @version 1.28.27
  * @namespace
  * @name sap.ui.test.qunit
  * @public
@@ -129,9 +129,12 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 */
 	sap.ui.test.qunit.triggerEvent = function(sEventName, oTarget, oParams) {
 		var tmpEvent = jQuery.Event(sEventName);
+		tmpEvent.originalEvent = tmpEvent.originalEvent || {};
+
 		if (oParams) {
 			for (var x in oParams) {
 				tmpEvent[x] = oParams[x];
+				tmpEvent.originalEvent[x] = oParams[x];
 			}
 		}
 
