@@ -22,7 +22,7 @@ sap.ui.define([
 		 * @class This class represents the ControlTree plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 * @abstract
 		 * @extends sap.ui.base.Object
-		 * @version 1.34.2
+		 * @version 1.34.3
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.ControlTree
@@ -167,6 +167,8 @@ sap.ui.define([
 
 		ControlTree.prototype.renderContentAreas = function() {
 			var rm = sap.ui.getCore().createRenderManager();
+
+			rm.write('<div>You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.</div>');
 
 			rm.write('<div id="sapUiSupportControlTreeArea"><ul class="sapUiSupportControlTreeList"></ul></div>');
 

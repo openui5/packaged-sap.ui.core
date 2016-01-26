@@ -34,7 +34,9 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function (fnManagedObject) {
 		 */
 		isMatching : function (oControl) {
 			return true;
-		}
+		},
+
+		_sLogPrefix : "Opa5 matcher"
 	});
 
 }, /* bExport= */ true);

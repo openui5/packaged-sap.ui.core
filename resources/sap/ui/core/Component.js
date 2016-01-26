@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.34.2
+	 * @version 1.34.3
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -305,7 +305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			var oData = this._oManifest.getEntry(sKey);
 
 			// merge / extend should only be done for objects or when entry wasn't found
-			if (oData && !jQuery.isPlainObject(oData)) {
+			if (oData !== undefined && !jQuery.isPlainObject(oData)) {
 				return oData;
 			}
 

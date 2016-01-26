@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.34.2
+	 * @version 1.34.3
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -720,7 +720,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			}
 
 			//No rerendering
-			this.setProperty("busy", bBusy, true);
+			this.setProperty("busy", bBusy, /*bSuppressInvalidate*/ true);
 
 			if (bBusy) {
 				this.addDelegate(oBusyIndicatorDelegate, false, this);
@@ -782,7 +782,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
 		 */
 		Control.prototype.setBusyIndicatorDelay = function(iDelay) {
-			this.setProperty("busyIndicatorDelay", iDelay, true);
+			this.setProperty("busyIndicatorDelay", iDelay, /*bSuppressInvalidate*/ true);
 			return this;
 		};
 

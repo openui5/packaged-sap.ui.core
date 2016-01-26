@@ -4,18 +4,18 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function (jQuery, Ui5Object) {
+sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	"use strict";
 
 	/**
 	 * @class The Press action is used to simulate a press interaction on a control's dom ref.
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.test.actions.Action
 	 * @public
-	 * @alias sap.ui.test.actions.Press
+	 * @name sap.ui.test.actions.Press
 	 * @author SAP SE
 	 * @since 1.34
 	 */
-	return Ui5Object.extend("sap.ui.test.actions.Press", {
+	var Press = Action.extend("sap.ui.test.actions.Press", /** @lends sap.ui.test.actions.Press.prototype */ {
 
 		metadata : {
 			publicMethods : [ "executeOn" ]
@@ -28,20 +28,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function (jQuery, Ui5
 		 *
 		 * @param {sap.ui.core.Control} oControl the control on which the 'press' event is triggered
 		 * @public
-		 * @function
 		 */
 		executeOn : function (oControl) {
-			var $Control = oControl.$();
-			if ($Control.length) {
-				$Control.focus();
-				// trigger 'tap' which is translated
-				// internally into a 'press' event
-				jQuery.sap.log.debug("Pressed the control " + oControl, this);
-				$Control.trigger("tap");
+			var $FocusDomRef,
+				sAdapterDomRef = Press._controlAdapters[oControl.getMetadata().getName()];
+
+			if (sAdapterDomRef) {
+				$FocusDomRef = oControl.$(sAdapterDomRef);
 			} else {
-				jQuery.sap.log.error("Control has no dom representation", this);
+				$FocusDomRef = $(oControl.getFocusDomRef());
 			}
+
+			if ($FocusDomRef.length) {
+				$FocusDomRef.focus();
+				$.sap.log.debug("Pressed the control " + oControl, this._sLogPrefix);
+
+				// the missing events like saptouchstart and tap will be fired by the event simulation
+				this._triggerEvent("mousedown", $FocusDomRef);
+				this._getUtils().triggerEvent("selectstart", $FocusDomRef);
+				this._triggerEvent("mouseup", $FocusDomRef);
+				this._triggerEvent("click", $FocusDomRef);
+			} else {
+				$.sap.log.error("Control " + oControl + " has no dom representation", this._sLogPrefix);
+			}
+		},
+
+		_triggerEvent : function (sName, $FocusDomRef) {
+			var oFocusDomRef = $FocusDomRef[0],
+				x = $FocusDomRef.offset().x,
+				y = $FocusDomRef.offset().y;
+
+			// See file jquery.sap.events.js for some insights to the magic
+			var oMouseEventObject = {
+				identifier: 1,
+				// Well offset should be fine here
+				pageX: x,
+				pageY: y,
+				// ignore scrolled down stuff in OPA
+				clientX: x,
+				clientY: y,
+				// Assume stuff is over the whole screen
+				screenX: x,
+				screenY: y,
+				target: $FocusDomRef[0],
+				radiusX: 1,
+				radiusY: 1,
+				rotationAngle: 0,
+				// left mouse button
+				button: 0,
+				// include the type so jQuery.event.fixHooks can copy properties properly
+				type: sName
+			};
+			this._getUtils().triggerEvent(sName, oFocusDomRef, oMouseEventObject);
 		}
 	});
+
+	Press._controlAdapters = {
+		"sap.m.SearchField" : "search"
+	};
+
+	return Press;
 
 }, /* bExport= */ true);
