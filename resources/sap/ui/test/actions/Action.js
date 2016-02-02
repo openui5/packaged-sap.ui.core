@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['sap/ui/base/ManagedObject'], function (ManagedObject) {
+sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/qunit/QUnitUtils', 'sap/ui/test/Opa5'], function (ManagedObject, QUnitUtils, Opa5) {
 	"use strict";
 
 	/**
@@ -35,6 +35,9 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function (ManagedObject) {
 			return true;
 		},
 
+		_getUtils : function () {
+			return Opa5.getUtils() || QUnitUtils;
+		},
 		_sLogPrefix : "Opa5 actions"
 	});
 

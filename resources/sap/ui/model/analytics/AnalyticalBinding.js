@@ -417,7 +417,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (!this.bProvideTotalSize) {
 			jQuery.sap.log.fatal("total size of result explicitly turned off, but getter invoked");
 		}
-		return this.iTotalSize;
+		return +this.iTotalSize;
 	};
 
 	/**
@@ -1162,8 +1162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						if (sParentGroupId == null) { // root node is requested, so discard all not received responses, because the entire table must be set up from scratch
 							this._abortAllPendingRequests();
 						}
-
-						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
+						Promise.resolve().then(AnalyticalBinding.prototype._processRequestQueue.bind(this));
 					}
 				} else { // ! bUseBatchRequests
 					var oMemberRequestDetails;
@@ -1999,7 +1998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var aBatchQueryRequest = [], aExecutedRequestDetails = [];
 
 		function triggerDataReceived() {
-			that.fireDataReceived();
+			that.fireDataReceived({__simulateAsyncAnalyticalBinding: true});
 		}
 
 		// Batch Response Handling for ODataModel V2
@@ -2019,7 +2018,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 			if (oAnalyticalQueryRequest.getURIQueryOptionValue("$select") == null) {
 				// no dimensions and no measures requested, so create an artificial empty root context (synonym for the regular "/")
-				this.fireDataRequested(); // simulate the async behavior
+				this.fireDataRequested({__simulateAsyncAnalyticalBinding: true}); // simulate the async behavior
 
 				// perform all steps of fct fnSuccess (w/o calling it, b/c its argument is some data object and not a context
 				sGroupId = null;
@@ -2163,7 +2162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			var aBatchErrors;
 
 			// raise event here since there is no separate fnCompleted handler for batch requests
-			that.fireDataReceived();
+			that.fireDataReceived({data: oData});
 
 			//check for possible V1 errors
 			var oV1Errors = {};
@@ -2249,7 +2248,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		if (oAnalyticalQueryRequest.getURIQueryOptionValue("$select") == null) {
 			// no dimensions and no measures requested, so create an artificial empty root context (synonym for the regular "/")
-			this.fireDataRequested(); // simulate the async behavior
+			this.fireDataRequested({__simulateAsyncAnalyticalBinding: true}); // simulate the async behavior
 
 			// perform all steps of fct fnSuccess (w/o calling it, b/c its argument is some data object and not a context
 			sGroupId = null;
@@ -2260,7 +2259,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// simulate the async behavior for the root context in case of having no sums (TODO: reconsider!)
 			setTimeout(function() {
 				if (that._cleanupGroupingForCompletedRequest(oRequestDetails.sRequestId)) {
-					that.fireDataReceived();
+					that.fireDataReceived({__simulateAsyncAnalyticalBinding: true});
 				}
 			});
 			this.bArtificalRootContext = true;
@@ -2324,17 +2323,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// the correct moment to clean up is after the success handler
 			// the error handler takes care of this itself
 			if (that.iModelVersion === AnalyticalVersionInfo.V2) {
-				fnCompleted();
+				fnCompleted(oData);
 			}
 		}
 
-		function fnCompleted() {
+		function fnCompleted(oData) {
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
 				// discard responses for outdated analytical infos
 				return;
 			}
 			if (that._cleanupGroupingForCompletedRequest(oRequestDetails.sRequestId)) {
-				that.fireDataReceived();
+				that.fireDataReceived({data: oData});
 			}
 		}
 
@@ -2600,7 +2599,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (this.bReloadSingleUnitMeasures && aReloadMeasuresRequestDetails.length > 0) {
 			if (this.bUseBatchRequests) {
 				this.aBatchRequestQueue.push([AnalyticalBinding._requestType.reloadMeasuresQuery, aReloadMeasuresRequestDetails]);
-				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
+				Promise.resolve().then(AnalyticalBinding.prototype._processRequestQueue.bind(this));
 			} else {
 				for (var q = 0; q < aReloadMeasuresRequestDetails.length; q++){
 					var oReloadMeasuresRequestDetails2 = aReloadMeasuresRequestDetails[q];
