@@ -407,13 +407,20 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
   -webkit-font-smoothing: antialiased;
 }
 .sapUiLocalBusyIndicator {
-  display: block;
   background-color: rgba(255, 255, 255, 0.72);
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+  -ms-transition: opacity 0.3s ease-in;
+  -moz-transition: opacity 0.3s ease-in;
+  -webkit-transition: opacity 0.3s ease-in;
+}
+.sapUiLocalBusyIndicatorFade {
+  opacity: 1;
 }
 /* Make sure busy indicators are not "nested", and the animations do not overlay each other */
 .sapUiLocalBusy .sapUiLocalBusy .sapUiLocalBusyIndicator {

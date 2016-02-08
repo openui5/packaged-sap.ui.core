@@ -10826,7 +10826,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.34.3
+ * @version 1.34.4
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10852,7 +10852,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.34.3";
+		var apiVersion = "1.34.4";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10910,7 +10910,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.34.3";
+		var v = "1.34.4";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15728,6 +15728,13 @@ return URI;
 		return;
 	}
 
+	// the Promise behaves wrong in MS Edge - therefore we rely on the Promise
+	// polyfill for the MS Edge which works properly (@see jQuery.sap.promise)
+	// Related to MS Edge issue: https://connect.microsoft.com/IE/feedback/details/1658365
+	if (sap.ui.Device.browser.edge) {
+		window.Promise = undefined;
+	}
+
 	// Enable promise polyfill if native promise is not available
 	if (!window.Promise) {
 		ES6Promise.polyfill();
@@ -15782,7 +15789,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.3
+	 * @version 1.34.4
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -16230,7 +16237,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.34.3
+	 * @version 1.34.4
 	 * @namespace
 	 * @public
 	 * @static
@@ -17000,7 +17007,7 @@ return URI;
 
 				// create timeline entries if available
 				/*eslint-disable no-console */
-				if (window.console && console.time) {
+				if (jQuery.sap.log.getLevel("sap.ui.Performance") >= 4 && window.console && console.time) {
 					console.time(sInfo + " - " + sId);
 				}
 				/*eslint-enable no-console */
@@ -17130,7 +17137,7 @@ return URI;
 				if (oMeasurement) {
 					// end timeline entry
 					/*eslint-disable no-console */
-					if (window.console && console.timeEnd) {
+					if (jQuery.sap.log.getLevel("sap.ui.Performance") >= 4 && window.console && console.timeEnd) {
 						console.timeEnd(oMeasurement.info + " - " + sId);
 					}
 					/*eslint-enable no-console */
@@ -17421,7 +17428,7 @@ return URI;
 
 			/**
 			 * Clears all interaction measurements
-			 * @name jQuery.sap.measure#getLastInteractionMeasurement
+			 * @name jQuery.sap.measure#clearInteractionMeasurements
 			 * @function
 			 * @public
 			 * @since 1.34.0

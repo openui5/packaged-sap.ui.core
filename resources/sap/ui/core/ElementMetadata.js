@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 *
 	 * @class
 	 * @author SAP SE
-	 * @version 1.34.3
+	 * @version 1.34.4
 	 * @since 0.8.6
 	 * @alias sap.ui.core.ElementMetadata
 	 */
