@@ -3,16 +3,6 @@
  * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-
-/**
- * sap.ui.model.TreeBindingUtils Utility Class
- *
- * @namespace
- * @name sap.ui.model
- * @public
- */
-
-// Provides class sap.ui.model.odata.ODataUtils
 sap.ui.define(function() {
 	"use strict";
 
@@ -31,6 +21,7 @@ sap.ui.define(function() {
 	 * @param {object[]} aSections the sections into which oNewSection will be merged
 	 * @param {objec} oNewSection the section which should be merged into aNewSections
 	 * @return {object[]} a new array containing all sections from aSections merged with oNewSection
+	 * @public
 	 */
 	TreeBindingUtils.mergeSections = function (aSections, oNewSection) {
 		// Iterate over all known/loaded sections of the node

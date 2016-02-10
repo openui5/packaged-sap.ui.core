@@ -217,7 +217,7 @@ sap.ui.define(['jquery.sap.global',
 
 				delete that.mRequestHandles[sRequestKey];
 
-				that.fireDataReceived();
+				that.fireDataReceived({data: oData});
 			},
 			error: function (oError) {
 				//Only perform error handling if the request was not aborted intentionally
@@ -908,7 +908,7 @@ sap.ui.define(['jquery.sap.global',
 			delete that.mRequestHandles[sRequestKey];
 			that.bNeedsUpdate = true;
 
-			that.fireDataReceived();
+			that.fireDataReceived({data: oData});
 		}
 
 		function fnError(oError) {
@@ -1051,7 +1051,7 @@ sap.ui.define(['jquery.sap.global',
 				that._applySort();
 			}
 
-			that.fireDataReceived();
+			that.fireDataReceived({data: oData});
 		};
 
 		var fnError = function (oError) {
