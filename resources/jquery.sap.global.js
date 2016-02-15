@@ -35,6 +35,13 @@
 		return;
 	}
 
+	// the Promise behaves wrong in MS Edge - therefore we rely on the Promise
+	// polyfill for the MS Edge which works properly (@see jQuery.sap.promise)
+	// Related to MS Edge issue: https://connect.microsoft.com/IE/feedback/details/1658365
+	if (sap.ui.Device.browser.edge) {
+		window.Promise = undefined;
+	}
+
 	// Enable promise polyfill if native promise is not available
 	if (!window.Promise) {
 		ES6Promise.polyfill();
@@ -89,7 +96,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -537,7 +544,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 * @namespace
 	 * @public
 	 * @static
@@ -1304,7 +1311,7 @@
 
 				// create timeline entries if available
 				/*eslint-disable no-console */
-				if (window.console && console.time) {
+				if (jQuery.sap.log.getLevel("sap.ui.Performance") >= 4 && window.console && console.time) {
 					console.time(sInfo + " - " + sId);
 				}
 				/*eslint-enable no-console */
@@ -1434,7 +1441,7 @@
 				if (oMeasurement) {
 					// end timeline entry
 					/*eslint-disable no-console */
-					if (window.console && console.timeEnd) {
+					if (jQuery.sap.log.getLevel("sap.ui.Performance") >= 4 && window.console && console.timeEnd) {
 						console.timeEnd(oMeasurement.info + " - " + sId);
 					}
 					/*eslint-enable no-console */
@@ -1701,14 +1708,45 @@
 
 			/**
 			 * Gets all interaction measurements
+			 * @param {boolean} bFinalize finalize the current pending interaction so that it is contained in the returned array
 			 * @return {object[]} all interaction measurements
 			 * @name jQuery.sap.measure#getAllInteractionMeasurements
 			 * @function
 			 * @public
 			 * @since 1.34.0
 			 */
-			this.getAllInteractionMeasurements = function() {
+			this.getAllInteractionMeasurements = function(bFinalize) {
+				if (bFinalize) {
+					// force the finalization of the currently pending interaction
+					jQuery.sap.measure.endInteraction(true);
+				}
 				return aInteractions;
+			};
+
+			/**
+			 * Gets all interaction measurements for which a provided filter function returns a truthy value.
+			 * To filter for certain categories of measurements a fnFilter can be implemented like this
+			 * <code>
+			 * function(oInteractionMeasurement) {
+			 *     return oInteractionMeasurement.duration > 0
+			 * }</code>
+			 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
+			 * @return {object[]} all interaction measurements passing the filter function successfully
+			 * @name jQuery.sap.measure#filterInteractionMeasurements
+			 * @function
+			 * @public
+			 * @since 1.36.2
+			 */
+			this.filterInteractionMeasurements = function(fnFilter) {
+				var aFilteredInteractions = [];
+				if (fnFilter) {
+					for (var i = 0, l = aInteractions.length; i < l; i++) {
+						if (fnFilter(aInteractions[i])) {
+							aFilteredInteractions.push(aInteractions[i]);
+						}
+					}
+				}
+				return aFilteredInteractions;
 			};
 
 			/**
@@ -1738,7 +1776,12 @@
 				if (oPendingInteraction) {
 					oPendingInteraction.end = iTime;
 					oPendingInteraction.duration = oPendingInteraction.processing;
-					oPendingInteraction.requests = jQuery.sap.measure.getRequestTimings();
+					jQuery.sap.measure.getRequestTimings().forEach(function(oTiming) {
+						// only add related requests to this interaction, none which are made during another or in between other interactions
+						if (oPendingInteraction.start <= oTiming.startTime || oPendingInteraction.event === "startup") {
+							oPendingInteraction.requests.push(oTiming);
+						}
+					});
 					oPendingInteraction.measurements = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 						return (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) ? oMeasurement : null;
 					}, true);
@@ -1779,7 +1822,7 @@
 						oPendingInteraction.processing = iProcessing > 0 ? iProcessing : 0;
 					}
 					aInteractions.push(oPendingInteraction);
-					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length);
+					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "jQuery.sap.measure");
 					oPendingInteraction = null;
 				}
 			}
@@ -1797,7 +1840,8 @@
 			 */
 			this.startInteraction = function(sType, oSrcElement) {
 				// component determination - heuristic
-				function identifyOwnerComponent(oSrcElement) {
+				function createOwnerComponentInfo(oSrcElement) {
+					var sId, sVersion;
 					if (oSrcElement) {
 						var Component, oComponent;
 						Component = sap.ui.require("sap/ui/core/Component");
@@ -1807,12 +1851,16 @@
 								oComponent = oComponent || oSrcElement;
 								var oApp = oComponent.getManifestEntry("sap.app");
 								// get app id or module name for FESR
-								return oApp && oApp.id || oComponent.getMetadata().getName();
+								sId = oApp && oApp.id || oComponent.getMetadata().getName();
+								sVersion = oApp && oApp.applicationVersion && oApp.applicationVersion.version;
 							}
 							oSrcElement = oSrcElement.getParent();
 						}
 					}
-					return "undetermined";
+					return {
+						id: sId ? sId : "undetermined",
+						version: sVersion ? sVersion : ""
+					};
 				}
 
 				var iTime = jQuery.sap.now();
@@ -1824,11 +1872,14 @@
 				// clear request timings for new interaction
 				this.clearRequestTimings();
 
+				var oComponentInfo = createOwnerComponentInfo(oSrcElement);
+
 				// setup new pending interaction
 				oPendingInteraction = {
 					event: sType, // event which triggered interaction
 					trigger: oSrcElement && oSrcElement.getId ? oSrcElement.getId() : "undetermined", // control which triggered interaction
-					component: identifyOwnerComponent(oSrcElement), // component or app identifier
+					component: oComponentInfo.id, // component or app identifier
+					appVersion: oComponentInfo.version, // application version as from app descriptor
 					start : iTime, // interaction start
 					end: 0, // interaction end
 					navigation: 0, // sum over all navigation times
@@ -1844,7 +1895,7 @@
 					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
 					requestCompression: undefined // true if all responses have been sent gzipped
 				};
-				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event);
+				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "jQuery.sap.measure");
 			};
 
 			/**

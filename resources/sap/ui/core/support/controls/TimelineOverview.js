@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		TimelineOverview.prototype.renderInteractionStep = function (rm, step, index) {
 			// 100% is the whole height, but need to keep space for time labels
-			var MAX_ALLOWED_HEIGHT_IN_PERC = 85,
+			var MAX_ALLOWED_HEIGHT_IN_PERC = 69,
 				stepDurationInPercent = Math.ceil((step.totalDuration / this.maxDuration) * MAX_ALLOWED_HEIGHT_IN_PERC);
 
 
@@ -104,14 +104,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 			rm.write('</div>');
 			rm.write('</div>');
-			var sClassNameSeparator = (index % 10 === 0 && index !== 0) ? "sapUiInteractionTimelineStepRightBold" :
+			var intIndex = index + 1;
+			var sClassNameSeparator = (intIndex % 10 === 0 ) ? "sapUiInteractionTimelineStepRightBold" :
 				"sapUiInteractionTimelineStepRight";
 
-			if (index % 2 === 0) {
+			if (intIndex % 2 === 0 ) {
 				rm.write('<div class="' + sClassNameSeparator + '"></div>');
 			}
 
-			if (index % 10 === 0 && index !== 0) {
+			if (intIndex % 10 === 0 && intIndex !== this.stepCount) {
 				rm.write('<div class="sapUiInteractionTimelineTimeLbl">' + Math.round((index * this.timeRange /
 						this.stepCount) / 10 ) / 100 + 's</div>');
 			}

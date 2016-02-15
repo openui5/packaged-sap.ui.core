@@ -61,7 +61,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 *
 	 * @constructor
 	 * @public
@@ -2427,7 +2427,7 @@ sap.ui.define([
 				for (var i = 0; i < aChangeSet.length; i++) {
 					var oRequest = aChangeSet[i].request,
 						sKey = oRequest.requestUri.split('?')[0];
-					if (oRequest.method === "POST") {
+					if (oRequest.method === "POST" || oRequest.method === "DELETE") {
 						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
 						if (oEntityMetadata) {
 							mEntityTypes[oEntityMetadata.entityType] = true;
@@ -3429,20 +3429,18 @@ sap.ui.define([
 				}
 			}
 			if (oFunctionMetadata.parameter != null) {
-				//jQuery.each(mUrlParams, function (sParameterName, oParameterValue) {
 				jQuery.each(oFunctionMetadata.parameter, function (iIndex, oParam) {
 					oData[oParam.name] = that._createPropertyValue(oParam.type);
 					if (mUrlParams && mUrlParams[oParam.name] !== undefined) {
 						oData[oParam.name] = mUrlParams[oParam.name];
 						mInputParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
-						delete mUrlParams[oParam.name];
 					}
 				});
-				if (!jQuery.isEmptyObject(mUrlParams)) {
-					jQuery.each(mUrlParams, function (sParameterName) {
+				jQuery.each(mUrlParams, function (sParameterName) {
+					if (mInputParams[sParameterName] === undefined) {
 						jQuery.sap.log.warning(that + " - Parameter '" + sParameterName + "' is not defined for function call '" + sFunctionName + "'!");
-					});
-				}
+					}
+				});
 			}
 			// add entry to model data
 			// remove starting / for key only

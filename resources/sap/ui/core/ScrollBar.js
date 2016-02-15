@@ -5,8 +5,8 @@
  */
 
 // Provides control sap.ui.core.ScrollBar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
-	function(jQuery, Device, Control, library) {
+sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'jquery.sap.script', 'jquery.sap.trace'],
+	function(jQuery, Device, Control, library /*, jQuery*/) {
 	"use strict";
 
 
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
 	 * The ScrollBar control can be used for virtual scrolling of a certain area.
 	 * This means: to simulate a very large scrollable area when technically the area is small and the control takes care of displaying the respective part only. E.g. a Table control can take care of only rendering the currently visible rows and use this ScrollBar control to make the user think he actually scrolls through a long list.
 	 * @extends sap.ui.core.Control
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 *
 	 * @constructor
 	 * @public
@@ -719,6 +719,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
 		this._iOldScrollPos = iScrollPos;
 		this._bMouseWheel = false;
 
+		// notify for a scroll event
+		jQuery.sap.interaction.notifyScrollEvent({type: eAction});
 	};
 
 	ScrollBar.prototype.onThemeChanged = function() {

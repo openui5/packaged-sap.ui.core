@@ -217,7 +217,7 @@ sap.ui.define(['jquery.sap.global',
 
 				delete that.mRequestHandles[sRequestKey];
 
-				that.fireDataReceived();
+				that.fireDataReceived({data: oData});
 			},
 			error: function (oError) {
 				//Only perform error handling if the request was not aborted intentionally
@@ -908,7 +908,7 @@ sap.ui.define(['jquery.sap.global',
 			delete that.mRequestHandles[sRequestKey];
 			that.bNeedsUpdate = true;
 
-			that.fireDataReceived();
+			that.fireDataReceived({data: oData});
 		}
 
 		function fnError(oError) {
@@ -1051,7 +1051,7 @@ sap.ui.define(['jquery.sap.global',
 				that._applySort();
 			}
 
-			that.fireDataReceived();
+			that.fireDataReceived({data: oData});
 		};
 
 		var fnError = function (oError) {
@@ -1718,12 +1718,14 @@ sap.ui.define(['jquery.sap.global',
 		}
 	};
 
-	/**
-	 * Builds a download URL
-	 * TODO: Make this public as soon as the download URL feature is implemented correctly
-	 * @param {string} sFormat The format for the result data, when accessing the Download-URL
+  /**
+	 * Get a download URL with the specified format considering the
+	 * sort/filter/custom parameters.
 	 *
-	 * @private
+	 * @param {string} sFormat Value for the $format Parameter
+	 * @return {string} URL which can be used for downloading
+	 * @since 1.28
+	 * @public
 	 */
 	ODataTreeBinding.prototype.getDownloadUrl = function(sFormat) {
 		var aParams = [],

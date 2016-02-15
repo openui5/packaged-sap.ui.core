@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.36.1
+		 * @version 1.36.2
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
@@ -837,6 +837,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 					fScrollTop = $Container.scrollTop(),
 					fVerticalMove = fScrollTop - this._scrollY;
 
+				jQuery.sap.interaction.notifyStepStart(this._oControl);
+
 				// Prevent false tap event during momentum scroll in IOS
 				if (this._oIOSScroll && this._oIOSScroll.bMomentum) {
 					var dY = Math.abs(fVerticalMove);
@@ -996,6 +998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 			},
 
 			_onEnd : function(oEvent){
+				jQuery.sap.interaction.notifyEventStart(oEvent);
 				if (this._oIOSScroll && this._oIOSScroll.bMomentum) {
 					this._oIOSScroll.iTimeStamp = oEvent.timeStamp;
 				}

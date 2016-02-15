@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -1097,6 +1097,27 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 */
 	Element.prototype.getElementBinding = function(sModelName){
 		return this.getObjectBinding(sModelName);
+	};
+
+	/*
+	 * If Control has no FieldGroupIds use the one of the parents.
+	 */
+	Element.prototype._getFieldGroupIds = function() {
+
+		var aFieldGroupIds;
+		if (this.getMetadata().hasProperty("fieldGroupIds")) {
+			aFieldGroupIds = this.getFieldGroupIds();
+		}
+
+		if (!aFieldGroupIds || aFieldGroupIds.length == 0) {
+			var oParent = this.getParent();
+			if (oParent && oParent._getFieldGroupIds) {
+				return oParent._getFieldGroupIds();
+			}
+		}
+
+		return aFieldGroupIds;
+
 	};
 
 	return Element;

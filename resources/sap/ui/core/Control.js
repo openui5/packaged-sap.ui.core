@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -850,7 +850,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				}
 				return this.checkFieldGroupIds(vFieldGroupIds.split(","));
 			}
-			var aFieldGroups = this.getFieldGroupIds();
+			var aFieldGroups = this._getFieldGroupIds();
 			if (jQuery.isArray(vFieldGroupIds)) {
 				var iFound = 0;
 				for (var i = 0; i < vFieldGroupIds.length; i++) {

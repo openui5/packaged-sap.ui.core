@@ -18,7 +18,7 @@
  * sap.ui.lazyRequire("sap.ui.core.Control");
  * sap.ui.lazyRequire("sap.ui.commons.Button");
  *
- * @version 1.36.1
+ * @version 1.36.2
  * @author  Martin Schaus, Daniel Brinkmann
  * @public
  */
@@ -26,7 +26,7 @@
 /*global OpenAjax */// declare unusual global vars for JSLint/SAPUI5 validation
 
 // Register to the OpenAjax Hub if it exists
-sap.ui.define(['jquery.sap.global', 'jquery.sap.trace', 'jquery.sap.dom'],
+sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	function(jQuery/* , jQuerySap */) {
 	"use strict";
 
@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.trace', 'jquery.sap.dom'],
 	 * The <code>sap</code> namespace is automatically registered with the
 	 * OpenAjax hub if it exists.
 	 *
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 * @namespace
 	 * @public
 	 * @name sap
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.trace', 'jquery.sap.dom'],
 	 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
 	 * point for UI related JavaScript functionality provided by SAP.
 	 *
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 * @namespace
 	 * @name sap.ui
 	 * @public
@@ -66,8 +66,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.trace', 'jquery.sap.dom'],
 			 * The version of the SAP UI Library
 			 * @type string
 			 */
-			version: "1.36.1",
-			buildinfo : { lastchange : "1d2fcb3f4d3d5707d1e1a812620368e08ca67cc1", buildtime : "20160202125633" }
+			version: "1.36.2",
+			buildinfo : { lastchange : "073b39ada55c8e01578b9acffbc83601f9fa222b", buildtime : "20160215123220" }
 		});
 
 	/**

@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.36.1
+		 * @version 1.36.2
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.TechInfo
@@ -112,10 +112,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 				buffer.push("</div>");
 			});
 
-			line(html, true, true, "SAP-statistics for oData calls", function(buffer){
-				buffer.push((oData.statistics ? "ON" : "OFF"), "<a href='javascript:void(0);' id='", that.getId(), "-tggleStatistics' class='sapUiSupportLink'>Toggle</a>");
-			});
-
 			html.push("</table></div>");
 			this.$().html(html.join(""));
 
@@ -131,9 +127,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 				this.select();
 			});
 
-			this.$("tggleStatistics").bind("click", function(){
-				sap.ui.core.support.Support.getStub().sendEvent(that.getId() + "ToggleStatistics", {});
-			});
 
 			this.$("startE2ETrace").bind("click", function() {
 				if (!that.e2eTraceStarted) {

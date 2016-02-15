@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.36.1
+	 * @version 1.36.2
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -663,7 +663,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		}
 	};
 
-	var rEvents = /^(mousedown|mouseup|click|keydown|keyup|keypress|touchstart|touchend|tap|mousewheel|scroll)$/;
+	var rEvents = /^(mousedown|mouseup|click|keydown|keyup|keypress|touchstart|touchend|tap)$/;
 
 	/**
 	 * Handles all incoming DOM events centrally and dispatches the event to the
@@ -676,11 +676,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		var oElement = null,
 			bInteractionRelevant;
 
-		// notify interaction tracing for relevant event
-		bInteractionRelevant = oEvent.type.match(rEvents);
-		if (bInteractionRelevant) {
-			jQuery.sap.interaction.notifyEventStart(oEvent);
-		}
 
 		// TODO: this should be the 'lowest' SAPUI5 Control of this very
 		// UIArea instance's scope -> nesting scenario
@@ -726,6 +721,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		// as control event afterwards!
 		if (this.bLocked || this.oCore.isLocked()) {
 			return;
+		}
+
+		// notify interaction tracing for relevant event - it is important to have evaluated all the previous switches
+		// in case the method would return before dispatching the event, we should not notify an event start
+		if (jQuery.sap.interaction.getActive()) {
+			bInteractionRelevant = oEvent.type.match(rEvents);
+			if (bInteractionRelevant) {
+				jQuery.sap.interaction.notifyEventStart(oEvent);
+			}
 		}
 
 		// retrieve the pseudo event types
@@ -957,7 +961,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				jQuery.sap.clearDelayedCall(UIArea._iFieldGroupTriggerDelay);
 			}
 			var oCurrentControl = this.getFieldGroupControl(),
-				aCurrentGroupIds = (oCurrentControl ? oCurrentControl.getFieldGroupIds() : []);
+				aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []);
 			if (aCurrentGroupIds.length > 0) {
 				oCurrentControl.triggerValidateFieldGroup(aCurrentGroupIds);
 			}
@@ -1001,8 +1005,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					return oElement instanceof sap.ui.core.Control;
 				});
 			}
-			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl.getFieldGroupIds() : []),
-				aNewGroupIds = (oControl ? oControl.getFieldGroupIds() : []),
+			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []),
+				aNewGroupIds = (oControl ? oControl._getFieldGroupIds() : []),
 				aTargetFieldGroupIds = [];
 			for (var i = 0; i < aCurrentGroupIds.length; i++) {
 				var sCurrentGroupId = aCurrentGroupIds[i];
