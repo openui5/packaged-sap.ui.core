@@ -239,7 +239,7 @@
     "sapUiUx3ToolPopupInverted": "false",
     "sapUiUx3ToolPopupArrowWidth": "12px",
     "sapUiUx3ToolPopupArrowHeight": "18px",
-    "sapUiUx3ToolPopupArrowRightMarginCorrection": "11px",
+    "sapUiUx3ToolPopupArrowRightMarginCorrection": "-2px",
     "sapUiUx3ToolPopupArrowRightMarginCorrectionInverted": "-7px",
     "sapUiUx3TPPaddingBottom": "50px",
     "sapUiButtonActiveBorderColor": "#ffffff",

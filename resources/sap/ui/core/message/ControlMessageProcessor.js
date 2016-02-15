@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.32.11
+	 * @version 1.32.12
 	 *
 	 * @constructor
 	 * @public
