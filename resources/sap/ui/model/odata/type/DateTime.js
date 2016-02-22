@@ -57,7 +57,7 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 * @extends sap.ui.model.odata.type.DateTimeBase
 	 *
 	 * @author SAP SE
-	 * @version 1.28.28
+	 * @version 1.28.29
 	 *
 	 * @alias sap.ui.model.odata.type.DateTime
 	 * @param {object} [oFormatOptions]

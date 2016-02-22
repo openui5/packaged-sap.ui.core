@@ -27,7 +27,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @class Control Tree used for the Debug Environment
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.28.28
+	 * @version 1.28.29
 	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
