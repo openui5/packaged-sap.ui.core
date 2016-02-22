@@ -62,7 +62,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.6
+	 * @version 1.34.7
 	 *
 	 * @constructor
 	 * @public
@@ -2424,7 +2424,7 @@ sap.ui.define([
 				for (var i = 0; i < aChangeSet.length; i++) {
 					var oRequest = aChangeSet[i].request,
 						sKey = oRequest.requestUri.split('?')[0];
-					if (oRequest.method === "POST") {
+					if (oRequest.method === "POST" || oRequest.method === "DELETE") {
 						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
 						if (oEntityMetadata) {
 							mEntityTypes[oEntityMetadata.entityType] = true;
@@ -2582,7 +2582,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
-		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
+		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts,
 		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
@@ -2607,6 +2607,8 @@ sap.ui.define([
 				info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
 			return false;
 		}
+
+		// broken implementations need this
 		if (oResultData && oResultData.results && !jQuery.isArray(oResultData.results)) {
 			oResultData = oResultData.results;
 		}
@@ -2614,8 +2616,8 @@ sap.ui.define([
 		// adding the result data to the data object
 		if (oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
 			//need a deep data copy for import
-			oResultData = jQuery.sap.extend(true, {}, oResultData);
-			that._importData(oResultData, mLocalGetEntities);
+			oImportData = jQuery.sap.extend(true, {}, oResultData);
+			that._importData(oImportData, mLocalGetEntities);
 		}
 
 		if (mLocalGetEntities && this.oData[oRequest.key] && this.oData[oRequest.key].__metadata.created && this.oData[oRequest.key].__metadata.created.functionImport) {
@@ -2681,7 +2683,7 @@ sap.ui.define([
 		this._updateETag(oRequest, oResponse);
 
 		if (fnSuccess) {
-			fnSuccess(oResponse.data, oResponse);
+			fnSuccess(oResultData, oResponse);
 		}
 
 		var oEventInfo = this._createEventInfo(oRequest, oResponse);
@@ -3426,20 +3428,18 @@ sap.ui.define([
 				}
 			}
 			if (oFunctionMetadata.parameter != null) {
-				//jQuery.each(mUrlParams, function (sParameterName, oParameterValue) {
 				jQuery.each(oFunctionMetadata.parameter, function (iIndex, oParam) {
 					oData[oParam.name] = that._createPropertyValue(oParam.type);
 					if (mUrlParams && mUrlParams[oParam.name] !== undefined) {
 						oData[oParam.name] = mUrlParams[oParam.name];
 						mInputParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
-						delete mUrlParams[oParam.name];
 					}
 				});
-				if (!jQuery.isEmptyObject(mUrlParams)) {
-					jQuery.each(mUrlParams, function (sParameterName) {
+				jQuery.each(mUrlParams, function (sParameterName) {
+					if (mInputParams[sParameterName] === undefined) {
 						jQuery.sap.log.warning(that + " - Parameter '" + sParameterName + "' is not defined for function call '" + sFunctionName + "'!");
-					});
-				}
+					}
+				});
 			}
 			// add entry to model data
 			// remove starting / for key only
