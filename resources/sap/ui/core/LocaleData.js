@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.36.2
+	 * @version 1.36.3
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.LocaleData
@@ -536,6 +536,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 */
 		getCurrencyPattern : function(sContext) {
 			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
+		},
+
+		getCurrencySpacing : function(sPosition) {
+			return this._get("currencyFormat", "currencySpacing", sPosition === "after" ? "afterCurrency" : "beforeCurrency");
 		},
 
 		/**

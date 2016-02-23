@@ -32,7 +32,7 @@
 			 *        feature - DO NOT USE IN PRODUCTIVE SCENARIOS!!
 			 *
 			 * @author Peter Muessig
-			 * @version 1.36.2
+			 * @version 1.36.3
 			 * @private
 			 * @alias sap.ui.core.plugin.LessSupport
 			 */
