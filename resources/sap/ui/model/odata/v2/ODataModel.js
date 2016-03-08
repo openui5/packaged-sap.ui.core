@@ -61,7 +61,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.36.3
+	 * @version 1.36.4
 	 *
 	 * @constructor
 	 * @public
@@ -1302,7 +1302,6 @@ sap.ui.define([
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-				oBinding.checkDataState(bForceUpdate);
 			}
 		}.bind(this));
 		//handle calls after update
@@ -1319,10 +1318,12 @@ sap.ui.define([
 	 * @param {boolean} bForceUpdate force update of controls
 	 * @private
 	 */
-	ODataModel.prototype.checkDataState = function(bForceUpdate) {
+	ODataModel.prototype.checkDataState = function(mLaunderingState) {
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkDataState(bForceUpdate);
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState(mLaunderingState);
+			}
 		});
 	};
 
@@ -2136,6 +2137,16 @@ sap.ui.define([
 			mEntityTypes = {};
 
 		var handleSuccess = function(oData, oResponse) {
+			// If there is a 200 response which does not contain valid data, this should be treated as an error.
+			// This may happen in case of SAML session expiration.
+			if (oData === undefined && oResponse.statusCode === 200) {
+				handleError({
+					message: "Response did not contain a valid OData result",
+					response: oResponse
+				});
+				return;
+			}
+
 			var fnSingleSuccess = function(oData, oResponse) {
 				if (fnSuccess) {
 					fnSuccess(oData, oResponse);
@@ -2176,6 +2187,16 @@ sap.ui.define([
 		var that = this;
 
 		var handleSuccess = function(oData, oBatchResponse) {
+			// If there is a 200 response which does not contain valid data, this should be treated as an error.
+			// This may happen in case of SAML session expiration.
+			if (oData === undefined && oBatchResponse.statusCode === 200) {
+				handleError({
+					message: "Response did not contain a valid OData batch result",
+					response: oBatchResponse
+				});
+				return;
+			}
+
 			var oResponse, oRequestObject, aChangeResponses,
 				aBatchResponses = oData.__batchResponses,
 				oEventInfo,
@@ -2551,7 +2572,7 @@ sap.ui.define([
 				}
 			});
 		}
-		this.checkDataState();
+		this.checkDataState(this.mLaunderingState);
 		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
 

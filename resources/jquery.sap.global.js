@@ -96,7 +96,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.36.3
+	 * @version 1.36.4
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -544,7 +544,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.36.3
+	 * @version 1.36.4
 	 * @namespace
 	 * @public
 	 * @static
@@ -1776,12 +1776,7 @@
 				if (oPendingInteraction) {
 					oPendingInteraction.end = iTime;
 					oPendingInteraction.duration = oPendingInteraction.processing;
-					jQuery.sap.measure.getRequestTimings().forEach(function(oTiming) {
-						// only add related requests to this interaction, none which are made during another or in between other interactions
-						if (oPendingInteraction.start <= oTiming.startTime || oPendingInteraction.event === "startup") {
-							oPendingInteraction.requests.push(oTiming);
-						}
-					});
+					oPendingInteraction.requests = jQuery.sap.measure.getRequestTimings();
 					oPendingInteraction.measurements = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 						return (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) ? oMeasurement : null;
 					}, true);
@@ -1893,7 +1888,8 @@
 					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
 					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
 					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
-					requestCompression: undefined // true if all responses have been sent gzipped
+					requestCompression: undefined, // true if all responses have been sent gzipped
+					busyDuration : 0 // summed GlobalBusyIndicator duration during this interaction
 				};
 				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "jQuery.sap.measure");
 			};

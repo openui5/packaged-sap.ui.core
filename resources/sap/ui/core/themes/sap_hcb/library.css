@@ -424,6 +424,10 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
   -moz-transition: opacity 0.3s ease-in;
   -webkit-transition: opacity 0.3s ease-in;
 }
+/* Make sure busy indicators are not "nested", and the animations do not overlay each other */
+.sapUiLocalBusy .sapUiLocalBusy .sapUiLocalBusyIndicator {
+  display: none;
+}
 .sapUiLocalBusyIndicatorFade {
   opacity: 1;
 }
