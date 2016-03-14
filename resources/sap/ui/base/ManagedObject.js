@@ -172,7 +172,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.32.12
+	 * @version 1.32.13
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -3206,6 +3206,14 @@ sap.ui.define([
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+				// Remove the validation controlMessages for this Binding from the MessageManager so they will not be propagated again
+				var oDataState = oBindingInfo.binding.getDataState();
+				sap.ui.getCore().getMessageManager().removeMessages(oDataState.getControlMessages(), true);
+				// Also tell the Control that the messages have been removed (if any)
+				if (this.refreshDataState) {
+					this.refreshDataState(sName, oDataState);
+				}
+
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				if (oBindingInfo.modelRefreshHandler) { // only list bindings currently have a refresh handler attached
 					oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);

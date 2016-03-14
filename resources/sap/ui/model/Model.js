@@ -18,7 +18,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * A model implementation should specify its supported binding modes and set the default binding mode accordingly
 	 * (e.g. if the model supports only one way binding the default binding mode should also be set to one way).
 	 *
-	 * This MessageProcessor is able to handle Messages with the normal binding syntax as target.
 	 *
 	 * @namespace
 	 * @name sap.ui.model
@@ -28,6 +27,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	/**
 	 * Constructor for a new Model.
 	 *
+	 * Every Model is a MessageProcessor that is able to handle Messages with the normal binding path syntax in the target.
+	 *
 	 * @class
 	 * This is an abstract base class for model objects.
 	 * @abstract
@@ -35,7 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.32.12
+	 * @version 1.32.13
 	 *
 	 * @constructor
 	 * @public
@@ -760,7 +761,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate);
-			oBinding.checkDataState(bForceUpdate);
 		});
 	};
 
@@ -771,8 +771,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @public
 	 */
 	Model.prototype.setMessages = function(mMessages) {
+		//jQuery.sap.assert(!jQuery.isEmptyObject(mMessages), this + ": mMessages passed as emptyObject( {} ). Use null instead!");
+
 		this.mMessages = mMessages || {};
-		this.checkMessages();
+		if (mMessages !== null || !jQuery.sap.equal(this.mMessages, mMessages)) {
+			this.checkMessages();
+		}
 	};
 
 	/**
@@ -794,7 +798,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 */
 	Model.prototype.checkMessages = function() {
 		jQuery.each(this.aBindings, function(iIndex, oBinding) {
-			oBinding.checkDataState();
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState();
+			}
 		});
 	};
 

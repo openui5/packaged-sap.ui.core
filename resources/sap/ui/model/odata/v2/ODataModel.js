@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.32.12
+	 * @version 1.32.13
 	 *
 	 * @constructor
 	 * @public
@@ -1289,7 +1289,6 @@ sap.ui.define([
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-				oBinding.checkDataState(bForceUpdate);
 			}
 		}.bind(this));
 		//handle calls after update
@@ -1306,10 +1305,12 @@ sap.ui.define([
 	 * @param {boolean} bForceUpdate force update of controls
 	 * @private
 	 */
-	ODataModel.prototype.checkDataState = function(bForceUpdate) {
+	ODataModel.prototype.checkDataState = function(mLaunderingState) {
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkDataState(bForceUpdate);
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState(mLaunderingState);
+			}
 		});
 	};
 
@@ -1658,17 +1659,19 @@ sap.ui.define([
 	/**
 	 * Returns the key part from the entry URI or the given context or object
 	 *
-	 * @param {object|sap.ui.model.Context} oObject The context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
 	 * @returns {string} [sKey] key of the entry
 	 * @private
 	 */
-	ODataModel.prototype._getKey = function(oObject) {
+	ODataModel.prototype._getKey = function(vValue) {
 		var sKey, sURI;
-		if (oObject instanceof Context) {
-			sKey = oObject.getPath().substr(1);
-		} else if (oObject && oObject.__metadata && oObject.__metadata.uri) {
-			sURI = oObject.__metadata.uri;
+		if (vValue instanceof Context) {
+			sKey = vValue.getPath().substr(1);
+		} else if (vValue && vValue.__metadata && vValue.__metadata.uri) {
+			sURI = vValue.__metadata.uri;
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
+		} else if (typeof vValue === 'string') {
+			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
 		return sKey;
 	};
@@ -1676,12 +1679,12 @@ sap.ui.define([
 	/**
 	 * Returns the key part from the entry URI or the given context or object
 	 *
-	 * @param {object|sap.ui.model.Context} oObject The context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
 	 * @returns {string} [sKey] key of the entry
 	 * @public
 	 */
-	ODataModel.prototype.getKey = function(oObject) {
-		return this._getKey(oObject);
+	ODataModel.prototype.getKey = function(vValue) {
+		return this._getKey(vValue);
 	};
 
 	/**
@@ -1832,7 +1835,7 @@ sap.ui.define([
 			}
 		}
 		//if we have a changed Entity we need to extend it with the backend data
-		if (this._getKey(oChangedNode)) {
+		if (jQuery.isPlainObject(oChangedNode) && this._getKey(oChangedNode)) {
 			oNode =  bOriginalValue ? oOrigNode : jQuery.sap.extend(true, {}, oOrigNode, oChangedNode);
 		}
 		return oNode;
@@ -2505,7 +2508,7 @@ sap.ui.define([
 				}
 			});
 		}
-		this.checkDataState();
+		this.checkDataState(this.mLaunderingState);
 		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
 
@@ -2539,7 +2542,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
-		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
+		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts,
 		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
@@ -2564,6 +2567,8 @@ sap.ui.define([
 				info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
 			return false;
 		}
+
+		// broken implementations need this
 		if (oResultData && oResultData.results && !jQuery.isArray(oResultData.results)) {
 			oResultData = oResultData.results;
 		}
@@ -2571,8 +2576,8 @@ sap.ui.define([
 		// adding the result data to the data object
 		if (oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
 			//need a deep data copy for import
-			oResultData = jQuery.sap.extend(true, {}, oResultData);
-			that._importData(oResultData, mLocalGetEntities);
+			oImportData = jQuery.sap.extend(true, {}, oResultData);
+			that._importData(oImportData, mLocalGetEntities);
 		}
 
 
@@ -2623,7 +2628,7 @@ sap.ui.define([
 		this._updateETag(oRequest, oResponse);
 
 		if (fnSuccess) {
-			fnSuccess(oResponse.data, oResponse);
+			fnSuccess(oResultData, oResponse);
 		}
 
 		var oEventInfo = this._createEventInfo(oRequest, oResponse);
@@ -2726,7 +2731,7 @@ sap.ui.define([
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload.__metadata) {
 			for (var n in oPayload.__metadata) {
-				if (n !== 'type' && n !== 'uri' && n !== 'etag') {
+				if (n !== 'type' && n !== 'uri' && n !== 'etag' && n !== 'content_type' && n !== 'media_src') {
 					delete oPayload.__metadata[n];
 				}
 			}
@@ -2944,6 +2949,21 @@ sap.ui.define([
 		}
 		return null;
 	};
+
+	/**
+	 * Force the update on the server of an entity by setting its ETag to '*'.
+	 * ETag handling must be active so the force update will work.
+	 * @param {string} sKey The key to an Entity e.g.: Customer(4711)
+	 * @public
+	 */
+	 ODataModel.prototype.forceEntityUpdate = function(sKey) {
+		 var oData = this.mChangedEntities[sKey];
+		 if (oData && oData.__metadata) {
+			 oData.__metadata.etag = '*';
+		 } else {
+			 jQuery.sap.log.error(this + " - Entity with key " + sKey + " does not exist or has no change");
+		 }
+	 };
 
 	/**
 	 * creation of a request object
@@ -4648,7 +4668,7 @@ sap.ui.define([
 		while (aParts.length > 0)  {
 			var sEntryPath = aParts.join("/"),
 				oObject = this._getObject(sEntryPath);
-			if (oObject) {
+			if (jQuery.isPlainObject(oObject)) {
 				var sKey = this._getKey(oObject);
 				if (sKey) {
 					oEntity = oObject;

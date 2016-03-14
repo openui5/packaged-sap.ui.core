@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.32.12
+	 * @version 1.32.13
 	 *
 	 * @constructor
 	 * @public
@@ -126,7 +126,7 @@ sap.ui.define([
 	/**
 	 * Add messages to MessageManager
 	 *
-	 * @param {sap.ui.core.Message|array} vMessages Array of sap.ui.core.Message or single sap.ui.core.Message
+	 * @param {sap.ui.core.message.Message|sap.ui.core.message.Message[]} vMessages Array of sap.ui.core.message.Message or single sap.ui.core.message.Message
 	 * @public
 	 */
 	MessageManager.prototype.addMessages = function(vMessages) {
@@ -170,22 +170,25 @@ sap.ui.define([
 			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {};
 			that._sortMessages(vMessages);
 			//push a copy
-			oProcessor.setMessages(jQuery.extend(true, {}, vMessages));
+			vMessages = Object.keys(vMessages).length === 0 ? null : jQuery.extend(true, {}, vMessages);
+			oProcessor.setMessages(vMessages);
 		});
 	};
 
 	/**
 	 * sort messages by type 'Error', 'Warning', 'Success', 'Info'
 	 *
-	 * @param {map} mMessages Map of Messages: {'target':[array of Messages]}
+	 * @param {map|sap.ui.core.message.Message[]} mMessages Map or array of Messages to be sorted (in order of severity) by their type property
 	 * @private
 	 */
 	MessageManager.prototype._sortMessages = function(mMessages) {
 		var mSortOrder = {'Error': 0,'Warning':1,'Success':2,'Info':3};
 		jQuery.each(mMessages, function(sTarget, aMessages){
-			aMessages.sort(function(a, b){
-				return mSortOrder[a.type] - mSortOrder[b.type];
-			});
+			if (!aMessages.length === 0) {
+				aMessages.sort(function(a, b){
+					return mSortOrder[a.type] - mSortOrder[b.type];
+				});
+			}
 		});
 	};
 
@@ -224,7 +227,8 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.removeMessages = function(vMessages) {
-		this._removeMessages(vMessages);
+		// Do not expose bOnlyValidationMessages to public API
+		return this._removeMessages.apply(this, arguments);
 	};
 
 	/**
@@ -281,10 +285,10 @@ sap.ui.define([
 					--i; // Decrease counter as one element has been removed
 				}
 			}
-		}
-		// delete empty message array
-		if (mMessages[oMessage.getTarget()].length === 0) {
-			delete mMessages[oMessage.getTarget()];
+			// delete empty message array
+			if (mMessages[oMessage.getTarget()].length === 0) {
+				delete mMessages[oMessage.getTarget()];
+			}
 		}
 	};
 
