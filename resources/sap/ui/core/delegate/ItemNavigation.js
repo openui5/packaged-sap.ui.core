@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {Element[]} aItemDomRefs Array of DOM references representing the items for the navigation
 	 * @param {boolean} [bNotInTabChain=false] Whether the selected element should be in the tab chain or not
 	 *
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @constructor
 	 * @alias sap.ui.core.delegate.ItemNavigation
 	 * @public
@@ -529,7 +529,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			if (this.bTableMode) {
 				var iCol = iIndex % this.iColumns;
 				var iOldIndex = iIndex;
-				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_RIGHT) {
+				if (oEvent && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_RIGHT) {
 					if (iCol < this.iColumns - 1) {
 						iIndex += 1;
 					}
@@ -553,7 +553,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this.setFocusedIndex(iIndex);
 		this.bISetFocus = true;
 
-		if (jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot") && oEvent) {
+		if (oEvent && jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot")) {
 
 			// store event type for nested ItemNavigations
 			var oItemItemNavigation = jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot");

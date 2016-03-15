@@ -5,8 +5,8 @@
  */
 
 // Provides control sap.ui.core.tmpl.TemplateControl.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', './DOMElement'],
-	function(jQuery, Control, DeclarativeSupport, library, DOMElement) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/UIArea', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', './DOMElement'],
+	function(jQuery, Control, UIArea, DeclarativeSupport, library, DOMElement) {
 	"use strict";
 
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	 * @class
 	 * This is the base class for all template controls. Template controls are declared based on templates.
 	 * @extends sap.ui.core.Control
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -91,9 +91,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 		// in case of inline templates the ID of the UIArea root node is the same
 		// like the ID for the current template control (this can only be the case
 		// for inline templates)
-		var bInline = false;
-		if (this.getParent() instanceof sap.ui.core.UIArea &&
-			jQuery(this.getParent().getRootNode()).attr("id") === this.getId()) {
+		var bInline = false,
+			oParent = this.getParent();
+		if (oParent instanceof UIArea &&
+			jQuery(oParent.getRootNode()).attr("id") === this.getId()) {
 		  bInline = true;
 		}
 		return bInline;
@@ -119,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	};
 
 	/**
-	 * Returns the instance specific renderer for an anoymous template control.
+	 * Returns the instance specific renderer for an anonymous template control.
 	 *
 	 * @return {function} the instance specific renderer function
 	 * @protected
@@ -130,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 
 
 	/**
-	 * Sets the instance specific renderer for an anoymous template control.
+	 * Sets the instance specific renderer for an anonymous template control.
 	 *
 	 * @param {function} fnRenderer the instance specific renderer function
 	 * @return {sap.ui.core.tmpl.Template} <code>this</code> to allow method chaining

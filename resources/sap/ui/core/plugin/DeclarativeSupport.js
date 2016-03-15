@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/Declarative
 	 * @see sap.ui.core.DeclarativeSupport
 	 * @public
 	 * @since 1.7.0
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @alias sap.ui.core.plugin.DeclarativeSupport
 	 */
 	var DeclarativeSupport = function() {

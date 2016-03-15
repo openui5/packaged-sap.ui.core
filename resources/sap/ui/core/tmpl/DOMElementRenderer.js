@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// opening tag incl. control data
 		oRM.write("<");
-		oRM.write(oElement.getTag());
+		oRM.writeEscaped(oElement.getTag());
 		oRM.writeControlData(oElement);
 
 		// add the attributes of the DOM element
@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global'],
 				jQuery.each(aClasses, function(iIndex, sClass) {
 					var sClass = sClass.trim();
 					if (sClass) {
-						oRM.addClass(sClass);
+						oRM.addClass(jQuery.sap.encodeHTML(sClass));
 					}
 				});
 			} else if (sName === "style") {
@@ -55,11 +55,11 @@ sap.ui.define(['jquery.sap.global'],
 					if (iIndex != -1) {
 						var sKey = sStyle.substring(0, iIndex).trim();
 						var sValue = sStyle.substring(iIndex + 1).trim();
-						oRM.addStyle(sKey, sValue);
+						oRM.addStyle(jQuery.sap.encodeHTML(sKey), jQuery.sap.encodeHTML(sValue));
 					}
 				});
 			} else {
-				oRM.writeAttributeEscaped(oAttribute.getName(), oAttribute.getValue());
+				oRM.writeAttributeEscaped(jQuery.sap.encodeHTML(oAttribute.getName()), oAttribute.getValue());
 			}
 		});
 
@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			// closing tag
 			oRM.write("</");
-			oRM.write(oElement.getTag());
+			oRM.writeEscaped(oElement.getTag());
 			oRM.write(">");
 		}
 	};

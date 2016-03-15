@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @alias sap.ui.core.tmpl.HandlebarsTemplate
 	 * @experimental Since 1.15.0. The Template concept is still under construction, so some implementation details can be changed in future.
 	 */
@@ -54,9 +54,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 	}
 
 	function determinePath(sPath, sParentPath) {
-		// either the path starts with "/" or with e.g. "i18n>/"
-		// but what about relative named model paths - unclear
-		return (/^(\/|\w+>\/)/.test(sPath) ? "" : (sParentPath || "")) + sPath;
+		// split given paths in model name (optional) and path
+		var rPath = /^((\w+)>)?(.*)/,
+		    aPathParts = rPath.exec(sPath),
+		    sPathModel = aPathParts[2],
+		    aParentPathParts = rPath.exec(sParentPath),
+		    sParentPathModel = aParentPathParts[2];
+		var aPathParts = rPath.exec(sPath);
+		// if the model matches and the path is not absolute they need to be concatenated
+		if (sParentPath && sPathModel == sParentPathModel) {
+			return sParentPath + aPathParts[3];
+		} else {
+			return sPath;
+		}
 	}
 
 
@@ -66,8 +76,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 	 */
 	HandlebarsTemplate.RENDER_HELPERS = (function() {
 
-		// TODO: ERROR HANDLING!!!
-		// TODO: implement support for "with", ...
 		// TODO: find a point in time for destroying this RenderManager again
 
 		// extended helpers:
@@ -304,9 +312,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 					sParentPath = options.data.path,
 					mParentChildren = options.data.children,
 					sType = options.hash["sap-ui-type"],
-					oMetadata = jQuery.sap.getObject(sType).getMetadata(),
-					sDefaultAggregation = options.hash["sap-ui-default-aggregation"] || oMetadata.getDefaultAggregationName(),
+					oClass = jQuery.sap.getObject(sType),
+					oMetadata = oClass && oClass.getMetadata(),
+					sDefaultAggregation = options.hash["sap-ui-default-aggregation"] || oMetadata && oMetadata.getDefaultAggregationName(),
 					oView = options.data.view;
+
+				// throw error if control cannot be found
+				if (!oClass) {
+					throw new Error("Control of type " + sType + " cannot be found.");
+				}
 
 				// Nested controls will get the reference to the parent control in order
 				// to add them to the defined aggregation. Example of nested controls:
@@ -328,16 +342,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 
 				// remove the found nested children from the mSettings because they will
 				// be handled after the creation of the new control instance
-				var mSettings = jQuery.extend({}, options.hash);
+				var mSettings = jQuery.extend({}, options.hash),
+				    aStyleClasses;
 				for (var sKey in mSettings) {
 					//var oValue = mSettings[sKey];
-					if (mChildren[sKey]) {
+					if (sKey === "sap-ui-class" && typeof mSettings[sKey] === "string") {
+						aStyleClasses = mSettings["sap-ui-class"] && mSettings["sap-ui-class"].split(" ");
+						delete mSettings[sKey];
+					} else if (mChildren[sKey]) {
 						delete mSettings[sKey];
 					}
 				}
 
 				// create the new control (out of the hash information)
 				var oNewControl = oRootControl.createControl(mSettings, options.data.path, !!mParentChildren, oView);
+				if (aStyleClasses && aStyleClasses.length > 0) {
+					aStyleClasses.forEach(oNewControl.addStyleClass.bind(oNewControl));
+				}
 
 				// add the created children to current control instance either as template
 				// in case of a binding has been found or as aggregation in case of no

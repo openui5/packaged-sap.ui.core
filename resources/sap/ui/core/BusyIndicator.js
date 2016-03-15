@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 	 * Provides methods to show or hide a waiting animation covering the whole
 	 * page and blocking user interaction.
 	 * @namespace
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @public
 	 * @alias sap.ui.core.BusyIndicator
 	 */
@@ -64,7 +64,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 		oRootDomRef.appendChild(oBusyContainer);
 
 		var oBusyElement = BusyIndicatorUtils.getElement("Big");
-		oBusyElement.className += " sapUiLocalBusyIndicatorSizeBig";
 		oBusyElement.setAttribute("title", sTitle);
 		oRootDomRef.appendChild(oBusyElement);
 
@@ -203,6 +202,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 			// Grab the focus once opened
 			var oDomRef = jQuery.sap.domById(BusyIndicator.sDOM_ID);
 			oDomRef.style.height = "100%";
+			var oAnimation = oDomRef.querySelector(".sapUiLocalBusyIndicator");
+			oAnimation.className += " sapUiLocalBusyIndicatorFade";
 			jQuery.sap.focus(oDomRef);
 
 			jQuery("body").attr("aria-busy", true);

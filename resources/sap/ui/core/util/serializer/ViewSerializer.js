@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	 * @class ViewSerializer class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @alias sap.ui.core.util.serializer.ViewSerializer
 	 * @experimental Since 1.15.1. The ViewSerializer is still under construction, so some implementation details can be changed in future.
 	 */
