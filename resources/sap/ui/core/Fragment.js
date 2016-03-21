@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 * @class
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.36.4
+	 * @version 1.36.5
 	 * @public
 	 * @alias sap.ui.core.Fragment
 	 */

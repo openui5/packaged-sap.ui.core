@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.36.4
+		 * @version 1.36.5
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Interaction
@@ -44,7 +44,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 					this._aEventIds = [this.getId() + "SetMeasurements",
 						this.getId() + "SetActive",
 						this.getId() + "Export",
-						this.getId() + "Import"
+						this.getId() + "Import",
+						this.getId() + "SetQueryString"
 					];
 					jQuery.sap.require("sap.ui.core.format.DateFormat");
 					var pad0 = function(i, w) {
@@ -69,7 +70,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 						this.getId() + "Stop",
 						this.getId() + "Activate",
 						this.getId() + "Export",
-						this.getId() + "Import"
+						this.getId() + "Import",
+						this.getId() + "SetQueryString"
 					];
 
 				}
@@ -80,9 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		Interaction.prototype.init = function(oSupportStub){
 			Plugin.prototype.init.apply(this, arguments);
 
-			this._bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test((window.opener) ? window.opener.location.search : window.location.search);
-			this._bODATA_Stats_On = jQuery.sap.statistics() ||
-				/sap-statistics=(true|x|X)/.test((window.opener) ? window.opener.location.search : window.location.search);
 			if (this.isToolPlugin()) {
 				initInTools.call(this, oSupportStub);
 			} else {
@@ -190,6 +189,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		}
 
 		function initInApps(oSupportStub) {
+			var _bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(window.location.search);
+			var _bODATA_Stats_On = jQuery.sap.statistics() ||
+				/sap-statistics=(true|x|X)/.test(window.location.search);
+
+			this._oStub.sendEvent(this.getId() + "SetQueryString", {"queryString": { bFesrActive: _bFesrActive,
+				bODATA_Stats_On: _bODATA_Stats_On}});
 			getPerformanceData.call(this);
 		}
 
@@ -239,6 +244,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", { "measurements": aMeasurements });
 			this._oStub.sendEvent(this.getId() + "SetActive", {"active": bActive});
 		}
+
+		/**
+		 * Handler for sapUiSupportInteractionSetQueryString event
+		 *
+		 * @param {sap.ui.base.Event} oEvent the event
+		 * @private
+		 */
+		Interaction.prototype.onsapUiSupportInteractionSetQueryString = function(oEvent) {
+
+			var oParam = oEvent.getParameter("queryString");
+			this._bFesrActive = oParam.bFesrActive;
+			this._bODATA_Stats_On = oParam.bODATA_Stats_On;
+			this.$("odata").attr('checked',this._bODATA_Stats_On);
+			this.$('record').attr('data-state', (!this._bFesrActive) ? 'Start recording' : 'Stop recording');
+		};
 
 
 		/**
