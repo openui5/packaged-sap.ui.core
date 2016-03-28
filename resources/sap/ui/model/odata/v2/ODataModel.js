@@ -62,7 +62,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.34.10
 	 *
 	 * @constructor
 	 * @public
@@ -2367,6 +2367,7 @@ sap.ui.define([
 			if (oRequest.key && oRequestGroup.map && oRequest.key in oRequestGroup.map) {
 				var oChangeRequest = oRequestGroup.map[oRequest.key];
 				oChangeRequest.method = oRequest.method;
+				oChangeRequest.headers = oRequest.headers;
 				if (oRequest.method === "PUT") {
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
 					// (by submitChanges) the merge header must be removed
