@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 		 * gets removed again.
 		 *
 		 * @author SAP SE
-		 * @version 1.32.13
+		 * @version 1.32.14
 		 * @constructor
 		 * @private
 		 * @since 1.15.1
