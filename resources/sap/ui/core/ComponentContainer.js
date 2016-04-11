@@ -19,7 +19,7 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 	 * @class
 	 * Component Container
 	 * @extends sap.ui.core.Control
-	 * @version 1.34.10
+	 * @version 1.34.11
 	 *
 	 * @constructor
 	 * @public
