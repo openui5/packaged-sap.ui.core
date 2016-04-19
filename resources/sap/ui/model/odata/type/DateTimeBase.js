@@ -102,7 +102,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.36.6
+	 * @version 1.36.7
 	 *
 	 * @alias sap.ui.model.odata.type.DateTimeBase
 	 * @param {object} [oFormatOptions]

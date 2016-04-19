@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP SE
-	 * @version 1.36.6
+	 * @version 1.36.7
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
@@ -67,6 +67,22 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 *
 	 * @function
 	 * @name jQuery.sap.util.ResourceBundle.prototype.getText
+	 * @public
+	 */
+
+	/**
+	 * Checks whether the text for the given key can be found in the concrete
+	 * resource bundle or not. Neither the custom resource bundles nor the
+	 * fallback chain will be processed.
+	 *
+	 * When requesting the resource bundle asynchronously this check must only be
+	 * used after the resource bundle has been loaded.
+	 *
+	 * @param {string} sKey
+	 * @return {boolean} true if the text has been found in the concrete bundle
+	 *
+	 * @function
+	 * @name jQuery.sap.util.ResourceBundle.prototype.hasText
 	 * @public
 	 */
 
@@ -346,6 +362,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 		}
 
 		return sValue;
+	};
+
+	// checks the existence of the text in the concrete properties file
+	Bundle.prototype.hasText = function(sKey) {
+		return this.aPropertyFiles.length > 0 && typeof this.aPropertyFiles[0].getProperty(sKey) === "string";
 	};
 
 	/*
