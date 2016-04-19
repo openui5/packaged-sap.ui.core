@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * @class
 		 * @see [CLDR calendar types]{@link http://www.unicode.org/reports/tr35/#Key_And_Type_Definitions_}
 		 * @author SAP SE
-		 * @version 1.32.14
+		 * @version 1.32.15
 		 * @since 1.28.6
 		 * @extends sap.ui.base.Object
 		 * @alias sap.ui.core.date.IslamicDate
