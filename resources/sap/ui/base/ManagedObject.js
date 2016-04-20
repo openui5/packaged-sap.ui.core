@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.28.32
+	 * @version 1.28.33
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -3212,7 +3212,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				}
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
 				oBindingInfo.binding.destroy();
+				// remove all binding related data from the binding info
 				delete oBindingInfo.binding;
+				delete oBindingInfo.modelChangeHandler;
+				delete oBindingInfo.modelRefreshHandler;
 			}
 
 			// if there is no binding and if all required information is available, create a binding object
@@ -3783,7 +3786,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					jQuery.sap.log.error("A shared template must be marked with templateShareable:true in the binding info");
 				}
 
-				delete oCloneBindingInfo.binding; // remove the runtime binding info (otherwise the property will not be connected again!)
+				 // remove the runtime binding data (otherwise the property will not be connected again!)
+				delete oCloneBindingInfo.binding;
+				delete oCloneBindingInfo.modelChangeHandler;
+				delete oCloneBindingInfo.modelRefreshHandler;
+
 				if (oBindingInfo.factory || oBindingInfo.template) {
 					oClone.bindAggregation(sName, oCloneBindingInfo);
 				} else {
