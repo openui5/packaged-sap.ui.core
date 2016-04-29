@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Test Page for SAPUI5 jQuery.sap.global functionality</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.core"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css" data-marker="42">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+
+			/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */
+			jQuery.sap.includeScript("testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript");
+			jQuery.sap.includeStyleSheet("testdata/testA.css", "jsunitIncludeStyleSheetTest");
+
+			QUnit.module("Basic", {
+				beforeEach: function(assert) {
+					window.saptest = {};
+					window.saptest.JUST_FOR_TESTING = "Just for testing";
+
+					assert.notStrictEqual(window.sap.jsunittestvalue, undefined, "setup precondition");
+					assert.notStrictEqual(window.sap.jsunittestvalue, null, "setup precondition");
+				},
+				afterEach: function() {
+					window.saptest = null;
+				}
+			});
+
+			QUnit.test("GlobalSetupDone", function(assert) {
+
+				assert.notStrictEqual(sap, undefined, "package sap must be defined");
+				assert.notStrictEqual(sap.ui, undefined, "package sap.ui must be defined");
+
+			});
+
+			QUnit.test("NewObject", function(assert) {
+
+				temp = {};
+
+				temp.ClassA = function() {
+					this.fieldA_1 = true;
+					this.fieldA_2 = 'string';
+				};
+				temp.ClassA.prototype.methodA_1 = function() { return "ClassA.methodA_1"; };
+				temp.ClassA.prototype.methodA_2 = function() { return "ClassA.methodA_2"; };
+
+				var oA1 = new temp.ClassA();
+				ok(typeof oA1.methodA_1 == "function" && oA1.methodA_1() == "ClassA.methodA_1", "instance oA1 inherits from prototype");
+				ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 inherits from prototype");
+				for(var key in temp.ClassA.prototype) {
+					assert.ok(typeof temp.ClassA.prototype[key] == "function", "prototype of A only contains functions");
+				};
+
+				var oA2 = new temp.ClassA();
+				ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "ClassA.methodA_2", "instance oA2 inherits from prototype");
+				oA2.methodA_2 = function() { return "oA2.methodA_2"; };
+				ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "oA2.methodA_2", "instance oA2 overrides methodA_2");
+				ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 still inherits from prototype");
+
+				temp.ClassB = function() {
+					temp.ClassA.apply(this);
+				};
+				temp.ClassB.prototype = jQuery.sap.newObject(temp.ClassA.prototype);
+				temp.ClassB.prototype.methodA_2 = function() { return "ClassB.methodA_2"; };
+				temp.ClassB.prototype.methodB_3 = function() { return "ClassB.methodB_3"; };
+				temp.ClassB.prototype.methodB_4 = function() { return "ClassB.methodB_4"; };
+
+				var oB1 = new temp.ClassB();
+
+				assert.ok(typeof temp.ClassB.prototype.methodA_1 == "function" && temp.ClassB.prototype.methodA_1() == "ClassA.methodA_1", "prototype of B inherits from A");
+				assert.ok(typeof temp.ClassB.prototype.fieldA_1 == "undefined", "prototype of B does not contain instance fields from A");
+				assert.ok(typeof temp.ClassB.prototype.fieldA_2 == "undefined", "prototype of B does not contain instance fields from A");
+				for(var key in temp.ClassB.prototype) {
+					assert.ok(typeof temp.ClassB.prototype[key] == "function", "prototype of B only contains functions");
+				}
+				assert.strictEqual(oB1.methodA_1(), "ClassA.methodA_1", "B inherits methodA_1");
+				assert.strictEqual(oB1.methodA_2(), "ClassB.methodA_2", "B overrides methodA_2");
+			});
+
+
+			//****************************************************
+			// includeScript tests
+			//****************************************************
+
+			QUnit.module("includeScript ");
+
+			QUnit.test("basic", function(assert) {
+				var iBefore = sap.jsunittestvalue;
+				var iScriptCnt = document.getElementsByTagName("SCRIPT").length;
+				var done = assert.async();
+				jQuery.sap.includeScript("testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript", function() {
+					assert.strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
+					assert.strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
+					done();
+				});
+			});
+
+			QUnit.test("basic (Promise)", function(assert) {
+				var iBefore = sap.jsunittestvalue;
+				var iScriptCnt = document.getElementsByTagName("SCRIPT").length;
+				return jQuery.sap.includeScript({
+					url: "testdata/sapjsunittestvalueincrementor.js",
+					id: "jsunitIncludeScriptTestScript",
+					promisify: true
+				}).then(function() {
+					assert.strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
+					assert.strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
+				});
+			});
+
+
+			//****************************************************
+			// includeStylesheet tests
+			//****************************************************
+
+			QUnit.module("includeStyleSheet");
+
+			QUnit.test("basic", function(assert){
+				var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
+				var sBefore = jQuery(oTestArea).css("backgroundColor");
+				var iLinkCnt = document.getElementsByTagName("LINK").length;
+				var done = assert.async();
+				jQuery.sap.includeStyleSheet("testdata/testB.css", "jsunitIncludeStyleSheetTest", function() {
+					assert.notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
+					assert.strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
+					done();
+				});
+			});
+
+			QUnit.test("basic (Promise)", function(assert){
+				var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
+				var sBefore = jQuery(oTestArea).css("backgroundColor");
+				var iLinkCnt = document.getElementsByTagName("LINK").length;
+				return jQuery.sap.includeStyleSheet({
+					url: "testdata/testC.css",
+					id: "jsunitIncludeStyleSheetTest",
+					promisify: true
+				}).then(function() {
+					notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
+					strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
+				});
+			});
+
+			QUnit.test("don't load twice", function(assert){
+				var sStyleSheetUrl = "../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css";
+				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+				assert.equal($link.length, 1, "initially, there should be exactly one matching link)");
+				assert.equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
+
+				jQuery.sap.includeStyleSheet(sStyleSheetUrl, "sap-ui-theme-sap.ui.layout");
+
+				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+				assert.equal($link.length, 1, "after includeStylesheet, there still should be exactly one matching link");
+				assert.equal($link.attr("data-marker"), "42", "after includeStylesheet, the link object still should be the old one");
+
+				// use link node to make URL absolute
+				var oLink = document.createElement('link');
+				oLink.href = sStyleSheetUrl;
+				var sAbsoluteStylesheetUrl = oLink.href;
+
+				jQuery.sap.includeStyleSheet(sAbsoluteStylesheetUrl, "sap-ui-theme-sap.ui.layout");
+
+				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+				assert.equal($link.length, 1, "after includeStylesheet with absolute URL, there still should be exactly one matching link");
+				assert.equal($link.attr("data-marker"), "42", "after includeStylesheet with absolute URL, the link object still should be the old one");
+
+				sap.ui.getCore().loadLibrary("sap.ui.layout");
+
+				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+				assert.equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
+				assert.equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
+			});
+
+			QUnit.test("stylesheet count", function(assert) {
+
+				function getStyleId(i) {
+					return "style" + (i + 1);
+				}
+
+				function includeStyleSheet(i, fnResolve, fnReject) {
+					var sStyleId = getStyleId(i);
+					jQuery.sap.includeStyleSheet(sStyleBaseUrl + sStyleId + '.css', sStyleId, fnResolve, fnReject);
+				}
+
+				// remember initial stylesheet count
+				var iInitialStylesheets = document.styleSheets.length;
+
+				// include 40 stylesheets
+				var iNewStylesheets = 40;
+				var sStyleBaseUrl = "testdata/stylesheets/";
+				var aPromises = [];
+				var i;
+				for (i = 0; i < iNewStylesheets; i++) {
+
+					// success / error callback will only be called for real link tags
+					// in IE < 9 there will be a @import statement in a inline style after the 28th stylesheet
+					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9 && document.styleSheets.length >= 28) {
+						includeStyleSheet(i);
+					} else {
+						// create promise to keep track of loading state
+						var oPromise = new Promise(function(fnResolve, fnReject) {
+							includeStyleSheet(i, fnResolve, fnReject);
+						});
+						aPromises.push(oPromise);
+					}
+
+				}
+
+				var iExpectedStylesheets;
+				if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9) {
+					// in IE < 9 there is a technical stylesheet link limit
+					// jQuery.sap.includeStyleSheet should not produce more than 29 link tags
+					iExpectedStylesheets = 29;
+				} else {
+					// in all other browsers, all new stylesheets should be added
+					iExpectedStylesheets = iInitialStylesheets + iNewStylesheets;
+				}
+
+				// wait until all stylesheets are loaded
+				return Promise.all(aPromises).then(function() {
+					assert.equal(document.styleSheets.length, iExpectedStylesheets, "Overall stylesheet count should be like expected");
+
+					// remove all added stylesheets again
+					for (i = 0; i < iNewStylesheets; i++) {
+						var sStyleId = getStyleId(i);
+						var oLink = jQuery("#" + sStyleId);
+						oLink.remove();
+					}
+
+				}, function(e) {
+					assert.ok(false, e);
+				});
+
+			});
+
+		</script>
+
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="includeStyleSheetTest" class="sap-jsunitIncludeStyleSheetTest" style="width:100px;height:100px">
+		Test area for includeStyleSheet
+		</div>
+	</body>
+</html>

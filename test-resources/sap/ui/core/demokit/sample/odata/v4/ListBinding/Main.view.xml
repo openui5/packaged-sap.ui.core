@@ -1,0 +1,253 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.ListBinding.Main"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	>
+	<Toolbar>
+		<Title text="Teams" titleStyle="H4"/>
+		<ToolbarSpacer width="1em"/>
+		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
+			items="{path: '/TEAMS',
+				parameters: {'$expand':
+					{'TEAM_2_EMPLOYEES': {'$expand': {'EMPLOYEE_2_EQUIPMENTS': true}},
+					'TEAM_2_MANAGER': true}}}" >
+			<core:Item key="{Team_Id}" text="{Name}"/>
+		</Select>
+		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" press="openChangeTeamBudgetDialog"
+				text="Budget">
+			<dependents>
+				<Dialog id="ChangeTeamBudgetDialog" title="Change Team Budget">
+					<buttons>
+						<Button icon="sap-icon://sys-cancel-2" press="cancelChangeTeamBudget"
+							text="Cancel" type="Reject"/>
+						<Button icon="sap-icon://save" press="changeTeamBudget"
+							text="Change" type="Accept"/>
+					</buttons>
+					<content>
+						<form:SimpleForm binding="{/ChangeTeamBudgetByID(...)}" editable="true"
+								id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
+							<form:content>
+								<Label text="Team ID" />
+								<!-- <Text text="{$Parameter('TeamID'}" /> -->
+								<Text text="{ui>/TeamID}" />
+								<Label text="Budget" />
+								<!-- <Input value="{$Parameter('Budget'}" /> -->
+								<Input value="{ui>/Budget}" />
+							</form:content>
+						</form:SimpleForm>
+					</content>
+				</Dialog>
+			</dependents>
+		</Button>
+		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit"
+				press="openChangeManagerOfTeamDialog" text="Manager"/>
+	</Toolbar>
+	<form:SimpleForm id="TeamDetails" layout="ResponsiveGridLayout">
+		<form:content>
+			<Label text="Team ID" />
+			<Text id="Team_Id" text="{Team_Id}" />
+			<Label text="Team Name" />
+			<Text text="{Name}" />
+			<Label text="Member Count" />
+			<Text text="{MEMBER_COUNT}" />
+			<Label text="Manager ID" />
+			<Text id="ManagerID" text="{TEAM_2_MANAGER/ID}" />
+			<Label text="Budget" />
+			<Text id="Budget" text="{Budget}" />
+			<Label text="Currency" />
+			<Text text="{BudgetCurrency}" />
+		</form:content>
+		<form:dependents>
+			<Dialog id="ChangeManagerOfTeamDialog" title="Change Team Manager">
+				<buttons>
+					<Button icon="sap-icon://sys-cancel-2" press="cancelChangeManagerOfTeam"
+						text="Cancel" type="Reject"/>
+					<Button icon="sap-icon://save" press="changeManagerOfTeam"
+						text="Change" type="Accept"/>
+				</buttons>
+				<content>
+					<form:SimpleForm
+							binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)}"
+							editable="true" id="ChangeTeamManagerByID"
+							layout="ResponsiveGridLayout">
+						<form:content>
+							<Label text="Manager ID" />
+							<!-- <Input value="{$Parameter('ManagerID'}" /> -->
+							<Input value="{ui>/ManagerID}" />
+						</form:content>
+					</form:SimpleForm>
+				</content>
+			</Dialog>
+		</form:dependents>
+	</form:SimpleForm>
+	<Table id="Employees" growing="true" growingThreshold="1" headerText="Team Members"
+		items="{TEAM_2_EMPLOYEES}" mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
+		<headerToolbar>
+			<Toolbar>
+				<content>
+					<Button enabled="false" icon="sap-icon://add" text="Create"
+						press="onCreateEmployee"/>
+				</content>
+				<dependents>
+					<Dialog id="CreateEmployeeDialog" title="Create New Employee">
+						<buttons>
+							<Button icon="sap-icon://sys-cancel-2" text="Cancel"
+								press="onCancelEmployee" type="Reject"/>
+							<Button icon="sap-icon://save" text="Save"
+								press="onSaveEmployee" type="Accept"/>
+						</buttons>
+						<content>
+							<form:SimpleForm layout="ResponsiveGridLayout">
+								<form:content>
+									<!-- TODO types should be determined automatically from OData
+										$metadata -->
+									<Label text="Name"/>
+									<!-- TODO Q: derive maxLength from type's constraints?!
+									          A: SmartField?! -->
+									<Input maxLength="16" value="{path: 'new>/Name',
+										type: 'sap.ui.model.odata.type.String',
+										constraints: {maxLength: 16, nullable: false}}"/>
+									<Label text="Age"/>
+									<Input value="{path: 'new>/AGE',
+										type: 'sap.ui.model.odata.type.Int16',
+										constraints: {nullable: false}}"/>
+									<Label text="Entry Date"/>
+									<Input value="{path: 'new>/ENTRYDATE',
+										type: 'sap.ui.model.odata.type.Date',
+										constraints: {nullable: false}}"/>
+									<Label text="Is Manager"/>
+									<CheckBox selected="{path: 'new>/Is_Manager',
+										type: 'sap.ui.model.odata.type.Boolean',
+										constraints: {nullable: false}}"/>
+								</form:content>
+							</form:SimpleForm>
+						</content>
+					</Dialog>
+				</dependents>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="Employee Name"/>
+			</Column>
+			<Column>
+				<Text text="Employee ID"/>
+			</Column>
+			<Column>
+				<Text text="Age"/>
+			</Column>
+			<Column>
+				<Text text="City"/>
+			</Column>
+			<Column>
+				<Text text="Entry Date"/>
+			</Column>
+			<Column>
+				<Text text="ETag"/>
+			</Column>
+			<Column>
+				<Text text="Delete"/>
+			</Column>
+			<Column>
+				<Text text="Update" tooltip="Make ETag look outdated"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{Name}"/>
+				</cells>
+				<cells>
+					<Text text="{ID}"/>
+				</cells>
+				<cells>
+					<Text text="{AGE}"/>
+				</cells>
+				<cells>
+					<Text text="{LOCATION/City/CITYNAME}"/>
+				</cells>
+				<cells>
+					<Text text="{ENTRYDATE}"/>
+				</cells>
+				<cells>
+					<!-- Note: automatic type determination cannot work here and triggers a warning
+					  -->
+					<Text text="{path: '@odata.etag', type: 'sap.ui.model.odata.type.String'}"/>
+				</cells>
+				<cells>
+					<Button enabled="false" icon="sap-icon://delete" text="Delete"
+						press="onDeleteEmployee"/>
+				</cells>
+				<cells>
+					<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" text="Update"
+						press="onUpdateEmployee" tooltip="Make ETag look outdated"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Table id="EmployeeEquipments" headerText="Employee Equipments"
+		items="{EMPLOYEE_2_EQUIPMENTS}">
+		<columns>
+			<Column>
+				<Text text="Equipment Name"/>
+			</Column>
+			<Column>
+				<Text text="Equipment ID"/>
+			</Column>
+			<Column>
+				<Text text="Category"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{Name}"/>
+				</cells>
+				<cells>
+					<Text text="{ID}"/>
+				</cells>
+				<cells>
+					<Text text="{Category}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<VBox>
+		<Toolbar id="GetEmployeeMaxAge" binding="{/GetEmployeeMaxAge(...)}">
+			<Title text="Max. Employee Age" titleStyle="H4" />
+			<ToolbarSpacer width="1em"/>
+			<Text text="{value}"/>
+			<Button press="getEmployeeMaxAge" text="Execute"/>
+		</Toolbar>
+	</VBox>
+	<VBox>
+		<Toolbar>
+			<Title text="Employee Search" titleStyle="H4">
+				<layoutData>
+					<ToolbarLayoutData shrinkable="false" />
+				</layoutData>
+			</Title>
+			<ToolbarSpacer width="1em"/>
+			<Label labelFor="EmployeeId" text="Employee ID">
+				<layoutData>
+					<ToolbarLayoutData shrinkable="false" />
+				</layoutData>
+			</Label>
+			<Input enabled="{ui>/bRealOData}" id="EmployeeId" value="{search>/EmployeeID}"
+				width="4em" />
+			<Button text="Search" enabled="{ui>/bRealOData}" press="getEmployeeByID"/>
+		</Toolbar>
+		<form:SimpleForm id="GetEmployeeByID" binding="{/GetEmployeeByID(...)}"
+				layout="ResponsiveGridLayout">
+			<Label text="Name"/>
+			<Text text="{Name}"/>
+			<Label text="Age"/>
+			<Text text="{AGE}"/>
+			<Label text="Entry Date"/>
+			<Text text="{ENTRYDATE}"/>
+		</form:SimpleForm>
+	</VBox>
+</mvc:View>
