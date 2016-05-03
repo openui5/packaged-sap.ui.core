@@ -41,7 +41,7 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.38.0
+	 * 1.38.1
 	 *
 	 * @public
 	 * @since 1.37.0

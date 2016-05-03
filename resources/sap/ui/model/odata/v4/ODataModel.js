@@ -38,7 +38,6 @@ sap.ui.define([
 		mSupportedParameters = {
 			groupId : true,
 			serviceUrl : true,
-			serviceUrlParams : true,
 			synchronizationMode : true,
 			updateGroupId : true
 		};
@@ -55,15 +54,10 @@ sap.ui.define([
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. The path part of the URL must end with a
 	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
-	 *   OData custom query options to the service root URL separated with a "?",
-	 *   e.g. "/MyService/?custom=foo". See parameter <code>mParameters.serviceUrlParams</code> for
-	 *   details on custom query options.
-	 * @param {object} [mParameters.serviceUrlParams]
-	 *   Map of OData custom query options to be used in each data service request for this model,
-	 *   see specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
+	 *   OData custom query options to the service root URL separated with a "?", for example
+	 *   "/MyService/?custom=foo".
+	 *   See specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
 	 *   OData system query options and OData parameter aliases lead to an error.
-	 *   Query options from this map overwrite query options with the same name specified via the
-	 *   <code>sServiceUrl</code> parameter.
 	 * @param {string} mParameters.synchronizationMode
 	 *   Controls synchronization between different bindings which refer to the same data for the
 	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
@@ -92,7 +86,7 @@ sap.ui.define([
 	 *   The model does not support any public events; attaching an event handler leads to an error.
 	 * @extends sap.ui.model.Model
 	 * @public
-	 * @version 1.38.0
+	 * @version 1.38.1
 	 */
 	var ODataModel = Model.extend(sClassName,
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
@@ -125,8 +119,9 @@ sap.ui.define([
 						throw new Error("Service root URL must end with '/'");
 					}
 					this._sQuery = oUri.search(); //return query part with leading "?"
-					this.mUriParameters = _ODataHelper.buildQueryOptions(jQuery.extend({},
-						oUri.query(true), mParameters.serviceUrlParams));
+					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
+					this.mUriParameters
+						= _ODataHelper.buildQueryOptions(null, oUri.query(true), null, true);
 					this.sServiceUrl = oUri.query("").toString();
 					this.sGroupId = mParameters.groupId;
 					if (this.sGroupId === undefined) {
@@ -249,7 +244,9 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"
+	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"; OData V4 only
+	 *   allows $filter and $orderby inside resource paths that identify a collection. In our case
+	 *   here, this means you can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -409,6 +406,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Destroys this model and its meta model.
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#destroy
+	 * @since 1.38.0
+	 */
+	// @override
+	ODataModel.prototype.destroy = function () {
+		this.oMetaModel.destroy();
+		return Model.prototype.destroy.apply(this, arguments);
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}
@@ -461,6 +471,20 @@ sap.ui.define([
 	// @override
 	ODataModel.prototype.getMetaModel = function () {
 		return this.oMetaModel;
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#getObject
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataModel.prototype.getObject = function () {
+		throw new Error("Unsupported operation: v4.ODataModel#getObject");
 	};
 
 	/**
@@ -551,7 +575,7 @@ sap.ui.define([
 
 	/**
 	 * Reports a technical error by adding a message to the MessageManager and logging the error to
-	 * the console.
+	 * the console. Takes care that the error is only added once to the MessageManager.
 	 *
 	 * @param {string} sLogMessage
 	 *   The message to write to the console log
@@ -569,12 +593,16 @@ sap.ui.define([
 			sDetails = oError.message + "\n" + oError.stack;
 		}
 		jQuery.sap.log.error(sLogMessage, sDetails, sReportingClassName);
+		if (oError.$reported) {
+			return;
+		}
+		oError.$reported = true;
 		sap.ui.getCore().getMessageManager().addMessages(new Message({
-				message : oError.message,
-				processor : this,
-				technical : true,
-				type : "Error"
-			}));
+			message : oError.message,
+			processor : this,
+			technical : true,
+			type : "Error"
+		}));
 	};
 
 	/**

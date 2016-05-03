@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 	 * @class
 	 * A View defined using (P)XML and HTML markup.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.38.0
+	 * @version 1.38.1
 	 *
 	 * @constructor
 	 * @public
@@ -346,8 +346,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			XML : "xml",
 
 			/**
-			 * This preprocessor receives a valid view xml with control declarations enriched with their full via which they
-			 * are also queryable during runtime
+			 * This preprocessor receives a valid xml source for View creation without any template tags but with control
+			 * declarations. These include their full IDs by which they can also be queried during runtime.
 			 * @public
 			 */
 			VIEWXML : "viewxml",

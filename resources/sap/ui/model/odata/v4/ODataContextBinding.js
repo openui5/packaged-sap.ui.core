@@ -44,7 +44,9 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"
+	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"; OData V4 only
+	 *   allows $filter and $orderby inside resource paths that identify a collection. In our case
+	 *   here, this means you can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -101,7 +103,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
-	 * @version 1.38.0
+	 * @version 1.38.1
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
@@ -332,8 +334,9 @@ sap.ui.define([
 							if (oParameter.$IsCollection) {
 								throw new Error("Unsupported: collection parameter");
 							}
-							aParameters.push(sName + "=" + _Helper.formatLiteral(
-									that.oOperation.mParameters[sName], oParameter.$Type));
+							aParameters.push(encodeURIComponent(sName) + "="
+								+ encodeURIComponent(_Helper.formatLiteral(
+									that.oOperation.mParameters[sName], oParameter.$Type)));
 						}
 					});
 				}
@@ -568,7 +571,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   <code>this</code> to enable method chaining
 	 * @throws {Error} If the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}).
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}) or if the value is missing
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -576,6 +579,9 @@ sap.ui.define([
 	ODataContextBinding.prototype.setParameter = function (sParameterName, vValue) {
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
+		}
+		if (vValue === undefined) {
+			throw new Error("Missing value for parameter: " + sParameterName);
 		}
 		this.oOperation.mParameters[sParameterName] = vValue;
 		return this;

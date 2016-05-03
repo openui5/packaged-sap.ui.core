@@ -9,6 +9,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	function(jQuery, Device, Control, IconPool, library) {
 	"use strict";
 
+	// shortcut
+	var IconColor = library.IconColor;
 
 	/**
 	 * Constructor for a new Icon.
@@ -23,7 +25,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.38.0
+	 * @version 1.38.1
 	 *
 	 * @constructor
 	 * @public
@@ -367,11 +369,11 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			return;
 		}
 
-		jQuery.each(sap.ui.core.IconColor, function(sPropertyName, sPropertyValue) {
+		jQuery.each(IconColor, function(sPropertyName, sPropertyValue) {
 			that.removeStyleClass(sCSSClassNamePrefix + sPropertyValue);
 		});
 
-		if (sColor in sap.ui.core.IconColor) {
+		if (sColor in IconColor) {
 			// reset the relevant css property
 			$Icon.css(sCSSPropName, "");
 			this.addStyleClass(sCSSClassNamePrefix + sColor);

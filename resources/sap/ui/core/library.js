@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @namespace
 	 * @name sap.ui.core
 	 * @author SAP SE
-	 * @version 1.38.0
+	 * @version 1.38.1
 	 * @public
 	 */
 
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.core",
-		version: "1.38.0",
+		version: "1.38.1",
 		types: [
 
 			// builtin types
@@ -1626,11 +1626,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 	lazy("sap.ui.model.odata.AnnotationHelper", "createPropertySetting format getNavigationPath"
 		+ " gotoEntitySet gotoEntityType gotoFunctionImport isMultiple resolvePath simplePath");
-	sap.ui.model.odata.AnnotationHelper.format.requiresIContext = true;
-	sap.ui.model.odata.AnnotationHelper.getNavigationPath.requiresIContext = true;
-	sap.ui.model.odata.AnnotationHelper.isMultiple.requiresIContext = true;
-	sap.ui.model.odata.AnnotationHelper.simplePath.requiresIContext = true;
-
+	if ( sap.ui.model && sap.ui.model.odata && sap.ui.model.odata.AnnotationHelper ) { // ensure that lazy stub exists before enriching it
+		sap.ui.model.odata.AnnotationHelper.format.requiresIContext = true;
+		sap.ui.model.odata.AnnotationHelper.getNavigationPath.requiresIContext = true;
+		sap.ui.model.odata.AnnotationHelper.isMultiple.requiresIContext = true;
+		sap.ui.model.odata.AnnotationHelper.simplePath.requiresIContext = true;
+	}
 	lazy("sap.ui", "xmlfragment", "sap.ui.core.Fragment"); // cannot use "each" as it assumes a module to exist for each function name
 	lazy("sap.ui", "jsfragment", "sap.ui.core.Fragment");
 	lazy("sap.ui", "htmlfragment", "sap.ui.core.Fragment");

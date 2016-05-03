@@ -330,7 +330,7 @@
   height: 100%;
 }
 .sapUiBusy {
-  background-image: url(img-RTL/Busy.gif);
+  background-image: url(../base/img-RTL/Busy.gif);
   display: block;
   width: 48px;
   height: 48px;
@@ -1061,56 +1061,10 @@ Usage:
 .sapUiViewDisplayBlock {
   display: block;
 }
+/* ============================== */
 /* Global CSS for 'sap_hcb' theme */
-/* Background Colors */
-/* Foreground Colors */
-/* Semantic Colors */
-/* Shadow Color */
-/* StandardListItem */
-/* ==================================== */
-/* Font styling                         */
-/* ==================================== */
-/* ==================================== */
-/* Chart Colors                         */
-/* ==================================== */
-/* Semantic Chart Colors */
-/* Note Explicit UX decision not to derive from @sapUiCritical, ... */
-/* Accent Chart Colors */
-/* Sequential Chart Colors */
-/* Derived Chart Colors */
-/* Shell */
-/* NotificationBar */
-/* ToolPopup */
-/* RatingIndicator */
-/* DateTimeInput Custom Picker JavaScript	  */
-/* mixed, scroller, clickpick */
-/* mixed, scroller, clickpick */
-/* modal, bubble, bottom, top */
-/* modal, bubble, bottom, top */
-/* Toolbar Separator */
-/* ------------------------------------------------------------------- */
-/* Generic Mapping: not for usage in standard control development !!!! */
-/* ------------------------------------------------------------------- */
-/* Semantic Text Colors */
-/* Semantic Element Colors */
-/* Semantic Backgrounds */
-/* Background Brand */
-/* Text Colors */
-/* Border Colors */
-/* @sapUiLightBorder: @sapHCStandardFG; */
-/* @sapUiExtraLightBorder: @sapHCStandardFG; */
-/* Accent */
-/* Backgrounds Header/Footer */
-/* Background */
-/* SAP.ME */
-/* OverlapCalendar Event Type */
-/* Calendar Legend */
+/* ============================== */
 /* Shared CSS for 'sap_hcb' theme */
-:focus {
-  outline-width: 3px;
-  outline-style: solid;
-  outline-color: #ffffff;
-}
 .sapUiBody {
   width: 100%;
   height: 100%;
@@ -1130,22 +1084,22 @@ Usage:
   scrollbar-track-color: #585858;
   scrollbar-highlight-color: #000000;
 }
-.sap-desktop ::-webkit-scrollbar {
+html.sap-desktop ::-webkit-scrollbar {
   background-color: #000000;
   border-right: 1px solid #999999;
 }
-.sap-desktop ::-webkit-scrollbar:horizontal {
+html.sap-desktop ::-webkit-scrollbar:horizontal {
   height: 0.75rem;
 }
-.sap-desktop ::-webkit-scrollbar:vertical {
+html.sap-desktop ::-webkit-scrollbar:vertical {
   width: 0.75rem;
 }
-.sap-desktop ::-webkit-scrollbar-thumb {
+html.sap-desktop ::-webkit-scrollbar-thumb {
   background-color: #999999;
   box-shadow: inset #000000 0 0 0 0.125rem;
   border-right: 1px solid #999999;
 }
-.sap-desktop ::-webkit-scrollbar-thumb:hover {
+html.sap-desktop ::-webkit-scrollbar-thumb:hover {
   background-color: #ffffff;
 }
 .sapUiBusy {

@@ -461,7 +461,7 @@
     "sapUiNotificationBarBG": "rgba(128, 128, 128, 0.92)",
     "sapUiNotifierSeparator": "#808080",
     "sapUiNotifierSeparatorWidth": "2px",
-    "sapUiNotificationBarBorder": "sapUiNotificationBarBG",
+    "sapUiNotificationBarBorder": "rgba(128, 128, 128, 0.92)",
     "sapUiUx3ToolPopupInverted": "true",
     "sapUiUx3ToolPopupArrowRightMarginCorrection": "-2px",
     "sapUiUx3ToolPopupShadow": "0px 6px 12px 0px rgba(0, 0, 0, 0.3)",
