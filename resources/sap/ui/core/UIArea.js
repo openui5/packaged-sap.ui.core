@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.34.11
+	 * @version 1.34.12
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -656,8 +656,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		var oDomRef = null;
 		if (oControl) {
 			oDomRef = oControl.getDomRef();
-			if (!oDomRef) {
-				// If no DOM node was found, look for the invisible placeholder node
+			if (!oDomRef || RenderManager.isPreservedContent(oDomRef) ) {
+				// In case no old DOM node was found or only preserved DOM, search for an 'invisible' placeholder
 				oDomRef = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId());
 			}
 		}

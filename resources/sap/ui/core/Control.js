@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.34.11
+	 * @version 1.34.12
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -595,7 +595,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	};
 
 	(function() {
-		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart mouseup touchend click",
+		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart touchmove mouseup touchend click",
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
 					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId && !this.$("busyIndicator").length) {
@@ -615,6 +615,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 					}
 				}
 			},
+
 			fnAppendBusyIndicator = function() {
 				var $this = this.$(this._sBusySection),
 					aForbiddenTags = ["area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "menuitem", "meta", "param", "source", "track", "wbr"];
@@ -672,7 +673,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 						tabindex : $this.attr('tabindex')
 					});
 					$this.attr('tabindex', -1);
-					$this.bind(sPreventedEvents, fnPreserveEvents);
+					$this.bind(sPreventedEvents, this._preserveEvents);
 
 					$TabRefs.each(function(iIndex, oObject) {
 						var $Ref = jQuery(oObject),
@@ -688,7 +689,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 						});
 
 						$Ref.attr('tabindex', -1);
-						$Ref.bind(sPreventedEvents, fnPreserveEvents);
+						$Ref.bind(sPreventedEvents, this._preserveEvents);
 					});
 				} else {
 					if (this._busyTabIndices) {
@@ -703,17 +704,18 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 								oObject.ref.removeAttr('tabindex');
 							}
 
-							oObject.ref.unbind(sPreventedEvents, fnPreserveEvents);
+							oObject.ref.unbind(sPreventedEvents, this._preserveEvents);
 						});
 					}
 					this._busyTabIndices = [];
 				}
-			},
-			fnPreserveEvents = function(oEvent) {
-				jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
-				oEvent.preventDefault();
-				oEvent.stopImmediatePropagation();
 			};
+
+		Control.prototype._preserveEvents = function(oEvent) {
+			jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
+		};
 
 		/**
 		 * Set the controls busy state.
