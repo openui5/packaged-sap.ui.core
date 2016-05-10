@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 *
 	 * @abstract
 	 * @extends sap.ui.base.Object
-	 * @version 1.36.8
+	 * @version 1.36.9
 	 * @constructor
 	 * @private
 	 * @alias sap.ui.core.support.Plugin

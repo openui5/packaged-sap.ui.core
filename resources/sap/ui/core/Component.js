@@ -50,6 +50,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		}
 	}
 
+
+	/**
+	 * Calls the function <code>fn</code> once and marks all ManagedObjects
+	 * created during that call as "owned" by the given id.
+	 *
+	 * @param {function} fn Function to execute
+	 * @param {string} sOwnerId Id of the owner
+	 * @return {any} result of function <code>fn</code>
+	 */
+	function runWithOwner(fn, sOwnerId) {
+
+		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
+
+		var oldOwnerId = ManagedObject._sOwnerId;
+		try {
+			ManagedObject._sOwnerId = sOwnerId;
+			return fn.call();
+		} finally {
+			ManagedObject._sOwnerId = oldOwnerId;
+		}
+
+	}
+
+
 	/**
 	 * Creates and initializes a new Component with the given <code>sId</code> and
 	 * settings.
@@ -71,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.36.8
+	 * @version 1.36.9
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -442,15 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @public
 	 */
 	Component.prototype.runAsOwner = function(fn) {
-		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
-
-		var oldOwnerId = ManagedObject._sOwnerId;
-		try {
-			ManagedObject._sOwnerId = this.getId();
-			return fn.call();
-		} finally {
-			ManagedObject._sOwnerId = oldOwnerId;
-		}
+		return runWithOwner(fn, this.getId());
 	};
 
 	// ---- ----
@@ -1119,8 +1135,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// load the component class
 		var vClassOrPromise = sap.ui.component.load(vConfig, true);
 		if ( vConfig.async ) {
-			// async: instantiate component after Promise has been fulfilled with component constructor
-			return vClassOrPromise.then(createInstance);
+			// async: instantiate component after Promise has been fulfilled with component
+			//        constructor and delegate the current owner id for the instance creation
+			var sCurrentOwnerId = ManagedObject._sOwnerId;
+			return vClassOrPromise.then(function(oClass) {
+				return runWithOwner(function() {
+					return createInstance(oClass);
+				}, sCurrentOwnerId);
+			});
 		} else {
 			// sync: constructor has been returned, instantiate component immediately
 			return createInstance(vClassOrPromise);
