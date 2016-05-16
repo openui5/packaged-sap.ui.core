@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @class
 	 * Contains a single key/value pair of custom data attached to an Element. See method data().
 	 * @extends sap.ui.core.Element
-	 * @version 1.38.1
+	 * @version 1.38.2
 	 *
 	 * @constructor
 	 * @public
@@ -57,7 +57,8 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 			 * @since 1.9.0
 			 */
 			writeToDom : {type : "boolean", group : "Data", defaultValue : false}
-		}
+		},
+		designtime : true
 	}});
 
 	CustomData.prototype.setValue = function(oValue) {

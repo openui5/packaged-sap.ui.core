@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.38.1
+ * @version 1.38.2
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.38.1";
+		var apiVersion = "1.38.2";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.38.1";
+		var v = "1.38.2";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -4908,7 +4908,7 @@ return URI;
 	"use strict";
 
 	if ( !jQuery ) {
-		throw new Error("SAPUI5 requires jQuery as a prerequisite (>= version 1.7)");
+		throw new Error("SAPUI5 requires jQuery as a prerequisite (>= version 1.10)");
 	}
 
 	// ensure not to initialize twice
@@ -5109,8 +5109,8 @@ return URI;
 	// -----------------------------------------------------------------------
 
 	var oJQVersion = Version(jQuery.fn.jquery);
-	if ( !oJQVersion.inRange("1.7.0", "2.2.4") ) {
-		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2.4; current version is " + jQuery.fn.jquery);
+	if ( !oJQVersion.inRange("1.10.1", "2.2.4") ) {
+		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.10 or higher, but lower than 2.2.4; current version is " + jQuery.fn.jquery);
 	}
 
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
@@ -5431,7 +5431,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.38.1
+	 * @version 1.38.2
 	 * @namespace
 	 * @public
 	 * @static

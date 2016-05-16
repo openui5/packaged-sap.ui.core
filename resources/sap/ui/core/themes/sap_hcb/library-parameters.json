@@ -283,6 +283,7 @@
     "sapUiNegativeText": "#ff5e5e",
     "sapUiCriticalText": "#ffab1d",
     "sapUiPositiveText": "#00aa00",
+    "sapUiNeutralText": "#ffffff",
     "sapUiNegative": "#bb0000",
     "sapUiCritical": "#e78c07",
     "sapUiPositive": "#2b7d2b",

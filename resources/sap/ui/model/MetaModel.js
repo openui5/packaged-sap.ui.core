@@ -16,7 +16,7 @@ sap.ui.define(['./Model'],
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.38.1
+	 * @version 1.38.2
 	 *
 	 * @constructor
 	 * @public

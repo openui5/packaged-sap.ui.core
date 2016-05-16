@@ -1074,6 +1074,12 @@ Usage:
   background-color: #000000;
   opacity: 0.3;
 }
+/**
+ * Class used to hide the line-sliding busy indicator at the top (as used in goldreflection)
+ */
+.sapUiBusy {
+  display: none;
+}
 .sapUiBody {
   scrollbar-base-color: #000000;
   scrollbar-face-color: #ffffff;
@@ -1102,12 +1108,6 @@ html.sap-desktop ::-webkit-scrollbar-thumb {
 html.sap-desktop ::-webkit-scrollbar-thumb:hover {
   background-color: #ffffff;
 }
-.sapUiBusy {
-  background-image: none;
-}
-.sapUiBusy:after {
-  content: url(img-RTL/Busy.gif);
-}
 .sapUiIcon:focus {
   outline: 1px dashed #ffffff;
 }
@@ -1134,20 +1134,6 @@ html.sap-desktop ::-webkit-scrollbar-thumb:hover {
 }
 .sapUiIconBGColorNegative {
   background-color: #ff5e5e;
-}
-.sapUiLocalBusyIndicator {
-  background-color: rgba(0, 0, 0, 0.3);
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-.sapUiBusy {
-  margin: 0 auto;
-}
-#sapUiBusyIndicator > .sapUiLocalBusyIndicator {
-  display: none;
 }
 /* HCB */
 .sapUiShd {

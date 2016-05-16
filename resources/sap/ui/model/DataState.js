@@ -52,7 +52,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.38.1
+	 * @version 1.38.2
 	 *
 	 * @constructor
 	 * @public

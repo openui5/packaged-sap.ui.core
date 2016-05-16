@@ -6,8 +6,10 @@
 
 sap.ui.define([
 	"sap/ui/model/FormatException",
-	"sap/ui/model/odata/type/ODataType"
-], function (FormatException, ODataType) {
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException"
+], function (FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	/**
@@ -28,7 +30,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.type.ODataType
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.38.1
+	 * @version 1.38.2
 	 */
 	var Raw = ODataType.extend("sap.ui.model.odata.type.Raw", {
 			constructor : function (oFormatOptions, oConstraints) {
@@ -60,8 +62,7 @@ sap.ui.define([
 		if (sTargetType === "any") {
 			return vValue;
 		}
-		throw new FormatException("Unsupported operation: sap.ui.model.odata.type.Raw#formatValue,"
-			+ " sTargetType must be 'any'");
+		throw new FormatException("Type 'sap.ui.model.odata.type.Raw' does not support formatting");
 	};
 
 	/**
@@ -81,27 +82,28 @@ sap.ui.define([
 	/**
 	 * Method not supported
 	 *
-	 * @throws {Error}
+	 * @throws {sap.ui.model.ParseException}
 	 *
 	 * @public
 	 * @see sap.ui.model.SimpleType#parseValue
 	 * @since 1.37.0
 	 */
 	Raw.prototype.parseValue = function () {
-		throw new Error("Unsupported operation: sap.ui.model.odata.type.Raw#parseValue");
+		throw new ParseException("Type 'sap.ui.model.odata.type.Raw' does not support parsing");
 	};
 
 	/**
 	 * Method not supported
 	 *
-	 * @throws {Error}
+	 * @throws {sap.ui.model.ValidateException}
 	 *
 	 * @public
 	 * @see sap.ui.model.SimpleType#validateValue
 	 * @since 1.37.0
 	 */
 	Raw.prototype.validateValue = function () {
-		throw new Error("Unsupported operation: sap.ui.model.odata.type.Raw#validateValue");
+		throw new ValidateException(
+			"Type 'sap.ui.model.odata.type.Raw' does not support validating");
 	};
 
 	return Raw;
