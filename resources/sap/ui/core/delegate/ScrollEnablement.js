@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.36.10
+		 * @version 1.36.11
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
@@ -774,7 +774,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 			},
 
 			getMaxScrollTop : function() {
-				return (this._$Container && this._$Container.length) ? this._$Container[0].scrollHeight - this._$Container.height() : -1;
+				var $Container = this._$Container;
+				return ($Container && $Container[0]) ? $Container[0].scrollHeight - $Container[0].clientHeight : -1;
 			},
 
 			_cleanup : function() {
@@ -793,8 +794,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 				// Let container scroll into the configured directions
 				if (Device.os.ios || Device.os.blackberry) {
 					$Container
-						.css("overflow-x", this._bHorizontal ? "scroll" : "hidden")
-						.css("overflow-y", this._bVertical ? "scroll" : "hidden")
+						.css("overflow-x", this._bHorizontal && !this._bDragScroll ? "scroll" : "hidden")
+						.css("overflow-y", this._bVertical && !this._bDragScroll ? "scroll" : "hidden")
 						.css("-webkit-overflow-scrolling", "touch");
 				} else { //other browsers do not support -webkit-overflow-scrolling
 					$Container
@@ -853,7 +854,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 				this._scrollY = fScrollTop;
 
 				// Growing List/Table
-				if (this._fnScrollLoadCallback && fVerticalMove > 0 && $Container[0].scrollHeight - fScrollTop - $Container.height() < 100 ) {
+				if (this._fnScrollLoadCallback && fVerticalMove > 0 && $Container[0].scrollHeight - fScrollTop - $Container[0].clientHeight < 100 ) {
 					this._fnScrollLoadCallback(); // close to the bottom
 				}
 

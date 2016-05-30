@@ -61,7 +61,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.36.10
+	 * @version 1.36.11
 	 *
 	 * @constructor
 	 * @public
@@ -1495,8 +1495,11 @@ sap.ui.define([
 			aExpand = [], aSelect = [];
 
 		function filterOwn(aEntries) {
-			return aEntries.filter(function(sEntry) {
-				return sEntry.indexOf("/") === -1;
+			return aEntries.map(function(sEntry) {
+				var iSlash = sEntry.indexOf("/");
+				return iSlash === -1 ? sEntry : sEntry.substr(0, iSlash);
+			}).filter(function(sValue, iIndex, aEntries) {
+				return aEntries.indexOf(sValue) === iIndex;
 			});
 		}
 
@@ -1529,8 +1532,9 @@ sap.ui.define([
 
 			// check select properties
 			aOwnSelect = filterOwn(aSelect);
-			if (aOwnSelect.length === 0) {
-				// If no select options are defined, check all existing properties
+			if (aOwnSelect.length === 0 || aOwnSelect.indexOf("*") >= 0) {
+				// If no select options are defined or the star is contained,
+				// check all existing properties
 				aOwnSelect = oEntityType.property.map(function(oProperty) {
 					return oProperty.name;
 				});
@@ -1721,7 +1725,7 @@ sap.ui.define([
 			sName = oEntityType.key.propertyRef[0].name;
 			jQuery.sap.assert(sName in oKeyProperties, "Key property \"" + sName + "\" is missing in object!");
 			oProperty = this.oMetadata._getPropertyMetadata(oEntityType, sName);
-			sKey += ODataUtils.formatValue(oKeyProperties[sName], oProperty.type);
+			sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 		} else {
 			jQuery.each(oEntityType.key.propertyRef, function(i, oPropertyRef) {
 				if (i > 0) {
@@ -1732,7 +1736,7 @@ sap.ui.define([
 				oProperty = that.oMetadata._getPropertyMetadata(oEntityType, sName);
 				sKey += sName;
 				sKey += "=";
-				sKey += ODataUtils.formatValue(oKeyProperties[sName], oProperty.type);
+				sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 			});
 		}
 		sKey += ")";
@@ -3075,7 +3079,7 @@ sap.ui.define([
 		/* make sure to set content type header for POST/PUT requests when using JSON
 		 * format to prevent datajs to add "odata=verbose" to the content-type header
 		 * may be removed as later gateway versions support this */
-		if (sMethod !== "DELETE" && sMethod !== "GET") {
+		if (!mHeaders["Content-Type"] && sMethod !== "DELETE" && sMethod !== "GET") {
 			if (this.bJSON) {
 				mHeaders["Content-Type"] = "application/json";
 			} else {

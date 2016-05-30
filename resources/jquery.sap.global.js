@@ -96,7 +96,7 @@
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.36.10
+	 * @version 1.36.11
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -544,7 +544,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.36.10
+	 * @version 1.36.11
 	 * @namespace
 	 * @public
 	 * @static
@@ -3002,15 +3002,16 @@
 		function requireAll(sBaseName, aDependencies, fnCallback) {
 
 			var aModules = [],
-				i, sDepModName;
+				i, sDepModName, oShim;
 
 			for (i = 0; i < aDependencies.length; i++) {
 				sDepModName = resolveModuleName(sBaseName, aDependencies[i]);
+				oShim = mAMDShim[sDepModName + ".js"];
 				log.debug(sLogPrefix + "require '" + sDepModName + "'");
 				requireModule(sDepModName + ".js");
 				// best guess for legacy modules that don't use sap.ui.define
 				// TODO implement fallback for raw modules
-				aModules[i] = mModules[sDepModName + ".js"].content || jQuery.sap.getObject(urnToUI5(sDepModName + ".js"));
+				aModules[i] = mModules[sDepModName + ".js"].content || jQuery.sap.getObject((oShim && oShim.exports) || urnToUI5(sDepModName + ".js"));
 				log.debug(sLogPrefix + "require '" + sDepModName + "': done.");
 			}
 

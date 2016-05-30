@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 * @class
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.36.10
+	 * @version 1.36.11
 	 * @public
 	 * @alias sap.ui.core.Fragment
 	 */
@@ -48,26 +48,31 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 				type: "string"
 			},
 			specialSettings: {
+
 				/*
 				 * Name of the fragment to load
 				 */
-				fragmentName : true,
+				fragmentName : 'string',
+
 				/*
 				 * Content of the fragment
 				 */
-				fragmentContent : true,
+				fragmentContent : 'any',
+
 				/*
 				 * An enclosing view that contains this instance of the fragment (optional)
 				 */
-				containingView : true,
+				containingView : { type: 'sap.ui.core.mvc.View', visibility: 'hidden' },
+
 				/*
 				 * A controller of a containing View that should be used by this fragment (optional)
 				 */
-				oController : true,
+				oController : { type: 'sap.ui.core.mvc.Controller', visibility: 'hidden' },
+
 				/*
 				 * The ID of this fragment (optional)
 				 */
-				sId : true
+				sId : { type: 'sap.ui.core.ID', visibility: 'hidden' }
 			}
 		},
 

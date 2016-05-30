@@ -533,20 +533,6 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
 /**
  * Keyframe definitions
  */
-.mixin-standard-animation-frames 0%,
-.mixin-standard-animation-frames 80%,
-.mixin-standard-animation-frames 100% {
-  -webkit-transform: scale(0.4);
-  -moz-transform: scale(0.4);
-  -ms-transform: scale(0.4);
-  transform: scale(0.4);
-}
-.mixin-standard-animation-frames 40% {
-  -webkit-transform: scale(1);
-  -moz-transform: scale(1);
-  -ms-transform: scale(1);
-  transform: scale(1);
-}
 .mixin-standard-background-animation-frames 0%,
 .mixin-standard-background-animation-frames 80%,
 .mixin-standard-background-animation-frames 100% {
@@ -562,19 +548,6 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
 }
 .mixin-standard-shadow-animation-frames 40% {
   opacity: 1;
-}
-.mixin-small-animation-frames 0%,
-.mixin-small-animation-frames 100% {
-  -webkit-transform: scale(0.2);
-  -moz-transform: scale(0.2);
-  -ms-transform: scale(0.2);
-  transform: scale(0.2);
-}
-.mixin-small-animation-frames 50% {
-  -webkit-transform: scale(1);
-  -moz-transform: scale(1);
-  -ms-transform: scale(1);
-  transform: scale(1);
 }
 .mixin-small-background-animation-frames 0%,
 .mixin-small-background-animation-frames 100% {
@@ -597,15 +570,9 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
   0%,
   80%,
   100% {
-    -webkit-transform: scale(0.4);
-    -moz-transform: scale(0.4);
-    -ms-transform: scale(0.4);
     transform: scale(0.4);
   }
   40% {
-    -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
     transform: scale(1);
   }
 }
@@ -614,47 +581,9 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
   80%,
   100% {
     -webkit-transform: scale(0.4);
-    -moz-transform: scale(0.4);
-    -ms-transform: scale(0.4);
-    transform: scale(0.4);
   }
   40% {
     -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
-  }
-}
-@-moz-keyframes sapUiBusyAnimationStandard {
-  0%,
-  80%,
-  100% {
-    -webkit-transform: scale(0.4);
-    -moz-transform: scale(0.4);
-    -ms-transform: scale(0.4);
-    transform: scale(0.4);
-  }
-  40% {
-    -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
-  }
-}
-@-ms-keyframes sapUiBusyAnimationStandard {
-  0%,
-  80%,
-  100% {
-    -webkit-transform: scale(0.4);
-    -moz-transform: scale(0.4);
-    -ms-transform: scale(0.4);
-    transform: scale(0.4);
-  }
-  40% {
-    -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
   }
 }
 @keyframes sapUiBusyAnimationStandardBackground {
@@ -668,26 +597,6 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
   }
 }
 @-webkit-keyframes sapUiBusyAnimationStandardBackground {
-  0%,
-  80%,
-  100% {
-    opacity: 1;
-  }
-  40% {
-    opacity: 0.1;
-  }
-}
-@-moz-keyframes sapUiBusyAnimationStandardBackground {
-  0%,
-  80%,
-  100% {
-    opacity: 1;
-  }
-  40% {
-    opacity: 0.1;
-  }
-}
-@-ms-keyframes sapUiBusyAnimationStandardBackground {
   0%,
   80%,
   100% {
@@ -717,38 +626,12 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
     opacity: 1;
   }
 }
-@-moz-keyframes sapUiBusyAnimationStandardShadow {
-  0%,
-  80%,
-  100% {
-    opacity: 0;
-  }
-  40% {
-    opacity: 1;
-  }
-}
-@-ms-keyframes sapUiBusyAnimationStandardShadow {
-  0%,
-  80%,
-  100% {
-    opacity: 0;
-  }
-  40% {
-    opacity: 1;
-  }
-}
 @keyframes sapUiBusyAnimationSmall {
   0%,
   100% {
-    -webkit-transform: scale(0.2);
-    -moz-transform: scale(0.2);
-    -ms-transform: scale(0.2);
     transform: scale(0.2);
   }
   50% {
-    -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
     transform: scale(1);
   }
 }
@@ -756,45 +639,9 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
   0%,
   100% {
     -webkit-transform: scale(0.2);
-    -moz-transform: scale(0.2);
-    -ms-transform: scale(0.2);
-    transform: scale(0.2);
   }
   50% {
     -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
-  }
-}
-@-moz-keyframes sapUiBusyAnimationSmall {
-  0%,
-  100% {
-    -webkit-transform: scale(0.2);
-    -moz-transform: scale(0.2);
-    -ms-transform: scale(0.2);
-    transform: scale(0.2);
-  }
-  50% {
-    -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
-  }
-}
-@-ms-keyframes sapUiBusyAnimationSmall {
-  0%,
-  100% {
-    -webkit-transform: scale(0.2);
-    -moz-transform: scale(0.2);
-    -ms-transform: scale(0.2);
-    transform: scale(0.2);
-  }
-  50% {
-    -webkit-transform: scale(1);
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
   }
 }
 @keyframes sapUiBusyAnimationSmallBackground {
@@ -815,24 +662,6 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
     opacity: 0.1;
   }
 }
-@-moz-keyframes sapUiBusyAnimationSmallBackground {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.1;
-  }
-}
-@-ms-keyframes sapUiBusyAnimationSmallBackground {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.1;
-  }
-}
 @keyframes sapUiBusyAnimationSmallShadow {
   0%,
   100% {
@@ -843,24 +672,6 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
   }
 }
 @-webkit-keyframes sapUiBusyAnimationSmallShadow {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@-moz-keyframes sapUiBusyAnimationSmallShadow {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@-ms-keyframes sapUiBusyAnimationSmallShadow {
   0%,
   100% {
     opacity: 0;
