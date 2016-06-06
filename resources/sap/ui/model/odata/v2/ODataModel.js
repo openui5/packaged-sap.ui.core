@@ -61,7 +61,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.36.11
+	 * @version 1.36.12
 	 *
 	 * @constructor
 	 * @public
@@ -1168,47 +1168,58 @@ sap.ui.define([
 	/**
 	 * Restore reference entries of navigation properties created in importData function
 	 * @param {object} oData entry which references should be restored
+	 * @param {object} [mVisitedEntries] map of entries which already have been visited and included
 	 * @returns {object} oData entry
 	 * @private
 	 */
-	ODataModel.prototype._restoreReferences = function(oData){
+	ODataModel.prototype._restoreReferences = function(oData, mVisitedEntries){
 		var that = this,
-		aList,
-		aResults = [];
-		if (oData.results) {
-			aList = [];
-			jQuery.each(oData.results, function(i, entry) {
-				aList.push(that._restoreReferences(entry));
-			});
-			return aList;
-		} else {
-			jQuery.each(oData, function(sPropName, oCurrentEntry) {
-				if (oCurrentEntry && oCurrentEntry["__ref"]) {
-					var oChildEntry = that._getObject("/" + oCurrentEntry["__ref"]);
-					jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " + oCurrentEntry["__ref"] + " not found!");
+		sKey,
+		oChildEntry,
+		aResults;
+
+		function getEntry(sKey) {
+			var oChildEntry = mVisitedEntries[sKey];
+			if (!oChildEntry) {
+				oChildEntry = that._getObject("/" + sKey);
+				jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " + sKey + " not found!");
+				if (oChildEntry) {
+					oChildEntry = jQuery.sap.extend(true, {}, oChildEntry);
+					mVisitedEntries[sKey] = oChildEntry;
+					// check recursively for found child entries
+					that._restoreReferences(oChildEntry, mVisitedEntries);
+				}
+			}
+			return oChildEntry;
+		}
+
+		if (!mVisitedEntries) {
+			mVisitedEntries = {};
+		}
+
+		jQuery.each(oData, function(sPropName, oCurrentEntry) {
+			if (oCurrentEntry) {
+				if (oCurrentEntry.__ref) {
+					sKey = oCurrentEntry.__ref;
+					oChildEntry = getEntry(sKey);
 					if (oChildEntry) {
-						delete oCurrentEntry["__ref"];
 						oData[sPropName] = oChildEntry;
-						// check recursively for found child entries
-						that._restoreReferences(oChildEntry);
 					}
-				} else if (oCurrentEntry && oCurrentEntry["__list"]) {
-					jQuery.each(oCurrentEntry["__list"], function(j, sEntry) {
-						var oChildEntry = that._getObject("/" + oCurrentEntry["__list"][j]);
-						jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " +  oCurrentEntry["__list"][j] + " not found!");
+					delete oCurrentEntry.__ref;
+				} else if (oCurrentEntry.__list) {
+					aResults = [];
+					jQuery.each(oCurrentEntry.__list, function(i, sKey) {
+						oChildEntry = getEntry(sKey);
 						if (oChildEntry) {
 							aResults.push(oChildEntry);
-							// check recursively for found child entries
-							that._restoreReferences(oChildEntry);
 						}
 					});
-					delete oCurrentEntry["__list"];
+					delete oCurrentEntry.__list;
 					oCurrentEntry.results = aResults;
-					aResults = [];
 				}
-			});
-			return oData;
-		}
+			}
+		});
+		return oData;
 	};
 
 	/**
@@ -1851,8 +1862,8 @@ sap.ui.define([
 				iIndex++;
 			}
 		}
-		//if we have a changed Entity we need to extend it with the backend data
-		if (jQuery.isPlainObject(oChangedNode) && this._getKey(oChangedNode)) {
+		//if we have a changed Entity/complext type we need to extend it with the backend data
+		if (jQuery.isPlainObject(oChangedNode)) {
 			oNode =  bOriginalValue ? oOrigNode : jQuery.sap.extend(true, {}, oOrigNode, oChangedNode);
 		}
 		return oNode;

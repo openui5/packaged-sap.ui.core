@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup', 'sap/ui/core/support/Pl
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.36.11
+		 * @version 1.36.12
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Selector
