@@ -10368,7 +10368,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.38.2
+ * @version 1.38.3
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10394,7 +10394,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.38.2";
+		var apiVersion = "1.38.3";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10452,7 +10452,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.38.2";
+		var v = "1.38.3";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15225,7 +15225,14 @@ return URI;
       // ##### END: MODIFIED BY SAP
     } else if (typeof module !== 'undefined' && module['exports']) {
       module['exports'] = lib$es6$promise$umd$$ES6Promise;
-    } else if (typeof this !== 'undefined') {
+      // ##### BEGIN: MODIFIED BY SAP
+      // When require.js was loaded before the core, this will not set the global window.ES6Promise property and thus
+      // keep the rest of the framework from working in browsers that do not have native Promise support.
+      // Original line:
+      // } else if (typeof this !== 'undefined') {
+    }
+    if (typeof this !== 'undefined') {
+      // ##### END: MODIFIED BY SAP
       this['ES6Promise'] = lib$es6$promise$umd$$ES6Promise;
     }
 
@@ -15788,7 +15795,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.38.2
+	 * @version 1.38.3
 	 * @namespace
 	 * @public
 	 * @static

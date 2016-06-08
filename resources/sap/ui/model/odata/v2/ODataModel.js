@@ -62,7 +62,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.38.2
+	 * @version 1.38.3
 	 *
 	 * @constructor
 	 * @public
@@ -289,7 +289,7 @@ sap.ui.define([
 
 	//
 	ODataModel.M_EVENTS = {
-			RejectChange: "rejectChange",
+
 			/**
 			 * Event is fired if the metadata document was successfully loaded
 			 */
@@ -332,6 +332,71 @@ sap.ui.define([
 			 */
 			BatchRequestCompleted : "batchRequestCompleted"
 	};
+
+	/**
+	 * The 'metadataLoaded' event is fired, when the metadata document was successfully loaded.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#metadataLoaded
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {string} oControlEvent.getParameters.metadata The parsed metadata
+	 * @public
+	 */
+
+	/**
+	 * The 'metadataFailed' event is fired, when the metadata document has failed to load.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#metadataFailed
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {string} oControlEvent.getParameters.metadata The parsed metadata
+	 * @param {string} oControlEvent.getParameters.message A text that describes the failure.
+	 * @param {string} oControlEvent.getParameters.statusCode HTTP status code returned by the request (if available)
+	 * @param {string} oControlEvent.getParameters.statusText The status as a text, details not specified, intended only for diagnosis output
+	 * @param {string} oControlEvent.getParameters.responseText Response that has been received for the request, as a text string
+	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response
+	 * @public
+	 */
+
+	/**
+	 * The 'annotationsLoaded' event is fired, when the annotations document was successfully loaded.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#annotationsLoaded
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations~Source[]} oControlEvent.getParameters.result One or several annotation source(s)
+	 * @public
+	 */
+
+	/**
+	 * The 'annotationsFailed' event is fired, when the annotations document was successfully loaded.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#annotationsFailed
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {Error[]} oControlEvent.getParameters.result An array of Errors
+	 * @public
+	 */
 
 	// document event again, as parameters differ from sap.ui.model.Model#event:requestFailed
 	/**
@@ -638,21 +703,6 @@ sap.ui.define([
 	// Keep a map of service specific data, which can be shared across different model instances
 	// on the same OData service
 	ODataModel.mServiceData = {
-	};
-
-	ODataModel.prototype.fireRejectChange = function(mArguments) {
-		this.fireEvent("rejectChange", mArguments);
-		return this;
-	};
-
-	ODataModel.prototype.attachRejectChange = function(oData, fnFunction, oListener) {
-		this.attachEvent("rejectChange", oData, fnFunction, oListener);
-		return this;
-	};
-
-	ODataModel.prototype.detachRejectChange = function(fnFunction, oListener) {
-		this.detachEvent("rejectChange", fnFunction, oListener);
-		return this;
 	};
 
 	/**
@@ -1485,8 +1535,11 @@ sap.ui.define([
 			aExpand = [], aSelect = [];
 
 		function filterOwn(aEntries) {
-			return aEntries.filter(function(sEntry) {
-				return sEntry.indexOf("/") === -1;
+			return aEntries.map(function(sEntry) {
+				var iSlash = sEntry.indexOf("/");
+				return iSlash === -1 ? sEntry : sEntry.substr(0, iSlash);
+			}).filter(function(sValue, iIndex, aEntries) {
+				return aEntries.indexOf(sValue) === iIndex;
 			});
 		}
 
@@ -1519,8 +1572,9 @@ sap.ui.define([
 
 			// check select properties
 			aOwnSelect = filterOwn(aSelect);
-			if (aOwnSelect.length === 0) {
-				// If no select options are defined, check all existing properties
+			if (aOwnSelect.length === 0 || aOwnSelect.indexOf("*") >= 0) {
+				// If no select options are defined or the star is contained,
+				// check all existing properties
 				aOwnSelect = oEntityType.property.map(function(oProperty) {
 					return oProperty.name;
 				});
@@ -1711,7 +1765,7 @@ sap.ui.define([
 			sName = oEntityType.key.propertyRef[0].name;
 			jQuery.sap.assert(sName in oKeyProperties, "Key property \"" + sName + "\" is missing in object!");
 			oProperty = this.oMetadata._getPropertyMetadata(oEntityType, sName);
-			sKey += ODataUtils.formatValue(oKeyProperties[sName], oProperty.type);
+			sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 		} else {
 			jQuery.each(oEntityType.key.propertyRef, function(i, oPropertyRef) {
 				if (i > 0) {
@@ -1722,7 +1776,7 @@ sap.ui.define([
 				oProperty = that.oMetadata._getPropertyMetadata(oEntityType, sName);
 				sKey += sName;
 				sKey += "=";
-				sKey += ODataUtils.formatValue(oKeyProperties[sName], oProperty.type);
+				sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 			});
 		}
 		sKey += ")";
@@ -1837,8 +1891,8 @@ sap.ui.define([
 				iIndex++;
 			}
 		}
-		//if we have a changed Entity we need to extend it with the backend data
-		if (jQuery.isPlainObject(oChangedNode) && this._getKey(oChangedNode)) {
+		//if we have a changed Entity/complext type we need to extend it with the backend data
+		if (jQuery.isPlainObject(oChangedNode)) {
 			oNode =  bOriginalValue ? oOrigNode : jQuery.sap.extend(true, {}, oOrigNode, oChangedNode);
 		}
 		return oNode;
@@ -3081,7 +3135,7 @@ sap.ui.define([
 		/* make sure to set content type header for POST/PUT requests when using JSON
 		 * format to prevent datajs to add "odata=verbose" to the content-type header
 		 * may be removed as later gateway versions support this */
-		if (sMethod !== "DELETE" && sMethod !== "GET") {
+		if (!mHeaders["Content-Type"] && sMethod !== "DELETE" && sMethod !== "GET") {
 			if (this.bJSON) {
 				mHeaders["Content-Type"] = "application/json";
 			} else {

@@ -34,7 +34,7 @@ sap.ui
 			 * @extends sap.ui.base.ManagedObject
 			 * @abstract
 			 * @author SAP SE
-			 * @version 1.38.2
+			 * @version 1.38.3
 			 * @public
 			 * @alias sap.ui.core.util.MockServer
 			 */
@@ -1801,15 +1801,15 @@ sap.ui
 				if (!oMetadata) {
 					return;
 				}
-
-				jQuery.sap.require("sap.ui.core.util.MockServerAnnotationsHandler");
-				var MockServerAnnotationsHandler = sap.ui.require("sap/ui/core/util/MockServerAnnotationsHandler");
-				var oAnnotations = MockServerAnnotationsHandler.parse(this._oMetadata, this._sMetadata);
-
-				jQuery.sap.require("sap.ui.core.util.DraftEnabledMockServer");
-				var DraftEnabledMockServer = sap.ui.require("sap/ui/core/util/DraftEnabledMockServer");
-				DraftEnabledMockServer.handleDraft(oAnnotations, this);
-
+				// create mockserver annotations handler only when metadata exists
+				if (this._sMetadata) {
+					jQuery.sap.require("sap.ui.core.util.MockServerAnnotationsHandler");
+					var MockServerAnnotationsHandler = sap.ui.require("sap/ui/core/util/MockServerAnnotationsHandler");
+					var oAnnotations = MockServerAnnotationsHandler.parse(this._oMetadata, this._sMetadata);
+					jQuery.sap.require("sap.ui.core.util.DraftEnabledMockServer");
+					var DraftEnabledMockServer = sap.ui.require("sap/ui/core/util/DraftEnabledMockServer");
+					DraftEnabledMockServer.handleDraft(oAnnotations, this);
+				}
 				this._refreshData();
 
 				// helper to handle xsrf token
