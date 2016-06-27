@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.36.13
+	 * @version 1.36.15
 	 *
 	 * @constructor
 	 * @public
@@ -300,8 +300,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 				sAlt = this.getAlt(),
 				bUseIconTooltip = this.getUseIconTooltip();
 
-			if (sTooltip || bUseIconTooltip) {
-				$Icon.attr("title", sTooltip || oIconInfo.text || oIconInfo.name);
+			if (sTooltip || (bUseIconTooltip && oIconInfo.text)) {
+				$Icon.attr("title", sTooltip || oIconInfo.text);
 			} else {
 				$Icon.attr("title", null);
 			}

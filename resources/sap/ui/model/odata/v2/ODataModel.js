@@ -61,7 +61,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.36.13
+	 * @version 1.36.15
 	 *
 	 * @constructor
 	 * @public
@@ -2528,7 +2528,6 @@ sap.ui.define([
 									}
 									oChangeSet.__changeRequests.push(aChangeSet[i].request);
 									aChanges.push(aChangeSet[i]);
-									delete that.mChangeHandles[aChangeSet[i].request.key];
 								}
 							}
 							if (oChangeSet.__changeRequests && oChangeSet.__changeRequests.length > 0) {
