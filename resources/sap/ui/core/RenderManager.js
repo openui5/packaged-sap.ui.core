@@ -38,7 +38,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.38.3
+	 * @version 1.38.4
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -1291,7 +1291,7 @@ sap.ui.define([
 				"data-sap-ui-icon-content": oIconInfo.content,
 				"role": "presentation",
 				"aria-label": oIconInfo.text || oIconInfo.name,
-				"title": oIconInfo.text || oIconInfo.name
+				"title": oIconInfo.text || null
 			};
 
 			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
