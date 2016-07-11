@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './ExportType'],
 	 * @extends sap.ui.core.util.ExportType
 	 *
 	 * @author SAP SE
-	 * @version 1.28.35
+	 * @version 1.28.36
 	 * @since 1.22.0
 	 *
 	 * @constructor

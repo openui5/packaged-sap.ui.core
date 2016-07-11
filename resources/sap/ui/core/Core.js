@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @extends sap.ui.base.EventProvider
 	 * @final
 	 * @author SAP SE
-	 * @version 1.28.35
+	 * @version 1.28.36
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -633,7 +633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 			// notify the listeners
 			if ( this.oThemeCheck ) {
-				this.oThemeCheck.fireThemeChangedEvent(false, true);
+				this.oThemeCheck.fireThemeChangedEvent(false);
 			}
 		}
 	};
