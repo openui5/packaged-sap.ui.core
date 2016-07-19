@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>qUnit Page for sap.ui.test.Opa5</title>
+
+		<script
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons, sap.m"
+			data-sap-ui-resourceroots='{
+			"samples" : "../../samples/",
+			"unitTests" : "./opa5TestFiles"
+			}'>
+		</script>
+
+		<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+		QUnit.config.autostart = false;
+		jQuery.sap.require("samples.components.button.Component");
+		jQuery.sap.require("sap.ui.core.routing.HashChanger");
+
+		jQuery.sap.require("samples.components.button.Component");
+		jQuery.sap.require("sap.ui.core.routing.HashChanger");
+		sap.ui.require([
+			"sap/ui/test/Opa5",
+			"sap/ui/test/opaQunit",
+			//fast tests
+			'unitTests/actions',
+			'unitTests/basics',
+			'unitTests/component',
+			'unitTests/logging',
+			'unitTests/matchers',
+			//the slow ones
+			'unitTests/launchers',
+			'unitTests/iFrame'
+		], function (Opa5, opaTest) {
+			QUnit.module("wait for basics", {
+				setup: function () {
+					this.oOpa5 = new Opa5();
+				}
+			});
+
+			opaTest("Should invoke check and success if nothing else is specified", function () {
+				this.oOpa5.waitFor({
+					check: function () {
+						Opa5.assert.strictEqual(arguments.length, 0);
+						return true
+					},
+					success: function () {
+						Opa5.assert.strictEqual(arguments.length, 0);
+					}
+				});
+			});
+
+			QUnit.start();
+		});
+
+		</script>
+	</head>
+	<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	</body>
+</html>
