@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.40.1
+	 * @version 1.40.2
 	 *
 	 * @alias sap.ui.model.odata.type.String
 	 * @param {object} [oFormatOptions]
@@ -151,8 +151,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 *   the target type; may be "any", "boolean", "float", "int" or "string".
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string|number|boolean}
-	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   are formatted to <code>null</code>
+	 *   the formatted output value in the target type; <code>undefined</code> is always formatted
+	 *   to <code>null</code>; <code>null</code> is formatted to "" if the target type is "string".
 	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported or the string cannot be formatted to the target
 	 *   type
@@ -160,6 +160,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 * @public
 	 */
 	EdmString.prototype.formatValue = function(sValue, sTargetType) {
+		if (sValue === null && sTargetType === "string") {
+			return "";
+		}
 		if (isDigitSequence(sValue, this.oConstraints)) {
 			sValue = sValue.replace(rLeadingZeros, "");
 		}

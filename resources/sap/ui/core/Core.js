@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.40.1
+	 * @version 1.40.2
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -1220,15 +1220,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
 
-		var libModule = lib.replace(/\./g, '/') + '/library.js';
-		if ( jQuery.sap.isResourceLoaded(libModule) ) {
-			return Promise.resolve(true);
-		}
-
 		var json;
 		if ( typeof lib !== 'string' ) {
 			json = lib.json;
 			lib = lib.name;
+		}
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return Promise.resolve(true);
 		}
 
 		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
@@ -1349,15 +1349,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
 
-		var libModule = lib.replace(/\./g, '/') + '/library.js';
-		if ( jQuery.sap.isResourceLoaded(libModule) ) {
-			return;
-		}
-
 		var json;
 		if ( typeof lib !== 'string' ) {
 			json = lib.json;
 			lib = lib.name;
+		}
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return;
 		}
 
 		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
@@ -1370,10 +1370,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// currently loading
 		if ( libInfo.pending ) {
 			if ( libInfo.async ) {
-				throw new Error("request to load " + lib + " synchronously, but async loading is pending");
+				jQuery.sap.log.warning("request to load " + lib + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
+				// fall through and preload synchronously
 			} else {
-				// sync cycle -> error (or return null like with modules?)
-				throw new Error("request to load " + lib + " synchronously, but sync loading is pending (cycle)");
+				// sync cycle -> ignore nested call (would nevertheless be a dependency cycle)
+				jQuery.sap.log.warning("request to load " + lib + " synchronously while sync loading is pending (cycle, ignored)");
+				return;
 			}
 		}
 
@@ -1540,8 +1542,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		function requireLibs() {
 			if ( bRequire ) {
-				aLibraries.forEach(function(sLibraryName) {
-					jQuery.sap.require(sLibraryName + ".library");
+				aLibraries.forEach(function(vLibraryName) {
+					if ( typeof vLibraryName === 'object' ) {
+						vLibraryName = vLibraryName.name;
+					}
+					jQuery.sap.require(vLibraryName + ".library");
 				});
 				if ( that.oThemeCheck && that.isInitialized() ) {
 					that.oThemeCheck.fireThemeChangedEvent(true);
@@ -2323,13 +2328,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.fireLocalizationChanged = function(mChanges) {
 		var sEventId = Core.M_EVENTS.LocalizationChanged,
 			oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
-			fnAdapt = ManagedObject._handleLocalizationChange,
-			changedSettings = [];
+			fnAdapt = ManagedObject._handleLocalizationChange;
 
-		jQuery.each(mChanges, function(key,value) {
-			changedSettings.push(key);
-		});
-		jQuery.sap.log.info("localization settings changed: " + changedSettings.join(","), null, "sap.ui.core.Core");
+		jQuery.sap.log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
 
 		/*
 		 * Notify models that are able to handle a localization change
@@ -2372,7 +2373,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			jQuery.sap.log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
 		}
 
-		// notify Elements via a pseudo browser event (onLocalizationChanged)
+		// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
 		jQuery.each(this.mElements, function(sId, oElement) {
 			this._handleEvent(oBrowserEvent);
 		});
