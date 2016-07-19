@@ -63,7 +63,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.40.0
+	 * @version 1.40.1
 	 *
 	 * @constructor
 	 * @public
@@ -1159,10 +1159,10 @@ sap.ui.define([
 				}
 
 				if (!jQuery.isEmptyObject(mHeaders)) {
-					if (!oEntry.__metadata) {
-						oEntry.__metadata = {};
+					if (!oData.__metadata) {
+						oData.__metadata = {};
 					}
-					oEntry.__metadata.headers = mHeaders;
+					oData.__metadata.headers = mHeaders;
 				}
 			}
 

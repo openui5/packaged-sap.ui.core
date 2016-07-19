@@ -83,7 +83,7 @@ sap.ui.define([
 	 *   asynchronously ({@link #requestProperty} and {@link #requestObject}).
 	 * @extends sap.ui.model.Context
 	 * @public
-	 * @version 1.40.0
+	 * @version 1.40.1
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
 			constructor : function (oModel, oBinding, sPath, iIndex) {
@@ -92,6 +92,18 @@ sap.ui.define([
 				this.iIndex = iIndex;
 			}
 		});
+
+	/**
+	 * Deregisters the given dependent binding from the parent binding.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+	 *   oDependentBinding The dependent binding
+	 *
+	 * @private
+	 */
+	Context.prototype.deregisterBinding = function (oDependentBinding) {
+		_ODataHelper.deregisterBinding(this.oBinding, oDependentBinding);
+	};
 
 	/**
 	 * Deregisters the given change listener.
@@ -290,7 +302,21 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.hasPendingChanges = function (sPath) {
-		return this.oBinding.hasPendingChanges(_Helper.buildPath(this.iIndex, sPath));
+		// since we send a path, bAskParent is not needed and set to undefined
+		return _ODataHelper.hasPendingChanges(this.oBinding, undefined,
+			_Helper.buildPath(this.iIndex, sPath));
+	};
+
+	/**
+	 * Registers the given dependent binding at the parent binding.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+	 *   oDependentBinding The dependent binding
+	 *
+	 * @private
+	 */
+	Context.prototype.registerBinding = function (oDependentBinding) {
+		_ODataHelper.registerBinding(this.oBinding, oDependentBinding);
 	};
 
 	/**
@@ -351,6 +377,20 @@ sap.ui.define([
 	 */
 	Context.prototype.requestProperty = function (sPath, bExternalFormat) {
 		return Promise.resolve(fetchPrimitiveValue(this, sPath, bExternalFormat));
+	};
+
+	/**
+	 * Resets all pending changes for a given <code>sPath</code>.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 *
+	 * @private
+	 */
+	Context.prototype.resetChanges = function (sPath) {
+		// since we send a path, bAskParent is not needed and set to undefined
+		return _ODataHelper.resetChanges(this.oBinding, undefined,
+			_Helper.buildPath(this.iIndex, sPath));
 	};
 
 	/**
