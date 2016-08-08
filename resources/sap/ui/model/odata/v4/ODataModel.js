@@ -94,7 +94,7 @@ sap.ui.define([
 	 *   The model does not support any public events; attaching an event handler leads to an error.
 	 * @extends sap.ui.model.Model
 	 * @public
-	 * @version 1.40.3
+	 * @version 1.40.4
 	 */
 	var ODataModel = Model.extend(sClassName,
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */

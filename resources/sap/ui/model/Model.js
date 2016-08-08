@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.40.3
+	 * @version 1.40.4
 	 *
 	 * @constructor
 	 * @public
@@ -451,6 +451,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		this.fireEvent("propertyChange", mArguments);
 		return this;
 	};
+
+	/**
+	 *
+	 *
+	 * The 'propertyChange' event is fired when changes occur to a property value in the model. The event contains a reason parameter which describes the cause of the property value change.
+	 * Currently the event is only fired with reason <code>sap.ui.model.ChangeReason.Binding</code> which is fired when two way changes occur to a value of a property binding.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.Model#propertyChange
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason The cause of the property value change
+	 * @param {string} oEvent.getParameters.path The path of the property
+	 * @param {sap.ui.model.Context} [oEvent.getParameters.context] The binding context (if available)
+	 * @param {object} oEvent.getParameters.value The current value of the property
+	 * @public
+	 */
 
 	/**
 	 * Attach event-handler <code>fnFunction</code> to the 'propertyChange' event of this <code>sap.ui.model.Model</code>.

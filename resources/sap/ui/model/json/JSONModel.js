@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
-	 * @version 1.40.3
+	 * @version 1.40.4
 	 *
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
 	 * @param {boolean} bObserve whether to observe the JSON data for property changes (experimental)
@@ -231,7 +231,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 			});
 
 			this.pSequentialImportCompleted = this.pSequentialImportCompleted.then(function() {
-				return pImportCompleted.then(fnSuccess, fnError);
+				//must always resolve
+				return pImportCompleted.then(fnSuccess, fnError).catch(function() {});
 			});
 		} else {
 			_loadData(fnSuccess, fnError);

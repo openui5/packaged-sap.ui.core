@@ -63,7 +63,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.40.3
+	 * @version 1.40.4
 	 *
 	 * @constructor
 	 * @public
@@ -3633,7 +3633,7 @@ sap.ui.define([
 			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 			sUrl = that._createRequestUrl(sFunctionName, null, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined);
+			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined, sETag);
 			oRequest.key = sKey;
 
 			mRequests = that.mRequests;
