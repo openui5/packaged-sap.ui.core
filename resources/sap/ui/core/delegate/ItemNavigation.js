@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {Element[]} aItemDomRefs Array of DOM references representing the items for the navigation
 	 * @param {boolean} [bNotInTabChain=false] Whether the selected element should be in the tab chain or not
 	 *
-	 * @version 1.38.6
+	 * @version 1.38.7
 	 * @constructor
 	 * @alias sap.ui.core.delegate.ItemNavigation
 	 * @public
@@ -442,8 +442,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 */
 	ItemNavigation.prototype.setTableMode = function(bTableMode, bTableList) {
 		this.bTableMode = bTableMode;
-		if (this.bIsRTL === undefined) {
-			this.bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+		if (this.oConfiguration === undefined) {
+			this.oConfiguration = sap.ui.getCore().getConfiguration();
 		}
 		this.bTableList = bTableMode ? bTableList : false;
 		return this;
@@ -534,11 +534,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				var iOldIndex = iIndex;
 				if (oEvent && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_RIGHT) {
 					if (iCol < this.iColumns - 1) {
-						iIndex += this.bIsRTL ? -1 : 1;
+						iIndex += this.oConfiguration.getRTL() ? -1 : 1;
 					}
 				} else if (oEvent && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_LEFT) {
 					if (iCol > 1) {
-						iIndex -= this.bIsRTL ? -1 : 1;
+						iIndex -= this.oConfiguration.getRTL() ? -1 : 1;
 					}
 				} else {
 					if (iCol > 1) {
