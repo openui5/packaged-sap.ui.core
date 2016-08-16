@@ -18,7 +18,7 @@ sap.ui.define([], function() {
 	 *        only the defined functions will be visible, no internals of the class can be accessed.
 	 *
 	 * @author Malte Wedel, Daniel Brinkmann
-	 * @version 1.40.4
+	 * @version 1.40.5
 	 * @param {sap.ui.base.Object}
 	 *            oObject the instance that needs an interface created
 	 * @param {string[]}

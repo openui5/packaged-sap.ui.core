@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.40.4
+	 * @version 1.40.5
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -774,9 +774,9 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		} else {
 			//Remove the busy indicator from the DOM
 			this.$("busyIndicator").remove();
-			this.$().removeClass('sapUiLocalBusy');
+			$this.removeClass('sapUiLocalBusy');
 			//Unset the actual DOM Element´s 'aria-busy'
-			this.$().removeAttr('aria-busy');
+			$this.removeAttr('aria-busy');
 
 			//Reset the position style to its original state
 			if (this._busyStoredPosition) {

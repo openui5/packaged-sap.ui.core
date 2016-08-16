@@ -5,8 +5,8 @@
  */
 
 //Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
-		function(jQuery, ContextBinding) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model/ChangeReason'],
+		function(jQuery, ContextBinding, ChangeReason) {
 	"use strict";
 
 
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 		if (!sResolvedPath || bCreatedRelative) {
 			this.oElementContext = null;
-			this._fireChange();
+			this._fireChange({ reason: ChangeReason.Context });
 			return;
 		}
 
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 			var oData;
 			that.oElementContext = oContext;
-			that._fireChange();
+			that._fireChange({ reason: ChangeReason.Context });
 			if (sResolvedPath && bReloadNeeded) {
 				if (that.oElementContext) {
 					oData = that.oElementContext.getObject();
@@ -142,11 +142,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
 				if (that.oElementContext === oContext) {
 					if (bForceUpdate) {
-						that._fireChange();
+						that._fireChange({ reason: ChangeReason.Context });
 					}
 				} else {
 					that.oElementContext = oContext;
-					that._fireChange();
+					that._fireChange({ reason: ChangeReason.Context });
 				}
 				if (that.oElementContext) {
 					oData = that.oElementContext.getObject();
@@ -189,7 +189,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			if (!sResolvedPath || bCreated) {
 				if (this.oElementContext !== null) {
 					this.oElementContext = null;
-					this._fireChange();
+					this._fireChange({ reason: ChangeReason.Context });
 				}
 				return;
 			}
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 				that.oElementContext = oContext;
-				that._fireChange();
+				that._fireChange({ reason: ChangeReason.Context });
 				if (sResolvedPath && bReloadNeeded) {
 					if (that.oElementContext) {
 						oData = that.oElementContext.getObject();
