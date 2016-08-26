@@ -1,0 +1,247 @@
+<!DOCTYPE HTML>
+<!--
+  Tested class: sap.ui.core.Configuration
+  Author: d020684
+  -->
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<!-- Initialization -->
+	<script>
+		window["sap-ui-config"] = {
+			theme : "sap_bluecrystal"
+		}
+	</script>
+
+	<script id="sap-ui-bootstrap"
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-calendarType="islamic"
+		data-sap-ui-language="en"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.core">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script>
+
+		QUnit.module("Basic");
+
+		QUnit.test("Settings", function(assert) {
+			var oCfg = new sap.ui.core.Configuration();
+			assert.equal(oCfg.theme, "sap_bluecrystal", "tag config should override global config");
+			assert.deepEqual(oCfg.modules, ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
+		});
+
+		QUnit.test("jQuery and $", function(assert) {
+			// we configured noConflict=true, so $ shouldn'T be the same as jQuery
+			assert.ok(window.jQuery, "window.jQuery is available");
+			assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
+		});
+
+		QUnit.test("LegacyDateCalendarCustomizing", function(assert) {
+			var oCfg = new sap.ui.core.Configuration(),
+				oFormatSettings = oCfg.getFormatSettings();
+
+			var aData = [{
+				"dateFormat": "A",
+				"islamicMonthStart": "14351201",
+				"gregDate": "20140925"
+			}, {
+				"dateFormat": "A",
+				"islamicMonthStart": "14360101",
+				"gregDate": "20141024"
+			}, {
+				"dateFormat": "A",
+				"islamicMonthStart": "14360201",
+				"gregDate": "20141123"
+			}];
+
+			assert.ok(oFormatSettings, "FormatSettings object is created");
+			oFormatSettings.setLegacyDateCalendarCustomizing(aData);
+			assert.strictEqual(oFormatSettings.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
+		});
+
+		QUnit.test("getter and setter for option 'calendar'", function(assert) {
+			var oCfg = new sap.ui.core.Configuration(),
+				oFormatSettings = oCfg.getFormatSettings();
+
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The bootstrap parameter is respected");
+
+			oCfg.setCalendarType(null);
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The default calendar type is determined using the current locale");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+
+			oCfg.setCalendarType(sap.ui.core.CalendarType.Gregorian);
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
+
+			oCfg.setCalendarType(null);
+			oFormatSettings.setLegacyDateFormat("B");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
+
+			oFormatSettings.setLegacyDateFormat("7");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Japanese, "The legacy date format '7' changes the calendar type to japanese");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+			oFormatSettings.setLegacyDateFormat("8");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Japanese, "The legacy date format '8' changes the calendar type to japanese");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+			oFormatSettings.setLegacyDateFormat("9");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Japanese, "The legacy date format '9' changes the calendar type to japanese");
+		});
+
+		QUnit.module("localization change", {
+			beforeEach: function(assert) {
+				this.oConfig = sap.ui.getCore().getConfiguration();
+				this.oConfig.setLanguage("en");
+				this.reset = function() {
+					this.eventsReceived = 0;
+					this.changes = [];
+				};
+				this.fnListener = function(e) {
+					this.eventsReceived++;
+					this.changes.push(e.getParameter("changes"));
+				};
+				this.reset();
+				sap.ui.getCore().attachLocalizationChanged(this.fnListener, this);
+			},
+			afterEach: function(assert) {
+				sap.ui.getCore().detachLocalizationChanged(this.fnListener, this);
+				this.oConfig.setLanguage("en");
+			}
+		});
+
+		QUnit.test("setLanguage(en) - noop", function(assert) {
+			this.oConfig.setLanguage("en");
+			assert.equal(this.oConfig.getLanguage(), "en", "language still should be 'en'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
+			assert.equal(this.eventsReceived, 0, "one localizationChange event should have been fired");
+		});
+
+		QUnit.test("setLanguage(de) - simple", function(assert) {
+			this.oConfig.setLanguage("de");
+			assert.equal(this.oConfig.getLanguage(), "de", "language should have changed to 'de'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]), ['language'], "event should have reported 'language' as changed");
+		});
+
+		QUnit.test("setLanguage(he) - multi", function(assert) {
+			this.oConfig.setLanguage("he");
+			assert.equal(this.oConfig.getLanguage(), "he", "language should have changed to 'he'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['language', 'rtl'], "event should have reported 'language' and 'rtl' as changed");
+		});
+
+		QUnit.test("getSAPLogonLanguage()", function(assert) {
+			this.oConfig.setLanguage("en-US");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
+			this.oConfig.setLanguage("de-CH");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
+			this.oConfig.setLanguage("zh-CN");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			this.oConfig.setLanguage("zh-Hans");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			this.oConfig.setLanguage("zh-Hans-CN");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			this.oConfig.setLanguage("zh-TW");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			this.oConfig.setLanguage("zh-Hant");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			this.oConfig.setLanguage("zh-Hant-TW");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			this.oConfig.setLanguage("en-US-x-saptrc");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "1Q", "SAP Logon language should be '1Q'");
+			this.oConfig.setLanguage("en-US-x-sappsd");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "2Q", "SAP Logon language should be '2Q'");
+		});
+
+		QUnit.test("setLegacyDateFormat", function(assert) {
+			this.oConfig.getFormatSettings().setLegacyDateFormat("1");
+			assert.equal(this.oConfig.getFormatSettings().getLegacyDateFormat(), "1", "legacy date format should have changed to '1'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['dateFormats-medium', 'dateFormats-short', 'legacyDateFormat'], "event should have reported 'language' and 'rtl' as changed");
+			assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+
+			// unset again
+			this.oConfig.getFormatSettings().setLegacyDateFormat();
+			assert.notOk(this.oConfig.getFormatSettings().getLegacyDateFormat(), "legacy date format should have been unset");
+			assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		});
+
+		QUnit.test("setLegacyTimeFormat", function(assert) {
+			this.oConfig.getFormatSettings().setLegacyTimeFormat("1");
+			assert.equal(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "1", "legacy time format should have changed to '1'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['dayPeriods-format-abbreviated', 'legacyTimeFormat', 'timeFormats-medium', 'timeFormats-short'], "event should have reported 'language' and 'rtl' as changed");
+			assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+
+			// unset again
+			this.oConfig.getFormatSettings().setLegacyTimeFormat();
+			assert.notOk(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "legacy date format should have been unset");
+			assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		});
+
+		QUnit.test("applySettings", function(assert) {
+			this.oConfig.applySettings({
+				language: 'he',
+				formatSettings: {
+					legacyDateFormat: '1',
+					legacyTimeFormat: '1'
+				},
+				calendarType: 'Islamic'
+			});
+			assert.equal(this.oConfig.getLanguage(), "he", "language should have changed to 'he'");
+			assert.equal(this.oConfig.getRTL(), true, "RTL should have changed to true");
+			assert.equal(this.oConfig.getFormatSettings().getLegacyDateFormat(), "1", "legacy date format should have changed to '1'");
+			assert.equal(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "1", "legacy time format should have changed to '1'");
+			assert.ok(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should contain private extension 'sapufmt'");
+			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+			assert.deepEqual(Object.keys(this.changes[0]).sort(), [
+				'calendarType',
+				'dateFormats-medium',
+				'dateFormats-short',
+				'dayPeriods-format-abbreviated',
+				'language',
+				'legacyDateFormat',
+				'legacyTimeFormat',
+				'rtl',
+				'timeFormats-medium',
+				'timeFormats-short'], "event should have reported the expected settings as changed");
+
+			// unset again
+			this.oConfig.applySettings({
+				language: 'en',
+				formatSettings: {
+					legacyDateFormat: null,
+					legacyTimeFormat: null
+				},
+				calendarType: null
+			});
+			assert.equal(this.oConfig.getLanguage(), "en", "language should have been reset to 'en'");
+			assert.equal(this.oConfig.getRTL(), false, "RTL should have changed to false");
+			assert.notOk(this.oConfig.getFormatSettings().getLegacyDateFormat(), "legacy date format should have been reset");
+			assert.notOk(this.oConfig.getFormatSettings().getLegacyTimeFormat(), "legacy time format should have been reset");
+			assert.equal(this.oConfig.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "calendar type should be 'Gregorian' again");
+			assert.notOk(/-x-(.*-)?sapufmt/.test(this.oConfig.getFormatSettings().getFormatLocale().toString()), "format locale should no longer contain private extension 'sapufmt'");
+		});
+
+ 	</script>
+
+</head>
+<body>
+	<div id="qunit"></div>
+</body>
+</html>
