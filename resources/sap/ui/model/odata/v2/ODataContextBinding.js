@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 			that._fireChange({ reason: ChangeReason.Context });
 			if (sResolvedPath && bReloadNeeded) {
 				if (that.oElementContext) {
-					oData = that.oElementContext.getObject();
+					oData = that.oElementContext.getObject(that.mParameters);
 				}
 				//register datareceived call as  callAfterUpdate
 				that.oModel.callAfterUpdate(function() {
@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 					that._fireChange({ reason: ChangeReason.Context });
 				}
 				if (that.oElementContext) {
-					oData = that.oElementContext.getObject();
+					oData = that.oElementContext.getObject(that.mParameters);
 				}
 				//register datareceived call as  callAfterUpdate
 				if (sResolvedPath) {
@@ -206,7 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 				that._fireChange({ reason: ChangeReason.Context });
 				if (sResolvedPath && bReloadNeeded) {
 					if (that.oElementContext) {
-						oData = that.oElementContext.getObject();
+						oData = that.oElementContext.getObject(that.mParameters);
 					}
 					//register datareceived call as  callAfterUpdate
 					that.oModel.callAfterUpdate(function() {

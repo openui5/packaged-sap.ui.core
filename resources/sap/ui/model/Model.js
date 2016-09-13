@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.40.6
+	 * @version 1.40.7
 	 *
 	 * @constructor
 	 * @public
@@ -625,10 +625,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *         sPath the path to where to read the object
 	 * @param {object}
 	 *		   [oContext=null] the context with which the path should be resolved
+	 * @param {object}
+	 *       [mParameters] additional model specific parameters
+	 *
 	 * @public
 	 */
-	Model.prototype.getObject = function(sPath, oContext) {
-		return this.getProperty(sPath, oContext);
+	Model.prototype.getObject = function(sPath, oContext, mParameters) {
+		return this.getProperty(sPath, oContext, mParameters);
 	};
 
 

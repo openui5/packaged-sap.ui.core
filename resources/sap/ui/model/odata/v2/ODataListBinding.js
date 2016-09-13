@@ -255,7 +255,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		if (!this.bDetectUpdates) {
 			return this.fnGetEntryKey(oContext);
 		} else {
-			return JSON.stringify(oContext.getObject());
+			return JSON.stringify(oContext.getObject(this.mParameters));
 		}
 	};
 
@@ -605,6 +605,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			} else if (!bAborted) {
 				// reset data and trigger update
 				that.aKeys = [];
+				that.aAllKeys = [];
 				that.iLength = 0;
 				that.bLengthFinal = true;
 				that.bDataAvailable = true;

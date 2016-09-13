@@ -190,6 +190,10 @@ xhr.onCreate = function(request) {
 				[200, oCountHeaders, "5"],
 			"Categories(1)":
 				[200, oJSONHeaders, sCategory1JSON],
+			"Categories(1)?test":
+				[200, oJSONHeaders, sCategory1JSON],
+			"Categories(1)?hubel=dubel&test":
+				[200, oJSONHeaders, sCategory1JSON],
 			"ZeroTest(1)":
 				[200, oJSONHeaders, sZeroTest],
 			"Categories(3)":
@@ -234,6 +238,10 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sProductsAllXML],
 			"Products(1)?$expand=Category%2fProducts%2fSupplier":
 				[200, oXMLHeaders, sProductsExpand3LevelsXML],
+				"Suppliers(7)?$select=%2a%2cProducts%2f%2a%2cProducts%2fSupplier%2f%2a%2cProducts%2fCategory%2fCategoryID%2cProducts%2fCategory%2fCategoryName&$expand=Products%2cProducts%2fSupplier%2cProducts%2fCategory":
+				[200, oJSONHeaders, sSupplierWithMultipleExpandSelectsJSON],
+				"Suppliers(7)?$expand=Products%2cProducts%2fSupplier%2cProducts%2fCategory":
+				[200, oJSONHeaders, sSupplierWithMultipleExpandJSON],
 			"Employees":
 				[200, oXMLHeaders, sEmployeesXML],
 			"Employees(2)":
@@ -265,7 +273,11 @@ xhr.onCreate = function(request) {
 			"Orders?$skip=2&$top=1&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages":
 				[200, oXMLHeaders, sFaultTolerance2],
 			"Employees(2)/Employee1":
-				[204, oNodataHeaders, ""]
+				[204, oNodataHeaders, ""],
+			"SpecialHeaders":
+				[204, oSpecialHeaders, ""],
+			"SpecialHeadersError":
+				[500, oSpecialHeaders, ""]
 		},
 		"POST":{
 			//create Entry
@@ -553,7 +565,8 @@ function createBatchResponse(responses, token) {
 
 var oMetaDataHeaders = {
 		"Content-Type": "application/xml;charset=utf-8",
-		"DataServiceVersion": "1.0"
+		"DataServiceVersion": "1.0",
+		"last-modified": "Tue, 15 Nov 1994 12:45:26 GMT"
 	};
 var oNodataHeaders = 	{
 		"DataServiceVersion": "1.0"
@@ -594,7 +607,12 @@ var oCsrfResponseHeaders = 	{
 		"DataServiceVersion": "1.0",
 		"X-CSRF-Token": ""
 	};
-
+var oSpecialHeaders = {
+	"Content-Type": "application/xml;charset=utf-8",
+	"DataServiceVersion": "1.0",
+	"lAsT-mOdIfIeD": "morgen frueh",
+	"X-CuStOm-HeAdEr": "case-sensitive"
+};
 var sSAMLLoginPage = '<html><body><h1>SAML Login Page</h1></body></html>';
 
 var sServiceDocXML = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
@@ -1824,8 +1842,6 @@ var sProducts3SelProductAndCategoryNameExpCategoryXML = '\
       </entry>\
     </m:inline>\
   </link>\
-  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
-  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />\
   <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
   <content type="application/xml">\
     <m:properties>\
@@ -7739,6 +7755,604 @@ var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 				"  </author>\n" +
 				"  <link rel=\"self\" title=\"Categories\" href=\"Categories\" />\n" +
 				"</feed>";
+
+		var sSupplierWithMultipleExpandSelectsJSON = "{\n" +
+		"	\"d\" : {\n" +
+		"		\"__metadata\" : {\n" +
+		"			\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"			\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"		},\n" +
+		"		\"SupplierID\" : 7,\n" +
+		"		\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"		\"ContactName\" : \"Ian Devling\",\n" +
+		"		\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"		\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"		\"City\" : \"Melbourne\",\n" +
+		"		\"Region\" : \"Victoria\",\n" +
+		"		\"PostalCode\" : \"3058\",\n" +
+		"		\"Country\" : \"Australia\",\n" +
+		"		\"Phone\" : \"(03) 444-2343\",\n" +
+		"		\"Fax\" : \"(03) 444-6588\",\n" +
+		"		\"HomePage\" : null,\n" +
+		"		\"Products\" : {\n" +
+		"			\"results\" : [{\n" +
+		"				\"__metadata\" : {\n" +
+		"					\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(16)\",\n" +
+		"					\"type\" : \"NorthwindModel.Product\"\n" +
+		"				},\n" +
+		"				\"ProductID\" : 16,\n" +
+		"				\"ProductName\" : \"Pavlova\",\n" +
+		"				\"SupplierID\" : 7,\n" +
+		"				\"CategoryID\" : 3,\n" +
+		"				\"QuantityPerUnit\" : \"32 - 500 g boxes\",\n" +
+		"				\"UnitPrice\" : \"17.4500\",\n" +
+		"				\"UnitsInStock\" : 29,\n" +
+		"				\"UnitsOnOrder\" : 0,\n" +
+		"				\"ReorderLevel\" : 10,\n" +
+		"				\"Discontinued\" : false,\n" +
+		"				\"Category\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(3)\",\n" +
+		"						\"type\" : \"NorthwindModel.Category\"\n" +
+		"					},\n" +
+		"					\"CategoryID\" : 3,\n" +
+		"					\"CategoryName\" : \"Confections\"\n" +
+		"				},\n" +
+		"				\"Order_Details\" : {\n" +
+		"					\"__deferred\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(16)/Order_Details\"\n" +
+		"					}\n" +
+		"				},\n" +
+		"				\"Supplier\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"						\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"					},\n" +
+		"					\"SupplierID\" : 7,\n" +
+		"					\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"					\"ContactName\" : \"Ian Devling\",\n" +
+		"					\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"					\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"					\"City\" : \"Melbourne\",\n" +
+		"					\"Region\" : \"Victoria\",\n" +
+		"					\"PostalCode\" : \"3058\",\n" +
+		"					\"Country\" : \"Australia\",\n" +
+		"					\"Phone\" : \"(03) 444-2343\",\n" +
+		"					\"Fax\" : \"(03) 444-6588\",\n" +
+		"					\"HomePage\" : null,\n" +
+		"					\"Products\" : {\n" +
+		"						\"__deferred\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"						}\n" +
+		"					}\n" +
+		"				}\n" +
+		"			}, {\n" +
+		"				\"__metadata\" : {\n" +
+		"					\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(17)\",\n" +
+		"					\"type\" : \"NorthwindModel.Product\"\n" +
+		"				},\n" +
+		"				\"ProductID\" : 17,\n" +
+		"				\"ProductName\" : \"Alice Mutton\",\n" +
+		"				\"SupplierID\" : 7,\n" +
+		"				\"CategoryID\" : 6,\n" +
+		"				\"QuantityPerUnit\" : \"20 - 1 kg tins\",\n" +
+		"				\"UnitPrice\" : \"39.0000\",\n" +
+		"				\"UnitsInStock\" : 0,\n" +
+		"				\"UnitsOnOrder\" : 0,\n" +
+		"				\"ReorderLevel\" : 0,\n" +
+		"				\"Discontinued\" : true,\n" +
+		"				\"Category\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(6)\",\n" +
+		"						\"type\" : \"NorthwindModel.Category\"\n" +
+		"					},\n" +
+		"					\"CategoryID\" : 6,\n" +
+		"					\"CategoryName\" : \"Meat/Poultry\"\n" +
+		"				},\n" +
+		"				\"Order_Details\" : {\n" +
+		"					\"__deferred\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(17)/Order_Details\"\n" +
+		"					}\n" +
+		"				},\n" +
+		"				\"Supplier\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"						\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"					},\n" +
+		"					\"SupplierID\" : 7,\n" +
+		"					\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"					\"ContactName\" : \"Ian Devling\",\n" +
+		"					\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"					\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"					\"City\" : \"Melbourne\",\n" +
+		"					\"Region\" : \"Victoria\",\n" +
+		"					\"PostalCode\" : \"3058\",\n" +
+		"					\"Country\" : \"Australia\",\n" +
+		"					\"Phone\" : \"(03) 444-2343\",\n" +
+		"					\"Fax\" : \"(03) 444-6588\",\n" +
+		"					\"HomePage\" : null,\n" +
+		"					\"Products\" : {\n" +
+		"						\"__deferred\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"						}\n" +
+		"					}\n" +
+		"				}\n" +
+		"			}, {\n" +
+		"				\"__metadata\" : {\n" +
+		"					\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(18)\",\n" +
+		"					\"type\" : \"NorthwindModel.Product\"\n" +
+		"				},\n" +
+		"				\"ProductID\" : 18,\n" +
+		"				\"ProductName\" : \"Carnarvon Tigers\",\n" +
+		"				\"SupplierID\" : 7,\n" +
+		"				\"CategoryID\" : 8,\n" +
+		"				\"QuantityPerUnit\" : \"16 kg pkg.\",\n" +
+		"				\"UnitPrice\" : \"62.5000\",\n" +
+		"				\"UnitsInStock\" : 42,\n" +
+		"				\"UnitsOnOrder\" : 0,\n" +
+		"				\"ReorderLevel\" : 0,\n" +
+		"				\"Discontinued\" : false,\n" +
+		"				\"Category\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(8)\",\n" +
+		"						\"type\" : \"NorthwindModel.Category\"\n" +
+		"					},\n" +
+		"					\"CategoryID\" : 8,\n" +
+		"					\"CategoryName\" : \"Seafood\"\n" +
+		"				},\n" +
+		"				\"Order_Details\" : {\n" +
+		"					\"__deferred\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(18)/Order_Details\"\n" +
+		"					}\n" +
+		"				},\n" +
+		"				\"Supplier\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"						\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"					},\n" +
+		"					\"SupplierID\" : 7,\n" +
+		"					\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"					\"ContactName\" : \"Ian Devling\",\n" +
+		"					\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"					\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"					\"City\" : \"Melbourne\",\n" +
+		"					\"Region\" : \"Victoria\",\n" +
+		"					\"PostalCode\" : \"3058\",\n" +
+		"					\"Country\" : \"Australia\",\n" +
+		"					\"Phone\" : \"(03) 444-2343\",\n" +
+		"					\"Fax\" : \"(03) 444-6588\",\n" +
+		"					\"HomePage\" : null,\n" +
+		"					\"Products\" : {\n" +
+		"						\"__deferred\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"						}\n" +
+		"					}\n" +
+		"				}\n" +
+		"			}, {\n" +
+		"				\"__metadata\" : {\n" +
+		"					\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(63)\",\n" +
+		"					\"type\" : \"NorthwindModel.Product\"\n" +
+		"				},\n" +
+		"				\"ProductID\" : 63,\n" +
+		"				\"ProductName\" : \"Vegie-spread\",\n" +
+		"				\"SupplierID\" : 7,\n" +
+		"				\"CategoryID\" : 2,\n" +
+		"				\"QuantityPerUnit\" : \"15 - 625 g jars\",\n" +
+		"				\"UnitPrice\" : \"43.9000\",\n" +
+		"				\"UnitsInStock\" : 24,\n" +
+		"				\"UnitsOnOrder\" : 0,\n" +
+		"				\"ReorderLevel\" : 5,\n" +
+		"				\"Discontinued\" : false,\n" +
+		"				\"Category\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)\",\n" +
+		"						\"type\" : \"NorthwindModel.Category\"\n" +
+		"					},\n" +
+		"					\"CategoryID\" : 2,\n" +
+		"					\"CategoryName\" : \"Condiments\"\n" +
+		"				},\n" +
+		"				\"Order_Details\" : {\n" +
+		"					\"__deferred\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(63)/Order_Details\"\n" +
+		"					}\n" +
+		"				},\n" +
+		"				\"Supplier\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"						\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"					},\n" +
+		"					\"SupplierID\" : 7,\n" +
+		"					\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"					\"ContactName\" : \"Ian Devling\",\n" +
+		"					\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"					\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"					\"City\" : \"Melbourne\",\n" +
+		"					\"Region\" : \"Victoria\",\n" +
+		"					\"PostalCode\" : \"3058\",\n" +
+		"					\"Country\" : \"Australia\",\n" +
+		"					\"Phone\" : \"(03) 444-2343\",\n" +
+		"					\"Fax\" : \"(03) 444-6588\",\n" +
+		"					\"HomePage\" : null,\n" +
+		"					\"Products\" : {\n" +
+		"						\"__deferred\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"						}\n" +
+		"					}\n" +
+		"				}\n" +
+		"			}, {\n" +
+		"				\"__metadata\" : {\n" +
+		"					\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(70)\",\n" +
+		"					\"type\" : \"NorthwindModel.Product\"\n" +
+		"				},\n" +
+		"				\"ProductID\" : 70,\n" +
+		"				\"ProductName\" : \"Outback Lager\",\n" +
+		"				\"SupplierID\" : 7,\n" +
+		"				\"CategoryID\" : 1,\n" +
+		"				\"QuantityPerUnit\" : \"24 - 355 ml bottles\",\n" +
+		"				\"UnitPrice\" : \"15.0000\",\n" +
+		"				\"UnitsInStock\" : 15,\n" +
+		"				\"UnitsOnOrder\" : 10,\n" +
+		"				\"ReorderLevel\" : 30,\n" +
+		"				\"Discontinued\" : false,\n" +
+		"				\"Category\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)\",\n" +
+		"						\"type\" : \"NorthwindModel.Category\"\n" +
+		"					},\n" +
+		"					\"CategoryID\" : 1,\n" +
+		"					\"CategoryName\" : \"Beverages\"\n" +
+		"				},\n" +
+		"				\"Order_Details\" : {\n" +
+		"					\"__deferred\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(70)/Order_Details\"\n" +
+		"					}\n" +
+		"				},\n" +
+		"				\"Supplier\" : {\n" +
+		"					\"__metadata\" : {\n" +
+		"						\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"						\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"					},\n" +
+		"					\"SupplierID\" : 7,\n" +
+		"					\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"					\"ContactName\" : \"Ian Devling\",\n" +
+		"					\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"					\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"					\"City\" : \"Melbourne\",\n" +
+		"					\"Region\" : \"Victoria\",\n" +
+		"					\"PostalCode\" : \"3058\",\n" +
+		"					\"Country\" : \"Australia\",\n" +
+		"					\"Phone\" : \"(03) 444-2343\",\n" +
+		"					\"Fax\" : \"(03) 444-6588\",\n" +
+		"					\"HomePage\" : null,\n" +
+		"					\"Products\" : {\n" +
+		"						\"__deferred\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"						}\n" +
+		"					}\n" +
+		"				}\n" +
+		"			}]\n" +
+		"		}\n" +
+		"	}\n" +
+		"}";
+
+var sSupplierWithMultipleExpandJSON = "{\n" +
+		"	\"d\" : {\n" +
+		"		\"__metadata\" : {\n" +
+		"			\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"			\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"		},\n" +
+		"		\"SupplierID\" : 7,\n" +
+		"		\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"		\"ContactName\" : \"Ian Devling\",\n" +
+		"		\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"		\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"		\"City\" : \"Melbourne\",\n" +
+		"		\"Region\" : \"Victoria\",\n" +
+		"		\"PostalCode\" : \"3058\",\n" +
+		"		\"Country\" : \"Australia\",\n" +
+		"		\"Phone\" : \"(03) 444-2343\",\n" +
+		"		\"Fax\" : \"(03) 444-6588\",\n" +
+		"		\"HomePage\" : null,\n" +
+		"		\"Products\" : {\n" +
+		"			\"results\" : [\n" +
+		"					{\n" +
+		"						\"__metadata\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(16)\",\n" +
+		"							\"type\" : \"NorthwindModel.Product\"\n" +
+		"						},\n" +
+		"						\"ProductID\" : 16,\n" +
+		"						\"ProductName\" : \"Pavlova\",\n" +
+		"						\"SupplierID\" : 7,\n" +
+		"						\"CategoryID\" : 3,\n" +
+		"						\"QuantityPerUnit\" : \"32 - 500 g boxes\",\n" +
+		"						\"UnitPrice\" : \"17.4500\",\n" +
+		"						\"UnitsInStock\" : 29,\n" +
+		"						\"UnitsOnOrder\" : 0,\n" +
+		"						\"ReorderLevel\" : 10,\n" +
+		"						\"Discontinued\" : false,\n" +
+		"						\"Category\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(3)\",\n" +
+		"								\"type\" : \"NorthwindModel.Category\"\n" +
+		"							},\n" +
+		"							\"CategoryID\" : 3,\n" +
+		"							\"CategoryName\" : \"Confections\",\n" +
+		"							\"Description\" : \"Desserts, candies, and sweet breads\",\n" +
+		"							\"Picture\" : \"\",\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(3)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Order_Details\" : {\n" +
+		"							\"__deferred\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(16)/Order_Details\"\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Supplier\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"								\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"							},\n" +
+		"							\"SupplierID\" : 7,\n" +
+		"							\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"							\"ContactName\" : \"Ian Devling\",\n" +
+		"							\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"							\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"							\"City\" : \"Melbourne\",\n" +
+		"							\"Region\" : \"Victoria\",\n" +
+		"							\"PostalCode\" : \"3058\",\n" +
+		"							\"Country\" : \"Australia\",\n" +
+		"							\"Phone\" : \"(03) 444-2343\",\n" +
+		"							\"Fax\" : \"(03) 444-6588\",\n" +
+		"							\"HomePage\" : null,\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						}\n" +
+		"					},\n" +
+		"					{\n" +
+		"						\"__metadata\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(17)\",\n" +
+		"							\"type\" : \"NorthwindModel.Product\"\n" +
+		"						},\n" +
+		"						\"ProductID\" : 17,\n" +
+		"						\"ProductName\" : \"Alice Mutton\",\n" +
+		"						\"SupplierID\" : 7,\n" +
+		"						\"CategoryID\" : 6,\n" +
+		"						\"QuantityPerUnit\" : \"20 - 1 kg tins\",\n" +
+		"						\"UnitPrice\" : \"39.0000\",\n" +
+		"						\"UnitsInStock\" : 0,\n" +
+		"						\"UnitsOnOrder\" : 0,\n" +
+		"						\"ReorderLevel\" : 0,\n" +
+		"						\"Discontinued\" : true,\n" +
+		"						\"Category\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(6)\",\n" +
+		"								\"type\" : \"NorthwindModel.Category\"\n" +
+		"							},\n" +
+		"							\"CategoryID\" : 6,\n" +
+		"							\"CategoryName\" : \"Meat/Poultry\",\n" +
+		"							\"Description\" : \"Prepared meats\",\n" +
+		"							\"Picture\" : \"\",\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(6)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Order_Details\" : {\n" +
+		"							\"__deferred\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(17)/Order_Details\"\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Supplier\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"								\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"							},\n" +
+		"							\"SupplierID\" : 7,\n" +
+		"							\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"							\"ContactName\" : \"Ian Devling\",\n" +
+		"							\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"							\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"							\"City\" : \"Melbourne\",\n" +
+		"							\"Region\" : \"Victoria\",\n" +
+		"							\"PostalCode\" : \"3058\",\n" +
+		"							\"Country\" : \"Australia\",\n" +
+		"							\"Phone\" : \"(03) 444-2343\",\n" +
+		"							\"Fax\" : \"(03) 444-6588\",\n" +
+		"							\"HomePage\" : null,\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						}\n" +
+		"					},\n" +
+		"					{\n" +
+		"						\"__metadata\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(18)\",\n" +
+		"							\"type\" : \"NorthwindModel.Product\"\n" +
+		"						},\n" +
+		"						\"ProductID\" : 18,\n" +
+		"						\"ProductName\" : \"Carnarvon Tigers\",\n" +
+		"						\"SupplierID\" : 7,\n" +
+		"						\"CategoryID\" : 8,\n" +
+		"						\"QuantityPerUnit\" : \"16 kg pkg.\",\n" +
+		"						\"UnitPrice\" : \"62.5000\",\n" +
+		"						\"UnitsInStock\" : 42,\n" +
+		"						\"UnitsOnOrder\" : 0,\n" +
+		"						\"ReorderLevel\" : 0,\n" +
+		"						\"Discontinued\" : false,\n" +
+		"						\"Category\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(8)\",\n" +
+		"								\"type\" : \"NorthwindModel.Category\"\n" +
+		"							},\n" +
+		"							\"CategoryID\" : 8,\n" +
+		"							\"CategoryName\" : \"Seafood\",\n" +
+		"							\"Description\" : \"Seaweed and fish\",\n" +
+		"							\"Picture\" : \"\",\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(8)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Order_Details\" : {\n" +
+		"							\"__deferred\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(18)/Order_Details\"\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Supplier\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"								\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"							},\n" +
+		"							\"SupplierID\" : 7,\n" +
+		"							\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"							\"ContactName\" : \"Ian Devling\",\n" +
+		"							\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"							\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"							\"City\" : \"Melbourne\",\n" +
+		"							\"Region\" : \"Victoria\",\n" +
+		"							\"PostalCode\" : \"3058\",\n" +
+		"							\"Country\" : \"Australia\",\n" +
+		"							\"Phone\" : \"(03) 444-2343\",\n" +
+		"							\"Fax\" : \"(03) 444-6588\",\n" +
+		"							\"HomePage\" : null,\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						}\n" +
+		"					},\n" +
+		"					{\n" +
+		"						\"__metadata\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(63)\",\n" +
+		"							\"type\" : \"NorthwindModel.Product\"\n" +
+		"						},\n" +
+		"						\"ProductID\" : 63,\n" +
+		"						\"ProductName\" : \"Vegie-spread\",\n" +
+		"						\"SupplierID\" : 7,\n" +
+		"						\"CategoryID\" : 2,\n" +
+		"						\"QuantityPerUnit\" : \"15 - 625 g jars\",\n" +
+		"						\"UnitPrice\" : \"43.9000\",\n" +
+		"						\"UnitsInStock\" : 24,\n" +
+		"						\"UnitsOnOrder\" : 0,\n" +
+		"						\"ReorderLevel\" : 5,\n" +
+		"						\"Discontinued\" : false,\n" +
+		"						\"Category\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)\",\n" +
+		"								\"type\" : \"NorthwindModel.Category\"\n" +
+		"							},\n" +
+		"							\"CategoryID\" : 2,\n" +
+		"							\"CategoryName\" : \"Condiments\",\n" +
+		"							\"Description\" : \"Sweet and savory sauces, relishes, spreads, and seasonings\",\n" +
+		"							\"Picture\" : \"\",\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Order_Details\" : {\n" +
+		"							\"__deferred\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(63)/Order_Details\"\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Supplier\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"								\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"							},\n" +
+		"							\"SupplierID\" : 7,\n" +
+		"							\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"							\"ContactName\" : \"Ian Devling\",\n" +
+		"							\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"							\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"							\"City\" : \"Melbourne\",\n" +
+		"							\"Region\" : \"Victoria\",\n" +
+		"							\"PostalCode\" : \"3058\",\n" +
+		"							\"Country\" : \"Australia\",\n" +
+		"							\"Phone\" : \"(03) 444-2343\",\n" +
+		"							\"Fax\" : \"(03) 444-6588\",\n" +
+		"							\"HomePage\" : null,\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						}\n" +
+		"					},\n" +
+		"					{\n" +
+		"						\"__metadata\" : {\n" +
+		"							\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(70)\",\n" +
+		"							\"type\" : \"NorthwindModel.Product\"\n" +
+		"						},\n" +
+		"						\"ProductID\" : 70,\n" +
+		"						\"ProductName\" : \"Outback Lager\",\n" +
+		"						\"SupplierID\" : 7,\n" +
+		"						\"CategoryID\" : 1,\n" +
+		"						\"QuantityPerUnit\" : \"24 - 355 ml bottles\",\n" +
+		"						\"UnitPrice\" : \"15.0000\",\n" +
+		"						\"UnitsInStock\" : 15,\n" +
+		"						\"UnitsOnOrder\" : 10,\n" +
+		"						\"ReorderLevel\" : 30,\n" +
+		"						\"Discontinued\" : false,\n" +
+		"						\"Category\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)\",\n" +
+		"								\"type\" : \"NorthwindModel.Category\"\n" +
+		"							},\n" +
+		"							\"CategoryID\" : 1,\n" +
+		"							\"CategoryName\" : \"Beverages\",\n" +
+		"							\"Description\" : \"Soft drinks, coffees, teas, beers, and ales\",\n" +
+		"							\"Picture\" : \"\",\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Order_Details\" : {\n" +
+		"							\"__deferred\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(70)/Order_Details\"\n" +
+		"							}\n" +
+		"						},\n" +
+		"						\"Supplier\" : {\n" +
+		"							\"__metadata\" : {\n" +
+		"								\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)\",\n" +
+		"								\"type\" : \"NorthwindModel.Supplier\"\n" +
+		"							},\n" +
+		"							\"SupplierID\" : 7,\n" +
+		"							\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+		"							\"ContactName\" : \"Ian Devling\",\n" +
+		"							\"ContactTitle\" : \"Marketing Manager\",\n" +
+		"							\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+		"							\"City\" : \"Melbourne\",\n" +
+		"							\"Region\" : \"Victoria\",\n" +
+		"							\"PostalCode\" : \"3058\",\n" +
+		"							\"Country\" : \"Australia\",\n" +
+		"							\"Phone\" : \"(03) 444-2343\",\n" +
+		"							\"Fax\" : \"(03) 444-6588\",\n" +
+		"							\"HomePage\" : null,\n" +
+		"							\"Products\" : {\n" +
+		"								\"__deferred\" : {\n" +
+		"									\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(7)/Products\"\n" +
+		"								}\n" +
+		"							}\n" +
+		"						}\n" +
+		"					}]\n" +
+		"		}\n" +
+		"	}\n" +
+		"}";
 
 		var sCategory10JSON = "{\n" +
 		"\"d\" : {\n" +
