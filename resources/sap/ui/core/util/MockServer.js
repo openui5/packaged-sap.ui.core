@@ -34,7 +34,7 @@ sap.ui
 			 * @extends sap.ui.base.ManagedObject
 			 * @abstract
 			 * @author SAP SE
-			 * @version 1.38.7
+			 * @version 1.38.8
 			 * @public
 			 * @alias sap.ui.core.util.MockServer
 			 */
@@ -1174,13 +1174,13 @@ sap.ui
 						}
 						var oKeyValue = oEntry[sKey];
 						if (oEntitySet.keysType[sKey] === "Edm.String") {
-							oKeyValue = "'" + oKeyValue + "'";
+							oKeyValue = encodeURIComponent("'" + oKeyValue + "'");
 						} else if (oEntitySet.keysType[sKey] === "Edm.DateTime") {
 							oKeyValue = that._getDateTime(oKeyValue);
+							oKeyValue = encodeURIComponent(oKeyValue);
 						} else if (oEntitySet.keysType[sKey] === "Edm.Guid") {
 							oKeyValue = "guid'" + oKeyValue + "'";
 						}
-
 						if (oEntitySet.keys.length === 1) {
 							sKeys += oKeyValue;
 							return sKeys;
@@ -1983,6 +1983,7 @@ sap.ui
 				};
 
 				var initNewEntity = function(oXhr, sTargetEntityName, sKeys, sUrlParams) {
+					sKeys = sKeys ? decodeURIComponent(sKeys) : sKeys;
 					var oEntity = JSON.parse(oXhr.requestBody);
 					if (oEntity) {
 						var oKeys = {};

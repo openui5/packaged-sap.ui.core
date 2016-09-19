@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.38.7
+ * @version 1.38.8
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.38.7";
+		var apiVersion = "1.38.8";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.38.7";
+		var v = "1.38.8";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -5120,6 +5120,12 @@ return URI;
 		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.10 or higher, but lower than 2.2.4; current version is " + jQuery.fn.jquery);
 	}
 
+	// since jQuery 1.10.1 - 1.11.1 will be removed for UI5 1.40 we Should
+	// warn users if they use a deprecated jQuery version
+	if (oJQVersion.inRange("1.10.1", "2.2.3") ) {
+		_earlyLog("warning", 'jQuery version ' + jQuery.fn.jquery + ' is not supported anymore for SAPUI5 and will be removed with version 1.40');
+	}
+
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
 	if ( !jQuery.browser ) {
 		// re-introduce the jQuery.browser support if missing (jQuery-1.9ff)
@@ -5438,7 +5444,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.38.7
+	 * @version 1.38.8
 	 * @namespace
 	 * @public
 	 * @static
