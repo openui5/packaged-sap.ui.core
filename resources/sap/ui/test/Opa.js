@@ -38,9 +38,10 @@ sap.ui.define([
 		fnCheck();
 
 		function fnCheck () {
+			var oResult;
 			oLogCollector.getAndClearLog();
 			try {
-				var oResult = fnCallback();
+				oResult = fnCallback();
 			} catch (oError) {
 				oDeferred.reject(oOptions, oError);
 				throw oError;
@@ -68,7 +69,7 @@ sap.ui.define([
 				try {
 					oOptions.error(oOptions, oResult.arguments);
 				} finally {
-					oDeferred.reject(oOptions, oResult.arguments);
+					oDeferred.reject(oOptions);
 				}
 				return;
 			}
@@ -79,7 +80,6 @@ sap.ui.define([
 	}
 
 	function internalEmpty (deferred) {
-		var iInitialDelay = Device.browser.msie ? 50 : 0;
 		if (queue.length === 0) {
 			deferred.resolve();
 			return true;
@@ -87,21 +87,17 @@ sap.ui.define([
 
 		var queueElement = queue.shift();
 
-		// TODO: this only affects IE with the IFrame startup without the frame the timeout can probably be 0 but this need to be evaluated as soon as we have an alternative startup
-		// This has to be here for IFrame with IE - if there is no timeout 50, there is a window with all properties undefined.
-		// Therefore the core code throws exceptions, when functions like setTimeout are called.
-		// I don't have a proper explanation for this.
 		timeout = setTimeout(function () {
 			internalWait(queueElement.callback, queueElement.options, deferred);
-		}, iInitialDelay);
+		}, Opa.config.executionDelay);
 	}
 
-	function ensureNewlyAddedWaitForStatementsPrepended (iPreviousQueueLength, nestedInOptions){
-		var iNewWaitForsCount = queue.length - iPreviousQueueLength;
+	function ensureNewlyAddedWaitForStatementsPrepended (oWaitForCounter, oNestedInOptions){
+		var iNewWaitForsCount = oWaitForCounter.get();
 		if (iNewWaitForsCount) {
-			var aNewWaitFors = queue.splice(iPreviousQueueLength, iNewWaitForsCount);
+			var aNewWaitFors = queue.splice(queue.length - iNewWaitForsCount, iNewWaitForsCount);
 			aNewWaitFors.forEach(function(queueElement) {
-				queueElement.options._nestedIn = nestedInOptions;
+				queueElement.options._nestedIn = oNestedInOptions;
 			});
 			queue = aNewWaitFors.concat(queue);
 		}
@@ -268,6 +264,29 @@ sap.ui.define([
 		Opa.config = $.extend(Opa.config, options);
 	};
 
+	var iExecutionDelay, sExecutionDelayFromUrl = $.sap.getUriParameters().get("opaExecutionDelay");
+
+	if (sExecutionDelayFromUrl){
+		iExecutionDelay = parseInt(sExecutionDelayFromUrl, 10);
+	}
+
+	// These browsers are not executing Promises as microtasks so slow down OPA a bit to let mircotasks before other tasks.
+	// TODO: A proper solution would be waiting for all the active timeouts in the synchronization part until then this is a workaround
+
+	// TODO: Workaround for IE with the IFrame startup. Without the frame the timeout can probably be 0 but this need to be evaluated as soon as we have an alternative startup
+	// This has to be here for IFrame with IE - if there is no timeout 50, there is a window with all properties undefined.
+	// Therefore the core code throws exceptions, when functions like setTimeout are called.
+	// I don't have a proper explanation for this.
+	if (!iExecutionDelay) {
+		if (Device.browser.msie) {
+			iExecutionDelay = 50;
+		} else {
+			iExecutionDelay = 0;
+		}
+	}
+
+
+
 	/**
 	 * Reset Opa.config to its default values.
 	 * All of the global values can be overwritten in an individual waitFor call.
@@ -279,6 +298,14 @@ sap.ui.define([
 	 * 		<li>assertions: A new Opa instance</li>
 	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
+	 * 		<li>
+	 * 			executionDelay: 0 or 50 (depending on the browser) or coming from an URL parameter opaExecutionDelay.
+	 * 			The URL parameter takes priority over the browser value. The value is a number representing milliseconds.
+	 * 			The executionDelay will slow down the execution of every single waitFor statement to be delayed by the number of milliseconds.
+	 * 			This does not effect the polling interval it just adds an initial pause.
+	 * 			Use this parameter to slow down OPA when you want to watch your test during development or checking the UI of your app.
+	 * 			It is not recommended to use this parameter in any automated test executions.
+	 * 		</li>
 	 * </ul>
 	 *
 	 * @public
@@ -289,6 +316,7 @@ sap.ui.define([
 			arrangements : new Opa(),
 			actions : new Opa(),
 			assertions : new Opa(),
+			executionDelay : iExecutionDelay,
 			timeout : 15,
 			pollingInterval : 400,
 			_stackDropCount : 0 //Internal use. Specify numbers of additional stack frames to remove for logging
@@ -372,7 +400,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Opa.stopQueue = function stopQueue () {
-		return Opa._stopQueue(true);
+		Opa._stopQueue(true);
 	};
 
 	Opa._stopQueue = function (bStoppedManually) {
@@ -422,14 +450,16 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {object} options These contain check, success and error functions
-		 * @param {int} [oOptions.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.
-		 * @param {int} [oOptions.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
-		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * @param {int} [options.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.
+		 * @param {int} [options.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
+		 * @param {function} [options.check] Will get invoked in every polling interval.
+		 * If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
 		 * Returning something other than boolean in the check will not change the first parameter of success.
-		 * @param {function} [oOptions.success] Will get invoked after the check function returns true. If there is no check function defined,
-		 * it will be directly invoked. waitFor statements added in the success handler will be executed before previously added waitFor statements
-		 * @param {string} [oOptions.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
+		 * @param {function} [options.success] Will get invoked after the check function returns true.
+		 * If there is no check function defined, it will be directly invoked.
+		 * waitFor statements added in the success handler will be executed before previously added waitFor statements.
+		 * @param {string} [options.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa is QUnit.
 		 * This message is displayed there if Opa has reached its timeout but QUnit has not yet reached it.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
@@ -470,12 +500,12 @@ sap.ui.define([
 
 					if (bResult) {
 						if (options.success) {
-							var iCurrentQueueLength = queue.length;
+							var oWaitForCounter = Opa._getWaitForCounter();
 							// do not catch here, there is another catch around the whole function
 							try {
 								options.success.apply(this, arguments);
 							} finally {
-								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength, options);
+								ensureNewlyAddedWaitForStatementsPrepended(oWaitForCounter, options);
 							}
 						}
 						deferred.resolve();
