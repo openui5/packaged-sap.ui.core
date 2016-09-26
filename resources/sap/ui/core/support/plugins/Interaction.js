@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.40.7
+		 * @version 1.40.8
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Interaction
