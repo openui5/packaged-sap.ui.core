@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @extends sap.ui.model.odata.type.Int
 	 *
 	 * @author SAP SE
-	 * @version 1.28.38
+	 * @version 1.28.40
 	 *
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.SByte
