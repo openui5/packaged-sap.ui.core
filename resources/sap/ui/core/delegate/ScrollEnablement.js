@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.42.2
+		 * @version 1.42.3
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
@@ -338,10 +338,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			},
 
 			_customScrollTo : function(left, top, oEvent) {
-				oEvent.preventDefault();
-				oEvent.setMarked();
+				// do not prevent events coming from input controls
+				if (!oEvent.isMarked("inputBase")) {
+					oEvent.preventDefault();
+					oEvent.setMarked();
 
-				this._scrollTo(left, top);
+					this._scrollTo(left, top);
+				}
 			}
 
 		});
