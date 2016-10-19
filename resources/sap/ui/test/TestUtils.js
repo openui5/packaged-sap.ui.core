@@ -146,9 +146,8 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * @param {object} oSandbox
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
 		 * @param {string} sBase
-		 *   The base path for <code>source</code> values in the fixture. The path must be relative
-		 *   to the <code>test</code> folder of the <code>sap.ui.core</code> project, typically it
-		 *   should start with "sap". It must not end with '/'.
+		 *   The base path for <code>source</code> values in the fixture. The path must be in the
+		 *   project's test folder, typically it should start with "sap".
 		 *   Example: <code>"sap/ui/core/qunit/model"</code>
 		 * @param {map} mFixture
 		 *   The fixture. Each key represents a URL to respond to. The value is an object that may
@@ -312,7 +311,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				});
 			}
 
-			sBase = "/" + window.location.pathname.split("/")[1] + "/test-resources/" + sBase + "/";
+			// ensure to always search the fake data in test-resources, remove cache buster token
+			sBase = jQuery.sap.getResourcePath(sBase)
+				.replace(/(^|\/)resources\/(~[-a-zA-Z0-9_.]*~\/)?/, "$1test-resources/") + "/";
 			setupServer();
 
 		},
@@ -405,8 +406,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *   the absolute path transformed in a way that invokes a proxy
 		 */
 		proxy : function (sAbsolutePath) {
-			return bProxy
-				? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
+			return bProxy ?
+					jQuery.sap.getResourcePath("sap/ui").replace("resources/sap/ui", "proxy")
+						+ sAbsolutePath
 				: sAbsolutePath;
 		},
 
@@ -429,9 +431,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * @param {map} mFixture
 		 *   the fixture for {@link sap.ui.test.TestUtils#.useFakeServer}.
 		 * @param {string} [sSourceBase="sap/ui/core/qunit/odata/v4/data"]
-		 *   The base path for <code>source</code> values in the fixture. The path must be relative
-		 *   to the <code>test</code> folder of the <code>sap.ui.core</code> project, typically it
-		 *   should start with "sap". It must not end with '/'.
+		 *   The base path for <code>source</code> values in the fixture. The path must be in the
+		 *   project's test folder, typically it should start with "sap".
+		 *   Example: <code>"sap/ui/core/qunit/model"</code>
 		 * @param {string} [sFilterBase="/"]
 		 *   A base path for the filter URLs. It is prepended to all keys in <code>mFixture</code>.
 		 *   It must end with '/'.
