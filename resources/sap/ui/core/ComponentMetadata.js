@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @experimental Since 1.9.2. The Component concept is still under construction, so some implementation details can be changed in future.
 	 * @class
 	 * @author SAP SE
-	 * @version 1.28.40
+	 * @version 1.28.41
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
