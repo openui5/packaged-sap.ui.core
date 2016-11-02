@@ -62,7 +62,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.38.9
+	 * @version 1.38.10
 	 *
 	 * @constructor
 	 * @public
@@ -1485,17 +1485,25 @@ sap.ui.define([
 					sGroupId = mParameters.groupId || mParameters.batchGroupId;
 				}
 				var handleSuccess = function(oData) {
-					var sKey = oData ? that._getKey(oData) : undefined;
-					if (sKey && oContext && bIsRelative) {
-						var sContextPath = oContext.getPath();
+					var sKey = oData ? that._getKey(oData) : null,
+						oRef = null,
+						sContextPath;
+
+					oNewContext = null;
+
+					if (sKey) {
+						oNewContext = that.getContext('/' + sKey);
+						oRef = {__ref: sKey};
+					}
+					if (oContext && bIsRelative) {
+						sContextPath = oContext.getPath();
 						// remove starting slash
 						sContextPath = sContextPath.substr(1);
 						// when model is refreshed, parent entity might not be available yet
 						if (that.oData[sContextPath]) {
-							that.oData[sContextPath][sPath] = {__ref: sKey};
+							that.oData[sContextPath][sPath] = oRef;
 						}
 					}
-					oNewContext = that.getContext('/' + sKey);
 					fnCallBack(oNewContext);
 				};
 				var handleError = function(oError) {
