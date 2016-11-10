@@ -85,7 +85,7 @@ sap.ui.define([
 	 *   Context instances are immutable.
 	 * @extends sap.ui.model.Context
 	 * @public
-	 * @version 1.42.4
+	 * @version 1.42.5
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
 			constructor : function (oModel, oBinding, sPath, iIndex) {

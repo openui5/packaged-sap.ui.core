@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.42.4
+	 * 1.42.5
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -88,7 +88,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 				mOptions.source.unshift({
 					type: "xml",
 					data: oMetadata.loaded().then(function(mParams) {
-						return mParams["metadataString"];
+						return {
+							xml: mParams["metadataString"],
+							lastModified: mParams["lastModified"]
+						};
 					})
 				});
 			}
@@ -575,18 +578,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 */
 	ODataAnnotations.prototype._loadSource = function(mSource) {
 		if (mSource.data instanceof Promise) {
-			return mSource.data.then(function(sData) {
-				return this._loadSource({
-					type: mSource.type,
-					data: sData
-				});
+			return mSource.data.then(function(oData) {
+				delete mSource.data;
+				mSource.type = "xml";
+				mSource.xml = oData.xml;
+				mSource.lastModified = oData.lastModified;
+				return this._loadSource(mSource);
 			}.bind(this));
 		} else if (mSource.type === "xml") {
-			return Promise.resolve({
-				type: mSource.type,
-				data: mSource.data,
-				xml: mSource.data
-			});
+			if (typeof mSource.data === "string") {
+				mSource.xml = mSource.data;
+				delete mSource.data;
+			}
+			return Promise.resolve(mSource);
 		} else if (mSource.type === "url") {
 			return this._loadUrl(mSource);
 		} else {
@@ -621,6 +625,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 			var fnSuccess = function(sData, sStatusText, oXHR) {
 				mSource.xml = oXHR.responseText;
+				mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
 				fnResolve(mSource);
 			};
 
@@ -689,12 +694,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 				};
 				fnReject(oError);
 			} else {
-				fnResolve({
-					type: mSource.type,
-					data: mSource.data,
-					xml: mSource.xml,
-					document: oXMLDocument
-				});
+				mSource.document = oXMLDocument;
+				fnResolve(mSource);
 			}
 		});
 	};
@@ -711,15 +712,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 		// On IE we have a specia format for the XML documents on every other browser it must be a "Document" object.
 		jQuery.sap.assert(mSource.document instanceof window.Document || Device.browser.internet_explorer, "Source must contain a parsed XML document converted to an annotation object");
 
-		var oAnnotations = AnnotationParser.parse(this._oMetadata, mSource.document);
+		mSource.annotations = AnnotationParser.parse(this._oMetadata, mSource.document);
 
-		return Promise.resolve({
-			type: mSource.type,
-			data: mSource.data,
-			xml: mSource.xml,
-			document: mSource.document,
-			annotations: oAnnotations
-		});
+		return Promise.resolve(mSource);
 	};
 
 	/**
