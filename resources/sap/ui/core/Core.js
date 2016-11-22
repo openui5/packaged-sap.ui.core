@@ -25,6 +25,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		return typeof FNClass === 'function' && (o instanceof FNClass);
 	}
 
+	// share the rendering log with the UIArea
+	var oRenderLog = UIArea._oRenderLog;
+
 	/**
 	 * Set of libraries that have been loaded and initialized already.
 	 * This is maintained separately from Core.mLibraries to protect it against
@@ -87,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.42.5
+	 * @version 1.42.6
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -213,6 +216,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 * @private
 			 */
 			this.bInitLegacyLib = false;
+
+			/**
+			 * The ID of a timer that will execute the next rendering.
+			 *
+			 * A non-falsy value indicates that a timer exists already, or at least that no
+			 * new timer needs to be created as. During the boot phase, this member is set
+			 * to the special value <code>this</code> which is non-falsy and which should never
+			 * represent a valid timer ID (no chance of misinterpretation).
+			 */
+			this._sRerenderTimer = this;
 
 			/**
 			 * Tasks that are called just before the rendering starts.
@@ -1044,11 +1057,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._loadWebFonts();
 
 		if ( this.isThemeApplied() || !this.oConfiguration['xx-waitForTheme'] ) {
-			this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+			this.renderPendingUIUpdates("during Core init"); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
 		} else {
-			log.info("initial rendering delayed until theme has been loaded");
-			this._sRerenderTimer = this; // use 'this' as an easy to recognize marker for an already pending rerendering
-			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, this.renderPendingUIUpdates, this);
+			oRenderLog.debug("delay initial rendering until theme has been loaded");
+			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
+				this.renderPendingUIUpdates("after theme has been loaded");
+			}, this);
 		}
 
 		jQuery.sap.measure.end("coreComplete");
@@ -2213,9 +2227,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		return null;
 	};
 
-	// share the rendering log with the UIArea
-	var oRenderLog = UIArea._oRenderLog;
-
 	/**
 	 * Informs the core about an UIArea that just became invalid.
 	 *
@@ -2248,10 +2259,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @private
 	 */
-	Core.prototype.renderPendingUIUpdates = function() {
+	Core.prototype.renderPendingUIUpdates = function(sCaller) {
 
 		// start performance measurement
-		oRenderLog.debug("Render pending UI updates: start");
+		oRenderLog.debug("Render pending UI updates: start (" + (sCaller || "by timer" ) + ")");
 
 		jQuery.sap.measure.start("renderPendingUIUpdates","Render pending UI updates in all UIAreas");
 
@@ -2574,7 +2585,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.applyChanges = function() {
-		this.renderPendingUIUpdates();
+		this.renderPendingUIUpdates("forced by applyChanges");
 	};
 
 	/**
