@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @extends sap.ui.model.Context
 	 * @private
-	 * @version 1.38.11
+	 * @version 1.38.12
 	 */
 	var _Context = Context.extend("sap.ui.model.odata.v4._Context", {
 			/**
