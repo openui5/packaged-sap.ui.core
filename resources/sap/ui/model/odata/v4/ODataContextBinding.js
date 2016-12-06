@@ -34,7 +34,7 @@ sap.ui.define([
 	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -55,8 +55,8 @@ sap.ui.define([
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -106,7 +106,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.44.0
+	 * @version 1.44.1
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
@@ -114,7 +114,9 @@ sap.ui.define([
 					iPos = sPath.indexOf("(...)"),
 					bDeferred = iPos >= 0;
 
-				ContextBinding.call(this, oModel, sPath); // context is set below
+
+				ContextBinding.call(this, oModel, sPath, undefined /*context is set below*/,
+					mParameters);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -124,13 +126,13 @@ sap.ui.define([
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
-				this.mQueryOptions = undefined;
+				this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+					mParameters, _ODataHelper.aAllowedSystemQueryOptions);
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
-				if (!this.bRelative || bDeferred || mParameters) {
-					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
+				if (!this.bRelative || bDeferred || mParameters
+					|| oContext && !oContext.getBinding) {
 					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
 						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
@@ -179,7 +181,7 @@ sap.ui.define([
 		var that = this;
 
 		// a context binding without path can simply delegate to its parent context.
-		if (this.sPath === "") {
+		if (this.sPath === "" && this.oContext["delete"]) {
 			return this.oContext["delete"](sGroupId);
 		}
 		if (this.hasPendingChanges()) {
@@ -272,6 +274,42 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
+	/*
+	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
+	 * parent context changed.
+	 *
+	 * @throws {Error} If called with parameters
+	 */
+	// @override
+	ODataContextBinding.prototype.checkUpdate = function () {
+		var that = this;
+
+		function updateDependents() {
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.checkUpdate();
+			});
+		}
+
+		if (arguments.length > 0) {
+			throw new Error("Unsupported operation: v4.ODataContextBinding#checkUpdate "
+				+ "must not be called with parameters");
+		}
+
+		if (this.oCache && this.bRelative && this.oContext.fetchCanonicalPath) {
+			this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+				if (that.oCache.$canonicalPath !== sCanonicalPath) { // entity of context changed
+					that.refreshInternal();
+				} else {
+					updateDependents();
+				}
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to update " + that, sClassName, oError);
+			});
+		} else {
+			updateDependents();
+		}
+	};
+
 	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is to be used by applications for example to switch on a busy indicator. Registered event
@@ -327,7 +365,7 @@ sap.ui.define([
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
 	 * @throws {Error}
-	 *   If the resulting group ID is neither "$auto" nor "$direct"
+	 *   If the resulting group ID is neither '$auto' nor '$direct'
 	 *
 	 * @private
 	 */
@@ -347,7 +385,7 @@ sap.ui.define([
 			return oPromise;
 		}
 		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
-			_Helper.buildPath(this.oContext.getIndex(), this.sPath, sPath), fnCallback);
+			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
 	};
 
 	/**
@@ -396,8 +434,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the operation call succeeded, or rejected
 	 *   with an instance of <code>Error</code> in case of failure.
@@ -435,7 +473,7 @@ sap.ui.define([
 					that.oCache = _Cache.createSingle(that.oModel.oRequestor, sPath.slice(0, -5),
 						that.mQueryOptions, false, true);
 				}
-				if (that.bRelative) {
+				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
 					// if no ETag is available
 					iIndex = that.sPath.lastIndexOf("/");
@@ -477,7 +515,7 @@ sap.ui.define([
 			if (!this.oContext) {
 				throw new Error("Unresolved binding: " + this.sPath);
 			}
-			if (this.oContext.isTransient()) {
+			if (this.oContext.isTransient && this.oContext.isTransient()) {
 				throw new Error("Execute for transient context not allowed: "
 					+ this.oModel.resolve(this.sPath, this.oContext));
 			}
@@ -488,6 +526,10 @@ sap.ui.define([
 		}
 		return this._requestOperationMetadata().then(function (oOperationMetaData) {
 			if (that.bRelative) {
+				if (!that.oContext.getBinding) {
+					return createCacheAndRequest(oOperationMetaData,
+						that.oContext.getPath() === "/" ? "/" : that.oContext.getPath() + "/");
+				}
 				return that.getContext().requestCanonicalPath().then(function (sPath) {
 					return createCacheAndRequest(oOperationMetaData, sPath + "/");
 				});
@@ -523,7 +565,7 @@ sap.ui.define([
 				return this.fetchValue(sPath.slice(sResolvedPath.length + 1));
 			}
 		}
-		if (this.oContext) {
+		if (this.oContext && this.oContext.fetchAbsoluteValue) {
 			return this.oContext.fetchAbsoluteValue(sPath);
 		}
 		return _SyncPromise.resolve();
@@ -567,7 +609,7 @@ sap.ui.define([
 				throw oError;
 			});
 		}
-		if (this.oContext) {
+		if (this.oContext && this.oContext.fetchValue) {
 			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, sPath), oListener);
 		}
 		return _SyncPromise.resolve();
@@ -594,7 +636,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.getGroupId = function () {
-		return this.sGroupId || (this.bRelative && this.oContext && this.oContext.getGroupId())
+		return this.sGroupId
+			|| (this.bRelative && this.oContext && this.oContext.getGroupId
+					&& this.oContext.getGroupId())
 			|| this.oModel.getGroupId();
 	};
 
@@ -608,7 +652,8 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.getUpdateGroupId = function () {
 		return this.sUpdateGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId())
+			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
+					&& this.oContext.getUpdateGroupId())
 			|| this.oModel.getUpdateGroupId();
 	};
 
@@ -658,7 +703,8 @@ sap.ui.define([
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
-	 * Refresh is supported for absolute bindings.
+	 * Refresh is supported for bindings which are not relative to a
+	 * {@link sap.ui.model.odata.v4.Context}.
 	 *
 	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
@@ -673,8 +719,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
+	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
 	 *   If the given group ID is invalid, the binding has pending changes or refresh on this
 	 *   binding is not supported.
@@ -687,7 +733,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.refresh = function (sGroupId) {
-		if (this.bRelative) {
+		if (!_ODataHelper.isRefreshable(this)) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 		if (this.hasPendingChanges()) {
@@ -719,7 +765,7 @@ sap.ui.define([
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				this.sRefreshGroupId = sGroupId;
-				if (this.bRelative) {
+				if (this.bRelative && this.oContext.getBinding) {
 					this.oCache = _ODataHelper.createContextCacheProxy(this, this.oContext);
 					this.mCacheByContext = undefined;
 				} else {
@@ -737,6 +783,10 @@ sap.ui.define([
 
 	/**
 	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}.
+	 *
+	 * @throws {Error}
+	 *   If there is a change of this binding which has been sent to the server and for which there
+	 *   is no response yet.
 	 *
 	 * @public
 	 * @since 1.40.1
@@ -763,7 +813,7 @@ sap.ui.define([
 	 * Sets the (base) context which is used when the binding path is relative.
 	 * Fires a change event if the bound context is changed.
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 *
 	 * @private
@@ -783,7 +833,7 @@ sap.ui.define([
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
-					if (!this.oOperation && this.mQueryOptions) {
+					if (!this.oOperation && (this.mParameters || !oContext.getBinding)) {
 						this.oCache = _ODataHelper.createContextCacheProxy(this, oContext);
 					}
 				}

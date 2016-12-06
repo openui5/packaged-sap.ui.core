@@ -938,35 +938,53 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("hasPendingChanges, cancelChanges and running batch requests", function (assert) {
 		var oBatchMock = this.mock(_Batch),
+			oBatchRequest1,
+			oBatchRequest2,
+			oBatchRequest3,
 			oJQueryMock = this.mock(jQuery),
 			aPromises = [],
 			sServiceUrl = "/Service/",
 			oRequestor = _Requestor.create(sServiceUrl);
 
+		// expects a jQuery.ajax for a batch request and returns a mock for it to be resolved later
 		function expectBatch() {
+			var jqXHR = new jQuery.Deferred();
 			oJQueryMock.expects("ajax")
 				.withArgs(sServiceUrl + "$batch")
-				.returns(createMock(assert, "body", "OK"));
-			oBatchMock.expects("deserializeBatchResponse")
-				.withExactArgs(null, "body")
-				.returns([{}]);
+				.returns(jqXHR);
+			return jqXHR;
 		}
+
+		// resolves the mock for the jQuery.ajax for the batch
+		function resolveBatch(jqXHR) {
+			Promise.resolve().then(function () {
+				oBatchMock.expects("deserializeBatchResponse")
+					.withExactArgs(null, "body")
+					.returns([{}]);
+
+				jqXHR.resolve("body", "OK", { // mock jqXHR for success handler
+					getResponseHeader : function () { return null; }
+				});
+			});
+		}
+
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		// add a GET request and submit the queue
 		oRequestor.request("GET", "Products", "groupId");
-		expectBatch();
+		oBatchRequest1 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId"));
 		assert.strictEqual(oRequestor.hasPendingChanges(), false,
 			"a running GET request is not a pending change");
 
 		// add a PATCH request and submit the queue
 		oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
-		expectBatch();
+		oBatchRequest2 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
 			assert.strictEqual(oRequestor.hasPendingChanges(), true,
 				"the batch with the second PATCH is still running");
+			resolveBatch(oBatchRequest3);
 		}));
 
 		// code under test
@@ -979,13 +997,15 @@ sap.ui.require([
 
 		// while the batch with the first PATCH is still running, add another PATCH and submit
 		oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "bar"});
-		expectBatch();
+		oBatchRequest3 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
 			assert.strictEqual(oRequestor.hasPendingChanges(), false);
 			oRequestor.cancelChanges("groupId");
 		}));
 
+		resolveBatch(oBatchRequest1);
+		resolveBatch(oBatchRequest2);
 		return Promise.all(aPromises);
 	});
 
@@ -1020,6 +1040,7 @@ sap.ui.require([
 					undefined, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", "groupId"),
+			oRequestor.request("POST", "ActionImport('42')", "groupId", {}, {foo: "bar"}),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId", {},
 				oPostData, undefined, fnCancelPost).then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
@@ -1031,18 +1052,9 @@ sap.ui.require([
 				.then(unexpected, rejected.bind(null, 1))
 		]);
 
+		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
-		this.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, [
-				sinon.match({
-					method : "GET",
-					url : "Employees"
-				})
-			]).returns(Promise.resolve([
-				{responseText: "{}"},
-				{responseText : JSON.stringify({Name : "Name", Note : "Note"})}
-			]));
 		sinon.spy(oRequestor, "cancelChangeRequests");
 
 		// code under test
@@ -1053,8 +1065,24 @@ sap.ui.require([
 		sinon.assert.calledOnce(fnCancel2);
 		sinon.assert.calledOnce(fnCancel3);
 		sinon.assert.calledOnce(fnCancelPost);
-		assert.ok(oRequestor.cancelChangeRequests.calledWithExactly(sinon.match.func, "groupId"));
+		sinon.assert.calledWithExactly(oRequestor.cancelChangeRequests, sinon.match.func,
+			"groupId");
+
+		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
+
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "$batch", undefined, undefined, [
+				sinon.match({
+					method : "POST",
+					url : "ActionImport('42')"
+				}),
+				sinon.match({
+					method : "GET",
+					url : "Employees"
+				})
+			]).returns(Promise.resolve([{}, {}]));
+
 		oRequestor.submitBatch("groupId");
 
 		return oPromise;
@@ -1176,6 +1204,24 @@ sap.ui.require([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("removePatch after submitBatch", function (assert) {
+		var oPromise,
+			oRequestor = _Requestor.create("/Service/");
+
+		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"});
+
+		this.mock(oRequestor).expects("request").withArgs("POST", "$batch")
+			.returns(Promise.resolve([{}]));
+
+		oRequestor.submitBatch("groupId");
+
+		// code under test
+		assert.throws(function () {
+			oRequestor.removePatch(oPromise);
+		}, new Error("Cannot reset the changes, the batch request is running"));
+	});
+
+	//*****************************************************************************************
 	QUnit.test("removePost", function (assert) {
 		var oBody = {},
 			fnCancel1 = sinon.spy(),
@@ -1207,9 +1253,7 @@ sap.ui.require([
 					url : "Products",
 					body: {Name : "bar"}
 				})
-			]).returns(Promise.resolve([
-				{responseText : "{}"}
-			]));
+			]).returns(Promise.resolve([{}]));
 
 		// code under test
 		oRequestor.submitBatch("groupId");
@@ -1242,6 +1286,84 @@ sap.ui.require([
 		this.mock(oRequestor).expects("request").never();
 		oRequestor.submitBatch("groupId");
 		return oTestPromise;
+	});
+
+	//*****************************************************************************************
+	QUnit.test("removePost after submitBatch", function (assert) {
+		var oPayload = {},
+			oRequestor = _Requestor.create("/Service/");
+
+		oRequestor.request("POST", "Products", "groupId", {}, oPayload);
+
+		this.mock(oRequestor).expects("request").withArgs("POST", "$batch")
+			.returns(Promise.resolve([{}]));
+
+		oRequestor.submitBatch("groupId");
+
+		// code under test
+		assert.throws(function () {
+			oRequestor.removePost("groupId", oPayload);
+		}, new Error("Cannot reset the changes, the batch request is running"));
+	});
+
+	//*****************************************************************************************
+	QUnit.test("relocate", function (assert) {
+		var oBody1 = {},
+			oBody2 = {},
+			fnCancel = sinon.spy(),
+			oExpectedHeader = {
+				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+				"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
+				"foo" : "bar"
+			},
+			oHeaders = {foo : "bar"},
+			oCreatePromise1,
+			oCreatePromise2,
+			oError = new Error("Post failed"),
+			oRequestor = _Requestor.create("/Service/"),
+			oRequestorMock = this.mock(oRequestor),
+			fnSubmit = sinon.spy();
+
+		oCreatePromise1 = oRequestor.request("POST", "Employees", "$parked.$auto", oHeaders, oBody1,
+			fnSubmit, fnCancel);
+		oCreatePromise2 = oRequestor.request("POST", "Employees", "$parked.$auto", oHeaders, oBody2,
+			fnSubmit, fnCancel);
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.relocate("$foo", oBody1, "$auto");
+		}, new Error("Request not found in group '$foo'"));
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.relocate("$parked.$auto", {foo: "bar"}, "$auto");
+		}, new Error("Request not found in group '$parked.$auto'"));
+
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees", "$auto", oExpectedHeader, oBody2, fnSubmit,
+				fnCancel)
+			.returns(Promise.resolve());
+
+		// code under test
+		oRequestor.relocate("$parked.$auto", oBody2, "$auto");
+
+		assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"][0].length, 1, "one left");
+		assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"][0][0].body, oBody1);
+
+		return oCreatePromise2.then(function () {
+			oRequestorMock.expects("request")
+				.withExactArgs("POST", "Employees", "$auto", oExpectedHeader, oBody1, fnSubmit,
+					fnCancel)
+				.returns(Promise.reject(oError));
+
+			// code under test
+			oRequestor.relocate("$parked.$auto", oBody1, "$auto");
+
+			return oCreatePromise1.then(undefined, function (oError0) {
+				assert.strictEqual(oError0, oError);
+				assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"], undefined);
+			});
+		}, undefined);
 	});
 
 	//*********************************************************************************************
