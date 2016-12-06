@@ -91,7 +91,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.ListBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.44.1
+	 * @version 1.44.2
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
@@ -543,7 +543,7 @@ sap.ui.define([
 				return this.fetchValue(sPath, undefined, iIndex);
 			}
 		}
-		if (this.oContext) {
+		if (this.oContext && this.oContext.fetchAbsoluteValue) {
 			return this.oContext.fetchAbsoluteValue(sPath);
 		}
 		return _SyncPromise.resolve();
