@@ -1779,5 +1779,27 @@
         "references": []
       }
     ]
+  },
+  "1.38.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "48b331475733f248b9ca2cd3a16f062c6257e2e7",
+        "type": "FIX",
+        "text": " mvc/Controller: support controller extension in factory function",
+        "references": []
+      }
+    ]
+  },
+  "1.38.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "08df0bd223bc0617a591fe0cb80c2dc8fd24ce96",
+        "type": "FIX",
+        "text": " Device: Disables PointerEvent detection on Chrome 55+",
+        "references": []
+      }
+    ]
   }
 }
