@@ -697,7 +697,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.40.12
+	 * @version 1.40.13
 	 * @namespace
 	 * @public
 	 * @static
@@ -2707,6 +2707,15 @@
 				};
 
 				log.debug("Modules that should be excluded from preload: '" + sPattern + "'");
+
+			} else if ( vDebugInfo === true ) {
+
+				fnIgnorePreload = function() {
+					return true;
+				};
+
+				log.debug("All modules should be excluded from preload");
+
 			}
 		})();
 

@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @extends sap.ui.model.odata.type.Int
 	 *
 	 * @author SAP SE
-	 * @version 1.40.12
+	 * @version 1.40.13
 	 *
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int16

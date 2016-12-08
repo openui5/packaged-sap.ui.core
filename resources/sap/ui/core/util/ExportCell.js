@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/core/Element'],
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.40.12
+	 * @version 1.40.13
 	 * @since 1.22.0
 	 *
 	 * @constructor
