@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
-	 * @version 1.38.14
+	 * @version 1.38.15
 	 *
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
 	 * @constructor

@@ -22,7 +22,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.38.14
+	 * 1.38.15
 	 *
 	 * @constructor
 	 * @public
