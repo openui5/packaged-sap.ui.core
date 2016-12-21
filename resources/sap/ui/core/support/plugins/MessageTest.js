@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.40.13
+		 * @version 1.40.14
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.MessageTest
