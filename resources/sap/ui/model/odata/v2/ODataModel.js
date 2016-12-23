@@ -62,7 +62,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.38.15
+	 * @version 1.38.16
 	 *
 	 * @constructor
 	 * @public
@@ -4132,9 +4132,9 @@ sap.ui.define([
 		if (jQuery.sap.equal(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
 			//delete metadata to check if object has changes
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
+			delete this.mChangedEntities[sKey].__metadata;
 			// check for 'empty' complex types objects and delete it
 			updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
-			delete this.mChangedEntities[sKey].__metadata;
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;
