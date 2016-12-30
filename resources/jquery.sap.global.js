@@ -697,7 +697,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.42.6
+	 * @version 1.42.7
 	 * @namespace
 	 * @public
 	 * @static
@@ -730,7 +730,7 @@
 
 	// Reads the value for the given key from the localStorage or writes a new value to it.
 	function makeLocalStorageAccessor(key, type, callback) {
-		return window.localStorage ? function(value) {
+		return function(value) {
 			try {
 				if ( value != null || type === 'string' ) {
 					if (value) {
@@ -743,9 +743,9 @@
 				value = localStorage.getItem(key);
 				return type === 'boolean' ? value === 'X' : value;
 			} catch (e) {
-				jQuery.sap.log.warning("Could not access localStorage while setting '" + key + "' to '" + value + "' (are cookies disabled?): " + e.message);
+				jQuery.sap.log.warning("Could not access localStorage while accessing '" + key + "' (value: '" + value + "', are cookies disabled?): " + e.message);
 			}
-		} : jQuery.noop;
+		};
 	}
 
 	jQuery.sap.debug = makeLocalStorageAccessor('sap-ui-debug', '', function reloadHint(vDebugInfo) {

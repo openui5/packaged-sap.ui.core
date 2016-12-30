@@ -63,7 +63,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.42.6
+	 * @version 1.42.7
 	 *
 	 * @constructor
 	 * @public
@@ -1678,6 +1678,12 @@ sap.ui.define([
 			oEntityType = this.oMetadata._getEntityTypeByPath(sPath),
 			oEntity = this._getObject(sPath),
 			aExpand = [], aSelect = [];
+
+		// Created entities should never be reloaded, as they do not exist on
+		// the server yet
+		if (this._isCreatedEntity(oEntity)) {
+			return false;
+		}
 
 		function checkReloadNeeded(oEntityType, oEntity, aSelect, aExpand) {
 			var aOwnSelect, aOwnExpand,
@@ -4376,8 +4382,22 @@ sap.ui.define([
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry = { },
-		sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
-		mChangedEntities = {}, oEntityInfo = {}, mParams, bFunction = false, that = this;
+			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
+			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject,
+			bFunction = false, that = this;
+
+		function updateChangedEntities(oOriginalObject, oChangedObject) {
+			jQuery.each(oChangedObject,function(sKey) {
+				if (jQuery.isPlainObject(oChangedObject[sKey]) && jQuery.isPlainObject(oOriginalObject[sKey])) {
+					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey]);
+					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
+						delete oChangedObject[sKey];
+					}
+				} else if (jQuery.sap.equal(oChangedObject[sKey], oOriginalObject[sKey])) {
+					delete oChangedObject[sKey];
+				}
+			});
+		}
 
 		sResolvedPath = this.resolve(sPath, oContext, true);
 
@@ -4388,7 +4408,7 @@ sap.ui.define([
 
 		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1);
 		sKey = oEntityInfo.key;
-		oOriginalEntry = this._getObject('/' + sKey);
+		oOriginalEntry = this._getObject('/' + sKey, null, true);
 		oOriginalValue = this._getObject(sPath, oContext, true);
 
 		//clone property
@@ -4412,11 +4432,13 @@ sap.ui.define([
 
 		bFunction = oOriginalEntry.__metadata.created && oOriginalEntry.__metadata.created.functionImport;
 
+		oChangeObject[sPropertyPath] = oValue;
+
 		//reset clone if oValue equals the original value
 		if (jQuery.sap.equal(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
-			delete oChangeObject[sPropertyPath];
-			//delete metadata to check if object has changes
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
+			// check for 'empty' complex types objects and delete it
+			updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
 			delete this.mChangedEntities[sKey].__metadata;
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
 				delete this.mChangedEntities[sKey];
@@ -4430,8 +4452,6 @@ sap.ui.define([
 				return true;
 			}
 			this.mChangedEntities[sKey].__metadata = oEntityMetadata;
-		} else {
-			oChangeObject[sPropertyPath] = oValue;
 		}
 
 		oGroupInfo = this._resolveGroup(sKey);
@@ -4788,6 +4808,16 @@ sap.ui.define([
 		} else {
 			jQuery.sap.log.error("Tried to use createEntry without created-callback, before metadata is available!");
 		}
+	};
+
+	/**
+	 * Returns whether the given entity has been created using createEntry.
+	 * @param {object} oEntity The entity to check
+	 * @returns {boolean} Returns whether the entity is created
+	 * @private
+	 */
+	ODataModel.prototype._isCreatedEntity = function(oEntity) {
+		return !!(oEntity && oEntity.__metadata && oEntity.__metadata.created);
 	};
 
 	/**

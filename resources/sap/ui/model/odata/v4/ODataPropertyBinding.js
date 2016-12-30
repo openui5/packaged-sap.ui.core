@@ -65,7 +65,7 @@ sap.ui.define([
 	 *   For other events, an error is thrown.
 	 * @extends sap.ui.model.PropertyBinding
 	 * @public
-	 * @version 1.42.6
+	 * @version 1.42.7
 	 */
 	var ODataPropertyBinding = PropertyBinding.extend(sClassName, {
 			constructor : function (oModel, sPath, oContext, mParameters) {

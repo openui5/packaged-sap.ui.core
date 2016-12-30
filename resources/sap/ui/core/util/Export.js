@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.42.6
+	 * @version 1.42.7
 	 * @since 1.22.0
 	 *
 	 * @constructor
