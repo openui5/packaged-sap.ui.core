@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
-	 * @version 1.42.7
+	 * @version 1.42.8
 	 *
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
 	 * @param {boolean} bObserve whether to observe the JSON data for property changes (experimental)

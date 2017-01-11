@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.42.7
+		 * @version 1.42.8
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
@@ -338,8 +338,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			},
 
 			_customScrollTo : function(left, top, oEvent) {
+				var sNodeName = oEvent.target.nodeName;
 				// do not prevent events coming from input controls
-				if (!oEvent.isMarked("inputBase")) {
+				if (sNodeName != "INPUT" && sNodeName != "TEXTAREA") {
 					oEvent.preventDefault();
 					oEvent.setMarked();
 

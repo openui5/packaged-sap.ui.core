@@ -10357,7 +10357,7 @@ $.ui.position = {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10368,7 +10368,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.42.7
+ * @version 1.42.8
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10394,7 +10394,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.42.7";
+		var apiVersion = "1.42.8";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10452,7 +10452,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.42.7";
+		var v = "1.42.8";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15249,7 +15249,7 @@ return URI;
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -15946,7 +15946,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.42.7
+	 * @version 1.42.8
 	 * @namespace
 	 * @public
 	 * @static
@@ -20594,4 +20594,4 @@ jQuery.sap.globalEval = function() {
 	eval(arguments[0]);
 	/*eslint-enable no-eval */
 };
-if (!window["sap-ui-debug"]) { jQuery.sap.preloadModules("sap.ui.core.library-preload", false); } jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();
+if (!window["sap-ui-debug"]) { sap.ui.requireSync("sap/ui/core/library-preload"); } sap.ui.requireSync("sap/ui/core/Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();

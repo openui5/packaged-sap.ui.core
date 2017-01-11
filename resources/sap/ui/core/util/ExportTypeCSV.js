@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -9,12 +9,13 @@ sap.ui.define(['./ExportType'],
 	function(ExportType) {
 	'use strict';
 
-	// Matches CR, LF or double quote
+	// Matches CR, LF, double quote and common separator chars
 	// Used to detect whether content needs to be escaped (see #escapeContent)
-	var rNewLineOrDoubleQuote = /[\r\n"]/;
+	var rContentNeedsEscaping = /[\r\n"\t;,]/;
 
-	// Matches a formula: starts with one of = + - @ (see #escapeContent)
-	var rFormula = /^[=\+\-@]/;
+	// Matches a formula (for usage see #escapeContent):
+	// Starts with one of = + - @ but excludes "number only" formulas like -123,45 or =1.234e+5 as they are save to be used
+	var rFormula = /^[=\+\-@](?![\d.,]+(?:e[\+-]?\d+)?$)/i;
 
 	/**
 	 * Constructor for a new ExportTypeCSV.
@@ -35,7 +36,7 @@ sap.ui.define(['./ExportType'],
 	 * @extends sap.ui.core.util.ExportType
 	 *
 	 * @author SAP SE
-	 * @version 1.42.7
+	 * @version 1.42.8
 	 * @since 1.22.0
 	 *
 	 * @constructor
@@ -119,8 +120,8 @@ sap.ui.define(['./ExportType'],
 		var bContainsSeparatorChar = sVal.indexOf(this.getSeparatorChar()) > -1;
 
 		// Only wrap content with double quotes if it contains the separator char,
-		// a new line (CR / LF) or a double quote
-		if (bContainsSeparatorChar || rNewLineOrDoubleQuote.test(sVal)) {
+		// a new line (CR / LF), a double quote or a common separator char
+		if (bContainsSeparatorChar || rContentNeedsEscaping.test(sVal)) {
 
 			// Escape double quotes by preceding them with another one
 			sVal = sVal.replace(/"/g, '""');

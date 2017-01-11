@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -90,7 +90,7 @@ sap.ui.define([
 	 *   For other events, an error is thrown.
 	 * @extends sap.ui.model.ListBinding
 	 * @public
-	 * @version 1.42.7
+	 * @version 1.42.8
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
