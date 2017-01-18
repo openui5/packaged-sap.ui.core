@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -63,7 +63,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.40.14
+	 * @version 1.40.16
 	 *
 	 * @constructor
 	 * @public
@@ -1367,12 +1367,7 @@ sap.ui.define([
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
 			}
 		}.bind(this));
-		//handle calls after update
-		var aCallAfterUpdate = this.aCallAfterUpdate;
-		this.aCallAfterUpdate = [];
-		for (var i = 0; i < aCallAfterUpdate.length; i++) {
-			aCallAfterUpdate[i]();
-		}
+		this._processAfterUpdate();
 	};
 
 	/**
@@ -2506,6 +2501,8 @@ sap.ui.define([
 					that._processError(oRequest.parts[i].request, oError, oRequest.parts[i].fnError);
 				}
 			}
+
+			that._processAfterUpdate();
 		}
 
 		oRequest.request.eventInfo = {
@@ -2608,6 +2605,8 @@ sap.ui.define([
 				}
 			});
 
+			that._processAfterUpdate();
+
 			if (bAborted) {
 				that._processAborted(oBatchRequest, oError, fnError, true);
 			} else {
@@ -2640,11 +2639,15 @@ sap.ui.define([
 
 		sUrl = this.sServiceUrl	+ "/$batch";
 
+
 		if (this.aUrlParams.length > 0) {
 			sUrl += "?" + this.aUrlParams.join("&");
 		}
 
 		jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
+
+		// Set Accept header for $batch requests
+		oChangeHeader["Accept"] = "multipart/mixed";
 
 		// reset
 		delete oChangeHeader["Content-Type"];
@@ -3162,7 +3165,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * process a 'TwoWay' change
+	 * Process handlers registered for execution after update.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._processAfterUpdate = function() {
+		var aCallAfterUpdate = this.aCallAfterUpdate;
+		this.aCallAfterUpdate = [];
+		for (var i = 0; i < aCallAfterUpdate.length; i++) {
+			aCallAfterUpdate[i]();
+		}
+	};
+
+	/**
+	 * Process a two-way binding change.
 	 *
 	 * @param {string} sKey Key of the entity to change
 	 * @param {object} oData The entry data
@@ -4369,7 +4385,7 @@ sap.ui.define([
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry = { },
 			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
 			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject,
-			bFunction = false, that = this;
+			bFunction = false, that = this, bCreated;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			jQuery.each(oChangedObject,function(sKey) {
@@ -4422,9 +4438,12 @@ sap.ui.define([
 		//reset clone if oValue equals the original value
 		if (jQuery.sap.equal(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
+			bCreated = oEntityMetadata && oEntityMetadata.created;
 			delete this.mChangedEntities[sKey].__metadata;
-			// check for 'empty' complex types objects and delete it
-			updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
+			// check for 'empty' complex types objects and delete it - not for created entities
+			if (!bCreated) {
+				updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
+			}
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;

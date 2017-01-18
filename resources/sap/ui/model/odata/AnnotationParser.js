@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -376,9 +376,6 @@ var AnnotationsParser =  {
 					oEntityType = aEntityTypes[j];
 					oExtensions = {};
 					oProperties = {};
-					if (oEntityType.hasStream && oEntityType.hasStream === "true") {
-						continue;
-					}
 					for (var k in oEntityType.property) {
 						oProperty = oEntityType.property[k];
 						if (oProperty.type.substring(0, sNamespace.length) === sNamespace) {
