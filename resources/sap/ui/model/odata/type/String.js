@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.42.8
+	 * @version 1.42.9
 	 *
 	 * @alias sap.ui.model.odata.type.String
 	 * @param {object} [oFormatOptions]

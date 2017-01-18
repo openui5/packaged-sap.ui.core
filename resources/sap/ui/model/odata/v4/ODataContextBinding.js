@@ -105,7 +105,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
-	 * @version 1.42.8
+	 * @version 1.42.9
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
