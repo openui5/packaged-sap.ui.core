@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -54,7 +54,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.44.3
+	 * @version 1.44.5
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -114,17 +114,18 @@ sap.ui.define([
 		 * For details about the escaping refer to {@link jQuery.sap.encodeHTML}
 		 *
 		 * @param {string} sText
-		 * @param {boolean} bLineBreaks Whether to convert linebreaks into <br> tags
+		 * @param {boolean} bLineBreaks Whether to convert line breaks into <br> tags
 		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
 		 * @public
 		 */
-		this.writeEscaped = function(/** string */ sText, bLineBreaks) {
-			jQuery.sap.assert( typeof sText === "string", "sText must be a string");
-			sText = jQuery.sap.encodeHTML(sText);
-			if (bLineBreaks) {
-				sText = sText.replace(/&#xa;/g, "<br>");
+		this.writeEscaped = function(sText, bLineBreaks) {
+			if ( sText != null ) {
+				sText = jQuery.sap.encodeHTML( String(sText) );
+				if (bLineBreaks) {
+					sText = sText.replace(/&#xa;/g, "<br>");
+				}
+				aBuffer.push(sText);
 			}
-			aBuffer.push(sText);
 			return this;
 		};
 

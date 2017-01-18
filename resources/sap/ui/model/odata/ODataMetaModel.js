@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -169,7 +169,7 @@ sap.ui.define([
 	 * {@link #loaded loaded} has been resolved!
 	 *
 	 * @author SAP SE
-	 * @version 1.44.3
+	 * @version 1.44.5
 	 * @alias sap.ui.model.odata.ODataMetaModel
 	 * @extends sap.ui.model.MetaModel
 	 * @public
@@ -182,6 +182,9 @@ sap.ui.define([
 				function load() {
 					var oData;
 
+					if (that.bDestroyed) {
+						throw new Error("Meta model already destroyed");
+					}
 					jQuery.sap.measure.average(sPerformanceLoad, "", aPerformanceCategories);
 					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
 					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
@@ -446,7 +449,7 @@ sap.ui.define([
 
 	ODataMetaModel.prototype.destroy = function () {
 		MetaModel.prototype.destroy.apply(this, arguments);
-		return this.oModel.destroy.apply(this.oModel, arguments);
+		return this.oModel && this.oModel.destroy.apply(this.oModel, arguments);
 	};
 
 	/**

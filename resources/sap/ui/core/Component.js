@@ -1,6 +1,6 @@
 /*
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.44.3
+	 * @version 1.44.5
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -1088,8 +1088,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 								oModelConfig.settings = oModelConfig.settings || {};
 								oModelConfig.settings.metadataUrlParams = oModelConfig.settings.metadataUrlParams || {};
 
-								// set sapbc cache token (override existing value)
-								oModelConfig.settings.metadataUrlParams["sapbc"] = sCacheToken;
+								// set sap-context-token (override existing value)
+								oModelConfig.settings.metadataUrlParams["sap-context-token"] = sCacheToken;
 
 								// set sap-language (do not override existing value)
 								if (typeof oModelConfig.settings.metadataUrlParams["sap-language"] === "undefined") {
@@ -1137,8 +1137,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 								var sCacheToken = mCacheTokens.dataSources[oAnnotation.uri];
 								if (sCacheToken) {
 
-									// set sapbc cache token (override existing value)
-									oAnnotationUri.setQuery("sapbc", sCacheToken);
+									// set sap-context-token (override existing value)
+									oAnnotationUri.setQuery("sap-context-token", sCacheToken);
 
 									// set sap-language (do not override existing value)
 									if (!oAnnotationUri.hasQuery("sap-language")) {

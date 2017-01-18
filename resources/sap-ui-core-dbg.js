@@ -10357,7 +10357,7 @@ $.ui.position = {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10368,7 +10368,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.44.3
+ * @version 1.44.5
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10394,7 +10394,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.44.3";
+		var apiVersion = "1.44.5";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10452,7 +10452,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.44.3";
+		var v = "1.44.5";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -11248,6 +11248,11 @@ if (typeof window.sap.ui !== "object") {
 	}
 
 	device.support.pointer = !!window.PointerEvent;
+
+	// HOTFIX for Chrome 55+ since it newly introduced PointerEvents and touchevents aren't fired correctly.
+	if (device.browser.name == BROWSER.CHROME && device.browser.version >= 55) {
+		device.support.pointer = false;
+	}
 
 	device.support.matchmedia = !!window.matchMedia;
 	var m = device.support.matchmedia ? window.matchMedia("all and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
@@ -15245,7 +15250,7 @@ return URI;
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -15942,7 +15947,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.44.3
+	 * @version 1.44.5
 	 * @namespace
 	 * @public
 	 * @static
@@ -15975,7 +15980,7 @@ return URI;
 
 	// Reads the value for the given key from the localStorage or writes a new value to it.
 	function makeLocalStorageAccessor(key, type, callback) {
-		return window.localStorage ? function(value) {
+		return function(value) {
 			try {
 				if ( value != null || type === 'string' ) {
 					if (value) {
@@ -15988,9 +15993,9 @@ return URI;
 				value = localStorage.getItem(key);
 				return type === 'boolean' ? value === 'X' : value;
 			} catch (e) {
-				jQuery.sap.log.warning("Could not access localStorage while setting '" + key + "' to '" + value + "' (are cookies disabled?): " + e.message);
+				jQuery.sap.log.warning("Could not access localStorage while accessing '" + key + "' (value: '" + value + "', are cookies disabled?): " + e.message);
 			}
-		} : jQuery.noop;
+		};
 	}
 
 	jQuery.sap.debug = makeLocalStorageAccessor('sap-ui-debug', '', function reloadHint(vDebugInfo) {
@@ -18427,7 +18432,7 @@ return URI;
 			var oModule = mModules[sModuleName],
 				oShim = mAMDShim[sModuleName],
 				bLoggable = log.isLoggable(),
-				sOldPrefix, sScript, vAMD;
+				sOldPrefix, sScript, vAMD, oMatch;
 
 			if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
 
@@ -18463,10 +18468,18 @@ return URI;
 						// Note: make URL absolute so Chrome displays the file tree correctly
 						// Note: do not append if there is already a sourceURL / sourceMappingURL
 						// Note: Safari fails, if sourceURL is the same as an existing XHR URL
-						if (sScript && !sScript.match(/\/\/[#@] source(Mapping)?URL=.*$/)) {
-							sScript += "\n//# sourceURL=" + URI(oModule.url).absoluteTo(sDocumentLocation);
-							if (Device.browser.safari) {
-								sScript += "?";
+						// Note: Chrome ignores debug files when the same URL has already been load via sourcemap of the bootstrap file (sap-ui-core)
+						// Note: sourcemap annotations URLs in eval'ed sources are resolved relative to the page, not relative to the source
+						if (sScript ) {
+							oMatch = /\/\/[#@] source(Mapping)?URL=(.*)$/.exec(sScript);
+							if ( oMatch && oMatch[1] && /[^/]+\.js\.map$/.test(oMatch[2]) ) {
+								// found a sourcemap annotation with a typical UI5 generated relative URL
+								sScript = sScript.slice(0, oMatch.index) + oMatch[0].slice(0, -oMatch[2].length) + URI(oMatch[2]).absoluteTo(oModule.url);
+							} else if ( !oMatch ) {
+								sScript += "\n//# sourceURL=" + URI(oModule.url).absoluteTo(sDocumentLocation);
+								if (Device.browser.safari || Device.browser.chrome) {
+									sScript += "?eval";
+								}
 							}
 						}
 
@@ -20529,4 +20542,4 @@ jQuery.sap.globalEval = function() {
 	eval(arguments[0]);
 	/*eslint-enable no-eval */
 };
-if (!window["sap-ui-debug"]) { jQuery.sap.preloadModules("sap.ui.core.library-preload", false); } jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();
+if (!window["sap-ui-debug"]) { sap.ui.requireSync("sap/ui/core/library-preload"); } sap.ui.requireSync("sap/ui/core/Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();

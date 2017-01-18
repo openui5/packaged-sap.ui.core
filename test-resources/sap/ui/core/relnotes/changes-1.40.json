@@ -3531,5 +3531,122 @@
         "references": []
       }
     ]
+  },
+  "1.40.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "86c9ed687db09400578901520d099ccef414b4c7",
+        "type": "FIX",
+        "text": " BusyIndicator (Global): Fix missing wait cursor",
+        "references": []
+      },
+      {
+        "id": "34e7aa7f6e8e491d85cc00d24c1497279c8feb23",
+        "type": "FIX",
+        "text": " Device: Disables PointerEvent detection on Chrome 55+",
+        "references": []
+      },
+      {
+        "id": "b0b758c64624be7ecc330e9871b4d27d2f1d2f92",
+        "type": "FIX",
+        "text": " mvc/Controller: support controller extension in factory function",
+        "references": []
+      },
+      {
+        "id": "ec44015e8dafcb4ae5c04a0c81149691a60f01e4",
+        "type": "FIX",
+        "text": " sap.m.Carousel: swipe now works correctly on combi devices",
+        "references": []
+      },
+      {
+        "id": "68e90f0bf63ed5eec5c88614367ef6ef601d38ce",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollBar: invalidation while setting contentSize causes the user to lose track of the scrollbar handle",
+        "references": []
+      },
+      {
+        "id": "8dce03c19fc30c73d82c193377747fb0834bef9d",
+        "type": "FIX",
+        "text": " v2.ODataModel: Don\u0027t try to reload created entities",
+        "references": []
+      }
+    ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "42a1f6dceac7fbe2f565c39f28b23d7c9ee36356",
+        "type": "FIX",
+        "text": " Avoid unguarded access to window.localStorage during bootstrap",
+        "references": []
+      },
+      {
+        "id": "1469a00e8975850440f845e68517f89ab84993d1",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: SelectAll",
+        "references": []
+      },
+      {
+        "id": "701ac36488a26e1159b0e6450ace50e1e012cbde",
+        "type": "FIX",
+        "text": " v2.ODataModel: setProperty detect changes in __metadata",
+        "references": []
+      }
+    ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "d5952034728f8e03518affaf74b233edd9198d2d",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix issues when switching theme / improve logging",
+        "references": []
+      },
+      {
+        "id": "d878877cb893774a25a7e1460e4c7447dd4401a5",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Mouse swipe now works correctly",
+        "references": []
+      },
+      {
+        "id": "575ae6896559cf30ac229c84ed300be82756bbd7",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      },
+      {
+        "id": "b6643ab573efd3571b1edc90316adc6a0569a8df",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV: Don\u0027t escape number only formulas",
+        "references": []
+      },
+      {
+        "id": "6abd3e9025ef82aff0d690418d221a42289f88f0",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: ignore \"HasStream\" property",
+        "references": []
+      },
+      {
+        "id": "7455151889f1aa261537af5a61e39214c6970339",
+        "type": "FIX",
+        "text": " v2.ODataModel: Bindings fire no dataReceived event",
+        "references": []
+      },
+      {
+        "id": "fcd087d451903ff967c405423da3315a62d80ef2",
+        "type": "FIX",
+        "text": " v2.ODataModel: setting same value on created Entities - no changes",
+        "references": []
+      },
+      {
+        "id": "4e26916347931a86d2db9ea1ec10b50185a0f574",
+        "type": "FIX",
+        "text": " v2.ODataModel: wrong accept header for $batch",
+        "references": []
+      }
+    ]
   }
 }

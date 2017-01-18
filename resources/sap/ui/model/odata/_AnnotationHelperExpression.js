@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -736,7 +736,8 @@ sap.ui.define([
 					oConstraints.maxLength = oProperty.maxLength;
 					oIsDigitSequence = oProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 					if (oIsDigitSequence) {
-						oConstraints.isDigitSequence = oIsDigitSequence.Bool;
+						oConstraints.isDigitSequence =
+							oIsDigitSequence.Bool ? oIsDigitSequence.Bool : "true";
 					}
 					break;
 				// no default

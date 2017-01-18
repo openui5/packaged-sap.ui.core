@@ -61,7 +61,24 @@
 	function initModel(mParameters) {
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
 	}
+	
+	var bChanged = false, bDataRequested = false, bDataReceived = false;
 
+	var fnChange = function(oEvent) {
+		bChanged = true;
+		ok(bDataRequested && !bDataReceived,"change fired");
+	};
+
+	var fnDataRequested = function(oEvent) {
+		bDataRequested = true;
+		ok(!bDataReceived && !bChanged,"dataRequested fired");
+	};
+
+	var fnDataReceived = function(oEvent) {
+		bDataReceived = true;
+		ok(bChanged && bDataRequested,"dataRecieved fired");
+	};
+	
 	/**
 	 * Removes all shared Metadata
 	 */
@@ -130,6 +147,24 @@
 				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
 				oModel.createBindingContext("/ProductSet('AD-1000')", null, function(newContext) {
 					equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
+					start(); // resume normal testing
+				});
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+	});
+	
+	asyncTest("test $batch: check accept header", function() {
+		oSpy = sinon.spy(oModel, "_submitBatchRequest");
+		oModel.read("/ProductSet", {
+			success : function() {
+				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
+				oModel.createBindingContext("/ProductSet('AD-1000')", null, function(newContext) {
+					equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
+					ok(oSpy.args[0][0].headers["Accept"] === "multipart/mixed", "Accept header set to 'multipart/mixed'");
+					oSpy.restore();
 					start(); // resume normal testing
 				});
 			},
@@ -3087,7 +3122,84 @@
 			stopServer();
 		}
 	});
-
+	asyncTest("Event order (single request): bindElement fails --> refresh", function(){
+		expect(5);
+		oModel.setUseBatch(false);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			oLabel.getElementBinding().detachDataReceived(handler);
+			oLabel.getElementBinding().attachDataReceived(function() {
+				ok(true, "DataReceived fired");
+				oLabel.unbindElement();
+				bChanged = false;
+				bDataRequested = false;
+				bDataReceived = false;
+				start(); // resume normal testing			
+			});
+			oLabel.getElementBinding().refresh();
+		}
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
+	asyncTest("Event order (single request): bindElement fails", function(){
+		expect(3);
+		oModel.setUseBatch(false);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			oLabel.unbindElement();
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			start(); // resume normal testing
+		}
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
+	asyncTest("Event order (batch request): bindElement fails --> refresh", function(){
+		expect(5);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			oLabel.getElementBinding().detachDataReceived(handler);
+			oLabel.getElementBinding().attachDataReceived(function() {
+				ok(true, "DataReceived fired");
+				oLabel.unbindElement();
+				bChanged = false;
+				bDataRequested = false;
+				bDataReceived = false;
+				start(); // resume normal testing			
+			});
+			oLabel.getElementBinding().refresh();
+		}
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
+	asyncTest("Event order (batch request): bindElement fails", function(){
+		expect(3);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			oLabel.unbindElement();
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			start(); // resume normal testing
+		}
+		oLabel.bindElement( {path:"/ProductSet('FAIL')", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
 	asyncTest("test eventing when using read with batch on", function() {
 		var bSuccess = false;
 		var iReqComp = 0;
@@ -3108,7 +3220,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
@@ -3132,7 +3244,7 @@
 				ok(oEvent.getParameter('success'), "Param check: success");
 				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
@@ -3187,7 +3299,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain only one request");
@@ -3209,7 +3321,7 @@
 				ok(oEvent.getParameter('success'), "Param check: success");
 				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 				ok(aRequests.length == 1, "should contain one request");
@@ -3263,7 +3375,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
@@ -3341,7 +3453,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
@@ -3427,7 +3539,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
 			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
@@ -3519,7 +3631,7 @@
 			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
 			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 			equal(oEvent.getParameter('async'), true , "Param check: async");
-			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			var aRequests = oEvent.getParameter('requests');
 			ok(aRequests.length == 1, "should contain one request");
 			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
@@ -3824,7 +3936,7 @@
 				ok(oEvent.getParameter('success'), "Param check: success");
 				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 
@@ -3971,7 +4083,7 @@
 				ok(oEvent.getParameter('success'), "Param check: success");
 				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
 				equal(oEvent.getParameter('async'), true , "Param check: async");
-				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 

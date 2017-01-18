@@ -3521,7 +3521,50 @@
 			}
 		});
 	});
-
+	asyncTest("Event order (single request): bindElement - batch fails", function(){
+		expect(3);
+		cleanServiceDataCache();
+		var oModel = initModel(sURI);
+		oModel.setUseBatch(true);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			oLabel.unbindElement();
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			start(); // resume normal testing
+		}
+		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
+	asyncTest("Event order (batch request): bindElement - batch fails --> refresh", function(){
+		expect(5);
+		cleanServiceDataCache();
+		var oModel = initModel(sURI);
+		oModel.setUseBatch(true);
+		oLabel = new sap.ui.commons.Label();
+		oLabel.setModel(oModel);
+		var handler = function(oEvent) {
+			ok(true, "DataReceived fired");
+			bChanged = false;
+			bDataRequested = false;
+			bDataReceived = false;
+			oLabel.getElementBinding().detachDataReceived(handler);
+			oLabel.getElementBinding().attachDataReceived(function() {
+				ok(true, "DataReceived fired");
+				oLabel.unbindElement();
+				bChanged = false;
+				bDataRequested = false;
+				bDataReceived = false;
+				start(); // resume normal testing			
+			});
+			oLabel.getElementBinding().refresh();
+		}
+		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
+	});
+	
 	asyncTest("Event order: bindElement", function(){
 		expect(4);
 		cleanServiceDataCache();
@@ -3583,7 +3626,7 @@
 		oLabel.setModel(oModel1);
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
-
+	
 	asyncTest("ContextBinding: Unresolved bindings must fire change with null context", function(){
 		expect(2);
 		cleanServiceDataCache();
@@ -4272,6 +4315,18 @@
 			delete this.oModel;
 		}
 	});
+	asyncTest("set same value again", function() {
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, urlParameters: {'Fail500': true}});
+			var oProduct = this.oModel.getProperty('', oContext);
+			this.oModel.setProperty("Name", "test", oContext);
+			ok(oProduct, "Product created");
+			ok(oProduct.__metadata.created, "Product flagged as created");
+			ok(this.oModel.hasPendingChanges(), "Model should still have pending changes");
+			start();
+		}.bind(this))
+	});
 	asyncTest("submit again after error", function() {
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
@@ -4701,6 +4756,33 @@
 				ok(true, "Requests must be triggered");
 			});
 			setTimeout(function() {
+				start();
+			}, 0);
+		}.bind(this))
+	});
+
+	asyncTest("createEntry and bindElement", function() {
+		assert.expect(1);
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var fnSuccess = function() {
+					ok(false, "success handler must not be called");
+				},
+				fnRequestSent = function() {
+					ok(false, "no request must be triggered");
+				};
+	
+			var oCreatedContext = this.oModel.createEntry("/Products", {
+				success: fnSuccess
+			});
+			var oContextBinding = this.oModel.bindContext(oCreatedContext.getPath());
+			oContextBinding.attachChange(function(){
+				ok(true, "ContextBinding change must be fired");
+			});
+			this.oModel.attachRequestSent(fnRequestSent);
+			oContextBinding.initialize();
+			setTimeout(function() {
+				that.oModel.detachRequestSent(fnRequestSent);
 				start();
 			}, 0);
 		}.bind(this))

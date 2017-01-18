@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.44.3
+		 * @version 1.44.5
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.TechInfo
@@ -177,10 +177,11 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 		 */
 		TechInfo.prototype.onsapUiSupportTechInfoStartE2ETrace = function(oEvent) {
 
-			var that = this;
+			var that = this,
+				sLevel = oEvent.getParameter("level");
 
 			sap.ui.require(['sap/ui/core/support/trace/E2eTraceLib'], function(E2eTraceLib) {
-				E2eTraceLib.start(oEvent.getParameter("level"), function(traceXml) {
+				E2eTraceLib.start(sLevel, function(traceXml) {
 					Support.getStub().sendEvent(that.getId() + "FinishedE2ETrace", {
 						trace: traceXml
 					});

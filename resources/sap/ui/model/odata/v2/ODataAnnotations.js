@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -37,11 +37,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
 
 	/**
+	 * Creates a new instance of the ODataAnnotations annotation loader.
+	 *
+	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata Metadata object with the metadata information needed to parse the annotations
+	 * @param {map} mOptions Obligatory options
+	 * @param {string|map|string[]|map[]} mOptions.source One or several annotation sources. See {@link sap.ui.model.odata.v2.ODataAnnotations#addSource} for more details
+	 * @param {map} mOptions.headers A map of headers to be sent with every request. See {@link sap.ui.model.odata.v2.ODataAnnotations#setHeaders} for more details
+	 * @param {boolean} mOptions.skipMetadata If set to <code>true</code>, the metadata document will not be parsed for annotations;
+	 * @public
+	 *
 	 * @class Annotation loader for OData V2 services
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.44.3
+	 * 1.44.5
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -49,17 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @extends sap.ui.base.EventProvider
 	 */
 	var ODataAnnotations = EventProvider.extend("sap.ui.model.odata.v2.ODataAnnotations", /** @lends sap.ui.model.odata.v2.ODataAnnotations.prototype */ {
-		/**
-		 * Creates a new instance of the ODataAnnotations annotation loader.
-		 *
-		 * @param {sap.ui.model.odata.ODataMetadata} oMetadata Metadata object with the metadata information needed to parse the annotations
-		 * @param {map} mOptions Obligatory options
-		 * @param {string|map|string[]|map[]} mOptions.source One or several annotation sources. See {@link sap.ui.model.odata.v2.ODataAnnotations#addSource} for more details
-		 * @param {map} mOptions.headers A map of headers to be sent with every request. See {@link sap.ui.model.odata.v2.ODataAnnotations#setHeaders} for more details
-		 * @param {boolean} mOptions.skipMetadata If set to <code>true</code>, the metadata document will not be parsed for annotations;
-		 * @constructor
-		 * @public
-		 */
+
 		constructor : function(oMetadata, mOptions) {
 			// Allow event substription in constructor options
 			EventProvider.apply(this, [ mOptions ]);

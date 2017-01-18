@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -385,7 +385,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 					//<link rel="apple-touch-startup-image" href="/startup.png">
 				}
 
-				if (options.preventScroll && !Device.os.blackberry) {
+				if (options.preventScroll && Device.os.ios) {
 					$(window).bind("touchmove", function sapInitMobileTouchMoveHandle(oEvent) {
 						if (!oEvent.isMarked()) {
 							oEvent.preventDefault(); // prevent the rubber-band effect

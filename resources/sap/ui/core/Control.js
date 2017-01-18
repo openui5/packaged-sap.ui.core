@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.44.3
+	 * @version 1.44.5
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -926,7 +926,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 *                            // <code>null</code> can be provided.
 	 *      editable: true,       // Boolean which describes whether the control is editable. If not relevant it must not be set or
 	 *                            // <code>null</code> can be provided.
-	 *      children: []          // Array of accessibility info objects of children of the given control (e.g. when the control is a layout).
+	 *      children: []          // Aggregations of the given control (e.g. when the control is a layout). Primitive aggregations will be ignored.
 	 *                            // Note: Children should only be provided when it is helpful to understand the accessibility context
 	 *                            //       (e.g. a form control must not provide details of its internals (fields, labels, ...) but a
 	 *                            //       layout should).

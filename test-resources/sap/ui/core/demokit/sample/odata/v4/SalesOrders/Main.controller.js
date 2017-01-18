@@ -87,7 +87,11 @@ sap.ui.define([
 		},
 
 		onCloseSalesOrderDialog : function (oEvent) {
-			this.getView().byId("CreateSalesOrderDialog").close();
+			var oView = this.getView();
+
+			oView.byId("CreateSalesOrderDialog").close();
+			// move the focus to the row of the newly created sales order
+			oView.byId("SalesOrders").getItems()[0].focus();
 		},
 
 		onCreateSalesOrder : function (oEvent) {
@@ -377,11 +381,14 @@ sap.ui.define([
 		},
 
 		onSetBindingContext : function () {
-			var oText = this.getView().byId("FavoriteProductID"),
-				oBindingContext = oText.getModel().createBindingContext("/ProductList('HT-1000')");
+			var oView = this.getView(),
+				oInput = oView.byId("FavoriteProductID"),
+				oBindingContext = oInput.getModel().createBindingContext("/ProductList('HT-1000')");
 
-			oText.setBindingContext(oBindingContext);
-			oText.bindProperty("text", "ProductID");
+			oInput.setBindingContext(oBindingContext);
+			oInput.bindProperty("value", "ProductID");
+			oInput.bindProperty("tooltip", "ProductID");
+			oView.byId("FavoriteProductID").focus();
 		},
 
 		onSortByGrossAmount : function () {

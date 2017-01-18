@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -23,7 +23,8 @@ sap.ui.define([
 			"OData-MaxVersion" : "4.0",
 			"OData-Version" : "4.0",
 			"X-CSRF-Token" : "Fetch"
-		};
+		},
+		_Requestor;
 
 	/**
 	 * Deletes the queue for the given group ID if it contains only the empty change set, so that
@@ -359,7 +360,7 @@ sap.ui.define([
 
 		sGroupId = sGroupId || "$direct";
 		if (bIsBatch) {
-			oBatchRequest = _Batch.serializeBatchRequest(oPayload);
+			oBatchRequest = _Batch.serializeBatchRequest(_Requestor.cleanBatch(oPayload));
 			sPayload = oBatchRequest.body;
 		} else {
 			if (sGroupId !== "$direct") {
@@ -393,7 +394,7 @@ sap.ui.define([
 				return oPromise;
 			}
 
-			sPayload = JSON.stringify(oPayload);
+			sPayload = JSON.stringify(_Requestor.cleanPayload(oPayload));
 			if (fnSubmit) {
 				fnSubmit();
 			}
@@ -636,7 +637,55 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	return {
+	_Requestor = {
+		/**
+		 * Recursively cleans the payload of all contained requests via {@link #.cleanPayload}.
+		 * Modifies the array in-place.
+		 *
+		 * @param {object[]} aRequests
+		 *   The requests
+		 * @returns {object[]}
+		 *   The cleaned requests
+		 *
+		 * @private
+		 */
+		cleanBatch : function (aRequests) {
+			aRequests.forEach(function (oRequest) {
+				if (Array.isArray(oRequest)) {
+					_Requestor.cleanBatch(oRequest);
+				} else {
+					oRequest.body = _Requestor.cleanPayload(oRequest.body);
+				}
+			});
+			return aRequests;
+		},
+
+		/**
+		 * Creates a duplicate of the payload where all properties starting with "@$ui5." are
+		 * removed.
+		 *
+		 * @param {object} [oPayload]
+		 *   The request payload
+		 * @returns {object}
+		 *   The payload without the unwanted properties (only copied if necessary)
+		 *
+		 * @private
+		 */
+		cleanPayload : function (oPayload) {
+			var oResult = oPayload;
+			if (oResult) {
+				Object.keys(oResult).forEach(function (sKey) {
+					if (sKey.indexOf("@$ui5.") === 0) {
+						if (oResult === oPayload) {
+							oResult = jQuery.extend({}, oPayload);
+						}
+						delete oResult[sKey];
+					}
+				});
+			}
+			return oResult;
+		},
+
 		/**
 		 * Creates a new <code>_Requestor<code> instance for the given service URL and default
 		 * headers.
@@ -669,4 +718,6 @@ sap.ui.define([
 			return new Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup);
 		}
 	};
+
+	return _Requestor;
 }, /* bExport= */false);

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 	 * destroy</code> method. All functions can be called but may not work properly or lead to unexpected side effects.
 	 *
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.44.3
+	 * @version 1.44.5
 	 *
 	 * @constructor
 	 * @public
@@ -249,7 +249,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 
 		function getCacheKeyProviders(oView) {
 			var mPreprocessors = View._mPreprocessors["XML"],
-				oPreprocessorInfo = oView.getPreprocessorInfo(true),
+				oPreprocessorInfo = oView.getPreprocessorInfo(/*bSync =*/false),
 				aFutureCacheKeys = [];
 			function pushFutureKey(o) {
 				if (o.preprocessor.getCacheKey) {
@@ -475,6 +475,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			// when the render manager notifies us about an empty child rendering, we replace the old DOM with a dummy
 			jQuery(oElement).replaceWith('<div id="' + RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden"/>');
 			return true; // indicates that we have taken care
+		};
+
+		XMLView.prototype.destroy = function(bSuppressInvalidate) {
+			var $preservedContent = RenderManager.findPreservedContent(this.getId());
+			if ($preservedContent) {
+				// Cleanup any preserved content
+				$preservedContent.remove();
+			}
+			if (bSuppressInvalidate == "KeepDom" && this.getDomRef()) {
+				// Make sure that the view's DOM won't get preserved if the view is destroyed
+				// Otherwise it could get adopted by another view instance which just has
+				//	the same ID as the old view
+				// Also, if a destroyed view's DOM gets preserved, it probably won't ever get removed
+				this.getDomRef().removeAttribute("data-sap-ui-preserve");
+			}
+			View.prototype.destroy.call(this, bSuppressInvalidate);
 		};
 
 		/**
