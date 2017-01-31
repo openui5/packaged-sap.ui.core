@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Context
 	 * @public
 	 * @since 1.39.0
-	 * @version 1.44.5
+	 * @version 1.44.6
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
 			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
@@ -246,7 +246,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener) {
-		return this.oBinding.fetchValue(sPath, oListener, this.iIndex);
+		return this.oBinding.fetchValue(sPath || "", oListener, this.iIndex);
 	};
 
 	/**
