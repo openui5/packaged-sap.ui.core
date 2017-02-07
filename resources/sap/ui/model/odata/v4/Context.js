@@ -83,7 +83,7 @@ sap.ui.define([
 	 *   asynchronously ({@link #requestProperty} and {@link #requestObject}).
 	 * @extends sap.ui.model.Context
 	 * @public
-	 * @version 1.40.16
+	 * @version 1.40.17
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
 			constructor : function (oModel, oBinding, sPath, iIndex) {
