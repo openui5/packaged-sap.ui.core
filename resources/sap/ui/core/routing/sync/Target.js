@@ -100,6 +100,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oView = this._oViews._getView(oViewOptions);
 			}
 
+			this._bindTitleInTitleProvider(oView);
+
 			oView.addDependent(this._oTitleProvider);
 
 			if (oOptions.clearControlAggregation === true) {

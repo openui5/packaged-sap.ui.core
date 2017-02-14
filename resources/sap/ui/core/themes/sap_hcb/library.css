@@ -378,6 +378,13 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL):after {
   display: inline-block;
   /* pesudo element has display: inline by default and can't apply the transform css style for RTL mode*/
 }
+/**
+ * The Default color for Icon which always points to the variable across themes.
+ * Therefore it's defined in the base theme.
+ */
+.sapUiIconColorDefault {
+  color: #ffffff;
+}
 .sapUiLocalBusyIndicator {
   background-color: rgba(0, 0, 0, 0.3);
   position: absolute;
