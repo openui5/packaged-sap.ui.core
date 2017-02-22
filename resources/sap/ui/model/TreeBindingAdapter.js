@@ -1494,6 +1494,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				}
 
 				if (oNode) {
+					// Always reset selectAllMode
+					oNode.nodeState.selectAllMode = false;
+
 					if (this._mTreeState.selected[oNode.groupID]) {
 						// remember changed index, push it to the limit!
 						if (!oNode.isArtificial) {
@@ -1501,7 +1504,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 						}
 						// deslect the node
 						this.setNodeSelection(oNode.nodeState, false);
-						oNode.nodeState.selectAllMode = false;
 
 						//also remember the old lead index
 						if (oNode.groupID === this._sLeadSelectionGroupID) {

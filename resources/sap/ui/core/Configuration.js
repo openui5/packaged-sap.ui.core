@@ -107,6 +107,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
+					"support"               : { type : "string[]",  defaultValue : null },
 
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
@@ -130,8 +131,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
-					"statistics"            : { type : "boolean",  defaultValue : false },
-					"xx-support"            : { type : "string[]",  defaultValue : null }
+					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
 			var M_COMPAT_FEATURES = {
@@ -1238,7 +1238,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * @experimental
 		 */
 		getSupportMode : function() {
-			return this["xx-support"];
+			return this.support;
 		},
 
 		_collect : function() {

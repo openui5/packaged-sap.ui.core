@@ -34,7 +34,7 @@ sap.ui
 			 * @extends sap.ui.base.ManagedObject
 			 * @abstract
 			 * @author SAP SE
-			 * @version 1.46.2
+			 * @version 1.46.3
 			 * @public
 			 * @alias sap.ui.core.util.MockServer
 			 */
@@ -617,7 +617,7 @@ sap.ui
 					//TODO do the check using the property type and not value
 					// remove number suffixes from EDM types decimal, Int64, Single
 					var sTypecheck = sValue[sValue.length - 1];
-					if (sTypecheck === "M" || sTypecheck === "L" || sTypecheck === "f") {
+					if (sTypecheck === "M" || sTypecheck === "m" || sTypecheck === "L" || sTypecheck === "f") {
 						sValue = sValue.substring(0, sValue.length - 1);
 					}
 					//fix for filtering on date time properties
