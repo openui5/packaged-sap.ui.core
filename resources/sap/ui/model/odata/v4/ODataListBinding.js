@@ -91,7 +91,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.ListBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.44.7
+	 * @version 1.44.8
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
