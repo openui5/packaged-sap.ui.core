@@ -27,7 +27,8 @@ sap.ui.define([
 			dataReceived : true,
 			dataRequested : true,
 			refresh : true
-		};
+		},
+		UNKNOWN = {}; // diff calculation for extended change detection has not yet been done
 
 	/**
 	 * Do <strong>NOT</strong> call this private constructor, but rather use
@@ -91,7 +92,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.ListBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.44.8
+	 * @version 1.44.9
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
@@ -116,7 +117,7 @@ sap.ui.define([
 				this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
-				this.oDiff = undefined;
+				this.oDiff = UNKNOWN;
 				this.aFilters = [];
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
@@ -699,7 +700,7 @@ sap.ui.define([
 		}
 		iStartInModel = this.aContexts[-1] ? iStart - 1 : iStart;
 
-		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
+		if (!this.bUseExtendedChangeDetection || this.oDiff === UNKNOWN) {
 			oRange = _ODataHelper.getReadRange(this.aContexts, iStartInModel, iLength,
 				iMaximumPrefetchSize);
 			if (this.oCache) {
@@ -768,16 +769,16 @@ sap.ui.define([
 		} else {
 			aContexts = this.aContexts.slice(iStartInModel, iStartInModel + iLength);
 		}
-		if (this.bUseExtendedChangeDetection) {
-			if (this.oDiff && iLength !== this.oDiff.iLength) {
+		if (this.bUseExtendedChangeDetection && this.oDiff) {
+			if (this.oDiff !== UNKNOWN && iLength !== this.oDiff.iLength) {
 				throw new Error("Extended change detection protocol violation: Expected "
 					+ "getContexts(0," + this.oDiff.iLength + "), but got getContexts(0,"
 					+ iLength + ")");
 			}
-			aContexts.dataRequested = !this.oDiff;
-			aContexts.diff = this.oDiff ? this.oDiff.aDiff : [];
+			aContexts.dataRequested = this.oDiff === UNKNOWN;
+			aContexts.diff = this.oDiff !== UNKNOWN ? this.oDiff.aDiff : [];
 		}
-		this.oDiff = undefined;
+		this.oDiff = UNKNOWN;
 		return aContexts;
 	};
 

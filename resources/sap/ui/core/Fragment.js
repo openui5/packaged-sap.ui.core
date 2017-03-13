@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	 * @class
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.44.8
+	 * @version 1.44.9
 	 * @public
 	 * @alias sap.ui.core.Fragment
 	 */
@@ -499,6 +499,8 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 						}
 					});
 				}
+			}, {
+				settings: that._oContainingView._fnSettingsPreprocessor
 			});
 		}
 	});
@@ -526,6 +528,8 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 				that._aContent = [];
 				that._aContent = that._aContent.concat(content);
 
+			}, {
+				settings: that._oContainingView._fnSettingsPreprocessor
 			});
 		}
 	});
@@ -635,6 +639,8 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 					}// else {
 						// TODO: error
 					//}
+				}, {
+					settings: that._oContainingView._fnSettingsPreprocessor
 				});
 			}
 		});
