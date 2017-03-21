@@ -18,7 +18,7 @@ sap.ui.define([
 		 * @class This class represents the ViewInfo plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.46.4
+		 * @version 1.46.5
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.ViewInfo
