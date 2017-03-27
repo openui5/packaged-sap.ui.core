@@ -290,6 +290,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				this._compatversion[n] = _getCVers(n);
 			}
 
+			function getMetaTagValue(sName) {
+				var oMetaTag = document.querySelector("META[name='" + sName + "']"),
+				    sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
+				if (sMetaContent) {
+					return sMetaContent;
+				}
+			}
 
 			// 6. apply the settings from the url (only if not blocked by app configuration)
 			if ( !config.ignoreUrlParams ) {
@@ -369,6 +376,21 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				}
 			}
 
+			// map of SAP parameters (allows general access)
+			config.sapparams = config.sapparams || {};
+
+			// set the SAP logon language to the SAP params
+			config.sapparams['sap-language'] = this.getSAPLogonLanguage();
+
+			// read the SAP parameters from URL or META tag
+			['sap-client', 'sap-server', 'sap-system'].forEach(function(sName) {
+				if (!config.ignoreUrlParams && oUriParams.get(sName)) {
+					config.sapparams[sName] = oUriParams.get(sName);
+				} else {
+					config.sapparams[sName] = getMetaTagValue(sName);
+				}
+			});
+
 			// calculate RTL mode
 			this.derivedRTL = Locale._impliesRTL(config.language);
 
@@ -416,9 +438,9 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 			// Configure whitelistService / frameOptions via <meta> tag if not already defined via UI5 configuration
 			if (!config["whitelistService"]) {
-				var oMetaTag = document.querySelector("META[name='sap.whitelistService']");
-				if (oMetaTag) {
-					config["whitelistService"] = oMetaTag.getAttribute("content");
+				var sMetaTagValue = getMetaTagValue('sap.whitelistService');
+				if (sMetaTagValue) {
+					config["whitelistService"] = sMetaTagValue;
 					// Set default "frameOptions" to "trusted" instead of "allow"
 					if (config["frameOptions"] === "default") {
 						config["frameOptions"] = "trusted";
@@ -652,6 +674,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			if ( oLocale.toString() != this.getLanguageTag() || sSAPLogonLanguage !== this.sapLogonLanguage ) {
 				this.language = oLocale;
 				this.sapLogonLanguage = sSAPLogonLanguage || undefined;
+				this.sapparams['sap-language'] = this.getSAPLogonLanguage();
 				mChanges = this._collect();
 				mChanges.language = this.getLanguageTag();
 				this.derivedRTL = Locale._impliesRTL(oLocale);
@@ -673,6 +696,18 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getLocale : function () {
 			return this.language;
+		},
+
+		/**
+		 * Returns a SAP parameter by it's name (e.g. sap-client, sap-system, sap-server).
+		 *
+		 * @experimental
+		 * @since 1.44.11
+		 * @param {string} sName The parameter name
+		 * @return {string} The SAP parameter value
+		 */
+		getSAPParam : function (sName) {
+			return this.sapparams && this.sapparams[sName];
 		},
 
 		/**

@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * @class The Manifest class.
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.44.9
+	 * @version 1.44.10
 	 * @alias sap.ui.core.Manifest
 	 * @since 1.33.0
 	 */
@@ -536,14 +536,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		    bAsync = mOptions && mOptions.async,
 		    bFailOnError = mOptions && mOptions.failOnError;
 
-		// When loading the manifest via URL the language should be added as query
-		// parameter as it may contain language dependent texts.
-		// If the language is already provided it won't be overridden as this is
-		// expected to be only done by intension.
+		// When loading the manifest via URL the language and client should be
+		// added as query parameter as it may contain language dependent texts
+		// or needs to be loaded from a specific client.
+		// If the language or the client is already provided it won't be overridden
+		// as this is expected to be only done by intension.
 		var oManifestUrl = new URI(sManifestUrl);
-		if (!oManifestUrl.hasQuery("sap-language")) {
-			oManifestUrl.addQuery("sap-language", sap.ui.getCore().getConfiguration().getSAPLogonLanguage());
-		}
+		["sap-language", "sap-client"].forEach(function(sName) {
+			if (!oManifestUrl.hasQuery(sName)) {
+				var sValue = sap.ui.getCore().getConfiguration().getSAPParam(sName);
+				if (sValue) {
+					oManifestUrl.addQuery(sName, sValue);
+				}
+			}
+		});
 		sManifestUrl = oManifestUrl.toString();
 
 		jQuery.sap.log.info("Loading manifest via URL: " + sManifestUrl);
