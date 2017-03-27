@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.38.19
+		 * @version 1.38.20
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
