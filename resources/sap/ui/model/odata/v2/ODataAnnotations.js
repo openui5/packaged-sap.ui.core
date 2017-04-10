@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.44.10
+	 * 1.44.11
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -625,7 +625,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 			var fnSuccess = function(sData, sStatusText, oXHR) {
 				mSource.xml = oXHR.responseText;
-				mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
+
+				if (oXHR.getResponseHeader("Last-Modified")) {
+					mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
+				}
+
 				fnResolve(mSource);
 			};
 

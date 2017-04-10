@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.44.10
+	 * @version 1.44.11
 	 *
 	 * @alias sap.ui.model.odata.type.Decimal
 	 * @param {object} [oFormatOptions]

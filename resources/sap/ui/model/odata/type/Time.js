@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.44.10
+	 * @version 1.44.11
 	 *
 	 * @alias sap.ui.model.odata.type.Time
 	 * @param {object} [oFormatOptions]

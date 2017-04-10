@@ -65,7 +65,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.44.10
+	 * @version 1.44.11
 	 *
 	 * @constructor
 	 * @public
@@ -4474,7 +4474,7 @@ sap.ui.define([
 				delete that.mChangedEntities[sKey];
 			});
 		}
-		this.checkUpdate();
+		this.checkUpdate(true);
 	};
 
 	/**
