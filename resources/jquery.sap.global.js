@@ -321,20 +321,22 @@
 				_catch = Promise.prototype.catch,
 				_timeout = window.setTimeout,
 				_interval = window.setInterval,
-				oQueue;
+				aQueue = [];
 			function addPromiseHandler(fnHandler) {
 				// Collect all promise handlers and execute within the same timeout,
 				// to avoid them to be split among several tasks
 				if (!bPromisesQueued) {
 					bPromisesQueued = true;
-					oQueue = new Promise(function(resolve, reject) {
-						_timeout(function() {
-							resolve();
-							bPromisesQueued = false;
-						}, 0);
-					});
+					_timeout(function() {
+						var aCurrentQueue = aQueue;
+						aQueue = [];
+						bPromisesQueued = false;
+						aCurrentQueue.forEach(function(fnQueuedHandler) {
+							fnQueuedHandler();
+						});
+					}, 0);
 				}
-				_then.call(oQueue, fnHandler);
+				aQueue.push(fnHandler);
 			}
 			function wrapPromiseHandler(fnHandler, oScope, bCatch) {
 				if (typeof fnHandler !== "function") {
@@ -391,14 +393,16 @@
 			}
 			// setTimeout and setInterval can have arbitrary number of additional
 			// parameters, which are passed to the handler function when invoked.
-			window.setTimeout = function(fnHandler) {
+			window.setTimeout = function(vHandler) {
 				var aArgs = Array.prototype.slice.call(arguments),
+					fnHandler = typeof vHandler === "string" ? new Function(vHandler) : vHandler, // eslint-disable-line no-new-func
 					fnWrappedHandler = wrapTimerHandler(fnHandler);
 				aArgs[0] = fnWrappedHandler;
 				return _timeout.apply(window, aArgs);
 			};
-			window.setInterval = function(fnHandler) {
+			window.setInterval = function(vHandler) {
 				var aArgs = Array.prototype.slice.call(arguments),
+					fnHandler = typeof vHandler === "string" ? new Function(vHandler) : vHandler, // eslint-disable-line no-new-func
 					fnWrappedHandler = wrapTimerHandler(fnHandler, true);
 				aArgs[0] = fnWrappedHandler;
 				return _interval.apply(window, aArgs);
@@ -530,6 +534,8 @@
 							return true;
 						}
 					});
+					// add dummy readyStateChange listener to make sure readyState is updated properly
+					oProxy.addEventListener("readystatechange", function() {});
 					return oProxy;
 				}
 			});
@@ -787,7 +793,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.46.5
+	 * @version 1.46.6
 	 * @namespace
 	 * @public
 	 * @static

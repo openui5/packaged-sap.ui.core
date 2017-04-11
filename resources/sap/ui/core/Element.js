@@ -42,10 +42,10 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *     where the first element is a function and the 2nd element is an object to invoke the method on.
 	 * </ul>
 	 *
-	 * Special aggregation "dependents" is connected to the lifecycle management and databinding,
-	 * but not rendered automatically and can be used for popups or other dependent controls. This allows
-	 * definition of popup controls in declarative views and enables propagation of model and context
-	 * information to them.
+	 * Special aggregation <code>dependents</code> is connected to the lifecycle management and databinding,
+	 * but not rendered automatically and can be used for popups or other dependent controls or elements.
+	 * This allows the definition of popup controls in declarative views and enables propagation of model
+	 * and context information to them.
 	 *
 	 * @param {string} [sId] id for the new control; generated automatically if no non-empty id is given
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.46.5
+	 * @version 1.46.6
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 				 * Dependents are not rendered, but their databinding context and lifecycle are bound to the aggregating Element.
 				 * @since 1.19
 				 */
-				dependents : {name : "dependents", type : "sap.ui.core.Control", multiple : true}
+				dependents : {name : "dependents", type : "sap.ui.core.Element", multiple : true}
 			}
 		},
 
@@ -323,16 +323,16 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		}
 	};
 
-	Element.prototype.insertDependent = function(oControl, iIndex) {
-		return this.insertAggregation("dependents", oControl, iIndex, true);
+	Element.prototype.insertDependent = function(oElement, iIndex) {
+		return this.insertAggregation("dependents", oElement, iIndex, true);
 	};
 
-	Element.prototype.addDependent = function(oControl) {
-		return this.addAggregation("dependents", oControl, true);
+	Element.prototype.addDependent = function(oElement) {
+		return this.addAggregation("dependents", oElement, true);
 	};
 
-	Element.prototype.removeDependent = function(vControl) {
-		return this.removeAggregation("dependents", vControl, true);
+	Element.prototype.removeDependent = function(vElement) {
+		return this.removeAggregation("dependents", vElement, true);
 	};
 
 	Element.prototype.removeAllDependents = function() {

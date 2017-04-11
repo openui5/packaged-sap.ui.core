@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.46.5
+ * @version 1.46.6
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.46.5";
+		var apiVersion = "1.46.6";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.46.5";
+		var v = "1.46.6";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -5232,20 +5232,22 @@ return URI;
 				_catch = Promise.prototype.catch,
 				_timeout = window.setTimeout,
 				_interval = window.setInterval,
-				oQueue;
+				aQueue = [];
 			function addPromiseHandler(fnHandler) {
 				// Collect all promise handlers and execute within the same timeout,
 				// to avoid them to be split among several tasks
 				if (!bPromisesQueued) {
 					bPromisesQueued = true;
-					oQueue = new Promise(function(resolve, reject) {
-						_timeout(function() {
-							resolve();
-							bPromisesQueued = false;
-						}, 0);
-					});
+					_timeout(function() {
+						var aCurrentQueue = aQueue;
+						aQueue = [];
+						bPromisesQueued = false;
+						aCurrentQueue.forEach(function(fnQueuedHandler) {
+							fnQueuedHandler();
+						});
+					}, 0);
 				}
-				_then.call(oQueue, fnHandler);
+				aQueue.push(fnHandler);
 			}
 			function wrapPromiseHandler(fnHandler, oScope, bCatch) {
 				if (typeof fnHandler !== "function") {
@@ -5302,14 +5304,16 @@ return URI;
 			}
 			// setTimeout and setInterval can have arbitrary number of additional
 			// parameters, which are passed to the handler function when invoked.
-			window.setTimeout = function(fnHandler) {
+			window.setTimeout = function(vHandler) {
 				var aArgs = Array.prototype.slice.call(arguments),
+					fnHandler = typeof vHandler === "string" ? new Function(vHandler) : vHandler, // eslint-disable-line no-new-func
 					fnWrappedHandler = wrapTimerHandler(fnHandler);
 				aArgs[0] = fnWrappedHandler;
 				return _timeout.apply(window, aArgs);
 			};
-			window.setInterval = function(fnHandler) {
+			window.setInterval = function(vHandler) {
 				var aArgs = Array.prototype.slice.call(arguments),
+					fnHandler = typeof vHandler === "string" ? new Function(vHandler) : vHandler, // eslint-disable-line no-new-func
 					fnWrappedHandler = wrapTimerHandler(fnHandler, true);
 				aArgs[0] = fnWrappedHandler;
 				return _interval.apply(window, aArgs);
@@ -5441,6 +5445,8 @@ return URI;
 							return true;
 						}
 					});
+					// add dummy readyStateChange listener to make sure readyState is updated properly
+					oProxy.addEventListener("readystatechange", function() {});
 					return oProxy;
 				}
 			});
@@ -5698,7 +5704,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.46.5
+	 * @version 1.46.6
 	 * @namespace
 	 * @public
 	 * @static
