@@ -62,7 +62,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.38.20
+	 * @version 1.38.21
 	 *
 	 * @constructor
 	 * @public
@@ -203,7 +203,7 @@ sap.ui.define([
 				this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			}
 
-			if (!this.oServiceData.oMetadata) {
+			if (!this.oServiceData.oMetadata || this.oServiceData.oMetadata.bFailed) {
 				//create Metadata object
 				this.oMetadata = new ODataMetadata(sMetadataUrl,{
 					async: true,
@@ -244,8 +244,6 @@ sap.ui.define([
 			this.oMetadata.loaded().then(this._initializeMetadata.bind(this));
 			if (!this.oMetadata.isLoaded()) {
 				this.oMetadata.attachFailed(this.onMetadataFailed);
-			} else if (this.oMetadata.isFailed()){
-				this.refreshMetadata();
 			}
 
 
@@ -4074,7 +4072,7 @@ sap.ui.define([
 				delete that.mChangedEntities[sKey];
 			});
 		}
-		this.checkUpdate();
+		this.checkUpdate(true);
 	};
 
 	/**
