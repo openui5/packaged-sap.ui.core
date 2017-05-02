@@ -70,7 +70,7 @@ var mSeverityMap = {
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
- * @version 1.46.6
+ * @version 1.46.7
  * @public
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
@@ -320,9 +320,10 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
 
 	var bPersistent = false;
-	if (oMessageObject.propertyref) {
+	if (!oMessageObject.target && oMessageObject.propertyref) {
 		oMessageObject.target = oMessageObject.propertyref;
 	}
+	// propertyRef is deprecated and should not be used if a target is specified
 	if (typeof oMessageObject.target === "undefined") {
 		oMessageObject.target = "";
 	}

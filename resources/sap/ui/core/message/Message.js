@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.46.6
+	 * @version 1.46.7
 	 *
 	 * @constructor
 	 *
@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 			this.description = mParameters.description;
 			this.descriptionUrl = mParameters.descriptionUrl;
 			this.additionalText = mParameters.additionalText;
-			this.type = mParameters.type;
+			this.setType(mParameters.type);
 			this.code = mParameters.code;
 			this.target = mParameters.target;
 			this.processor = mParameters.processor;

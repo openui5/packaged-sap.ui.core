@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.46.6
+	 * @version 1.46.7
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
