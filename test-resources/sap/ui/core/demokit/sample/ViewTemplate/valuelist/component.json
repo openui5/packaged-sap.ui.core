@@ -1,0 +1,15 @@
+{
+	"config": {
+		"sample": {
+			"files": [
+				"Component.js",
+				"Main.view.xml",
+				"ValueHelp.js"
+			]
+		}
+	},
+	"dependencies": [],
+	"description": "Component for separate value list loading sample",
+	"name": "sap.ui.core.demokit.sample.ViewTemplate.valuelist",
+	"version": "1.29.1-SNAPSHOT"
+}
