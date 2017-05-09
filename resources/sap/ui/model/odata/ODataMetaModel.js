@@ -169,7 +169,7 @@ sap.ui.define([
 	 * {@link #loaded loaded} has been resolved!
 	 *
 	 * @author SAP SE
-	 * @version 1.44.12
+	 * @version 1.44.13
 	 * @alias sap.ui.model.odata.ODataMetaModel
 	 * @extends sap.ui.model.MetaModel
 	 * @public
@@ -820,9 +820,9 @@ sap.ui.define([
 				sQualifiedTypeName,
 				mValueLists = Utils.getValueLists(oProperty);
 
-			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]
+			if (!("" in mValueLists) && oProperty["sap:value-list"]
 				&& that.oODataModelInterface.addAnnotationUrl) {
-				// property with value list which is not yet loaded
+				// property with value list which is not yet (fully) loaded
 				bCachePromise = true;
 				sQualifiedTypeName = that.oModel.getObject(aMatches[2]).namespace
 					+ "." + that.oModel.getObject(aMatches[1]).name;
