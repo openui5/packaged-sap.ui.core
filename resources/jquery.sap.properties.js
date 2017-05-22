@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.sjax'],
 	 * can be used to retrieve an array of all keys that are currently stored in the collection.
 	 *
 	 * @author SAP SE
-	 * @version 1.44.13
+	 * @version 1.44.14
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public
