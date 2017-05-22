@@ -86,7 +86,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Context
 	 * @public
 	 * @since 1.39.0
-	 * @version 1.46.7
+	 * @version 1.46.8
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
 			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
@@ -564,7 +564,7 @@ sap.ui.define([
 			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 		}
 
-		return this.requestCanonicalPath().then(function (sEditUrl) {
+		return this.fetchCanonicalPath().then(function (sEditUrl) {
 			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
 				sPath);
 		});

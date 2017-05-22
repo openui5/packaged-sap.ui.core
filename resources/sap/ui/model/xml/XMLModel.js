@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
-	 * @version 1.46.7
+	 * @version 1.46.8
 	 *
 	 * @param {object} oData either the URL where to load the XML from or a XML
 	 * @constructor
