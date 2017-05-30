@@ -6,7 +6,7 @@
   <copyright>UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</copyright>
-  <version>1.48.0</version>
+  <version>1.48.1</version>
 
   <documentation>The SAPUI5 Core Runtime.
 
@@ -83,6 +83,7 @@
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
         <raw-module name="sap/ui/thirdparty/punycode.js" />
+        <raw-module name="sap/ui/thirdparty/qunit-2.js" />
         <raw-module name="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit-composite.js" depends="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit-reporter-junit.js" depends="sap/ui/thirdparty/qunit.js" />

@@ -19,7 +19,8 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
-		SOITEM_NOTE_COLUMN_INDEX = 9,
+		SOITEM_NOTE_COLUMN_INDEX = 10,
+		SOITEM_QUANTITY_COLUMN_INDEX = 7,
 		ITEM_COLUMN_INDEX = 1,
 		sLastNewNoteValue,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
@@ -186,6 +187,20 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 							oRow.getCells()[SOITEM_NOTE_COLUMN_INDEX].setValue(sNewNoteValue);
 							Opa5.assert.ok(true,
 								"SO Item Note of row " + iRow + " set to " + sNewNoteValue);
+						},
+						viewName : sViewName
+					});
+				},
+				changeSalesOrderLineItemQuantity : function (iRow, sNewQuantity) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderTable) {
+							var oRow = oSalesOrderTable.getItems()[iRow];
+
+							oRow.getCells()[SOITEM_QUANTITY_COLUMN_INDEX].setValue(sNewQuantity);
+							Opa5.assert.ok(true,
+								"SO Item Note of row " + iRow + " set to " + sNewQuantity);
 						},
 						viewName : sViewName
 					});
@@ -443,6 +458,17 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						}
 					});
 				},
+				resetSalesOrderListChanges : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oTable) {
+							oTable.getBinding("items").resetChanges();
+							Opa5.assert.ok(true, "SalesOrders reset by API");
+						},
+						viewName : sViewName
+					});
+				},
 				selectFirstSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -450,6 +476,8 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (aControls) {
 							aControls[0].$().tap();
+							Opa5.assert.ok(true, "First Sales Order selected: " +
+								aControls[0].getText());
 						},
 						viewName : sViewName
 					});
@@ -674,6 +702,19 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						}
 					});
 				},
+				checkNewSalesOrderItemProductName : function (sExpectProductName) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderItemsTable) {
+							var oRow = oSalesOrderItemsTable.getItems()[0];
+
+							Opa5.assert.strictEqual(oRow.getCells()[3].getText(),
+								sExpectProductName, "Product name of new created SOItem");
+						},
+						viewName : sViewName
+					});
+				},
 				checkNote : function (iRow, sExpectedNote) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -739,6 +780,20 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 				},
 				checkSalesOrderItemsCount : function (iExpectedCount) {
 					return checkCount(this, iExpectedCount, "SalesOrderLineItemsTitle");
+				},
+				checkSalesOrderLineItemNote : function (iRow, sNoteValue) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderTable) {
+							var oRow = oSalesOrderTable.getItems()[iRow];
+
+							Opa5.assert.strictEqual(
+								oRow.getCells()[SOITEM_NOTE_COLUMN_INDEX].getValue(), sNoteValue,
+								"SO Item Note of row " + iRow + " is " + sNoteValue);
+						},
+						viewName : sViewName
+					});
 				},
 				checkSalesOrdersCount : function (iExpectedCount) {
 					return checkCount(this, iExpectedCount, "SalesOrdersTitle");

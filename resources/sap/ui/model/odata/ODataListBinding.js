@@ -50,6 +50,9 @@ sap.ui.define([
 			this.bDataAvailable = false;
 			this.bIgnoreSuspend = false;
 
+			// check filter integrity
+			this.oModel.checkFilterOperation(this.aApplicationFilters);
+
 			// load the entity type for the collection only once and not e.g. every time when filtering
 			if (!this.oModel.getServiceMetadata()) {
 				var that = this,
@@ -817,6 +820,9 @@ sap.ui.define([
 		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
 		}
+
+		// check filter integrity
+		this.oModel.checkFilterOperation(aFilters);
 
 		if (sFilterType == FilterType.Application) {
 			this.aApplicationFilters = aFilters;

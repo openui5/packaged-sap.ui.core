@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.48.0
+		 * @version 1.48.1
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
@@ -444,7 +444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 						if (fVerticalMove < 0 && fScrollTop < 10) {
 							this._fnScrollLoadCallback();
 						}
-					} else if (fVerticalMove > 0 && $Container[0].scrollHeight - fScrollTop - $Container[0].clientHeight < 100) {
+					} else if (fVerticalMove >= 0 && $Container[0].scrollHeight - fScrollTop - $Container[0].clientHeight < 100) {
 						this._fnScrollLoadCallback();
 					}
 				}

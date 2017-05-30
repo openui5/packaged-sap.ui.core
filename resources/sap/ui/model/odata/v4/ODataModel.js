@@ -129,7 +129,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.48.0
+	 * @version 1.48.1
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
@@ -401,8 +401,7 @@ sap.ui.define([
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
-	 *   and "$$updateGroupId".
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
 	 *   parameters or if it is relative and has a context created via
 	 *   {@link ODataModel#createBindingContext}.
@@ -415,12 +414,6 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link #submitBatch}.
-	 * @param {string} [mParameters.$$updateGroupId]
-	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
-	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
-	 *   or the model's update group ID is used,
-	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
 	 * @throws {Error}
@@ -1088,9 +1081,15 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.submitBatch = function (sGroupId) {
+		var that = this;
+
 		this.checkGroupId(sGroupId, true);
 
-		return this._submitBatch(sGroupId);
+		return new Promise(function (resolve) {
+			sap.ui.getCore().addPrerenderingTask(function () {
+				resolve(that._submitBatch(sGroupId));
+			});
+		});
 	};
 
 	/**

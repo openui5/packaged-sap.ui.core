@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.48.0
+	 * @version 1.48.1
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -70,10 +70,8 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-					["$$groupId", "$$updateGroupId"]);
+				oBindingParameters = this.oModel.buildBindingParameters(mParameters, ["$$groupId"]);
 				this.sGroupId = oBindingParameters.$$groupId;
-				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				// Note: no system query options supported at property binding
 				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
 					/*bSystemQueryOptionsAllowed*/false);
@@ -216,7 +214,7 @@ sap.ui.define([
 		}
 		if (!this.bRequestTypeFailed && !this.oType && this.sInternalType !== "any") {
 			// request type only once
-			aPromises.push(this.oModel.getMetaModel().requestUI5Type(sResolvedPath)
+			aPromises.push(this.oModel.getMetaModel().fetchUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
 				})["catch"](function (oError) {
@@ -475,10 +473,8 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
-		var oCache = this.oCachePromise.getResult();
-
 		if (this.oContext !== oContext) {
-			if (!oCache && this.oContext) {
+			if (this.bRelative && this.oContext && this.oContext.deregisterChange) {
 				this.oContext.deregisterChange(this.sPath, this);
 			}
 			this.oContext = oContext;
@@ -538,6 +534,12 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
 		var that = this;
 
+		function reportError(oError) {
+			that.oModel.reportError("Failed to update path "
+				+ that.oModel.resolve(that.sPath, that.oContext),
+				sClassName, oError);
+		}
+
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
@@ -550,14 +552,17 @@ sap.ui.define([
 						that.oModel.resolve(that.sPath, that.oContext), sClassName);
 					// do not update that.vValue!
 				} else if (that.oContext) {
-					that.oContext.updateValue(sGroupId, that.sPath, vValue)
-					["catch"](function (oError) {
-						if (!oError.canceled) {
-							that.oModel.reportError("Failed to update path "
-								+ that.oModel.resolve(that.sPath, that.oContext),
-								sClassName, oError);
-						}
-					});
+					that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
+						.then(function (oResult) {
+							return that.oContext.getBinding().updateValue(sGroupId,
+								oResult.propertyPath, vValue, reportError, oResult.editUrl,
+								oResult.entityPath);
+						})
+						["catch"](function (oError) {
+							if (!oError.canceled) {
+								reportError(oError);
+							}
+						});
 				} else {
 					jQuery.sap.log.warning("Cannot set value on relative binding without context",
 						that.sPath, sClassName);

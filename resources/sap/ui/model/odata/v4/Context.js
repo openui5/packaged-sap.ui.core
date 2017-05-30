@@ -86,7 +86,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Context
 	 * @public
 	 * @since 1.39.0
-	 * @version 1.48.0
+	 * @version 1.48.1
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
 			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
@@ -163,7 +163,7 @@ sap.ui.define([
 		if (this.isTransient()) {
 			return that.oBinding._delete(sGroupId, "n/a", that);
 		}
-		return this.requestCanonicalPath().then(function (sCanonicalPath) {
+		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(sGroupId, sCanonicalPath.slice(1), that);
 		});
 	};
@@ -535,45 +535,6 @@ sap.ui.define([
 			sIndex = "[" + this.iIndex + (this.isTransient() ? "|transient" : "") + "]";
 		}
 		return this.sPath + sIndex;
-	};
-
-	/**
-	 * Delegates to the <code>updateValue</code> method of this context's binding which updates the
-	 * value for the given path, relative to this context, as maintained by that binding.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID to be used for this update call.
-	 * @param {string} sPropertyName
-	 *   Name of property to update
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {string} [sEditUrl]
-	 *   The edit URL corresponding to the entity to be updated
-	 * @param {string} [sPath]
-	 *   Some relative path
-	 * @returns {Promise}
-	 *   A promise on the outcome of the binding's <code>updateValue</code> call
-	 *
-	 * @private
-	 */
-	Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		var that = this;
-
-		// Note: iIndex === -2 will fail with "No instance to calculate key predicate" below
-		sPath = _Helper.buildPath(this.iIndex, sPath);
-
-		if (this.isTransient()) {
-			// Note: must not be falsy, otherwise a parent context would insert its own edit URL
-			sEditUrl = "n/a";
-		}
-		if (sEditUrl) {
-			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
-		}
-
-		return this.fetchCanonicalPath().then(function (sEditUrl) {
-			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
-				sPath);
-		});
 	};
 
 	return {
