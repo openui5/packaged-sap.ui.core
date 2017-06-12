@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', "sap/ui/core/f
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.48.1
+		 * @version 1.48.2
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Trace

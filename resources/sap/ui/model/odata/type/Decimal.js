@@ -177,7 +177,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.48.1
+	 * @version 1.48.2
 	 *
 	 * @alias sap.ui.model.odata.type.Decimal
 	 * @param {object} [oFormatOptions]

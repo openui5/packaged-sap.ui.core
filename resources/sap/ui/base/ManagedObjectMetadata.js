@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 *
 	 * @author Frank Weigel
-	 * @version 1.48.1
+	 * @version 1.48.2
 	 * @since 0.8.6
 	 * @alias sap.ui.base.ManagedObjectMetadata
 	 * @public

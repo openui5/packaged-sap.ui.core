@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * @class The Manifest class.
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.48.1
+	 * @version 1.48.2
 	 * @alias sap.ui.core.Manifest
 	 * @since 1.33.0
 	 */

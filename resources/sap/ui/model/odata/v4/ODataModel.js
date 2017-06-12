@@ -129,7 +129,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.48.1
+	 * @version 1.48.2
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */

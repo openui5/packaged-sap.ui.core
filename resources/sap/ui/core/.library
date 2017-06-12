@@ -6,7 +6,7 @@
   <copyright>UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</copyright>
-  <version>1.48.1</version>
+  <version>1.48.2</version>
 
   <documentation>The SAPUI5 Core Runtime.
 
@@ -163,6 +163,7 @@
         <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js" />
         <exclude name="sap/ui/thirdparty/jszip.js" />
         <exclude name="sap/ui/thirdparty/punycode.js" />
+        <exclude name="sap/ui/thirdparty/qunit-2.js" />
         <exclude name="sap/ui/thirdparty/qunit.js" />
         <exclude name="sap/ui/thirdparty/qunit-composite.js" />
         <exclude name="sap/ui/thirdparty/qunit-reporter-junit.js" />
