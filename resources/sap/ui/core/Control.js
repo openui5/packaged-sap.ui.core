@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.44.14
+	 * @version 1.44.15
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -628,6 +628,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		};
 
 	function fnAppendBusyIndicator() {
+
+		// Only append if busy state is still set
+		if (!this.getBusy()) {
+			return;
+		}
+
 		var $this = this.$(this._sBusySection);
 
 		//If there is a pending delayed call to append the busy indicator, we can clear it now
