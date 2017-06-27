@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
-	 * @version 1.48.2
+	 * @version 1.48.3
 	 *
 	 * @constructor
 	 * @public
@@ -149,8 +149,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	 * @private
 	 */
 	Icon.prototype[Device.support.touch ? "ontouchstart" : "onmousedown"] = function(oEvent) {
-		if (this.hasListeners("press") || this.hasListeners("tap")) {
-
+		if (this.hasListeners("press")) {
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 		}
@@ -227,7 +226,12 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	 *
 	 * @private
 	 */
-	Icon.prototype[Device.support.touch && !Device.system.desktop ? "ontap" : "onclick"] = function() {
+	Icon.prototype[Device.support.touch && !Device.system.desktop ? "ontap" : "onclick"] = function(oEvent) {
+		if (this.hasListeners("press")) {
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+		}
+
 		this.firePress({/* no parameters */});
 	};
 

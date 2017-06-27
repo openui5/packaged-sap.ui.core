@@ -4535,6 +4535,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		},
 
 		/**
+		 * Get the value for the OData system query option $orderby corresponding to
+		 * the sort expression.
+		 *
+		 * @returns {string} The $orderby value for the sort expression or <code>null</code>
+		 */
+		getURIOrderByOptionValue : function () {
+			var aAllMeasureNames,
+				oCondition,
+				sOrderByOptionString = null,
+				aSortConditions = this._oSortExpression
+					? this._oSortExpression._aSortCondition
+					: [],
+				i,
+				n = aSortConditions.length;
+
+			if (n) {
+				aAllMeasureNames = this._oQueryResult.getAllMeasureNames();
+
+				for (i = 0; i < n; i += 1) {
+					oCondition = aSortConditions[i];
+					if (!this._oSelectedPropertyNames[oCondition.property.name]
+						&& aAllMeasureNames.indexOf(oCondition.property.name) < 0) {
+						// sorting of aggregated entities is meaningful only if the sorted property
+						// is also selected or is a measure
+						continue;
+					}
+					sOrderByOptionString = (sOrderByOptionString ? sOrderByOptionString + "," : "")
+						+ oCondition.property.name + " " + oCondition.order;
+				}
+			}
+
+			return sOrderByOptionString;
+		},
+
+		/**
 		 * Get the value of a query option for the OData request URI corresponding
 		 * to this request.
 		 *
@@ -4629,11 +4664,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 				break;
 			}
 			case "$orderby": {
-				var sSortOption = null;
-				if (this._oSortExpression) {
-					sSortOption = this._oSortExpression.getURIOrderByOptionValue(this._oSelectedPropertyNames);
-				}
-				sQueryOptionValue = (sSortOption ? sSortOption : null);
+				sQueryOptionValue = this.getURIOrderByOptionValue();
 				break;
 			}
 			case "$top": {
