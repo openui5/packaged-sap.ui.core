@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.46.9
+ * @version 1.46.10
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.46.9";
+		var apiVersion = "1.46.10";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.46.9";
+		var v = "1.46.10";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -5704,7 +5704,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.46.9
+	 * @version 1.46.10
 	 * @namespace
 	 * @public
 	 * @static
@@ -10130,6 +10130,11 @@ return URI;
 		var that = this;
 
 		this.iTimer = setTimeout(function() {
+			if (that.bRunnable && that.bParentResponded && !that.bParentUnlocked) {
+				jQuery.sap.log.error("Reached timeout of " + that.iTimeout + "ms waiting for the parent to be unlocked", "", "jQuery.sap.FrameOptions");
+			} else {
+				jQuery.sap.log.error("Reached timeout of " + that.iTimeout + "ms waiting for a response from parent window", "", "jQuery.sap.FrameOptions");
+			}
 			that._callback(false);
 		}, this.iTimeout);
 
@@ -10149,6 +10154,7 @@ return URI;
 
 			// "deny" mode blocks embedding page from all origins
 			if (this.sMode === FrameOptions.Mode.DENY) {
+				jQuery.sap.log.error("Embedding blocked because configuration mode is set to 'DENY'", "", "jQuery.sap.FrameOptions");
 				this._callback(false);
 				return;
 			}
@@ -10364,6 +10370,7 @@ return URI;
 			xmlhttp.setRequestHeader('Accept', 'application/json');
 			xmlhttp.send();
 		} else {
+			jQuery.sap.log.error("Embedding blocked because the whitelist or the whitelist service is not configured correctly", "", "jQuery.sap.FrameOptions");
 			this._callback(false);
 		}
 	};
@@ -10381,10 +10388,13 @@ return URI;
 				if (this.match(this.sParentOrigin, oRuleSet.origin)) {
 					bTrusted = oRuleSet.framing;
 				}
+				if (!bTrusted) {
+					jQuery.sap.log.error("Embedding blocked because the whitelist service does not allow framing", "", "jQuery.sap.FrameOptions");
+				}
 				this._applyTrusted(bTrusted);
 			}
 		} else {
-			jQuery.sap.log.warning("The configured whitelist service is not available: " + xmlhttp.status);
+			jQuery.sap.log.error("The configured whitelist service is not available: " + xmlhttp.status, "", "jQuery.sap.FrameOptions");
 			this._callback(false);
 		}
 	};

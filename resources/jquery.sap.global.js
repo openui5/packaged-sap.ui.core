@@ -793,7 +793,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.46.9
+	 * @version 1.46.10
 	 * @namespace
 	 * @public
 	 * @static
@@ -5219,6 +5219,11 @@
 		var that = this;
 
 		this.iTimer = setTimeout(function() {
+			if (that.bRunnable && that.bParentResponded && !that.bParentUnlocked) {
+				jQuery.sap.log.error("Reached timeout of " + that.iTimeout + "ms waiting for the parent to be unlocked", "", "jQuery.sap.FrameOptions");
+			} else {
+				jQuery.sap.log.error("Reached timeout of " + that.iTimeout + "ms waiting for a response from parent window", "", "jQuery.sap.FrameOptions");
+			}
 			that._callback(false);
 		}, this.iTimeout);
 
@@ -5238,6 +5243,7 @@
 
 			// "deny" mode blocks embedding page from all origins
 			if (this.sMode === FrameOptions.Mode.DENY) {
+				jQuery.sap.log.error("Embedding blocked because configuration mode is set to 'DENY'", "", "jQuery.sap.FrameOptions");
 				this._callback(false);
 				return;
 			}
@@ -5453,6 +5459,7 @@
 			xmlhttp.setRequestHeader('Accept', 'application/json');
 			xmlhttp.send();
 		} else {
+			jQuery.sap.log.error("Embedding blocked because the whitelist or the whitelist service is not configured correctly", "", "jQuery.sap.FrameOptions");
 			this._callback(false);
 		}
 	};
@@ -5470,10 +5477,13 @@
 				if (this.match(this.sParentOrigin, oRuleSet.origin)) {
 					bTrusted = oRuleSet.framing;
 				}
+				if (!bTrusted) {
+					jQuery.sap.log.error("Embedding blocked because the whitelist service does not allow framing", "", "jQuery.sap.FrameOptions");
+				}
 				this._applyTrusted(bTrusted);
 			}
 		} else {
-			jQuery.sap.log.warning("The configured whitelist service is not available: " + xmlhttp.status);
+			jQuery.sap.log.error("The configured whitelist service is not available: " + xmlhttp.status, "", "jQuery.sap.FrameOptions");
 			this._callback(false);
 		}
 	};
