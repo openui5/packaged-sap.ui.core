@@ -19,7 +19,7 @@ sap.ui.define(['./Date', 'sap/ui/core/format/DateFormat'],
 	 * @extends sap.ui.model.type.Date
 	 *
 	 * @author SAP SE
-	 * @version 1.38.23
+	 * @version 1.38.24
 	 *
 	 * @constructor
 	 * @public
