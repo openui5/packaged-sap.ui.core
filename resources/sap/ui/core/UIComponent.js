@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 * @extends sap.ui.core.Component
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.48.3
+	 * @version 1.48.4
 	 * @alias sap.ui.core.UIComponent
 	 * @since 1.9.2
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -72,6 +72,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 				 */
 				"rootControl": { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
 			},
+			designTime : true,
 			routing: {
 			}
 			//autoDestroy: false // TODO: destroy component when view should be destroyed (not implemented yet!)

@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 	 * @class
 	 * Component Container
 	 * @extends sap.ui.core.Control
-	 * @version 1.48.3
+	 * @version 1.48.4
 	 *
 	 * @constructor
 	 * @public
@@ -113,7 +113,8 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			 * The component displayed in this ComponentContainer.
 			 */
 			component : {type : "sap.ui.core.UIComponent", multiple : false}
-		}
+		},
+		designTime : true
 	}});
 
 

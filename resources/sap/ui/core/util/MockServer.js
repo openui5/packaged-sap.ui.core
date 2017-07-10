@@ -34,7 +34,7 @@ sap.ui
 			 * @extends sap.ui.base.ManagedObject
 			 * @abstract
 			 * @author SAP SE
-			 * @version 1.48.3
+			 * @version 1.48.4
 			 * @public
 			 * @alias sap.ui.core.util.MockServer
 			 */
