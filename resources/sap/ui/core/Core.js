@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.46.11
+	 * @version 1.46.12
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -787,7 +787,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if ( m ) {
 				aLibs.push( m[1] );
 			} else {
-				aModules.push( jQuery.sap.getResourceName( sModule ) );
+				aModules.push( jQuery.sap.getResourceName( sModule, "" ) );
 			}
 		});
 

@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.46.11
+ * @version 1.46.12
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.46.11";
+		var apiVersion = "1.46.12";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.46.11";
+		var v = "1.46.12";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -5704,7 +5704,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.46.11
+	 * @version 1.46.12
 	 * @namespace
 	 * @public
 	 * @static
@@ -9925,7 +9925,7 @@ return URI;
 			try {
 				if ( e.shiftKey && e.altKey && e.ctrlKey ) {
 					if ( e.keyCode === 80 ) { // 'P'
-						sap.ui.require(['sap/ui/debug/TechnicalInfo'], function(TechnicalInfo) {
+						sap.ui.require(['sap/ui/core/support/techinfo/TechnicalInfo'], function(TechnicalInfo) {
 							TechnicalInfo.open(function() {
 								var oInfo = getModuleSystemInfo();
 								return { modules : oInfo.modules, prefixes : oInfo.prefixes, config: oCfgData };
@@ -9941,7 +9941,7 @@ return URI;
 						});
 					}
 				}
-			} catch (err) {
+			} catch (oException) {
 				// ignore any errors
 			}
 		});

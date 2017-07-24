@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 	 * @class
 	 * Component Container
 	 * @extends sap.ui.core.Control
-	 * @version 1.46.11
+	 * @version 1.46.12
 	 *
 	 * @constructor
 	 * @public
@@ -115,8 +115,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			oComponent = oComponentContainer.getComponentInstance();
 			if (oComponent) {
 				oComponent.setContainer(oComponentContainer);
-				oComponentContainer.propagateProperties(); //default model
-				oComponentContainer.propagateProperties(false); //Listener
+				oComponentContainer.propagateProperties(true); //all models/listeners
 			}
 		}
 	}
