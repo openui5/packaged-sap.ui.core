@@ -355,6 +355,7 @@
 /* CSS for control sap.ui.core/Icon.control      */
 /* ============================================= */
 .sapUiIcon {
+  position: relative;
   cursor: default;
   text-align: center;
   display: inline-block;
@@ -363,13 +364,35 @@
 .sapUiIconPointer {
   cursor: pointer;
 }
-.sapUiIcon:focus {
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiIcon:focus {
   outline-width: 1px;
   outline-style: dashed;
   /* keep the outline within the area of the icon */
   outline-offset: -1px;
 }
-.sapUiIcon:before {
+/*
+ * IE 11 and Edge (version < 15) don't support outline-offset.
+ * The outline is implemented using the ::after pseudo element.
+ *
+ * Edge 15 is already released but can't be upgraded automatically,
+ * therefore the approach is still used for all Edge versions.
+ */
+html[data-sap-ui-browser^="ie"] .sapUiIcon:focus,
+html[data-sap-ui-browser^="ed"] .sapUiIcon:focus {
+  outline: none;
+}
+html[data-sap-ui-browser^="ie"] .sapUiIcon:focus::after,
+html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
+  content: "";
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  border-width: 1px;
+  border-style: dashed;
+}
+.sapUiIcon::before {
   content: attr(data-sap-ui-icon-content);
   speak: none;
   font-weight: normal;
@@ -384,8 +407,8 @@
  *   in the wrong direction.
  *  3. Custom CSS style should be set on the root DOM and not the pesudo element.
  */
-html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL):before,
-html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL):after {
+html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL)::before,
+html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL)::after {
   transform: scale(-1, 1);
   -ms-transform: scale(-1, 1);
   /* IE 9 */

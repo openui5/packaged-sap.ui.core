@@ -175,7 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.44.18
+	 * @version 1.44.19
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -1960,14 +1960,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						promises.push(oPromise);
 					}
 				},
-				collectAfterModelPreload = function(fnCreatePromise) {
-					if (oManifest && mOptions.createModels && jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-first") === "true") {
-						collect(oManifest.then(fnCreatePromise));
-					} else {
-						collect(fnCreatePromise());
-					}
-				},
-				identity = function($) { return $; };
+				identity = function($) { return $; },
+				phase1Preloads,
+				libs;
 
 			if (oManifest && mOptions.createModels) {
 				collect(oManifest.then(function(oManifest) {
@@ -2028,21 +2023,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				}));
 			}
 
+			phase1Preloads = [];
+
 			// load any required preload bundles
-			if ( hints.preloadBundles ) {
-				jQuery.each(hints.preloadBundles, function(i, vBundle) {
-					collectAfterModelPreload(function() {
-						return jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true);
-					});
+			if ( Array.isArray(hints.preloadBundles) ) {
+				hints.preloadBundles.forEach(function(vBundle) {
+					phase1Preloads.push(
+						jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true) );
 				});
 			}
 
-			// preload required libraries
-			if ( hints.libs ) {
-				collectAfterModelPreload(function() {
-					return sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) );
+			// preload any libraries
+			if ( Array.isArray(hints.libs) ) {
+				libs = hints.libs.map(processOptions).filter(identity);
+				phase1Preloads.push(
+					sap.ui.getCore().loadLibraries( libs, { preloadOnly: true } )
+				);
+			}
+
+			// sync preloadBundles and preloads of libraries first before requiring the libs
+			// Note: component preloads are assumed to be always independent from libs
+			// therefore those requests are not synchronized with the require calls for the libs
+			phase1Preloads = Promise.all( phase1Preloads );
+			if ( libs && !mOptions.preloadOnly ) {
+				phase1Preloads = phase1Preloads.then( function() {
+					return sap.ui.getCore().loadLibraries( libs );
 				});
 			}
+			collect( phase1Preloads );
 
 			// preload the component itself
 			if (!oManifest) {
@@ -2085,7 +2093,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
 				jQuery.each(hints.components, function(i, vComp) {
-					collectAfterModelPreload(function() {
+					collect(function() {
 						return preload(processOptions(vComp), true);
 					});
 				});

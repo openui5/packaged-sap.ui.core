@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 *
 		 * @extends sap.ui.base.Object
 		 * @author SAP SE
-		 * @version 1.44.18
+		 * @version 1.44.19
 		 * @constructor
 		 * @public
 		 * @alias sap.ui.core.Locale
