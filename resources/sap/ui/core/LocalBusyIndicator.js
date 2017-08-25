@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', './Control', './LocalBusyIndicatorRenderer',
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.28.47
+	 * @version 1.28.48
 	 *
 	 * @constructor
 	 * @public
