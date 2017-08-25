@@ -57,7 +57,6 @@ sap.ui.define([
 				oFormatOptions.UTC = true;
 				oType.oFormat = DateFormat.getDateInstance(oFormatOptions);
 			} else {
-				delete oFormatOptions.UTC;
 				oType.oFormat = DateFormat.getDateTimeInstance(oFormatOptions);
 			}
 		}
@@ -137,7 +136,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.type.ODataType
 	 * @public
 	 * @since 1.27.0
-	 * @version 1.50.0
+	 * @version 1.50.1
 	 */
 	var DateTimeBase = ODataType.extend("sap.ui.model.odata.type.DateTimeBase", {
 			constructor : function (oFormatOptions, oConstraints) {

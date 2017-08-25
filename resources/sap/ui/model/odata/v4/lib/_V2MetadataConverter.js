@@ -774,6 +774,7 @@ sap.ui.define([
 		}
 		switch (sType) {
 			case "Edm.DateTime":
+				oProperty.$v2Type = sType;
 				if (oElement.getAttributeNS(sSapNamespace, "display-format") === "Date") {
 					sType = "Edm.Date";
 					delete oProperty.$Precision;
@@ -782,9 +783,11 @@ sap.ui.define([
 				}
 				break;
 			case "Edm.Float":
+				oProperty.$v2Type = sType;
 				sType = "Edm.Single";
 				break;
 			case "Edm.Time":
+				oProperty.$v2Type = sType;
 				sType = "Edm.TimeOfDay";
 				break;
 			default:

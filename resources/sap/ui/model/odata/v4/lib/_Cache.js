@@ -12,10 +12,11 @@ sap.ui.define([
 ], function (jQuery, _Helper, _SyncPromise) {
 	"use strict";
 
-	// Matches two cases:  segment with predicate or simply predicate:
-	//   EMPLOYEE(ID='42') -> aMatches[1] === "EMPLOYEE", aMatches[2] === "(ID='42')"
-	//   (ID='42') ->  aMatches[1] === "",  aMatches[2] === "(ID='42')"
-	var rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
+	var rPropertyNameOfSegment = /^[^-\d(][^(]*/, // Matches the property name of a segment
+		// Matches two cases:  segment with predicate or simply predicate:
+		//   EMPLOYEE(ID='42') -> aMatches[1] === "EMPLOYEE", aMatches[2] === "(ID='42')"
+		//   (ID='42') ->  aMatches[1] === "",  aMatches[2] === "(ID='42')"
+		rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
 
 	/**
 	 * Adds the given delta to the collection's $count if there is one.
@@ -303,6 +304,8 @@ sap.ui.define([
 	 *   {@link #fetchTypes})
 	 */
 	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForPath) {
+		var oRequestor = this.oRequestor;
+
 		/**
 		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
 		 * from predicate to entity.
@@ -334,7 +337,7 @@ sap.ui.define([
 			var oType = mTypeForPath[sPath];
 
 			if (oType && oInstance) { // oType is only defined when at an entity
-				oInstance["@$ui5.predicate"] = _Helper.getKeyPredicate(oType, oInstance, true);
+				oInstance["@$ui5.predicate"] = oRequestor.getKeyPredicate(oType, oInstance);
 
 				Object.keys(oInstance).forEach(function (sProperty) {
 					var vPropertyValue = oInstance[sProperty],
@@ -390,7 +393,7 @@ sap.ui.define([
 	 */
 	Cache.prototype.create = function (sGroupId, vPostPath, sPath, oEntityData,
 			fnCancelCallback, fnErrorCallback) {
-		var vCacheData, aCollection, sNavigationProperty, aSegments, that = this;
+		var aCollection, that = this;
 
 		// Clean-up when the create has been canceled.
 		function cleanUp() {
@@ -420,6 +423,11 @@ sap.ui.define([
 						_Helper.updateCacheAfterPost(that.mChangeListeners,
 							_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
 							_Helper.getSelectForPath(that.mQueryOptions, sPath));
+						// determine and save the key predicate
+						that.fetchTypeFor(sPath).then(function (oType) {
+							oEntityData["@$ui5.predicate"]
+								= that.oRequestor.getKeyPredicate(oType, oEntityData);
+						});
 					}, function (oError) {
 						if (oError.canceled) {
 							// for cancellation no error is reported via fnErrorCallback
@@ -437,10 +445,7 @@ sap.ui.define([
 		// clone data to avoid modifications outside the cache
 		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
 
-		aSegments = sPath.split("/");
-		sNavigationProperty = aSegments.pop();
-		vCacheData = this.fetchValue("$cached", aSegments.join("/")).getResult();
-		aCollection = sNavigationProperty ? vCacheData[sNavigationProperty] : vCacheData;
+		aCollection = this.fetchValue("$cached", sPath).getResult();
 		if (!Array.isArray(aCollection)) {
 			throw new Error("Create is only supported for collections; '" + sPath
 					+ "' does not reference a collection");
@@ -513,6 +518,28 @@ sap.ui.define([
 			}
 			return vValue === undefined ? invalidSegment(sSegment) : vValue;
 		}, oData);
+	};
+
+	/**
+	 * Fetches the type of the expanded entity matching the given path.
+	 * @param {string} sPath
+	 *   A relative path within the cache, which may contain key predicates and/or indexes.
+	 * @returns {SyncPromise}
+	 *   A promise that is resolved with the entity type for that path if it points to an expanded
+	 *   entity and <code>undefined</code> otherwise
+	 */
+	Cache.prototype.fetchTypeFor = function (sPath) {
+		var aSegments = [this.sResourcePath];
+
+		return this.fetchTypes().then(function (mTypeForPath) {
+			sPath.split("/").forEach(function (sSegment) {
+				var aMatches = rPropertyNameOfSegment.exec(sSegment);
+				if (aMatches) {
+					aSegments.push(aMatches[0]);
+				}
+			});
+			return mTypeForPath[aSegments.join("/")];
+		});
 	};
 
 	/**

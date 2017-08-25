@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.type.DateTimeBase
 	 *
 	 * @author SAP SE
-	 * @version 1.50.0
+	 * @version 1.50.1
 	 *
 	 * @alias sap.ui.model.odata.type.DateTimeOffset
 	 * @param {object} [oFormatOptions]
@@ -89,7 +89,8 @@ sap.ui.define([
 			}
 			oType.oModelFormat = DateFormat.getDateInstance({
 				pattern : sPattern + "X",
-				strictParsing : true
+				strictParsing : true,
+				UTC : oType.oFormatOptions && oType.oFormatOptions.UTC
 			});
 		}
 		return oType.oModelFormat;

@@ -481,7 +481,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.MetaModel
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.50.0
+	 * @version 1.50.1
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 		/*
@@ -1286,12 +1286,18 @@ sap.ui.define([
 				}
 				// calculate the key predicate asynchronously and append it to the prefix
 				return oContext.fetchValue(vSegment.path).then(function (oEntity) {
-					if (oEntity && ("@$ui5.transient" in oEntity)) {
+					if (!oEntity) {
+						error("No instance to calculate key predicate at " + vSegment.path);
+					}
+					if ("@$ui5.transient" in oEntity) {
 						bTransient = true;
 						return undefined;
 					}
-					return vSegment.prefix + _Helper.getKeyPredicate(vSegment.type, oEntity);
-				}).catch(function (oError) { // enrich the error message with the path
+					if (!oEntity["@$ui5.predicate"]) {
+						error("No key predicate known at " + vSegment.path);
+					}
+					return vSegment.prefix + oEntity["@$ui5.predicate"];
+				}, function (oError) { // enrich the error message with the path
 					error(oError.message + " at " + vSegment.path);
 				});
 			})).then(function (aFinalEditUrl) {
