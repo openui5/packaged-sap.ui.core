@@ -36,7 +36,7 @@ sap.ui.define(['./ExportType'],
 	 * @extends sap.ui.core.util.ExportType
 	 *
 	 * @author SAP SE
-	 * @version 1.38.25
+	 * @version 1.38.27
 	 * @since 1.22.0
 	 *
 	 * @constructor
