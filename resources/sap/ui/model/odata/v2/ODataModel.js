@@ -65,7 +65,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.44.19
+	 * @version 1.44.20
 	 *
 	 * @constructor
 	 * @public
@@ -3395,10 +3395,12 @@ sap.ui.define([
 
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
 		oData = this._getObject('/' + sKey);
-		mParams = oData.__metadata.created;
-		//for created entries the group information is retrieved from the params
-		if (mParams) {
-			return {groupId: mParams.groupId, changeSetId: mParams.changeSetId};
+		if (oData) {
+			mParams = oData.__metadata.created;
+			//for created entries the group information is retrieved from the params
+			if (mParams) {
+				return { groupId: mParams.groupId, changeSetId: mParams.changeSetId };
+			}
 		}
 		//resolve groupId/changeSetId
 		if (this.mChangeGroups[oEntityType.name]) {
