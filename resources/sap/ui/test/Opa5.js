@@ -255,7 +255,7 @@ sap.ui.define([
 					uri.search(true),Opa.config.appParams));
 				window.history.replaceState({},"",uri.toString());
 			};
-			this.waitFor(oParamsWaitForOptions);
+			return this.waitFor(oParamsWaitForOptions);
 		};
 
 		/**
