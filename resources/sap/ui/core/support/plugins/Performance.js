@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.38.27
+		 * @version 1.38.28
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Performance
