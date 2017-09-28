@@ -177,7 +177,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.50.1
+	 * @version 1.50.2
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 */
@@ -2809,6 +2809,12 @@ sap.ui.define([
 	 *
 	 *            <b>Note</b>: use this flag only when using multiple bindings. If you use only one
 	 *            binding and want raw values then simply don't specify a type for that binding.
+	 * @param {boolean} [oBindingInfo.useInternalValues]
+	 *            Whether the parameters to the formatter function should be passed as the related JavaScript primitive values.
+	 *            In this case the values of the model are parsed by the {@link sap.ui.model.SimpleType#getModelFormat model format}
+	 *            of the specified types from the binding parts.
+	 *
+	 *            <b>Note</b>: use this flag only when using multiple bindings.
 	 * @param {sap.ui.model.Type|string} [oBindingInfo.type]
 	 *            A type object or the name of a type class to create such a type object; the type
 	 *            will be used for converting model data to a property value (aka "formatting") and
@@ -3007,7 +3013,7 @@ sap.ui.define([
 				clType = jQuery.sap.getObject(oType);
 				oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 			}
-			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues);
+			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
 			oBinding.setType(oType, oBindingInfo.targetType || sInternalType);
 			oBinding.setBindingMode(oBindingInfo.mode || sCompositeMode);
 		} else {

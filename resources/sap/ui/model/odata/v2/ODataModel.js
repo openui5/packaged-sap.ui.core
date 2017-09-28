@@ -65,7 +65,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.50.1
+	 * @version 1.50.2
 	 *
 	 * @constructor
 	 * @public
@@ -4125,7 +4125,7 @@ sap.ui.define([
 
 		if (oFunctionMetadata.parameter != null) {
 			jQuery.each(oFunctionMetadata.parameter, function (iIndex, oParam) {
-				if (mUrlParams[oParam.name]) {
+				if (mUrlParams && mUrlParams[oParam.name] !== undefined) {
 					mUrlParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
 				}
 			});
