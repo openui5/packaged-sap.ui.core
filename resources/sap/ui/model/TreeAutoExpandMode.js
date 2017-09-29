@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Different modes for setting the auto expand mode on tree or analytical bindings.
 	 *
-	 * @version 1.50.2
+	 * @version 1.50.3
 	 * @enum {string}
 	 * @alias sap.ui.model.TreeAutoExpandMode
 	 * @protected

@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.50.2
+ * @version 1.50.3
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.50.2";
+		var apiVersion = "1.50.3";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.50.2";
+		var v = "1.50.3";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -5692,7 +5692,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.50.2
+	 * @version 1.50.3
 	 * @namespace
 	 * @public
 	 * @static
@@ -7998,13 +7998,16 @@ return URI;
 				sUrlPrefix,
 				sResourceName;
 
+			// Make sure to have an absolute URL to check against absolute prefix URLs
+			sURL = new URI(sURL, sDocumentLocation).toString();
+
 			for (sNamePrefix in mUrlPrefixes) {
 				if ( mUrlPrefixes.hasOwnProperty(sNamePrefix) ) {
 
 					// Note: configured URL prefixes are guaranteed to end with a '/'
 					// But to support the legacy scenario promoted by the application tools ( "registerModulePath('Application','Application')" )
 					// the prefix check here has to be done without the slash
-					sUrlPrefix = mUrlPrefixes[sNamePrefix].url.slice(0, -1);
+					sUrlPrefix = mUrlPrefixes[sNamePrefix].absoluteUrl.slice(0, -1);
 
 					if ( sURL.indexOf(sUrlPrefix) === 0 ) {
 
@@ -8633,6 +8636,10 @@ return URI;
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
 				}
+
+				// calculate absolute url
+				// only to be used by 'guessResourceName'
+				vUrlPrefix.absoluteUrl = new URI(vUrlPrefix.url, sDocumentLocation).toString();
 
 				mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
 
