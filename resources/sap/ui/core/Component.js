@@ -175,7 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.44.20
+	 * @version 1.44.21
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -2093,9 +2093,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
 				jQuery.each(hints.components, function(i, vComp) {
-					collect(function() {
-						return preload(processOptions(vComp), true);
-					});
+					collect(preload(processOptions(vComp), true));
 				});
 			}
 
