@@ -121,9 +121,11 @@ sap.ui.define([
 	 *   The function is called when the back end requests have been sent.
 	 */
 	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
-		var iExpectedLength = iEnd - iStart,
+		var sDelimiter = oCache.sQueryString ? "&" : "?",
+			iExpectedLength = iEnd - iStart,
 			oPromise,
-			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
+			sResourcePath = oCache.sResourcePath + oCache.sQueryString + sDelimiter
+				+ "$skip=" + iStart + "&$top=" + iExpectedLength;
 
 		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
 				fnDataRequested)
@@ -152,6 +154,7 @@ sap.ui.define([
 				throw oError;
 			});
 
+		oCache.bSentReadRequest = true;
 		fill(oCache.aElements, oPromise, iStart, iEnd);
 	}
 
@@ -196,11 +199,11 @@ sap.ui.define([
 		this.mChangeListeners = {};
 		this.mPatchRequests = {}; //map path to an array of (PATCH) promises
 		this.mPostRequests = {}; //map path to an array of entity data (POST bodies)
-		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath
-			+ Cache.buildQueryString(mQueryOptions, false, bSortExpandSelect);
 		this.bSortExpandSelect = bSortExpandSelect;
+		this.setQueryOptions(mQueryOptions);
+		this.sResourcePath = sResourcePath;
+		this.bSentReadRequest = false;
 	}
 
 	/**
@@ -565,12 +568,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the cache's URL.
+	 * Updates query options of the cache which has not yet sent a read request with the given
+	 * options.
+	 *
+	 * @param {object} mQueryOptions
+	 *   The new query options
+	 * @throws {Error} If the cache has already sent a read request
+	 */
+	Cache.prototype.setQueryOptions = function (mQueryOptions) {
+		if (this.bSentReadRequest) {
+			throw new Error("Cannot set query options: Cache has already sent a read request");
+		}
+
+		this.mQueryOptions = mQueryOptions;
+		this.sQueryString = Cache.buildQueryString(mQueryOptions, false, this.bSortExpandSelect);
+	};
+
+	/**	 * Returns the cache's URL.
 	 *
 	 * @returns {string} The URL
 	 */
 	Cache.prototype.toString = function () {
-		return this.oRequestor.getServiceUrl() + this.sResourcePath;
+		return this.oRequestor.getServiceUrl() + this.sResourcePath + this.sQueryString;
 	};
 
 	/**
@@ -698,8 +717,6 @@ sap.ui.define([
 		this.sContext = undefined;         // the "@odata.context" from the responses
 		this.aElements = [];               // the available elements
 		this.aElements.$count = undefined; // see setCount
-
-		this.sResourcePath += this.sResourcePath.indexOf("?") >= 0 ? "&" : "?";
 	}
 
 	// make CollectionCache a Cache
@@ -893,8 +910,10 @@ sap.ui.define([
 
 		that.registerChange("", oListener);
 		if (!this.oPromise) {
-			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", this.sResourcePath,
-				sGroupId, undefined, undefined, fnDataRequested));
+			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET",
+				this.sResourcePath + this.sQueryString, sGroupId, undefined, undefined,
+				fnDataRequested));
+			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1010,7 +1029,7 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
 		var that = this,
-			sResourcePath = this.sResourcePath;
+			sResourcePath = this.sResourcePath + this.sQueryString;
 
 		this.registerChange(sPath, oListener);
 		if (!this.oPromise) {
@@ -1023,6 +1042,7 @@ sap.ui.define([
 					Cache.computeCount(oResult);
 					return oResult;
 				});
+			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
