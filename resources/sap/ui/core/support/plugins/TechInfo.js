@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.38.28
+		 * @version 1.38.29
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.TechInfo
