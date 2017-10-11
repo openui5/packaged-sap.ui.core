@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.38.29
+		 * @version 1.38.30
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Trace
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				jContentRef.html("");
 				oPlugin._aLogEntries = [];
 			} else if (typeof (oEntry) === "string") {
-				jContentRef.html(oEntry);
+				jContentRef.html(jQuery.sap.encodeHTML(oEntry));
 				jContentRef[0].scrollTop = jContentRef[0].scrollHeight;
 			} else {
 				oEntry._levelInfo = getLevel(oEntry.level);
