@@ -642,5 +642,40 @@
         "references": []
       }
     ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "601f0dd5b7c677758d2682c222ffdfbe394382e8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser.enrichFromPropertyValueAttributes: do not call on string values",
+        "references": []
+      },
+      {
+        "id": "9f3d1dac2d47b46f75a77c30d11946c982bf7d33",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Clientside sorting and filtering of Edm types",
+        "references": []
+      },
+      {
+        "id": "0ccaa6574a1ca25b7466d74aa50fffce57c4b4f8",
+        "type": "FIX",
+        "text": " v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode\u003d\"Auto\" sends single requests for table cells",
+        "references": []
+      },
+      {
+        "id": "7489c9ac4c0679765d1de1424f4ed400577d8016",
+        "type": "FIX",
+        "text": " core.Popup: autoclose should only work with touch/mouse event when touch is supported",
+        "references": []
+      },
+      {
+        "id": "205cb443a3f4c7b235f2d9cc7885be3ef2bc45c8",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Better handling of incomplete list data",
+        "references": []
+      }
+    ]
   }
 }
