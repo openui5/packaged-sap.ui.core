@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.50.4
+	 * @version 1.50.5
 	 * @alias sap.ui.core.tmpl.Template
 	 * @since 1.15
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
