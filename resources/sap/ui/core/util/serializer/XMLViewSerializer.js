@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 	 * @class XMLViewSerializer class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.48.12
+	 * @version 1.48.13
 	 * @alias sap.ui.core.util.serializer.XMLViewSerializer
 	 * @private
 	 * @sap-restricted sap.watt com.sap.webide
