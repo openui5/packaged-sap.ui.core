@@ -411,5 +411,58 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3bac19fe9a68e92e9093eb4c377e74ceed1d7c27",
+        "type": "FEATURE",
+        "text": " Synchronous context creation",
+        "references": []
+      },
+      {
+        "id": "bdbefcaa0068c3f913103f283897bfc4f20e15e0",
+        "type": "FIX",
+        "text": " FilterProcessor: Normalization issues on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "810b708a91ea5a7175f33eb1e7424848c78c2152",
+        "type": "FIX",
+        "text": " ManagedObject: Remove null context propagation",
+        "references": []
+      },
+      {
+        "id": "03398f4fd2b267b2985a0607374c95dadb0d9b21",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: JSDoc for select binding parameter adjusted",
+        "references": []
+      },
+      {
+        "id": "3fb83257393152fc14318649eb0764d128d439b0",
+        "type": "FIX",
+        "text": " v2.ODataModel: Allow invalidation of model cache entries",
+        "references": []
+      },
+      {
+        "id": "15d21abe662bbd44254cadc759447223649233d1",
+        "type": "FEATURE",
+        "text": " core.Component: async loading of component resource bundles",
+        "references": []
+      },
+      {
+        "id": "008fce051d84cd6aefc3955ce0e7e5e2beb591d5",
+        "type": "FIX",
+        "text": " jquery.sap.global: deprecate synchronous module loading APIs",
+        "references": []
+      },
+      {
+        "id": "f251f9376b7ee38ad3b2ca036fa383ca1d46af5a",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
+        "references": []
+      }
+    ]
   }
 }

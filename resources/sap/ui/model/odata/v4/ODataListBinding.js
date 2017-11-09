@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.52.0
+	 * @version 1.52.1
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -292,10 +292,11 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} with the update group ID as parameter
 	 * also delete the created context together with other changes.
 	 *
-	 * If the creation of the entity on the server failed, the creation is repeated for application
-	 * group IDs with the next call of {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. For
-	 * '$auto' or '$direct', the creation is repeated automatically with the next update for the
-	 * entity.
+	 * If the creation of the entity on the server failed, the creation is repeated
+	 * automatically. If the binding's update group ID has
+	 * {@link sap.ui.model.odata.v4.SubmitMode.API}, it is repeated with the next call of
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. Otherwise it is repeated with the next
+	 * update for the entity.
 	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -497,8 +498,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link ODataBinding#fetchCache} to create a cache for this binding with the
-	 * given resource path and query options.
+	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
+	 * this binding with the given resource path and query options.
 	 *
 	 * @param {string} sResourcePath
 	 *   The resource path, for example "EMPLOYEES"
@@ -532,8 +533,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
-	 * this binding.
+	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache} to
+	 * determine the query options for this binding.
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context instance to be used
@@ -923,7 +924,7 @@ sap.ui.define([
 		this.sChangeReason = undefined;
 
 		if (sChangeReason === "AddVirtualContext") {
-			// Note: this task is queued _before_ any $auto submit task!
+			// Note: this task is queued _before_ any SubmitMode.Auto task!
 			sap.ui.getCore().addPrerenderingTask(function () {
 				// Note: first result of getContexts after refresh is ignored
 				that.sChangeReason = "RemoveVirtualContext";

@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/tmpl/Templa
 	 * @author Peter Muessig
 	 * @public
 	 * @since 1.15.0
-	 * @version 1.52.0
+	 * @version 1.52.1
 	 * @alias sap.ui.core.plugin.TemplatingSupport
 	 */
 	var TemplatingSupport = function() {

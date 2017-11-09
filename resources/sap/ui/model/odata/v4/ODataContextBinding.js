@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.52.0
+	 * @version 1.52.1
 	 *
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
@@ -356,8 +356,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link ODataBinding#fetchCache} to create a cache for this binding with the
-	 * given resource path and query options.
+	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
+	 * this binding with the given resource path and query options.
 	 *
 	 * @param {string} sResourcePath
 	 *   The resource path, for example "EMPLOYEES('1')"
@@ -374,8 +374,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
-	 * this binding.
+	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache} to
+	 * determine the query options for this binding.
 	 *
 	 * @returns {SyncPromise}
 	 *   A promise resolving with the binding's query options
@@ -510,6 +510,9 @@ sap.ui.define([
 			return createCacheAndRequest(oOperationMetaData, "");
 		}).then(function (oResult) {
 			that._fireChange({reason : ChangeReason.Change});
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.refreshInternal(sGroupId, true);
+			});
 			// do not return anything
 		})["catch"](function (oError) {
 			that.oModel.reportError("Failed to execute " + that.sPath, sClassName, oError);

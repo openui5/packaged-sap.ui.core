@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.52.0
+ * @version 1.52.1
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.52.0";
+		var apiVersion = "1.52.1";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.52.0";
+		var v = "1.52.1";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -5705,7 +5705,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.52.0
+	 * @version 1.52.1
 	 * @namespace
 	 * @public
 	 * @static
@@ -8785,6 +8785,9 @@ return URI;
 		 *
 		 * @public
 		 * @static
+		 * @deprecated As of 1.52, UI5 modules and their dependencies should be defined using {@link sap.ui.define}.
+		 *    For more details see {@link topic:91f23a736f4d1014b6dd926db0e91070 Modules and Dependencies} in the
+		 *    documentation.
 		 */
 		jQuery.sap.declare = function(sModuleName, bCreateNamespace) {
 
@@ -8832,6 +8835,10 @@ return URI;
 		 * @static
 		 * @function
 		 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+		 * @deprecated As of 1.52, UI5 modules and their dependencies should be defined using {@link sap.ui.define}.
+		 *    When additional modules have to be loaded dynamically at a later point in time, the asynchronous API
+		 *    {@link sap.ui.require} should be used. For more details, see {@link topic:91f23a736f4d1014b6dd926db0e91070
+		 *    Modules and Dependencies} in the documentation.
 		 */
 		jQuery.sap.require = function(vModuleName) {
 

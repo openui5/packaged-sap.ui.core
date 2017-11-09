@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @param {object} oClassInfo static info to construct the metadata from
 	 *
 	 * @author SAP SE
-	 * @version 1.52.0
+	 * @version 1.52.1
 	 * @since 1.50.0
 	 * @alias sap.ui.core.XMLCompositeMetadata
 	 * @private
