@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.44.23
+	 * @version 1.44.24
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.LocaleData
@@ -1460,7 +1460,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				}
 			},
 			"decimalFormat": { "standard": "#,##0.###" },
-			"currencyFormat": { "standard": "¤#,##0.00"},
+			"currencyFormat": {
+				"standard": "¤#,##0.00",
+				"currencySpacing": {
+					"beforeCurrency": {
+						"currencyMatch": "[:^S:]",
+						"surroundingMatch": "[:digit:]",
+						"insertBetween": " "
+					},
+					"afterCurrency": {
+						"currencyMatch": "[:^S:]",
+						"surroundingMatch": "[:digit:]",
+						"insertBetween": " "
+					}
+				}
+			},
 			"percentFormat": { "standard": "#,##0%"},
 			"symbols-latn-decimal":".",
 			"symbols-latn-group":",",
