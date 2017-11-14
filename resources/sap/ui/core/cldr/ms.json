@@ -1,73 +1,62 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
 	"languages": {
-		"aa": "Afar",
-		"ab": "Abkhaz",
+		"aa": "aa",
+		"ab": "Abkhazia",
 		"ace": "Aceh",
-		"ach": "Acoli",
+		"ach": "Akoli",
 		"ada": "Adangme",
-		"ady": "Adygei",
-		"ae": "Avesta",
+		"ady": "Adyghe",
+		"ae": "Avestan",
 		"aeb": "Arab Tunisia",
 		"af": "Afrikaans",
-		"afh": "Afrihili",
 		"agq": "Aghem",
 		"ain": "Ainu",
 		"ak": "Akan",
-		"akk": "Akkadia",
-		"akz": "Alabama",
-		"ale": "Aleut",
+		"ale": "ale",
 		"alt": "Altai Selatan",
-		"am": "Amharik",
+		"am": "Amharic",
 		"an": "Aragon",
-		"ang": "Inggris Kuno",
-		"anp": "Angika",
+		"anp": "anp",
 		"ar": "Arab",
-		"ar_001": "Arab Standar Modern",
-		"arc": "Aram",
+		"ar_001": "Arab Standard Moden",
 		"arn": "Mapuche",
 		"arp": "Arapaho",
-		"arq": "Arab Aljazair",
-		"arw": "Arawak",
-		"ary": "Arab Maroko",
+		"arq": "Arab Algeria",
+		"ary": "Arab Maghribi",
 		"arz": "Arab Mesir",
 		"as": "Assam",
 		"asa": "Asu",
-		"ase": "Bahasa Isyarat Amerika",
 		"ast": "Asturia",
-		"av": "Avar",
+		"av": "Avaric",
 		"awa": "Awadhi",
 		"ay": "Aymara",
-		"az": "Azerbaijani",
+		"az": "Azerbaijan",
 		"az_alt-short": "Azeri",
 		"ba": "Bashkir",
 		"bal": "Baluchi",
 		"ban": "Bali",
-		"bar": "Bavaria",
-		"bas": "Basa",
+		"bas": "Basaa",
 		"bax": "Bamun",
-		"bbc": "Batak Toba",
 		"bbj": "Ghomala",
-		"be": "Belarusia",
+		"be": "Belarus",
 		"bej": "Beja",
 		"bem": "Bemba",
-		"bew": "Betawi",
 		"bez": "Bena",
 		"bfd": "Bafut",
 		"bg": "Bulgaria",
 		"bgn": "Balochi Barat",
 		"bho": "Bhojpuri",
 		"bi": "Bislama",
-		"bik": "Bikol",
 		"bin": "Bini",
-		"bjn": "Banjar",
 		"bkm": "Kom",
 		"bla": "Siksika",
 		"bm": "Bambara",
-		"bn": "Bengali",
+		"bn": "Benggala",
 		"bo": "Tibet",
+		"bpy": "Bishnupriya",
 		"br": "Breton",
-		"bra": "Braj",
+		"brh": "Brahui",
 		"brx": "Bodo",
 		"bs": "Bosnia",
 		"bss": "Akoose",
@@ -76,138 +65,105 @@
 		"bum": "Bulu",
 		"byn": "Blin",
 		"byv": "Medumba",
-		"ca": "Katalan",
-		"cad": "Kado",
-		"car": "Karib",
+		"ca": "Catalonia",
 		"cay": "Cayuga",
-		"cch": "Atsam",
 		"ce": "Chechen",
 		"ceb": "Cebuano",
-		"cgg": "Kiga",
+		"cgg": "Chiga",
 		"ch": "Chamorro",
-		"chb": "Chibcha",
-		"chg": "Chagatai",
-		"chk": "Chuuke",
+		"chk": "Chukese",
 		"chm": "Mari",
-		"chn": "Jargon Chinook",
-		"cho": "Koktaw",
-		"chp": "Chipewyan",
+		"cho": "Choctaw",
 		"chr": "Cherokee",
 		"chy": "Cheyenne",
 		"ckb": "Kurdi Sorani",
-		"co": "Korsika",
-		"cop": "Koptik",
-		"cr": "Kree",
-		"crh": "Tatar Krimea",
-		"crs": "Seselwa Kreol Prancis",
-		"cs": "Cheska",
-		"csb": "Kashubia",
-		"cu": "Bahasa Gereja Slavonia",
+		"co": "Corsica",
+		"cop": "Coptic",
+		"crh": "Turki Krimea",
+		"crs": "Perancis Seselwa Creole",
+		"cs": "Czech",
+		"cu": "Slavik Gereja",
 		"cv": "Chuvash",
-		"cy": "Welsh",
-		"da": "Dansk",
+		"cy": "Wales",
+		"da": "Denmark",
 		"dak": "Dakota",
 		"dar": "Dargwa",
 		"dav": "Taita",
 		"de": "Jerman",
-		"de_AT": "Jerman (Austria)",
-		"de_CH": "Jerman Tinggi (Swiss)",
-		"del": "Delaware",
-		"den": "Slave",
+		"de_AT": "Jerman Austria",
+		"de_CH": "Jerman Halus Switzerland",
 		"dgr": "Dogrib",
-		"din": "Dinka",
 		"dje": "Zarma",
 		"doi": "Dogri",
-		"dsb": "Sorbia Rendah",
+		"dsb": "Sorbian Rendah",
 		"dua": "Duala",
-		"dum": "Belanda Abad Pertengahan",
 		"dv": "Divehi",
 		"dyo": "Jola-Fonyi",
-		"dyu": "Dyula",
 		"dz": "Dzongkha",
 		"dzg": "Dazaga",
 		"ebu": "Embu",
 		"ee": "Ewe",
 		"efi": "Efik",
-		"egy": "Mesir Kuno",
 		"eka": "Ekajuk",
-		"el": "Yunani",
-		"elx": "Elam",
-		"en": "Inggris",
-		"en_AU": "Inggris (Australia)",
-		"en_CA": "Inggris (Kanada)",
-		"en_GB": "Inggris (Inggris)",
-		"en_GB-alt-short": "Inggris (U.K.)",
-		"en_US": "Inggris (Amerika Serikat)",
-		"en_US-alt-short": "Inggris (A.S.)",
-		"enm": "Inggris Abad Pertengahan",
+		"el": "Greek",
+		"en": "Inggeris",
+		"en_AU": "Inggeris Australia",
+		"en_CA": "Inggeris Kanada",
+		"en_GB": "Inggeris British",
+		"en_GB-alt-short": "Inggeris U.K.",
+		"en_US": "Inggeris AS",
+		"en_US-alt-short": "Inggeris A.S.",
 		"eo": "Esperanto",
-		"es": "Spanyol",
-		"es_419": "Spanyol (Amerika Latin)",
-		"es_ES": "Spanyol (Eropa)",
-		"es_MX": "Spanyol (Meksiko)",
-		"et": "Esti",
+		"es": "Sepanyol",
+		"es_419": "Sepanyol Amerika Latin",
+		"es_ES": "Sepanyol Eropah",
+		"es_MX": "Sepanyol Mexico",
+		"et": "Estonia",
 		"eu": "Basque",
 		"ewo": "Ewondo",
-		"fa": "Persia",
-		"fan": "Fang",
-		"fat": "Fanti",
-		"ff": "Fula",
-		"fi": "Suomi",
-		"fil": "Filipino",
+		"fa": "Parsi",
+		"ff": "Fulah",
+		"fi": "Finland",
+		"fil": "Filipina",
 		"fj": "Fiji",
 		"fo": "Faroe",
 		"fon": "Fon",
-		"fr": "Prancis",
-		"fr_CA": "Prancis (Kanada)",
-		"fr_CH": "Prancis (Swiss)",
-		"frm": "Prancis Abad Pertengahan",
-		"fro": "Prancis Kuno",
-		"frp": "Arpitan",
-		"frr": "Frisia Utara",
-		"frs": "Frisia Timur",
-		"fur": "Friuli",
-		"fy": "Frisia Barat",
-		"ga": "Irlandia",
+		"fr": "Perancis",
+		"fr_CA": "Perancis Kanada",
+		"fr_CH": "Perancis Switzerland",
+		"fur": "Friulian",
+		"fy": "Frisian Barat",
+		"ga": "Ireland",
 		"gaa": "Ga",
 		"gag": "Gagauz",
-		"gan": "gan",
-		"gay": "Gayo",
+		"gan": "Cina Gan",
 		"gba": "Gbaya",
-		"gd": "Gaelik Skotlandia",
+		"gbz": "Zoroastrian Dari",
+		"gd": "Scots Gaelic",
 		"gez": "Geez",
-		"gil": "Gilbert",
-		"gl": "Galisia",
+		"gil": "Kiribati",
+		"gl": "Galicia",
 		"glk": "Gilaki",
-		"gmh": "Jerman Abad Pertengahan",
 		"gn": "Guarani",
-		"goh": "Jerman Kuno",
-		"gon": "Gondi",
 		"gor": "Gorontalo",
-		"got": "Gotik",
-		"grb": "Grebo",
-		"grc": "Yunani Kuno",
-		"gsw": "Jerman (Swiss)",
-		"gu": "Gujarat",
+		"grc": "Greek Purba",
+		"gsw": "Jerman Switzerland",
+		"gu": "Gujerat",
 		"guz": "Gusii",
 		"gv": "Manx",
-		"gwi": "Gwich’in",
+		"gwi": "Gwichʼin",
 		"ha": "Hausa",
-		"hai": "Haida",
-		"hak": "hak",
+		"hak": "Cina Hakka",
 		"haw": "Hawaii",
 		"he": "Ibrani",
 		"hi": "Hindi",
-		"hif": "Hindi Fiji",
 		"hil": "Hiligaynon",
-		"hit": "Hitit",
 		"hmn": "Hmong",
-		"ho": "Hiri Motu",
-		"hr": "Kroasia",
-		"hsb": "Sorbia Atas",
-		"hsn": "hsn",
-		"ht": "Kreol Haiti",
-		"hu": "Hungaria",
+		"hr": "Croatia",
+		"hsb": "Sorbian Atas",
+		"hsn": "Cina Xiang",
+		"ht": "Haiti",
+		"hu": "Hungary",
 		"hup": "Hupa",
 		"hy": "Armenia",
 		"hz": "Herero",
@@ -218,41 +174,35 @@
 		"ie": "Interlingue",
 		"ig": "Igbo",
 		"ii": "Sichuan Yi",
-		"ik": "Inupiak",
 		"ilo": "Iloko",
-		"inh": "Ingushetia",
+		"inh": "Ingush",
 		"io": "Ido",
-		"is": "Islandia",
-		"it": "Italia",
+		"is": "Iceland",
+		"it": "Itali",
 		"iu": "Inuktitut",
-		"ja": "Jepang",
+		"ja": "Jepun",
 		"jbo": "Lojban",
 		"jgo": "Ngomba",
 		"jmc": "Machame",
-		"jpr": "Ibrani-Persia",
-		"jrb": "Ibrani-Arab",
 		"jv": "Jawa",
 		"ka": "Georgia",
-		"kaa": "Kara-Kalpak",
 		"kab": "Kabyle",
 		"kac": "Kachin",
 		"kaj": "Jju",
 		"kam": "Kamba",
-		"kaw": "Kawi",
-		"kbd": "Kabardi",
+		"kbd": "Kabardian",
 		"kbl": "Kanembu",
 		"kcg": "Tyap",
 		"kde": "Makonde",
 		"kea": "Kabuverdianu",
-		"ken": "Kenyang",
 		"kfo": "Koro",
 		"kg": "Kongo",
 		"kha": "Khasi",
-		"kho": "Khotan",
 		"khq": "Koyra Chiini",
-		"ki": "Kikuyu",
+		"khw": "Khowar",
+		"ki": "Kikuya",
 		"kj": "Kuanyama",
-		"kk": "Kazakh",
+		"kk": "Kazakhstan",
 		"kkj": "Kako",
 		"kl": "Kalaallisut",
 		"kln": "Kalenjin",
@@ -262,198 +212,158 @@
 		"ko": "Korea",
 		"koi": "Komi-Permyak",
 		"kok": "Konkani",
-		"kos": "Kosre",
 		"kpe": "Kpelle",
 		"kr": "Kanuri",
-		"krc": "Karachai Balkar",
-		"kri": "Krio",
-		"krl": "Karelia",
-		"kru": "Kuruk",
+		"krc": "Karachay-Balkar",
+		"krl": "Karelian",
+		"kru": "Kurukh",
 		"ks": "Kashmir",
 		"ksb": "Shambala",
 		"ksf": "Bafia",
-		"ksh": "Dialek Kolsch",
-		"ku": "Kurdi",
+		"ksh": "Colognian",
+		"ku": "Kurdish",
 		"kum": "Kumyk",
-		"kut": "Kutenai",
 		"kv": "Komi",
-		"kw": "Kornish",
-		"ky": "Kirgiz",
+		"kw": "Cornish",
+		"ky": "Kirghiz",
 		"la": "Latin",
 		"lad": "Ladino",
 		"lag": "Langi",
 		"lah": "Lahnda",
-		"lam": "Lamba",
-		"lb": "Luksemburg",
-		"lez": "Lezghia",
+		"lb": "Luxembourg",
+		"lez": "Lezghian",
 		"lg": "Ganda",
-		"li": "Limburgia",
-		"lij": "Liguria",
+		"li": "Limburgish",
 		"lkt": "Lakota",
 		"ln": "Lingala",
-		"lo": "Lao",
-		"lol": "Mongo",
+		"lo": "Laos",
 		"loz": "Lozi",
 		"lrc": "Luri Utara",
-		"lt": "Lituavi",
+		"lt": "Lithuania",
 		"lu": "Luba-Katanga",
 		"lua": "Luba-Lulua",
-		"lui": "Luiseno",
 		"lun": "Lunda",
 		"luo": "Luo",
 		"lus": "Mizo",
 		"luy": "Luyia",
-		"lv": "Latvi",
-		"lzz": "Laz",
+		"lv": "Latvia",
 		"mad": "Madura",
 		"maf": "Mafa",
 		"mag": "Magahi",
 		"mai": "Maithili",
 		"mak": "Makasar",
-		"man": "Mandingo",
 		"mas": "Masai",
 		"mde": "Maba",
 		"mdf": "Moksha",
-		"mdr": "Mandar",
 		"men": "Mende",
 		"mer": "Meru",
-		"mfe": "Morisien",
-		"mg": "Malagasi",
-		"mga": "Irlandia Abad Pertengahan",
+		"mfe": "Morisyen",
+		"mg": "Malagasy",
 		"mgh": "Makhuwa-Meetto",
 		"mgo": "Meta’",
 		"mh": "Marshall",
 		"mi": "Maori",
-		"mic": "Mikmak",
+		"mic": "Micmac",
 		"min": "Minangkabau",
-		"mk": "Makedonia",
+		"mk": "Macedonia",
 		"ml": "Malayalam",
 		"mn": "Mongolia",
-		"mnc": "Manchuria",
 		"mni": "Manipuri",
 		"moh": "Mohawk",
 		"mos": "Mossi",
 		"mr": "Marathi",
-		"ms": "Melayu",
+		"ms": "Bahasa Melayu",
 		"mt": "Malta",
 		"mua": "Mundang",
-		"mul": "Beberapa Bahasa",
-		"mus": "Bahasa Muskogee",
-		"mwl": "Miranda",
-		"mwr": "Marwari",
-		"mwv": "Mentawai",
+		"mul": "Pelbagai Bahasa",
+		"mus": "Creek",
+		"mwl": "Mirandese",
 		"my": "Burma",
 		"mye": "Myene",
-		"myv": "Eryza",
+		"myv": "Erzya",
 		"mzn": "Mazanderani",
 		"na": "Nauru",
-		"nan": "nan",
+		"nan": "Cina Min Nan",
 		"nap": "Neapolitan",
 		"naq": "Nama",
-		"nb": "Bokmål Norwegia",
+		"nb": "Bokmål Norway",
 		"nd": "Ndebele Utara",
 		"nds": "Jerman Rendah",
-		"nds_NL": "Jerman Rendah (Belanda)",
-		"ne": "Nepali",
+		"nds_NL": "Saxon Rendah",
+		"ne": "Nepal",
 		"new": "Newari",
 		"ng": "Ndonga",
 		"nia": "Nias",
-		"niu": "Niuea",
+		"niu": "Niu",
 		"nl": "Belanda",
-		"nl_BE": "Belanda (Belgia)",
+		"nl_BE": "Flemish",
 		"nmg": "Kwasio",
-		"nn": "Nynorsk Norwegia",
+		"nn": "Nynorsk Norway",
 		"nnh": "Ngiemboon",
-		"no": "Norwegia",
+		"no": "Norway",
 		"nog": "Nogai",
-		"non": "Norse Kuno",
-		"nqo": "N’Ko",
+		"nqo": "N’ko",
 		"nr": "Ndebele Selatan",
 		"nso": "Sotho Utara",
 		"nus": "Nuer",
 		"nv": "Navajo",
-		"nwc": "Newari Klasik",
 		"ny": "Nyanja",
-		"nym": "Nyamwezi",
 		"nyn": "Nyankole",
-		"nyo": "Nyoro",
-		"nzi": "Nzima",
-		"oc": "Ositania",
-		"oj": "Ojibwa",
+		"oc": "Occitania",
 		"om": "Oromo",
 		"or": "Oriya",
-		"os": "Ossetia",
-		"osa": "Osage",
-		"ota": "Turki Osmani",
+		"os": "Ossete",
 		"pa": "Punjabi",
-		"pag": "Pangasina",
-		"pal": "Pahlevi",
+		"pag": "Pangasinan",
 		"pam": "Pampanga",
 		"pap": "Papiamento",
-		"pau": "Palau",
-		"pcm": "Pidgin Nigeria",
-		"pdc": "Jerman Pennsylvania",
-		"peo": "Persia Kuno",
-		"phn": "Funisia",
-		"pi": "Pali",
-		"pl": "Polski",
-		"pon": "Pohnpeia",
-		"prg": "Prusia",
-		"pro": "Provencal Lama",
+		"pau": "Palauan",
+		"pcm": "Nigerian Pidgin",
+		"pl": "Poland",
+		"prg": "Prussian",
 		"ps": "Pashto",
 		"ps_alt-variant": "Pushto",
 		"pt": "Portugis",
-		"pt_BR": "Portugis (Brasil)",
-		"pt_PT": "Portugis (Eropa)",
+		"pt_BR": "Portugis Brazil",
+		"pt_PT": "Portugis Eropah",
 		"qu": "Quechua",
 		"quc": "Kʼicheʼ",
-		"raj": "Rajasthani",
 		"rap": "Rapanui",
 		"rar": "Rarotonga",
-		"rm": "Reto-Roman",
+		"rm": "Romansh",
 		"rn": "Rundi",
-		"ro": "Rumania",
+		"ro": "Romania",
 		"ro_MD": "Moldavia",
 		"rof": "Rombo",
-		"rom": "Romani",
 		"root": "Root",
-		"rtm": "Rotuma",
 		"ru": "Rusia",
-		"rup": "Aromania",
+		"rup": "Aromanian",
 		"rw": "Kinyarwanda",
 		"rwk": "Rwa",
-		"sa": "Sanskerta",
+		"sa": "Sanskrit",
 		"sad": "Sandawe",
 		"sah": "Sakha",
-		"sam": "Aram Samaria",
 		"saq": "Samburu",
-		"sas": "Sasak",
 		"sat": "Santali",
-		"sba": "Ngambai",
+		"sba": "Ngambay",
 		"sbp": "Sangu",
 		"sc": "Sardinia",
-		"scn": "Sisilia",
-		"sco": "Skotlandia",
+		"scn": "Sicili",
+		"sco": "Scots",
 		"sd": "Sindhi",
-		"sdh": "Kurdi Selatan",
+		"sdh": "Kurdish Selatan",
 		"se": "Sami Utara",
 		"see": "Seneca",
 		"seh": "Sena",
-		"sei": "Seri",
-		"sel": "Selkup",
 		"ses": "Koyraboro Senni",
 		"sg": "Sango",
-		"sga": "Irlandia Kuno",
-		"sh": "Serbo-Kroasia",
+		"sh": "SerboCroatia",
 		"shi": "Tachelhit",
 		"shn": "Shan",
-		"shu": "Arab Suwa",
+		"shu": "Arab Chadian",
 		"si": "Sinhala",
-		"sid": "Sidamo",
 		"sk": "Slovak",
-		"sl": "Sloven",
-		"sli": "Silesia Rendah",
-		"sly": "Selayar",
+		"sl": "Slovenia",
 		"sm": "Samoa",
 		"sma": "Sami Selatan",
 		"smj": "Lule Sami",
@@ -462,323 +372,271 @@
 		"sn": "Shona",
 		"snk": "Soninke",
 		"so": "Somali",
-		"sog": "Sogdien",
 		"sq": "Albania",
-		"sr": "Serb",
+		"sr": "Serbia",
 		"srn": "Sranan Tongo",
-		"srr": "Serer",
 		"ss": "Swati",
 		"ssy": "Saho",
 		"st": "Sotho Selatan",
 		"su": "Sunda",
 		"suk": "Sukuma",
-		"sus": "Susu",
-		"sux": "Sumeria",
-		"sv": "Swedia",
+		"sv": "Sweden",
 		"sw": "Swahili",
-		"sw_CD": "Kongo Swahili",
-		"swb": "Komoria",
-		"syc": "Suriah Klasik",
-		"syr": "Suriah",
-		"szl": "Silesia",
+		"sw_CD": "Congo Swahili",
+		"swb": "Comoria",
+		"syr": "Syriac",
 		"ta": "Tamil",
-		"tcy": "Tulu",
 		"te": "Telugu",
 		"tem": "Timne",
 		"teo": "Teso",
-		"ter": "Tereno",
-		"tet": "Tetun",
+		"tet": "Tetum",
 		"tg": "Tajik",
 		"th": "Thai",
 		"ti": "Tigrinya",
 		"tig": "Tigre",
-		"tiv": "Tiv",
 		"tk": "Turkmen",
-		"tkl": "Tokelau",
-		"tl": "Tagalog",
 		"tlh": "Klingon",
-		"tli": "Tlingit",
-		"tmh": "Tamashek",
+		"tly": "Talysh",
 		"tn": "Tswana",
 		"to": "Tonga",
-		"tog": "Nyasa Tonga",
 		"tpi": "Tok Pisin",
 		"tr": "Turki",
-		"tru": "Turoyo",
 		"trv": "Taroko",
 		"ts": "Tsonga",
-		"tsi": "Tsimshia",
 		"tt": "Tatar",
-		"ttt": "Tat Muslim",
 		"tum": "Tumbuka",
 		"tvl": "Tuvalu",
 		"tw": "Twi",
 		"twq": "Tasawaq",
 		"ty": "Tahiti",
-		"tyv": "Tuvinia",
-		"tzm": "Tamazight Maroko Tengah",
+		"tyv": "Tuvinian",
+		"tzm": "Tamazight Atlas Tengah",
 		"udm": "Udmurt",
 		"ug": "Uyghur",
 		"ug_alt-variant": "Uighur",
-		"uga": "Ugarit",
-		"uk": "Ukraina",
+		"uk": "Ukraine",
 		"umb": "Umbundu",
-		"und": "Bahasa Tidak Dikenal",
+		"und": "Bahasa Tidak Diketahui",
 		"ur": "Urdu",
-		"uz": "Uzbek",
+		"uz": "Uzbekistan",
 		"vai": "Vai",
 		"ve": "Venda",
-		"vec": "Venesia",
 		"vi": "Vietnam",
-		"vo": "Volapuk",
-		"vot": "Votia",
+		"vo": "Volapük",
 		"vun": "Vunjo",
 		"wa": "Walloon",
 		"wae": "Walser",
-		"wal": "Walamo",
-		"war": "Warai",
-		"was": "Washo",
+		"wal": "Wolaytta",
+		"war": "Waray",
 		"wbp": "Warlpiri",
 		"wo": "Wolof",
-		"wuu": "wuu",
-		"xal": "Kalmuk",
+		"wuu": "Cina Wu",
+		"xal": "Kalmyk",
 		"xh": "Xhosa",
 		"xog": "Soga",
-		"yao": "Yao",
-		"yap": "Yapois",
 		"yav": "Yangben",
 		"ybb": "Yemba",
 		"yi": "Yiddish",
 		"yo": "Yoruba",
-		"yue": "Kanton",
-		"za": "Zhuang",
-		"zap": "Zapotek",
-		"zbl": "Blissymbol",
-		"zen": "Zenaga",
-		"zgh": "Tamazight Maroko Standar",
-		"zh": "Tionghoa",
-		"zh_Hans": "Tionghoa (Aksara Sederhana)",
-		"zh_Hant": "Tionghoa (Aksara Tradisional)",
+		"yue": "Kantonis",
+		"zgh": "Tamazight Maghribi Standard",
+		"zh": "Cina",
+		"zh_Hans": "Cina Ringkas",
+		"zh_Hant": "Cina Tradisional",
 		"zu": "Zulu",
 		"zun": "Zuni",
-		"zxx": "Tidak ada konten linguistik",
+		"zxx": "Tiada kandungan linguistik",
 		"zza": "Zaza"
 	},
 	"scripts": {
 		"Adlm": "Adlm",
-		"Afak": "Afaka",
-		"Aghb": "Albania Kaukasia",
+		"Aghb": "Aghb",
 		"Ahom": "Ahom",
 		"Arab": "Arab",
-		"Arab-alt-variant": "Arab Persia",
-		"Armi": "Aram Imperial",
+		"Arab-alt-variant": "Perso-Arab",
+		"Armi": "Armi",
 		"Armn": "Armenia",
-		"Avst": "Avesta",
+		"Avst": "Avst",
 		"Bali": "Bali",
-		"Bamu": "Bamum",
-		"Bass": "Bassa Vah",
-		"Batk": "Batak",
-		"Beng": "Bengali",
+		"Bamu": "Bamu",
+		"Bass": "Bass",
+		"Batk": "Batk",
+		"Beng": "Benggala",
 		"Bhks": "Bhks",
-		"Blis": "Blissymbol",
 		"Bopo": "Bopomofo",
-		"Brah": "Brahmi",
+		"Brah": "Brah",
 		"Brai": "Braille",
-		"Bugi": "Bugis",
-		"Buhd": "Buhid",
-		"Cakm": "Chakma",
-		"Cans": "Simbol Aborigin Kanada Kesatuan",
-		"Cari": "Karia",
+		"Bugi": "Bugi",
+		"Buhd": "Buhd",
+		"Cakm": "Cakm",
+		"Cans": "Cans",
+		"Cari": "Cari",
 		"Cham": "Cham",
-		"Cher": "Cherokee",
-		"Cirt": "Cirth",
-		"Copt": "Koptik",
-		"Cprt": "Siprus",
-		"Cyrl": "Sirilik",
-		"Cyrs": "Gereja Slavonia Sirilik Lama",
+		"Cher": "Cher",
+		"Copt": "Copt",
+		"Cprt": "Cprt",
+		"Cyrl": "Cyril",
 		"Deva": "Devanagari",
-		"Dsrt": "Deseret",
-		"Dupl": "Stenografi Duployan",
-		"Egyd": "Demotik Mesir",
-		"Egyh": "Hieratik Mesir",
-		"Egyp": "Hieroglip Mesir",
+		"Dsrt": "Dsrt",
+		"Dupl": "Dupl",
+		"Egyp": "Egyp",
 		"Elba": "Elba",
-		"Ethi": "Etiopia",
-		"Geok": "Georgian Khutsuri",
+		"Ethi": "Ethiopia",
 		"Geor": "Georgia",
-		"Glag": "Glagolitic",
-		"Goth": "Gothic",
-		"Gran": "Grantha",
-		"Grek": "Yunani",
+		"Glag": "Glag",
+		"Goth": "Goth",
+		"Gran": "Gran",
+		"Grek": "Greek",
 		"Gujr": "Gujarat",
 		"Guru": "Gurmukhi",
 		"Hanb": "Hanb",
 		"Hang": "Hangul",
 		"Hani": "Han",
-		"Hano": "Hanunoo",
-		"Hans": "Sederhana",
-		"Hans-alt-stand-alone": "Han Sederhana",
+		"Hano": "Hano",
+		"Hans": "Ringkas",
+		"Hans-alt-stand-alone": "Han Ringkas",
 		"Hant": "Tradisional",
 		"Hant-alt-stand-alone": "Han Tradisional",
 		"Hatr": "Hatr",
 		"Hebr": "Ibrani",
 		"Hira": "Hiragana",
-		"Hluw": "Hieroglif Anatolia",
-		"Hmng": "Pahawh Hmong",
-		"Hrkt": "Katakana atau Hiragana",
-		"Hung": "Hungaria Kuno",
-		"Inds": "Indus",
-		"Ital": "Italia Lama",
+		"Hluw": "Hluw",
+		"Hmng": "Hmng",
+		"Hrkt": "Ejaan sukuan Jepun",
+		"Hung": "Hung",
+		"Ital": "Ital",
 		"Jamo": "Jamo",
-		"Java": "Jawa",
-		"Jpan": "Jepang",
-		"Jurc": "Jurchen",
-		"Kali": "Kayah Li",
+		"Java": "Java",
+		"Jpan": "Jepun",
+		"Kali": "Kali",
 		"Kana": "Katakana",
-		"Khar": "Kharoshthi",
+		"Khar": "Khar",
 		"Khmr": "Khmer",
-		"Khoj": "Khojki",
+		"Khoj": "Khoj",
 		"Knda": "Kannada",
 		"Kore": "Korea",
-		"Kpel": "Kpelle",
-		"Kthi": "Kaithi",
-		"Lana": "Lanna",
-		"Laoo": "Laos",
-		"Latf": "Latin Fraktur",
-		"Latg": "Latin Gaelik",
+		"Kthi": "Kthi",
+		"Lana": "Lana",
+		"Laoo": "Lao",
 		"Latn": "Latin",
-		"Lepc": "Lepcha",
-		"Limb": "Limbu",
-		"Lina": "Linear A",
-		"Linb": "Linear B",
+		"Lepc": "Lepc",
+		"Limb": "Limb",
+		"Lina": "Lina",
+		"Linb": "Linb",
 		"Lisu": "Lisu",
-		"Loma": "Loma",
-		"Lyci": "Lycia",
-		"Lydi": "Lydia",
+		"Lyci": "Lyci",
+		"Lydi": "Lydi",
 		"Mahj": "Mahj",
-		"Mand": "Mandae",
-		"Mani": "Manikhei",
+		"Mand": "Mand",
+		"Mani": "Mani",
 		"Marc": "Marc",
-		"Maya": "Hieroglip Maya",
-		"Mend": "Mende",
-		"Merc": "Kursif Meroitik",
-		"Mero": "Meroitik",
+		"Mend": "Mend",
+		"Merc": "Merc",
+		"Mero": "Mero",
 		"Mlym": "Malayalam",
 		"Modi": "Modi",
 		"Mong": "Mongolia",
-		"Moon": "Moon",
-		"Mroo": "Mro",
-		"Mtei": "Meitei Mayek",
+		"Mroo": "Mroo",
+		"Mtei": "Mtei",
 		"Mult": "Mult",
-		"Mymr": "Myanmar",
-		"Narb": "Arab Utara Kuno",
-		"Nbat": "Nabataea",
+		"Mymr": "Myammar",
+		"Narb": "Narb",
+		"Nbat": "Nbat",
 		"Newa": "Newa",
-		"Nkgb": "Naxi Geba",
-		"Nkoo": "N’Ko",
-		"Nshu": "Nushu",
-		"Ogam": "Ogham",
-		"Olck": "Chiki Lama",
-		"Orkh": "Orkhon",
+		"Nkoo": "Nkoo",
+		"Ogam": "Ogam",
+		"Olck": "Olck",
+		"Orkh": "Orkh",
 		"Orya": "Oriya",
 		"Osge": "Osge",
-		"Osma": "Osmanya",
-		"Palm": "Palmira",
+		"Osma": "Osma",
+		"Palm": "Palm",
 		"Pauc": "Pauc",
-		"Perm": "Permik Kuno",
-		"Phag": "Phags-pa",
-		"Phli": "Pahlevi",
-		"Phlp": "Mazmur Pahlevi",
-		"Phlv": "Kitab Pahlevi",
-		"Phnx": "Phoenix",
-		"Plrd": "Fonetik Pollard",
-		"Prti": "Prasasti Parthia",
-		"Rjng": "Rejang",
-		"Roro": "Rongorongo",
-		"Runr": "Runik",
-		"Samr": "Samaria",
-		"Sara": "Sarati",
-		"Sarb": "Arab Selatan Kuno",
-		"Saur": "Saurashtra",
-		"Sgnw": "Tulisan Isyarat",
-		"Shaw": "Shavia",
-		"Shrd": "Sharada",
-		"Sidd": "Siddham",
-		"Sind": "Khudawadi",
+		"Perm": "Perm",
+		"Phag": "Phag",
+		"Phli": "Phli",
+		"Phlp": "Phlp",
+		"Phnx": "Phnx",
+		"Plrd": "Plrd",
+		"Prti": "Prti",
+		"Rjng": "Rjng",
+		"Runr": "Runr",
+		"Samr": "Samr",
+		"Sarb": "Sarb",
+		"Saur": "Saur",
+		"Sgnw": "Sgnw",
+		"Shaw": "Shaw",
+		"Shrd": "Shrd",
+		"Sidd": "Sidd",
+		"Sind": "Sind",
 		"Sinh": "Sinhala",
-		"Sora": "Sora Sompeng",
-		"Sund": "Sunda",
-		"Sylo": "Syloti Nagri",
-		"Syrc": "Suriah",
-		"Syre": "Suriah Estrangelo",
-		"Syrj": "Suriah Barat",
-		"Syrn": "Suriah Timur",
-		"Tagb": "Tagbanwa",
-		"Takr": "Takri",
-		"Tale": "Tai Le",
-		"Talu": "Tai Lue Baru",
+		"Sora": "Sora",
+		"Sund": "Sund",
+		"Sylo": "Sylo",
+		"Syrc": "Syrc",
+		"Tagb": "Tagb",
+		"Takr": "Takr",
+		"Tale": "Tale",
+		"Talu": "Talu",
 		"Taml": "Tamil",
-		"Tang": "Tangut",
-		"Tavt": "Tai Viet",
+		"Tang": "Tang",
+		"Tavt": "Tavt",
 		"Telu": "Telugu",
-		"Teng": "Tenghwar",
-		"Tfng": "Tifinagh",
-		"Tglg": "Tagalog",
+		"Tfng": "Tfng",
+		"Tglg": "Tglg",
 		"Thaa": "Thaana",
 		"Thai": "Thai",
 		"Tibt": "Tibet",
-		"Tirh": "Tirhuta",
-		"Ugar": "Ugaritik",
-		"Vaii": "Vai",
-		"Visp": "Ucapan Terlihat",
-		"Wara": "Varang Kshiti",
-		"Wole": "Woleai",
-		"Xpeo": "Persia Kuno",
-		"Xsux": "Cuneiform Sumero-Akkadia",
-		"Yiii": "Yi",
-		"Zinh": "Warisan",
-		"Zmth": "Notasi Matematika",
+		"Tirh": "Tirh",
+		"Ugar": "Ugar",
+		"Vaii": "Vaii",
+		"Wara": "Wara",
+		"Xpeo": "Xpeo",
+		"Xsux": "Xsux",
+		"Yiii": "Yiii",
+		"Zinh": "Zinh",
+		"Zmth": "Tatatanda matematik",
 		"Zsye": "Emoji",
 		"Zsym": "Simbol",
-		"Zxxx": "Tidak Tertulis",
-		"Zyyy": "Umum",
-		"Zzzz": "Skrip Tak Dikenal"
+		"Zxxx": "Tidak ditulis",
+		"Zyyy": "Lazim",
+		"Zzzz": "Tulisan Tidak Diketahui"
 	},
 	"territories": {
 		"142": "Asia",
 		"143": "Asia Tengah",
-		"145": "Asia Bagian Barat",
-		"150": "Eropa",
-		"151": "Eropa Bagian Timur",
-		"154": "Eropa Bagian Utara",
-		"155": "Eropa Bagian Barat",
+		"145": "Asia Barat",
+		"150": "Eropah",
+		"151": "Eropah Timur",
+		"154": "Eropah Utara",
+		"155": "Eropah Barat",
 		"419": "Amerika Latin",
 		"001": "Dunia",
 		"002": "Afrika",
 		"003": "Amerika Utara",
 		"005": "Amerika Selatan",
-		"009": "Oseania",
-		"011": "Afrika Bagian Barat",
+		"009": "Oceania",
+		"011": "Afrika Barat",
 		"013": "Amerika Tengah",
-		"014": "Afrika Bagian Timur",
-		"015": "Afrika Bagian Utara",
-		"017": "Afrika Bagian Tengah",
-		"018": "Afrika Bagian Selatan",
+		"014": "Afrika Timur",
+		"015": "Afrika Utara",
+		"017": "Afrika Tengah",
+		"018": "Selatan Afrika",
 		"019": "Amerika",
-		"021": "Amerika Bagian Utara",
-		"029": "Kepulauan Karibia",
-		"030": "Asia Bagian Timur",
-		"034": "Asia Bagian Selatan",
+		"021": "Utara Amerika",
+		"029": "Caribbean",
+		"030": "Asia Timur",
+		"034": "Asia Selatan",
 		"035": "Asia Tenggara",
-		"039": "Eropa Bagian Selatan",
+		"039": "Eropah Selatan",
 		"053": "Australasia",
 		"054": "Melanesia",
 		"057": "Wilayah Mikronesia",
 		"061": "Polinesia",
 		"AC": "Pulau Ascension",
 		"AD": "Andorra",
-		"AE": "Uni Emirat Arab",
-		"AF": "Afganistan",
+		"AE": "Emiriah Arab Bersatu",
+		"AF": "Afghanistan",
 		"AG": "Antigua dan Barbuda",
 		"AI": "Anguilla",
 		"AL": "Albania",
@@ -795,7 +653,7 @@
 		"BA": "Bosnia dan Herzegovina",
 		"BB": "Barbados",
 		"BD": "Bangladesh",
-		"BE": "Belgia",
+		"BE": "Belgium",
 		"BF": "Burkina Faso",
 		"BG": "Bulgaria",
 		"BH": "Bahrain",
@@ -805,9 +663,9 @@
 		"BM": "Bermuda",
 		"BN": "Brunei",
 		"BO": "Bolivia",
-		"BQ": "Karibia Belanda",
-		"BR": "Brasil",
-		"BS": "Bahama",
+		"BQ": "Belanda Caribbean",
+		"BR": "Brazil",
+		"BS": "Bahamas",
 		"BT": "Bhutan",
 		"BV": "Pulau Bouvet",
 		"BW": "Botswana",
@@ -815,173 +673,173 @@
 		"BZ": "Belize",
 		"CA": "Kanada",
 		"CC": "Kepulauan Cocos (Keeling)",
-		"CD": "Kongo - Kinshasa",
-		"CD-alt-variant": "Kongo (RDK)",
+		"CD": "Congo - Kinshasa",
+		"CD-alt-variant": "Congo (DRC)",
 		"CF": "Republik Afrika Tengah",
-		"CG": "Kongo - Brazzaville",
-		"CG-alt-variant": "Kongo (Republik)",
-		"CH": "Swiss",
+		"CG": "Congo - Brazzaville",
+		"CG-alt-variant": "Congo (Republik)",
+		"CH": "Switzerland",
 		"CI": "Cote d’Ivoire",
 		"CI-alt-variant": "Ivory Coast",
 		"CK": "Kepulauan Cook",
-		"CL": "Cile",
-		"CM": "Kamerun",
-		"CN": "Tiongkok",
-		"CO": "Kolombia",
+		"CL": "Chile",
+		"CM": "Cameroon",
+		"CN": "China",
+		"CO": "Colombia",
 		"CP": "Pulau Clipperton",
-		"CR": "Kosta Rika",
-		"CU": "Kuba",
-		"CV": "Tanjung Verde",
-		"CW": "Curaçao",
-		"CX": "Pulau Christmas",
-		"CY": "Siprus",
-		"CZ": "Cheska",
-		"CZ-alt-variant": "Republik Cheska",
+		"CR": "Costa Rica",
+		"CU": "Cuba",
+		"CV": "Cape Verde",
+		"CW": "Curacao",
+		"CX": "Pulau Krismas",
+		"CY": "Cyprus",
+		"CZ": "Czechia",
+		"CZ-alt-variant": "Republik Czech",
 		"DE": "Jerman",
 		"DG": "Diego Garcia",
-		"DJ": "Jibuti",
+		"DJ": "Djibouti",
 		"DK": "Denmark",
-		"DM": "Dominika",
-		"DO": "Republik Dominika",
-		"DZ": "Aljazair",
+		"DM": "Dominica",
+		"DO": "Republik Dominica",
+		"DZ": "Algeria",
 		"EA": "Ceuta dan Melilla",
-		"EC": "Ekuador",
+		"EC": "Ecuador",
 		"EE": "Estonia",
 		"EG": "Mesir",
 		"EH": "Sahara Barat",
 		"ER": "Eritrea",
-		"ES": "Spanyol",
-		"ET": "Etiopia",
-		"EU": "Uni Eropa",
+		"ES": "Sepanyol",
+		"ET": "Ethiopia",
+		"EU": "Kesatuan Eropah",
 		"EZ": "EZ",
-		"FI": "Finlandia",
+		"FI": "Finland",
 		"FJ": "Fiji",
-		"FK": "Kepulauan Malvinas",
-		"FK-alt-variant": "Kepulauan Malvinas (Falkland)",
-		"FM": "Mikronesia",
+		"FK": "Kepulauan Falkland",
+		"FK-alt-variant": "Kepulauan Falkland (Islas Malvinas)",
+		"FM": "Micronesia",
 		"FO": "Kepulauan Faroe",
-		"FR": "Prancis",
+		"FR": "Perancis",
 		"GA": "Gabon",
-		"GB": "Inggris Raya",
+		"GB": "United Kingdom",
 		"GB-alt-short": "UK",
 		"GD": "Grenada",
 		"GE": "Georgia",
-		"GF": "Guyana Prancis",
+		"GF": "Guiana Perancis",
 		"GG": "Guernsey",
 		"GH": "Ghana",
 		"GI": "Gibraltar",
-		"GL": "Grinlandia",
+		"GL": "Greenland",
 		"GM": "Gambia",
 		"GN": "Guinea",
 		"GP": "Guadeloupe",
-		"GQ": "Guinea Ekuatorial",
-		"GR": "Yunani",
-		"GS": "Georgia Selatan & Kep. Sandwich Selatan",
+		"GQ": "Guinea Khatulistiwa",
+		"GR": "Greece",
+		"GS": "Kepulauan Georgia Selatan & Sandwich Selatan",
 		"GT": "Guatemala",
 		"GU": "Guam",
-		"GW": "Guinea-Bissau",
+		"GW": "Guinea Bissau",
 		"GY": "Guyana",
-		"HK": "Hong Kong SAR Tiongkok",
+		"HK": "Hong Kong SAR China",
 		"HK-alt-short": "Hong Kong",
-		"HM": "Pulau Heard dan Kepulauan McDonald",
+		"HM": "Kepulauan Heard & McDonald",
 		"HN": "Honduras",
-		"HR": "Kroasia",
+		"HR": "Croatia",
 		"HT": "Haiti",
-		"HU": "Hungaria",
+		"HU": "Hungary",
 		"IC": "Kepulauan Canary",
 		"ID": "Indonesia",
-		"IE": "Irlandia",
+		"IE": "Ireland",
 		"IL": "Israel",
-		"IM": "Pulau Man",
+		"IM": "Isle of Man",
 		"IN": "India",
-		"IO": "Wilayah Inggris di Samudra Hindia",
-		"IQ": "Irak",
+		"IO": "Wilayah Lautan Hindi British",
+		"IQ": "Iraq",
 		"IR": "Iran",
-		"IS": "Islandia",
-		"IT": "Italia",
+		"IS": "Iceland",
+		"IT": "Itali",
 		"JE": "Jersey",
-		"JM": "Jamaika",
-		"JO": "Yordania",
-		"JP": "Jepang",
+		"JM": "Jamaica",
+		"JO": "Jordan",
+		"JP": "Jepun",
 		"KE": "Kenya",
-		"KG": "Kirgistan",
-		"KH": "Kamboja",
+		"KG": "Kyrgyzstan",
+		"KH": "Kemboja",
 		"KI": "Kiribati",
-		"KM": "Komoro",
+		"KM": "Comoros",
 		"KN": "Saint Kitts dan Nevis",
 		"KP": "Korea Utara",
 		"KR": "Korea Selatan",
 		"KW": "Kuwait",
 		"KY": "Kepulauan Cayman",
-		"KZ": "Kazakstan",
+		"KZ": "Kazakhstan",
 		"LA": "Laos",
-		"LB": "Lebanon",
+		"LB": "Lubnan",
 		"LC": "Saint Lucia",
 		"LI": "Liechtenstein",
 		"LK": "Sri Lanka",
 		"LR": "Liberia",
 		"LS": "Lesotho",
-		"LT": "Lituania",
-		"LU": "Luksemburg",
+		"LT": "Lithuania",
+		"LU": "Luxembourg",
 		"LV": "Latvia",
-		"LY": "Libia",
-		"MA": "Maroko",
-		"MC": "Monako",
+		"LY": "Libya",
+		"MA": "Maghribi",
+		"MC": "Monaco",
 		"MD": "Moldova",
 		"ME": "Montenegro",
 		"MF": "Saint Martin",
 		"MG": "Madagaskar",
 		"MH": "Kepulauan Marshall",
-		"MK": "Makedonia",
-		"MK-alt-variant": "Makedonia (BRY)",
+		"MK": "Macedonia",
+		"MK-alt-variant": "Macedonia (FYROM)",
 		"ML": "Mali",
 		"MM": "Myanmar (Burma)",
 		"MN": "Mongolia",
-		"MO": "Makau SAR Tiongkok",
-		"MO-alt-short": "Makau",
+		"MO": "Macau SAR China",
+		"MO-alt-short": "Macau",
 		"MP": "Kepulauan Mariana Utara",
-		"MQ": "Martinik",
+		"MQ": "Martinique",
 		"MR": "Mauritania",
 		"MS": "Montserrat",
 		"MT": "Malta",
 		"MU": "Mauritius",
-		"MV": "Maladewa",
+		"MV": "Maldives",
 		"MW": "Malawi",
-		"MX": "Meksiko",
+		"MX": "Mexico",
 		"MY": "Malaysia",
-		"MZ": "Mozambik",
+		"MZ": "Mozambique",
 		"NA": "Namibia",
-		"NC": "Kaledonia Baru",
+		"NC": "New Caledonia",
 		"NE": "Niger",
-		"NF": "Kepulauan Norfolk",
+		"NF": "Pulau Norfolk",
 		"NG": "Nigeria",
-		"NI": "Nikaragua",
+		"NI": "Nicaragua",
 		"NL": "Belanda",
-		"NO": "Norwegia",
+		"NO": "Norway",
 		"NP": "Nepal",
 		"NR": "Nauru",
 		"NU": "Niue",
-		"NZ": "Selandia Baru",
+		"NZ": "New Zealand",
 		"OM": "Oman",
 		"PA": "Panama",
 		"PE": "Peru",
-		"PF": "Polinesia Prancis",
-		"PG": "Papua Nugini",
+		"PF": "Polinesia Perancis",
+		"PG": "Papua New Guinea",
 		"PH": "Filipina",
 		"PK": "Pakistan",
-		"PL": "Polandia",
+		"PL": "Poland",
 		"PM": "Saint Pierre dan Miquelon",
 		"PN": "Kepulauan Pitcairn",
-		"PR": "Puerto Riko",
-		"PS": "Wilayah Palestina",
-		"PS-alt-short": "Palestina",
+		"PR": "Puerto Rico",
+		"PS": "Wilayah Palestin",
+		"PS-alt-short": "Palestin",
 		"PT": "Portugal",
 		"PW": "Palau",
 		"PY": "Paraguay",
 		"QA": "Qatar",
-		"QO": "Oseania Luar",
-		"RE": "Réunion",
-		"RO": "Rumania",
+		"QO": "Oceania Terpencil",
+		"RE": "Reunion",
+		"RO": "Romania",
 		"RS": "Serbia",
 		"RU": "Rusia",
 		"RW": "Rwanda",
@@ -989,34 +847,34 @@
 		"SB": "Kepulauan Solomon",
 		"SC": "Seychelles",
 		"SD": "Sudan",
-		"SE": "Swedia",
+		"SE": "Sweden",
 		"SG": "Singapura",
 		"SH": "Saint Helena",
 		"SI": "Slovenia",
-		"SJ": "Kepulauan Svalbard dan Jan Mayen",
+		"SJ": "Svalbard dan Jan Mayen",
 		"SK": "Slovakia",
 		"SL": "Sierra Leone",
 		"SM": "San Marino",
 		"SN": "Senegal",
 		"SO": "Somalia",
-		"SR": "Suriname",
+		"SR": "Surinam",
 		"SS": "Sudan Selatan",
 		"ST": "Sao Tome dan Principe",
 		"SV": "El Salvador",
 		"SX": "Sint Maarten",
-		"SY": "Suriah",
+		"SY": "Syria",
 		"SZ": "Swaziland",
 		"TA": "Tristan da Cunha",
 		"TC": "Kepulauan Turks dan Caicos",
-		"TD": "Cad",
-		"TF": "Wilayah Kutub Selatan Prancis",
+		"TD": "Chad",
+		"TF": "Wilayah Selatan Perancis",
 		"TG": "Togo",
 		"TH": "Thailand",
 		"TJ": "Tajikistan",
 		"TK": "Tokelau",
-		"TL": "Timor Leste",
+		"TL": "Timor-Leste",
 		"TL-alt-variant": "Timor Timur",
-		"TM": "Turkimenistan",
+		"TM": "Turkmenistan",
 		"TN": "Tunisia",
 		"TO": "Tonga",
 		"TR": "Turki",
@@ -1024,23 +882,23 @@
 		"TV": "Tuvalu",
 		"TW": "Taiwan",
 		"TZ": "Tanzania",
-		"UA": "Ukraina",
+		"UA": "Ukraine",
 		"UG": "Uganda",
-		"UM": "Kepulauan Terluar A.S.",
-		"UN": "Perserikatan Bangsa-Bangsa",
+		"UM": "Kepulauan Terpencil A.S.",
+		"UN": "Bangsa-bangsa Bersatu",
 		"UN-alt-short": "PBB",
-		"US": "Amerika Serikat",
-		"US-alt-short": "A.S.",
+		"US": "Amerika Syarikat",
+		"US-alt-short": "A.S",
 		"UY": "Uruguay",
 		"UZ": "Uzbekistan",
-		"VA": "Vatikan",
+		"VA": "Kota Vatican",
 		"VC": "Saint Vincent dan Grenadines",
 		"VE": "Venezuela",
-		"VG": "Kepulauan Virgin Inggris",
+		"VG": "Kepulauan Virgin British",
 		"VI": "Kepulauan Virgin A.S.",
 		"VN": "Vietnam",
 		"VU": "Vanuatu",
-		"WF": "Kepulauan Wallis dan Futuna",
+		"WF": "Wallis dan Futuna",
 		"WS": "Samoa",
 		"XK": "Kosovo",
 		"YE": "Yaman",
@@ -1048,21 +906,21 @@
 		"ZA": "Afrika Selatan",
 		"ZM": "Zambia",
 		"ZW": "Zimbabwe",
-		"ZZ": "Wilayah Tidak Dikenal"
+		"ZZ": "Wilayah Tidak Diketahui"
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
 		"dateFormats": {
-			"full": "EEEE, dd MMMM y",
+			"full": "EEEE, d MMMM y",
 			"long": "d MMMM y",
 			"medium": "d MMM y",
-			"short": "dd/MM/yy"
+			"short": "d/MM/yy"
 		},
 		"timeFormats": {
-			"full": "HH.mm.ss zzzz",
-			"long": "HH.mm.ss z",
-			"medium": "HH.mm.ss",
-			"short": "HH.mm"
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1072,46 +930,46 @@
 			"availableFormats": {
 				"d": "d",
 				"E": "ccc",
-				"Ed": "E, d",
-				"Ehm": "E h.mm a",
-				"EHm": "E HH.mm",
-				"Ehms": "E h.mm.ss a",
-				"EHms": "E HH.mm.ss",
-				"Gy": "y G",
-				"GyMMM": "MMM y G",
-				"GyMMMd": "d MMM y G",
-				"GyMMMEd": "E, d MMM y G",
+				"Ed": "d E",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "G y",
+				"GyMMM": "G y MMM",
+				"GyMMMd": "G y MMM d",
+				"GyMMMEd": "G y MMM d, E",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h.mm a",
-				"Hm": "HH.mm",
-				"hms": "h.mm.ss a",
-				"Hms": "HH.mm.ss",
-				"hmsv": "h.mm.ss. a v",
-				"Hmsv": "HH.mm.ss v",
-				"hmv": "h.mm a v",
-				"Hmv": "HH.mm v",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
 				"M": "L",
-				"Md": "d/M",
-				"MEd": "E, d/M",
+				"Md": "d-M",
+				"MEd": "E, d-M",
+				"MMdd": "dd/MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
 				"MMMMd": "d MMMM",
-				"MMMMEd": "E, d MMMM",
-				"ms": "mm.ss",
+				"ms": "mm:ss",
 				"y": "y",
-				"yM": "M/y",
+				"yM": "M-y",
 				"yMd": "d/M/y",
 				"yMEd": "E, d/M/y",
 				"yMMM": "MMM y",
 				"yMMMd": "d MMM y",
 				"yMMMEd": "E, d MMM y",
-				"yMMMM": "MMMM y",
+				"yMMMM": "y MMMM",
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
-				"MMMMW": "'minggu' 'ke'-W MMM",
-				"yw": "'minggu' 'ke'-w y"
+				"MMMMW": "'week' W 'of' MMM",
+				"yw": "'week' w 'of' y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1139,22 +997,22 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h.mm a – h.mm a",
-					"h": "h.mm–h.mm a",
-					"m": "h.mm–h.mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH.mm–HH.mm",
-					"m": "HH.mm–HH.mm"
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h.mm a – h.mm a v",
-					"h": "h.mm–h.mm a v",
-					"m": "h.mm–h.mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH.mm–HH.mm v",
-					"m": "HH.mm–HH.mm v"
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
 					"a": "h a – h a v",
@@ -1186,7 +1044,7 @@
 					"M": "E, d MMM – E, d MMM"
 				},
 				"y": {
-					"y": "y – y"
+					"y": "y–y"
 				},
 				"yM": {
 					"M": "M/y – M/y",
@@ -1208,7 +1066,7 @@
 				},
 				"yMMMd": {
 					"d": "d–d MMM y",
-					"M": "d MMM – d MMM y",
+					"M": "d MMM – d MMM, y",
 					"y": "d MMM y – d MMM y"
 				},
 				"yMMMEd": {
@@ -1227,16 +1085,16 @@
 				"abbreviated": [
 					"Jan",
 					"Feb",
-					"Mar",
+					"Mac",
 					"Apr",
 					"Mei",
 					"Jun",
 					"Jul",
-					"Agt",
+					"Ogo",
 					"Sep",
 					"Okt",
 					"Nov",
-					"Des"
+					"Dis"
 				],
 				"narrow": [
 					"J",
@@ -1246,7 +1104,7 @@
 					"M",
 					"J",
 					"J",
-					"A",
+					"O",
 					"S",
 					"O",
 					"N",
@@ -1255,32 +1113,32 @@
 				"wide": [
 					"Januari",
 					"Februari",
-					"Maret",
+					"Mac",
 					"April",
 					"Mei",
-					"Juni",
-					"Juli",
-					"Agustus",
+					"Jun",
+					"Julai",
+					"Ogos",
 					"September",
 					"Oktober",
 					"November",
-					"Desember"
+					"Disember"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
 					"Jan",
 					"Feb",
-					"Mar",
+					"Mac",
 					"Apr",
 					"Mei",
 					"Jun",
 					"Jul",
-					"Agt",
+					"Ogo",
 					"Sep",
 					"Okt",
 					"Nov",
-					"Des"
+					"Dis"
 				],
 				"narrow": [
 					"J",
@@ -1290,7 +1148,7 @@
 					"M",
 					"J",
 					"J",
-					"A",
+					"O",
 					"S",
 					"O",
 					"N",
@@ -1299,33 +1157,33 @@
 				"wide": [
 					"Januari",
 					"Februari",
-					"Maret",
+					"Mac",
 					"April",
 					"Mei",
-					"Juni",
-					"Juli",
-					"Agustus",
+					"Jun",
+					"Julai",
+					"Ogos",
 					"September",
 					"Oktober",
 					"November",
-					"Desember"
+					"Disember"
 				]
 			}
 		},
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Min",
-					"Sen",
+					"Ahd",
+					"Isn",
 					"Sel",
 					"Rab",
-					"Kam",
+					"Kha",
 					"Jum",
 					"Sab"
 				],
 				"narrow": [
-					"M",
-					"S",
+					"A",
+					"I",
 					"S",
 					"R",
 					"K",
@@ -1333,37 +1191,37 @@
 					"S"
 				],
 				"short": [
-					"Min",
-					"Sen",
-					"Sel",
-					"Rab",
-					"Kam",
-					"Jum",
-					"Sab"
+					"Ah",
+					"Is",
+					"Se",
+					"Ra",
+					"Kh",
+					"Ju",
+					"Sa"
 				],
 				"wide": [
-					"Minggu",
-					"Senin",
+					"Ahad",
+					"Isnin",
 					"Selasa",
 					"Rabu",
-					"Kamis",
-					"Jumat",
+					"Khamis",
+					"Jumaat",
 					"Sabtu"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Min",
-					"Sen",
+					"Ahd",
+					"Isn",
 					"Sel",
 					"Rab",
-					"Kam",
+					"Kha",
 					"Jum",
 					"Sab"
 				],
 				"narrow": [
-					"M",
-					"S",
+					"A",
+					"I",
 					"S",
 					"R",
 					"K",
@@ -1371,21 +1229,21 @@
 					"S"
 				],
 				"short": [
-					"Min",
-					"Sen",
-					"Sel",
-					"Rab",
-					"Kam",
-					"Jum",
-					"Sab"
+					"Ah",
+					"Is",
+					"Se",
+					"Ra",
+					"Kh",
+					"Ju",
+					"Sa"
 				],
 				"wide": [
-					"Minggu",
-					"Senin",
+					"Ahad",
+					"Isnin",
 					"Selasa",
 					"Rabu",
-					"Kamis",
-					"Jumat",
+					"Khamis",
+					"Jumaat",
 					"Sabtu"
 				]
 			}
@@ -1393,10 +1251,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"S1",
+					"S2",
+					"S3",
+					"S4"
 				],
 				"narrow": [
 					"1",
@@ -1405,18 +1263,18 @@
 					"4"
 				],
 				"wide": [
-					"Kuartal ke-1",
-					"Kuartal ke-2",
-					"Kuartal ke-3",
-					"Kuartal ke-4"
+					"Suku pertama",
+					"Suku Ke-2",
+					"Suku Ke-3",
+					"Suku Ke-4"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"S1",
+					"S2",
+					"S3",
+					"S4"
 				],
 				"narrow": [
 					"1",
@@ -1425,68 +1283,68 @@
 					"4"
 				],
 				"wide": [
-					"Kuartal ke-1",
-					"Kuartal ke-2",
-					"Kuartal ke-3",
-					"Kuartal ke-4"
+					"Suku pertama",
+					"Suku Ke-2",
+					"Suku Ke-3",
+					"Suku Ke-4"
 				]
 			}
 		},
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"a",
+					"p"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"a",
+					"p"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				]
 			}
 		},
 		"era-wide": {
-			"0": "Sebelum Masehi",
-			"1": "Masehi"
+			"0": "S.M.",
+			"1": "TM"
 		},
 		"era-abbreviated": {
-			"0": "SM",
-			"1": "M"
+			"0": "S.M.",
+			"1": "TM"
 		},
 		"era-narrow": {
-			"0": "SM",
-			"1": "M"
+			"0": "S.M.",
+			"1": "TM"
 		}
 	},
 	"ca-islamic": {
 		"dateFormats": {
-			"full": "EEEE, dd MMMM y G",
+			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
-			"medium": "d MMM y G",
-			"short": "d/M/y GGGGG"
+			"medium": "dd/MM/y G",
+			"short": "d/MM/y GGGGG"
 		},
 		"timeFormats": {
-			"full": "HH.mm.ss zzzz",
-			"long": "HH.mm.ss z",
-			"medium": "HH.mm.ss",
-			"short": "HH.mm"
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1507,10 +1365,10 @@
 				"GyMMMEd": "E, d MMM y G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h.mm a",
-				"Hm": "HH.mm",
-				"hms": "h.mm.ss a",
-				"Hms": "HH.mm.ss",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "d/M",
 				"MEd": "E, d/M",
@@ -1518,8 +1376,7 @@
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
 				"MMMMd": "d MMMM",
-				"MMMMEd": "E, d MMMM",
-				"ms": "mm.ss",
+				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
 				"yyyyM": "M/y G",
@@ -1558,22 +1415,22 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h.mm a – h.mm a",
-					"h": "h.mm–h.mm a",
-					"m": "h.mm–h.mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH.mm–HH.mm",
-					"m": "HH.mm–HH.mm"
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h.mm a – h.mm a v",
-					"h": "h.mm–h.mm a v",
-					"m": "h.mm–h.mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH.mm–HH.mm v",
-					"m": "HH.mm–HH.mm v"
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
 					"a": "h a – h a v",
@@ -1608,18 +1465,18 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "M/y – M/y GGGGG",
-					"y": "M/y – M/y GGGGG"
+					"M": "M/y – M/y G",
+					"y": "M/y – M/y G"
 				},
 				"yMd": {
-					"d": "d/M/y – d/M/y GGGGG",
-					"M": "d/M/y – d/M/y GGGGG",
-					"y": "d/M/y – d/M/y GGGGG"
+					"d": "d/M/y – d/M/y G",
+					"M": "d/M/y – d/M/y G",
+					"y": "d/M/y – d/M/y G"
 				},
 				"yMEd": {
-					"d": "E, d/M/y – E, d/M/y GGGGG",
-					"M": "E, d/M/y – E, d/M/y GGGGG",
-					"y": "E, d/M/y – E, d/M/y GGGGG"
+					"d": "E, d/M/y – E, d/M/y G",
+					"M": "E, d/M/y – E, d/M/y G",
+					"y": "E, d/M/y – E, d/M/y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
@@ -1627,16 +1484,16 @@
 				},
 				"yMMMd": {
 					"d": "d–d MMM y G",
-					"M": "d MMM – d MMM y G",
+					"M": "d MMM – d MMM, y G",
 					"y": "d MMM y – d MMM y G"
 				},
 				"yMMMEd": {
-					"d": "E, d MMM – E, d MMM y G",
-					"M": "E, d MMM – E, d MMM y G",
+					"d": "E, d MMM – E, d MMM, y G",
+					"M": "E, d MMM – E, d MMM, y G",
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"yMMMM": {
-					"M": "MMMM – MMMM y G",
+					"M": "MMMM–MMMM y G",
 					"y": "MMMM y – MMMM y G"
 				}
 			}
@@ -1653,7 +1510,7 @@
 					"Raj.",
 					"Sha.",
 					"Ram.",
-					"Syaw.",
+					"Shaw.",
 					"Dhuʻl-Q.",
 					"Dhuʻl-H."
 				],
@@ -1679,9 +1536,9 @@
 					"Jumada I",
 					"Jumada II",
 					"Rajab",
-					"Sya’ban",
-					"Ramadhan",
-					"Syawal",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
 					"Dhuʻl-Qiʻdah",
 					"Dhuʻl-Hijjah"
 				]
@@ -1697,7 +1554,7 @@
 					"Raj.",
 					"Sha.",
 					"Ram.",
-					"Syaw.",
+					"Shaw.",
 					"Dhuʻl-Q.",
 					"Dhuʻl-H."
 				],
@@ -1723,9 +1580,9 @@
 					"Jumada I",
 					"Jumada II",
 					"Rajab",
-					"Sya’ban",
-					"Ramadhan",
-					"Syawal",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
 					"Dhuʻl-Qiʻdah",
 					"Dhuʻl-Hijjah"
 				]
@@ -1734,17 +1591,17 @@
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Min",
-					"Sen",
+					"Ahd",
+					"Isn",
 					"Sel",
 					"Rab",
-					"Kam",
+					"Kha",
 					"Jum",
 					"Sab"
 				],
 				"narrow": [
-					"M",
-					"S",
+					"A",
+					"I",
 					"S",
 					"R",
 					"K",
@@ -1752,37 +1609,37 @@
 					"S"
 				],
 				"short": [
-					"Min",
-					"Sen",
-					"Sel",
-					"Rab",
-					"Kam",
-					"Jum",
-					"Sab"
+					"Ah",
+					"Is",
+					"Se",
+					"Ra",
+					"Kh",
+					"Ju",
+					"Sa"
 				],
 				"wide": [
-					"Minggu",
-					"Senin",
+					"Ahad",
+					"Isnin",
 					"Selasa",
 					"Rabu",
-					"Kamis",
-					"Jumat",
+					"Khamis",
+					"Jumaat",
 					"Sabtu"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Min",
-					"Sen",
+					"Ahd",
+					"Isn",
 					"Sel",
 					"Rab",
-					"Kam",
+					"Kha",
 					"Jum",
 					"Sab"
 				],
 				"narrow": [
-					"M",
-					"S",
+					"A",
+					"I",
 					"S",
 					"R",
 					"K",
@@ -1790,21 +1647,21 @@
 					"S"
 				],
 				"short": [
-					"Min",
-					"Sen",
-					"Sel",
-					"Rab",
-					"Kam",
-					"Jum",
-					"Sab"
+					"Ah",
+					"Is",
+					"Se",
+					"Ra",
+					"Kh",
+					"Ju",
+					"Sa"
 				],
 				"wide": [
-					"Minggu",
-					"Senin",
+					"Ahad",
+					"Isnin",
 					"Selasa",
 					"Rabu",
-					"Kamis",
-					"Jumat",
+					"Khamis",
+					"Jumaat",
 					"Sabtu"
 				]
 			}
@@ -1812,10 +1669,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"S1",
+					"S2",
+					"S3",
+					"S4"
 				],
 				"narrow": [
 					"1",
@@ -1824,18 +1681,18 @@
 					"4"
 				],
 				"wide": [
-					"Kuartal ke-1",
-					"Kuartal ke-2",
-					"Kuartal ke-3",
-					"Kuartal ke-4"
+					"Suku pertama",
+					"Suku Ke-2",
+					"Suku Ke-3",
+					"Suku Ke-4"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"S1",
+					"S2",
+					"S3",
+					"S4"
 				],
 				"narrow": [
 					"1",
@@ -1844,40 +1701,40 @@
 					"4"
 				],
 				"wide": [
-					"Kuartal ke-1",
-					"Kuartal ke-2",
-					"Kuartal ke-3",
-					"Kuartal ke-4"
+					"Suku pertama",
+					"Suku Ke-2",
+					"Suku Ke-3",
+					"Suku Ke-4"
 				]
 			}
 		},
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"a",
+					"p"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"a",
+					"p"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				]
 			}
 		},
@@ -1893,16 +1750,16 @@
 	},
 	"ca-japanese": {
 		"dateFormats": {
-			"full": "EEEE, dd MMMM y G",
+			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
-			"medium": "d MMM y G",
-			"short": "d/M/y GGGGG"
+			"medium": "dd/MM/y G",
+			"short": "d/MM/y GGGGG"
 		},
 		"timeFormats": {
-			"full": "HH.mm.ss zzzz",
-			"long": "HH.mm.ss z",
-			"medium": "HH.mm.ss",
-			"short": "HH.mm"
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1923,10 +1780,10 @@
 				"GyMMMEd": "E, d MMM y G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h.mm a",
-				"Hm": "HH.mm",
-				"hms": "h.mm.ss a",
-				"Hms": "HH.mm.ss",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "d/M",
 				"MEd": "E, d/M",
@@ -1934,9 +1791,8 @@
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
 				"MMMMd": "d MMMM",
-				"MMMMEd": "E, d MMMM",
-				"ms": "mm.ss",
-				"y": "G y",
+				"ms": "mm:ss",
+				"y": "y G",
 				"yyyy": "y G",
 				"yyyyM": "M/y G",
 				"yyyyMd": "d/M/y G",
@@ -1974,22 +1830,22 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h.mm a – h.mm a",
-					"h": "h.mm–h.mm a",
-					"m": "h.mm–h.mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH.mm–HH.mm",
-					"m": "HH.mm–HH.mm"
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h.mm a – h.mm a v",
-					"h": "h.mm–h.mm a v",
-					"m": "h.mm–h.mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH.mm–HH.mm v",
-					"m": "HH.mm–HH.mm v"
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
 					"a": "h a – h a v",
@@ -2024,18 +1880,18 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "M/y – M/y GGGGG",
-					"y": "M/y – M/y GGGGG"
+					"M": "M/y – M/y G",
+					"y": "M/y – M/y G"
 				},
 				"yMd": {
-					"d": "d/M/y – d/M/y GGGGG",
-					"M": "d/M/y – d/M/y GGGGG",
-					"y": "d/M/y – d/M/y GGGGG"
+					"d": "d/M/y – d/M/y G",
+					"M": "d/M/y – d/M/y G",
+					"y": "d/M/y – d/M/y G"
 				},
 				"yMEd": {
-					"d": "E, d/M/y – E, d/M/y GGGGG",
-					"M": "E, d/M/y – E, d/M/y GGGGG",
-					"y": "E, d/M/y – E, d/M/y GGGGG"
+					"d": "E, d/M/y – E, d/M/y G",
+					"M": "E, d/M/y – E, d/M/y G",
+					"y": "E, d/M/y – E, d/M/y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
@@ -2043,16 +1899,16 @@
 				},
 				"yMMMd": {
 					"d": "d–d MMM y G",
-					"M": "d MMM – d MMM y G",
+					"M": "d MMM – d MMM, y G",
 					"y": "d MMM y – d MMM y G"
 				},
 				"yMMMEd": {
-					"d": "E, d MMM – E, d MMM y G",
-					"M": "E, d MMM – E, d MMM y G",
+					"d": "E, d MMM – E, d MMM, y G",
+					"M": "E, d MMM – E, d MMM, y G",
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"yMMMM": {
-					"M": "MMMM – MMMM y G",
+					"M": "MMMM–MMMM y G",
 					"y": "MMMM y – MMMM y G"
 				}
 			}
@@ -2062,16 +1918,16 @@
 				"abbreviated": [
 					"Jan",
 					"Feb",
-					"Mar",
+					"Mac",
 					"Apr",
 					"Mei",
 					"Jun",
 					"Jul",
-					"Agt",
+					"Ogo",
 					"Sep",
 					"Okt",
 					"Nov",
-					"Des"
+					"Dis"
 				],
 				"narrow": [
 					"J",
@@ -2081,7 +1937,7 @@
 					"M",
 					"J",
 					"J",
-					"A",
+					"O",
 					"S",
 					"O",
 					"N",
@@ -2090,32 +1946,32 @@
 				"wide": [
 					"Januari",
 					"Februari",
-					"Maret",
+					"Mac",
 					"April",
 					"Mei",
-					"Juni",
-					"Juli",
-					"Agustus",
+					"Jun",
+					"Julai",
+					"Ogos",
 					"September",
 					"Oktober",
 					"November",
-					"Desember"
+					"Disember"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
 					"Jan",
 					"Feb",
-					"Mar",
+					"Mac",
 					"Apr",
 					"Mei",
 					"Jun",
 					"Jul",
-					"Agt",
+					"Ogo",
 					"Sep",
 					"Okt",
 					"Nov",
-					"Des"
+					"Dis"
 				],
 				"narrow": [
 					"J",
@@ -2125,7 +1981,7 @@
 					"M",
 					"J",
 					"J",
-					"A",
+					"O",
 					"S",
 					"O",
 					"N",
@@ -2134,33 +1990,33 @@
 				"wide": [
 					"Januari",
 					"Februari",
-					"Maret",
+					"Mac",
 					"April",
 					"Mei",
-					"Juni",
-					"Juli",
-					"Agustus",
+					"Jun",
+					"Julai",
+					"Ogos",
 					"September",
 					"Oktober",
 					"November",
-					"Desember"
+					"Disember"
 				]
 			}
 		},
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Min",
-					"Sen",
+					"Ahd",
+					"Isn",
 					"Sel",
 					"Rab",
-					"Kam",
+					"Kha",
 					"Jum",
 					"Sab"
 				],
 				"narrow": [
-					"M",
-					"S",
+					"A",
+					"I",
 					"S",
 					"R",
 					"K",
@@ -2168,37 +2024,37 @@
 					"S"
 				],
 				"short": [
-					"Min",
-					"Sen",
-					"Sel",
-					"Rab",
-					"Kam",
-					"Jum",
-					"Sab"
+					"Ah",
+					"Is",
+					"Se",
+					"Ra",
+					"Kh",
+					"Ju",
+					"Sa"
 				],
 				"wide": [
-					"Minggu",
-					"Senin",
+					"Ahad",
+					"Isnin",
 					"Selasa",
 					"Rabu",
-					"Kamis",
-					"Jumat",
+					"Khamis",
+					"Jumaat",
 					"Sabtu"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Min",
-					"Sen",
+					"Ahd",
+					"Isn",
 					"Sel",
 					"Rab",
-					"Kam",
+					"Kha",
 					"Jum",
 					"Sab"
 				],
 				"narrow": [
-					"M",
-					"S",
+					"A",
+					"I",
 					"S",
 					"R",
 					"K",
@@ -2206,21 +2062,21 @@
 					"S"
 				],
 				"short": [
-					"Min",
-					"Sen",
-					"Sel",
-					"Rab",
-					"Kam",
-					"Jum",
-					"Sab"
+					"Ah",
+					"Is",
+					"Se",
+					"Ra",
+					"Kh",
+					"Ju",
+					"Sa"
 				],
 				"wide": [
-					"Minggu",
-					"Senin",
+					"Ahad",
+					"Isnin",
 					"Selasa",
 					"Rabu",
-					"Kamis",
-					"Jumat",
+					"Khamis",
+					"Jumaat",
 					"Sabtu"
 				]
 			}
@@ -2228,10 +2084,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"S1",
+					"S2",
+					"S3",
+					"S4"
 				],
 				"narrow": [
 					"1",
@@ -2240,18 +2096,18 @@
 					"4"
 				],
 				"wide": [
-					"Kuartal ke-1",
-					"Kuartal ke-2",
-					"Kuartal ke-3",
-					"Kuartal ke-4"
+					"Suku pertama",
+					"Suku Ke-2",
+					"Suku Ke-3",
+					"Suku Ke-4"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"S1",
+					"S2",
+					"S3",
+					"S4"
 				],
 				"narrow": [
 					"1",
@@ -2260,40 +2116,40 @@
 					"4"
 				],
 				"wide": [
-					"Kuartal ke-1",
-					"Kuartal ke-2",
-					"Kuartal ke-3",
-					"Kuartal ke-4"
+					"Suku pertama",
+					"Suku Ke-2",
+					"Suku Ke-3",
+					"Suku Ke-4"
 				]
 			}
 		},
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"a",
+					"p"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"a",
+					"p"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				]
 			}
 		},
@@ -2318,16 +2174,16 @@
 	},
 	"ca-persian": {
 		"dateFormats": {
-			"full": "EEEE, dd MMMM y G",
+			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
-			"medium": "d MMM y G",
-			"short": "dd/MM/yy GGGGG"
+			"medium": "dd/MM/y G",
+			"short": "d/MM/y GGGGG"
 		},
 		"timeFormats": {
-			"full": "HH.mm.ss zzzz",
-			"long": "HH.mm.ss z",
-			"medium": "HH.mm.ss",
-			"short": "HH.mm"
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -2348,10 +2204,10 @@
 				"GyMMMEd": "E, d MMM y G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h.mm a",
-				"Hm": "HH.mm",
-				"hms": "h.mm.ss a",
-				"Hms": "HH.mm.ss",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
 				"M": "L",
 				"Md": "d/M",
 				"MEd": "E, d/M",
@@ -2359,8 +2215,7 @@
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
 				"MMMMd": "d MMMM",
-				"MMMMEd": "E, d MMMM",
-				"ms": "mm.ss",
+				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
 				"yyyyM": "M/y G",
@@ -2399,22 +2254,22 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h.mm a – h.mm a",
-					"h": "h.mm–h.mm a",
-					"m": "h.mm–h.mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH.mm–HH.mm",
-					"m": "HH.mm–HH.mm"
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h.mm a – h.mm a v",
-					"h": "h.mm–h.mm a v",
-					"m": "h.mm–h.mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH.mm–HH.mm v",
-					"m": "HH.mm–HH.mm v"
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
 					"a": "h a – h a v",
@@ -2449,18 +2304,18 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "M/y – M/y GGGGG",
-					"y": "M/y – M/y GGGGG"
+					"M": "M/y – M/y G",
+					"y": "M/y – M/y G"
 				},
 				"yMd": {
-					"d": "d/M/y – d/M/y GGGGG",
-					"M": "d/M/y – d/M/y GGGGG",
-					"y": "d/M/y – d/M/y GGGGG"
+					"d": "d/M/y – d/M/y G",
+					"M": "d/M/y – d/M/y G",
+					"y": "d/M/y – d/M/y G"
 				},
 				"yMEd": {
-					"d": "E, d/M/y – E, d/M/y GGGGG",
-					"M": "E, d/M/y – E, d/M/y GGGGG",
-					"y": "E, d/M/y – E, d/M/y GGGGG"
+					"d": "E, d/M/y – E, d/M/y G",
+					"M": "E, d/M/y – E, d/M/y G",
+					"y": "E, d/M/y – E, d/M/y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
@@ -2468,16 +2323,16 @@
 				},
 				"yMMMd": {
 					"d": "d–d MMM y G",
-					"M": "d MMM – d MMM y G",
+					"M": "d MMM – d MMM, y G",
 					"y": "d MMM y – d MMM y G"
 				},
 				"yMMMEd": {
-					"d": "E, d MMM – E, d MMM y G",
-					"M": "E, d MMM – E, d MMM y G",
+					"d": "E, d MMM – E, d MMM, y G",
+					"M": "E, d MMM – E, d MMM, y G",
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"yMMMM": {
-					"M": "MMMM – MMMM y G",
+					"M": "MMMM–MMMM y G",
 					"y": "MMMM y – MMMM y G"
 				}
 			}
@@ -2575,17 +2430,17 @@
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Min",
-					"Sen",
+					"Ahd",
+					"Isn",
 					"Sel",
 					"Rab",
-					"Kam",
+					"Kha",
 					"Jum",
 					"Sab"
 				],
 				"narrow": [
-					"M",
-					"S",
+					"A",
+					"I",
 					"S",
 					"R",
 					"K",
@@ -2593,37 +2448,37 @@
 					"S"
 				],
 				"short": [
-					"Min",
-					"Sen",
-					"Sel",
-					"Rab",
-					"Kam",
-					"Jum",
-					"Sab"
+					"Ah",
+					"Is",
+					"Se",
+					"Ra",
+					"Kh",
+					"Ju",
+					"Sa"
 				],
 				"wide": [
-					"Minggu",
-					"Senin",
+					"Ahad",
+					"Isnin",
 					"Selasa",
 					"Rabu",
-					"Kamis",
-					"Jumat",
+					"Khamis",
+					"Jumaat",
 					"Sabtu"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Min",
-					"Sen",
+					"Ahd",
+					"Isn",
 					"Sel",
 					"Rab",
-					"Kam",
+					"Kha",
 					"Jum",
 					"Sab"
 				],
 				"narrow": [
-					"M",
-					"S",
+					"A",
+					"I",
 					"S",
 					"R",
 					"K",
@@ -2631,21 +2486,21 @@
 					"S"
 				],
 				"short": [
-					"Min",
-					"Sen",
-					"Sel",
-					"Rab",
-					"Kam",
-					"Jum",
-					"Sab"
+					"Ah",
+					"Is",
+					"Se",
+					"Ra",
+					"Kh",
+					"Ju",
+					"Sa"
 				],
 				"wide": [
-					"Minggu",
-					"Senin",
+					"Ahad",
+					"Isnin",
 					"Selasa",
 					"Rabu",
-					"Kamis",
-					"Jumat",
+					"Khamis",
+					"Jumaat",
 					"Sabtu"
 				]
 			}
@@ -2653,10 +2508,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"S1",
+					"S2",
+					"S3",
+					"S4"
 				],
 				"narrow": [
 					"1",
@@ -2665,18 +2520,18 @@
 					"4"
 				],
 				"wide": [
-					"Kuartal ke-1",
-					"Kuartal ke-2",
-					"Kuartal ke-3",
-					"Kuartal ke-4"
+					"Suku pertama",
+					"Suku Ke-2",
+					"Suku Ke-3",
+					"Suku Ke-4"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"S1",
+					"S2",
+					"S3",
+					"S4"
 				],
 				"narrow": [
 					"1",
@@ -2685,40 +2540,40 @@
 					"4"
 				],
 				"wide": [
-					"Kuartal ke-1",
-					"Kuartal ke-2",
-					"Kuartal ke-3",
-					"Kuartal ke-4"
+					"Suku pertama",
+					"Suku Ke-2",
+					"Suku Ke-3",
+					"Suku Ke-4"
 				]
 			}
 		},
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"a",
+					"p"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"a",
+					"p"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"PG",
+					"PTG"
 				]
 			}
 		},
@@ -2742,89 +2597,89 @@
 			"relative-type-0": "tahun ini",
 			"relative-type-1": "tahun depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} tahun"
+				"relativeTimePattern-count-other": "dalam {0} saat"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} tahun yang lalu"
+				"relativeTimePattern-count-other": "{0} tahun lalu"
 			}
 		},
 		"year-short": {
-			"displayName": "thn.",
-			"relative-type--1": "tahun lalu",
-			"relative-type-0": "tahun ini",
-			"relative-type-1": "tahun depan",
+			"displayName": "thn",
+			"relative-type--1": "thn lepas",
+			"relative-type-0": "thn ini",
+			"relative-type-1": "thn depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dlm {0} thn"
+				"relativeTimePattern-count-other": "dalam {0} thn"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} thn lalu"
 			}
 		},
 		"year-narrow": {
-			"displayName": "thn.",
-			"relative-type--1": "tahun lalu",
-			"relative-type-0": "tahun ini",
-			"relative-type-1": "tahun depan",
+			"displayName": "thn",
+			"relative-type--1": "thn lepas",
+			"relative-type-0": "thn ini",
+			"relative-type-1": "thn depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} thn"
+				"relativeTimePattern-count-other": "dalam {0} thn"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} thn"
+				"relativeTimePattern-count-other": "{0} thn lalu"
 			}
 		},
 		"quarter-wide": {
-			"displayName": "Kuartal",
-			"relative-type--1": "Kuartal lalu",
-			"relative-type-0": "Kuartal ini",
-			"relative-type-1": "Kuartal berikutnya",
+			"displayName": "Suku Tahun",
+			"relative-type--1": "suku tahun lalu",
+			"relative-type-0": "suku tahun ini",
+			"relative-type-1": "suku tahun seterusnya",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dalam {0} kuartal"
+				"relativeTimePattern-count-other": "dalam {0} suku tahun"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} kuartal yang lalu"
+				"relativeTimePattern-count-other": "{0} suku tahun lalu"
 			}
 		},
 		"quarter-short": {
-			"displayName": "krtl.",
-			"relative-type--1": "Kuartal lalu",
-			"relative-type-0": "Kuartal ini",
-			"relative-type-1": "Kuartal berikutnya",
+			"displayName": "suku",
+			"relative-type--1": "suku lepas",
+			"relative-type-0": "suku ini",
+			"relative-type-1": "suku seterusnya",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dlm {0} krtl."
+				"relativeTimePattern-count-other": "dlm {0} suku tahun"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} krtl. lalu"
+				"relativeTimePattern-count-other": "{0} suku tahun lalu"
 			}
 		},
 		"quarter-narrow": {
-			"displayName": "krtl.",
-			"relative-type--1": "Kuartal lalu",
-			"relative-type-0": "Kuartal ini",
-			"relative-type-1": "Kuartal berikutnya",
+			"displayName": "suku",
+			"relative-type--1": "suku lepas",
+			"relative-type-0": "suku ini",
+			"relative-type-1": "suku seterusnya",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} krtl."
+				"relativeTimePattern-count-other": "dlm {0} suku tahun"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} krtl."
+				"relativeTimePattern-count-other": "{0} suku tahun lalu"
 			}
 		},
 		"month-wide": {
 			"displayName": "Bulan",
 			"relative-type--1": "bulan lalu",
 			"relative-type-0": "bulan ini",
-			"relative-type-1": "Bulan berikutnya",
+			"relative-type-1": "bulan depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} bulan"
+				"relativeTimePattern-count-other": "dalam {0} bulan"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} bulan yang lalu"
+				"relativeTimePattern-count-other": "{0} bulan lalu"
 			}
 		},
 		"month-short": {
-			"displayName": "bln.",
-			"relative-type--1": "bulan lalu",
-			"relative-type-0": "bulan ini",
-			"relative-type-1": "Bulan berikutnya",
+			"displayName": "bln",
+			"relative-type--1": "bln lalu",
+			"relative-type-0": "bln ini",
+			"relative-type-1": "bln depan",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "dlm {0} bln"
 			},
@@ -2833,15 +2688,15 @@
 			}
 		},
 		"month-narrow": {
-			"displayName": "bln.",
-			"relative-type--1": "bulan lalu",
-			"relative-type-0": "bulan ini",
-			"relative-type-1": "Bulan berikutnya",
+			"displayName": "bln",
+			"relative-type--1": "bln lalu",
+			"relative-type-0": "bln ini",
+			"relative-type-1": "bln depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} bln."
+				"relativeTimePattern-count-other": "dlm {0} bln"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} bln."
+				"relativeTimePattern-count-other": "{0} bulan lalu"
 			}
 		},
 		"week-wide": {
@@ -2850,176 +2705,176 @@
 			"relative-type-0": "minggu ini",
 			"relative-type-1": "minggu depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} minggu"
+				"relativeTimePattern-count-other": "dalam {0} minggu"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} minggu yang lalu"
+				"relativeTimePattern-count-other": "{0} minggu lalu"
 			},
 			"relativePeriod": "minggu ke-{0}"
 		},
 		"week-short": {
-			"displayName": "mgg.",
-			"relative-type--1": "minggu lalu",
-			"relative-type-0": "minggu ini",
-			"relative-type-1": "minggu depan",
+			"displayName": "mgu",
+			"relative-type--1": "mng lepas",
+			"relative-type-0": "mng ini",
+			"relative-type-1": "mng depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dlm {0} mgg"
+				"relativeTimePattern-count-other": "dlm {0} mgu"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} mgg lalu"
+				"relativeTimePattern-count-other": "{0} mgu lalu"
 			},
-			"relativePeriod": "mgg ke-{0}"
+			"relativePeriod": "minggu ke-{0}"
 		},
 		"week-narrow": {
-			"displayName": "mgg.",
-			"relative-type--1": "minggu lalu",
-			"relative-type-0": "minggu ini",
-			"relative-type-1": "minggu depan",
+			"displayName": "mgu",
+			"relative-type--1": "mng lepas",
+			"relative-type-0": "mng ini",
+			"relative-type-1": "mng depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} mgg."
+				"relativeTimePattern-count-other": "dlm {0} mgu"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} mgg."
+				"relativeTimePattern-count-other": "{0} mgu lalu"
 			},
-			"relativePeriod": "mgg {0}"
+			"relativePeriod": "minggu ke-{0}"
 		},
 		"day-wide": {
 			"displayName": "Hari",
-			"relative-type--2": "kemarin dulu",
-			"relative-type--1": "kemarin",
+			"relative-type--2": "kelmarin",
+			"relative-type--1": "semalam",
 			"relative-type-0": "hari ini",
-			"relative-type-1": "besok",
+			"relative-type-1": "esok",
 			"relative-type-2": "lusa",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} hari"
+				"relativeTimePattern-count-other": "dalam {0} hari"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} hari yang lalu"
+				"relativeTimePattern-count-other": "{0} hari lalu"
 			}
 		},
 		"day-short": {
-			"displayName": "h",
-			"relative-type--2": "kemarin dulu",
-			"relative-type--1": "kemarin",
+			"displayName": "hari",
+			"relative-type--2": "kelmarin",
+			"relative-type--1": "semlm",
 			"relative-type-0": "hari ini",
-			"relative-type-1": "besok",
+			"relative-type-1": "esok",
 			"relative-type-2": "lusa",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dalam {0} h"
+				"relativeTimePattern-count-other": "dlm {0} hari"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} h lalu"
+				"relativeTimePattern-count-other": "{0} hari lalu"
 			}
 		},
 		"day-narrow": {
-			"displayName": "h",
-			"relative-type--2": "kemarin dulu",
-			"relative-type--1": "kemarin",
+			"displayName": "hari",
+			"relative-type--2": "kelmarin",
+			"relative-type--1": "semlm",
 			"relative-type-0": "hari ini",
-			"relative-type-1": "besok",
+			"relative-type-1": "esok",
 			"relative-type-2": "lusa",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} h"
+				"relativeTimePattern-count-other": "dlm {0} hari"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} h"
+				"relativeTimePattern-count-other": "{0} hari lalu"
 			}
 		},
 		"weekday": {
-			"displayName": "Hari dalam Seminggu"
+			"displayName": "Hari dalam Minggu"
 		},
 		"hour-wide": {
 			"displayName": "Jam",
 			"relative-type-0": "jam ini",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} jam"
+				"relativeTimePattern-count-other": "dalam {0} jam"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} jam yang lalu"
+				"relativeTimePattern-count-other": "{0} jam lalu"
 			}
 		},
 		"hour-short": {
 			"displayName": "jam",
 			"relative-type-0": "jam ini",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} jam"
+				"relativeTimePattern-count-other": "dlm {0} jam"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} jam lalu"
 			}
 		},
 		"hour-narrow": {
-			"displayName": "j",
+			"displayName": "jam",
 			"relative-type-0": "jam ini",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} jam"
+				"relativeTimePattern-count-other": "dlm {0} jam"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} jam"
+				"relativeTimePattern-count-other": "{0} jam lalu"
 			}
 		},
 		"minute-wide": {
-			"displayName": "Menit",
-			"relative-type-0": "menit ini",
+			"displayName": "Minit",
+			"relative-type-0": "pada minit ini",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} menit"
+				"relativeTimePattern-count-other": "dalam {0} minit"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} menit yang lalu"
+				"relativeTimePattern-count-other": "{0} minit lalu"
 			}
 		},
 		"minute-short": {
-			"displayName": "mnt.",
-			"relative-type-0": "menit ini",
+			"displayName": "min",
+			"relative-type-0": "pada minit ini",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dlm {0} mnt"
+				"relativeTimePattern-count-other": "dlm {0} min"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} mnt lalu"
+				"relativeTimePattern-count-other": "{0} min lalu"
 			}
 		},
 		"minute-narrow": {
-			"displayName": "m",
-			"relative-type-0": "menit ini",
+			"displayName": "min",
+			"relative-type-0": "pada minit ini",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} mnt"
+				"relativeTimePattern-count-other": "dlm {0} min"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} mnt"
+				"relativeTimePattern-count-other": "{0} min lalu"
 			}
 		},
 		"second-wide": {
-			"displayName": "Detik",
+			"displayName": "Saat",
 			"relative-type-0": "sekarang",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} detik"
+				"relativeTimePattern-count-other": "dalam {0} saat"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} detik yang lalu"
+				"relativeTimePattern-count-other": "{0} saat lalu"
 			}
 		},
 		"second-short": {
-			"displayName": "dtk.",
+			"displayName": "saat",
 			"relative-type-0": "sekarang",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dlm {0} dtk"
+				"relativeTimePattern-count-other": "dlm {0} saat"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} dtk lalu"
+				"relativeTimePattern-count-other": "{0} saat lalu"
 			}
 		},
 		"second-narrow": {
-			"displayName": "d",
+			"displayName": "saat",
 			"relative-type-0": "sekarang",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} dtk"
+				"relativeTimePattern-count-other": "dlm {0} saat"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} dtk"
+				"relativeTimePattern-count-other": "{0} saat lalu"
 			}
 		},
 		"zone": {
-			"displayName": "Zona Waktu"
+			"displayName": "Zon Waktu"
 		}
 	},
 	"decimalFormat": {
@@ -3032,26 +2887,26 @@
 		"1000000-other": "0 juta",
 		"10000000-other": "00 juta",
 		"100000000-other": "000 juta",
-		"1000000000-other": "0 miliar",
-		"10000000000-other": "00 miliar",
-		"100000000000-other": "000 miliar",
-		"1000000000000-other": "0 triliun",
-		"10000000000000-other": "00 triliun",
-		"100000000000000-other": "000 triliun"
+		"1000000000-other": "0 bilion",
+		"10000000000-other": "00 bilion",
+		"100000000000-other": "000 bilion",
+		"1000000000000-other": "0 trilion",
+		"10000000000000-other": "00 trilion",
+		"100000000000000-other": "000 trilion"
 	},
 	"decimalFormat-short": {
-		"1000-other": "0 rb",
-		"10000-other": "00 rb",
-		"100000-other": "000 rb",
-		"1000000-other": "0 jt",
-		"10000000-other": "00 jt",
-		"100000000-other": "000 jt",
-		"1000000000-other": "0 M",
-		"10000000000-other": "00 M",
-		"100000000000-other": "000 M",
-		"1000000000000-other": "0 T",
-		"10000000000000-other": "00 T",
-		"100000000000000-other": "000 T"
+		"1000-other": "0K",
+		"10000-other": "00K",
+		"100000-other": "000K",
+		"1000000-other": "0J",
+		"10000000-other": "00J",
+		"100000000-other": "000J",
+		"1000000000-other": "0B",
+		"10000000000-other": "00B",
+		"100000000000-other": "000B",
+		"1000000000000-other": "0T",
+		"10000000000000-other": "00T",
+		"100000000000000-other": "000T"
 	},
 	"scientificFormat": {
 		"standard": "#E0"
@@ -3061,7 +2916,7 @@
 	},
 	"currencyFormat": {
 		"standard": "¤#,##0.00",
-		"accounting": "¤#,##0.00",
+		"accounting": "¤#,##0.00;(¤#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[:^S:]",
@@ -3076,21 +2931,21 @@
 		}
 	},
 	"currencyFormat-short": {
-		"1000-other": "¤0 rb",
-		"10000-other": "¤00 rb",
-		"100000-other": "¤000 rb",
-		"1000000-other": "¤0 jt",
-		"10000000-other": "¤00 jt",
-		"100000000-other": "¤000 jt",
-		"1000000000-other": "¤0 M",
-		"10000000000-other": "¤00 M",
-		"100000000000-other": "¤000 M",
-		"1000000000000-other": "¤0 T",
-		"10000000000000-other": "¤00 T",
-		"100000000000000-other": "¤000 T"
+		"1000-other": "¤0K",
+		"10000-other": "¤00K",
+		"100000-other": "¤000K",
+		"1000000-other": "¤0J",
+		"10000000-other": "¤00J",
+		"100000000-other": "¤000J",
+		"1000000000-other": "¤0B",
+		"10000000000-other": "¤00B",
+		"100000000000-other": "¤000B",
+		"1000000000000-other": "¤0T",
+		"10000000000000-other": "¤00T",
+		"100000000000000-other": "¤000T"
 	},
-	"symbols-latn-decimal": ",",
-	"symbols-latn-group": ".",
+	"symbols-latn-decimal": ".",
+	"symbols-latn-group": ",",
 	"symbols-latn-list": ";",
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
@@ -3100,25 +2955,21 @@
 	"symbols-latn-perMille": "‰",
 	"symbols-latn-infinity": "∞",
 	"symbols-latn-nan": "NaN",
-	"symbols-latn-timeSeparator": ".",
+	"symbols-latn-timeSeparator": ":",
 	"currencySymbols": {
-		"AUD": "AU$",
+		"AUD": "A$",
 		"BRL": "R$",
-		"CAD": "CA$",
 		"CNY": "CN¥",
 		"EUR": "€",
 		"GBP": "£",
 		"HKD": "HK$",
-		"IDR": "Rp",
 		"ILS": "₪",
-		"INR": "Rs",
+		"INR": "₹",
 		"JPY": "JP¥",
 		"KRW": "₩",
-		"MXN": "MX$",
+		"MYR": "RM",
 		"NZD": "NZ$",
-		"THB": "฿",
 		"TWD": "NT$",
-		"USD": "US$",
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
@@ -3197,12 +3048,12 @@
 	},
 	"plurals": {},
 	"weekData-minDays": 1,
-	"weekData-firstDay": 0,
+	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
 	"timeData": {
-		"_allowed": "H",
-		"_preferred": "H"
+		"_allowed": "hb hB H h",
+		"_preferred": "h"
 	},
 	"eras-gregorian": {
 		"0": {
