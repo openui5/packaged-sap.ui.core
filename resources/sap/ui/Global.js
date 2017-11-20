@@ -18,7 +18,7 @@
  * sap.ui.lazyRequire("sap.ui.core.Control");
  * sap.ui.lazyRequire("sap.ui.commons.Button");
  *
- * @version 1.48.13
+ * @version 1.48.14
  * @author  Martin Schaus, Daniel Brinkmann
  * @public
  */
@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * The <code>sap</code> namespace is automatically registered with the
 	 * OpenAjax hub if it exists.
 	 *
-	 * @version 1.48.13
+	 * @version 1.48.14
 	 * @namespace
 	 * @public
 	 * @name sap
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
 	 * point for UI related JavaScript functionality provided by SAP.
 	 *
-	 * @version 1.48.13
+	 * @version 1.48.14
 	 * @namespace
 	 * @name sap.ui
 	 * @public
@@ -67,8 +67,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 		 * The version of the SAP UI Library
 		 * @type string
 		 */
-		version: "1.48.13",
-		buildinfo : { lastchange : "8ce2158cc16e6188f7819b9ea778016b96d715f6", buildtime : "20171106184048" }
+		version: "1.48.14",
+		buildinfo : { lastchange : "cb08f7bfd583e05afed07dcf768cf1a868c51e12", buildtime : "20171120134142" }
 	});
 
 	var oCfgData = window["sap-ui-config"] || {};

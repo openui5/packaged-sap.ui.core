@@ -65,7 +65,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.48.13
+	 * @version 1.48.14
 	 *
 	 * @constructor
 	 * @public
@@ -4921,6 +4921,8 @@ sap.ui.define([
 				that.abortInternalRequest(sKey, sGroupId);
 			});
 			that._removeEntity(sKey);
+			//cleanup Messages for created Entry
+			sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByPath(oContext.getPath() + '/'));
 		}
 	};
 
@@ -5053,6 +5055,7 @@ sap.ui.define([
 			oCreatedContext.bCreated = true;
 
 			oRequest.key = sKey;
+			oRequest.created = true;
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
