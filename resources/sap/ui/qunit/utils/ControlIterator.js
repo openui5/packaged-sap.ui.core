@@ -52,7 +52,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	 * This module is independent from QUnit, so it could be used for other purposes than unit tests.
 	 *
 	 * @author SAP SE
-	 * @version 1.52.1
+	 * @version 1.52.2
 	 *
 	 * @public
 	 * @since 1.48.0
@@ -71,6 +71,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
 		"sap.ui.core.tmpl.Template",
+		"sap.ui.commons.Menu",
 		"sap.m.FacetFilterItem",
 		"sap.m.LightBox",
 		"sap.m.Menu",
@@ -90,6 +91,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		"sap.ui.richtexteditor.RichTextEditor",
 		"sap.ui.richtexteditor.ToolbarWrapper",
 		"sap.ui.suite.TaskCircle",
+		"sap.ui.table.AnalyticalColumnMenu",
 		"sap.ui.table.ColumnMenu",
 		"sap.ui.unified.Menu",
 		"sap.ui.ux3.ActionBar",

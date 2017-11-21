@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.52.1
+	 * @version 1.52.2
 	 *
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
@@ -352,6 +352,7 @@ sap.ui.define([
 		}
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
+		this.oContext = undefined;
 		ContextBinding.prototype.destroy.apply(this);
 	};
 
