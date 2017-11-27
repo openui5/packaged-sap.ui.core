@@ -186,7 +186,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.model.MetaModel
 	 * @public
-	 * @version 1.38.30
+	 * @version 1.38.31
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 		constructor : function (oRequestor, sUrl) {
