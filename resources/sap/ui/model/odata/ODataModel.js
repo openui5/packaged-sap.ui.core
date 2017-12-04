@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.48.14
+	 * @version 1.48.15
 	 *
 	 * @constructor
 	 * @public

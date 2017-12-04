@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.48.14
+	 * 1.48.15
 	 *
 	 * @public
 	 * @since 1.37.0
