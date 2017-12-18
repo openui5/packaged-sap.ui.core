@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.52.2
+	 * @version 1.52.3
 	 *
 	 * @alias sap.ui.model.odata.type.Int64
 	 * @param {object} [oFormatOptions]

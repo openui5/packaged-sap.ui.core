@@ -3166,6 +3166,195 @@ sap.ui.require([
 				"sap.ui.model.odata.v4.lib._Cache");
 		return this.createView(assert, sView);
 	});
+
+	//*********************************************************************************************
+	// Scenario: Object binding provides access to some collection and you then want to filter on
+	//   that collection; inspired by https://github.com/SAP/openui5/issues/1763
+	QUnit.test("Filter collection provided via object binding", function (assert) {
+		var sView = '\
+<VBox id="vbox" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
+		path : \'/TEAMS(\\\'42\\\')\'}">\
+	<Table items="{TEAM_2_EMPLOYEES}">\
+		<ColumnListItem>\
+			<Text id="id" text="{ID}" />\
+		</ColumnListItem>\
+	</Table>\
+</VBox>',
+			that = this;
+
+		// Note: for simplicity, autoExpandSelect : false but still most properties are omitted
+		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES", {
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1"
+				}, {
+					"ID" : "2"
+				}, {
+					"ID" : "3"
+				}]
+			})
+			.expectChange("id", ["1", "2", "3"])
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($filter=ID%20eq%20'2')", {
+					"TEAM_2_EMPLOYEES" : [{
+						"ID" : "2"
+					}]
+				})
+				.expectChange("id", ["2"])
+
+			that.oView.byId("vbox").getObjectBinding()
+				.changeParameters({$expand : "TEAM_2_EMPLOYEES($filter=ID eq '2')"});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
+	//   Show interaction of setParameter(), execute() and refresh().
+	QUnit.test("Function binding: setParameter, execute and refresh", function (assert) {
+		var sView = '\
+<FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
+	<Text id="name" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("name");
+		return this.createView(assert, sView).then(function () {
+			var oFunctionBinding = that.oView.byId("function").getObjectBinding();
+
+			oFunctionBinding.refresh(); // MUST NOT trigger a request!
+
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+					"Name" : "Jonathan Smith"
+				})
+				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", "Jonathan Smith");
+			oFunctionBinding.setParameter("EmployeeID", "1").execute();
+
+			return that.waitForChanges(assert).then(function () {
+				that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+						"Name" : "Frederic Fall"
+					})
+					.expectChange("name", "Frederic Fall");
+				oFunctionBinding.refresh();
+
+				return that.waitForChanges(assert).then(function () {
+					oFunctionBinding.setParameter("EmployeeID", "2");
+
+					oFunctionBinding.refresh(); // MUST NOT trigger a request!
+
+					that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
+							"Name" : "Peter Burke"
+						})
+						.expectChange("name", "Peter Burke");
+					oFunctionBinding.execute();
+
+					return that.waitForChanges(assert).then(function () {
+						that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
+								"Name" : "Jonathan Smith"
+							})
+							.expectChange("name", "Jonathan Smith");
+						oFunctionBinding.refresh();
+
+						return that.waitForChanges(assert);
+					});
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
+	//   Show interaction of setParameter(), execute() and changeParameters().
+	QUnit.test("Function binding: setParameter, execute and changeParameters", function (assert) {
+		var sView = '\
+<FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
+	<Text id="name" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("name");
+		return this.createView(assert, sView).then(function () {
+			var oFunctionBinding = that.oView.byId("function").getObjectBinding();
+
+			oFunctionBinding.changeParameters({$select : "Name"}); // MUST NOT trigger a request!
+
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
+					"Name" : "Jonathan Smith"
+				})
+				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", "Jonathan Smith");
+			oFunctionBinding.setParameter("EmployeeID", "1").execute();
+
+			return that.waitForChanges(assert).then(function () {
+				that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
+						"Name" : "Frederic Fall"
+					})
+					.expectChange("name", "Frederic Fall");
+				oFunctionBinding.changeParameters({$select : "ID,Name"});
+
+				return that.waitForChanges(assert).then(function () {
+					oFunctionBinding.setParameter("EmployeeID", "2");
+
+					// MUST NOT trigger a request!
+					oFunctionBinding.changeParameters({$select : "Name"});
+
+					that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=Name", {
+							"Name" : "Peter Burke"
+						})
+						.expectChange("name", "Peter Burke");
+					oFunctionBinding.execute();
+
+					return that.waitForChanges(assert).then(function () {
+						that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=ID,Name", {
+								"Name" : "Jonathan Smith"
+							})
+							.expectChange("name", "Jonathan Smith");
+						oFunctionBinding.changeParameters({$select : "ID,Name"});
+
+						return that.waitForChanges(assert);
+					});
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODataListBinding contains ODataContextBinding contains ODataPropertyBinding;
+	//   only one cache; refresh()
+	QUnit.test("refresh on nested bindings", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sUrl = "TEAMS('42')?$select=Team_Id&$expand=TEAM_2_MANAGER($select=ID)",
+			sView = '\
+<FlexBox binding="{/TEAMS(\'42\')}">\
+	<FlexBox binding="{TEAM_2_MANAGER}">\
+		<Text id="id" text="{ID}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(sUrl, {
+				"Team_Id" : "42",
+				"TEAM_2_MANAGER" : {
+					"ID" : "1"
+				}
+			})
+			.expectChange("id", "1") // TODO unexpected change
+			.expectChange("id", "1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest(sUrl, {
+					"Team_Id" : "42",
+					"TEAM_2_MANAGER" : {
+						"ID" : "2"
+					}
+				})
+				.expectChange("id", "2");
+
+			oModel.refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
 //TODO test bound action
 //TODO test delete

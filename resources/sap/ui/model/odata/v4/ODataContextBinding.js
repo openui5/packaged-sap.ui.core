@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.52.2
+	 * @version 1.52.3
 	 *
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
@@ -223,10 +223,13 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
+	 *   A change reason, used to distinguish calls by {@link #constructor} from calls by
+	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#changeParameters}
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.applyParameters = function (mParameters) {
+	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
 		var oBindingParameters;
 
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
@@ -236,9 +239,16 @@ sap.ui.define([
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mParameters = mParameters;
-		this.fetchCache(this.oContext);
 		if (!this.oOperation) {
-			this.checkUpdate();
+			this.fetchCache(this.oContext);
+			if (sChangeReason) {
+				this.refreshInternal(undefined, true);
+			} else {
+				this.checkUpdate();
+			}
+		} else if (this.oOperation.bAction === false) {
+			// Note: sChangeReason ignored here, "filter"/"sort" not suitable for ContextBinding
+			this.execute();
 		}
 	};
 
@@ -587,7 +597,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
+	ODataContextBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
 		var that = this;
 
 		this.oCachePromise.then(function (oCache) {
@@ -598,21 +608,21 @@ sap.ui.define([
 					that._fireChange({reason : ChangeReason.Refresh});
 				}
 			}
-			if (oCache) {
-				that.fetchCache(that.oContext);
-				if (!that.oOperation) {
+			if (!that.oOperation) {
+				if (oCache) {
+					that.fetchCache(that.oContext);
 					that.sRefreshGroupId = sGroupId;
 					that.mCacheByContext = undefined;
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
-				} else if (!that.oOperation.bAction) {
-					// ignore returned promise, error handling takes place in execute
-					that.execute(sGroupId);
 				}
+				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+					oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
+				});
+			} else if (that.oOperation.bAction === false) {
+				// ignore returned promise, error handling takes place in execute
+				that.execute(sGroupId);
 			}
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.refreshInternal(sGroupId, true);
-			});
 		});
 	};
 
@@ -671,6 +681,7 @@ sap.ui.define([
 			throw new Error("Missing value for parameter: " + sParameterName);
 		}
 		this.oOperation.mParameters[sParameterName] = vValue;
+		this.oOperation.bAction = undefined; // "not yet executed"
 		return this;
 	};
 
