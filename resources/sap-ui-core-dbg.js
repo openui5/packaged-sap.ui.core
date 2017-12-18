@@ -10375,7 +10375,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.48.15
+ * @version 1.48.16
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10401,7 +10401,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.48.15";
+		var apiVersion = "1.48.16";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10459,7 +10459,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.48.15";
+		var v = "1.48.16";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -16056,7 +16056,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.48.15
+	 * @version 1.48.16
 	 * @namespace
 	 * @public
 	 * @static
@@ -20195,14 +20195,14 @@ return URI;
 				}
 			};
 
-			// for IE we will check if the stylesheet contains any rule and then
+			// for IE / Edge we will check if the stylesheet contains any rule and then
 			// either trigger the load callback or the error callback
-			if ( Device.browser.msie ) {
+			if ( Device.browser.msie || Device.browser.edge ) {
 				var fnLoadOrg = fnLoad;
 				fnLoad = function(oEvent) {
 					var aRules;
 					try {
-						// in cross-origin scenarios the IE can still access the rules of the stylesheet
+						// in cross-origin scenarios IE / Edge can still access the rules of the stylesheet
 						// if the stylesheet has been loaded properly
 						aRules = oEvent.target && oEvent.target.sheet && oEvent.target.sheet.rules;
 						// in cross-origin scenarios now the catch block will be executed because we
