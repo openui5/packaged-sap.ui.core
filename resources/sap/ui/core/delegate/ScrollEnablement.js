@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * @constructor
 		 * @protected
 		 * @alias sap.ui.core.delegate.ScrollEnablement
-		 * @version 1.48.16
+		 * @version 1.48.17
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
@@ -479,17 +479,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				var point = oEvent.touches ? oEvent.touches[0] : oEvent;
 				this._iX = point.pageX;
 				this._iY = point.pageY;
-				if (this._oIOSScroll) { // preventing rubber page
-					if (!this._scrollable.vertical) {
-						this._oIOSScroll.iTopDown = 0;
-					} else if (container.scrollTop === 0) {
-						this._oIOSScroll.iTopDown = 1;
-					} else if (container.scrollTop === container.scrollHeight - container.clientHeight) {
-						this._oIOSScroll.iTopDown = -1;
-					} else {
-						this._oIOSScroll.iTopDown = 0;
-					}
-				}
 				this._bPullDown = false;
 				this._iDirection = ""; // h - horizontal, v - vertical
 			},
@@ -513,12 +502,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 							// user drags vertically down, disable native scrolling
 							this._bPullDown = true;
 						}
-					}
-				}
-
-				if (this._oIOSScroll && this._oIOSScroll.iTopDown && dy != 0) {
-					if (dy * this._oIOSScroll.iTopDown > 0) {
-						this._bDoDrag = true;
 					}
 				}
 
@@ -565,10 +548,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 					} else {
 						this._iLastTouchMoveTime = oEvent.timeStamp;
 					}
-				}
-
-				if (!this._oIOSScroll || this._scrollable.vertical || this._scrollable.horizontal && this._iDirection == "h") {
-					oEvent.setMarked &&  oEvent.setMarked(); // see jQuery.sap.mobile.js
 				}
 			},
 
@@ -753,9 +732,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 						if (Device.browser.msie || Device.browser.edge) {
 							this._bFlipX = true; // in IE and Edge RTL, scrollLeft goes opposite direction
 						}
-					}
-					if (Device.os.ios) {
-						this._oIOSScroll = {};
 					}
 				},
 				_exit : function() {
