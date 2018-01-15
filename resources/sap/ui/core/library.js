@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.core",
-		version: "1.52.3",
+		version: "1.52.4",
 		types: [
 
 			// builtin types
@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @namespace
 	 * @alias sap.ui.core
 	 * @author SAP SE
-	 * @version 1.52.3
+	 * @version 1.52.4
 	 * @public
 	 */
 	var thisLib = sap.ui.core;
