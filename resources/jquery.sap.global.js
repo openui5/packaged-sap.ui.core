@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -793,7 +793,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.44.25
+	 * @version 1.44.26
 	 * @namespace
 	 * @public
 	 * @static
@@ -4916,9 +4916,22 @@
 
 	// TODO should be in core, but then the 'callback' could not be implemented
 	if ( !(oCfgData.productive === true || oCfgData.productive === "true"  || oCfgData.productive === "x") ) {
+		// Check whether the left 'alt' key is used
+		// The TechnicalInfo should be shown only when left 'alt' key is used
+		// because the right 'alt' key is mapped to 'alt' + 'ctrl' on windows
+		// in some languages for example German or Polish which makes right
+		// 'alt' + 'shift' + S open the TechnicalInfo
+		var bLeftAlt = false;
+
 		document.addEventListener('keydown', function(e) {
 			try {
-				if ( e.shiftKey && e.altKey && e.ctrlKey ) {
+				if (e.keyCode === 18) { // 'alt' Key
+					bLeftAlt = (typeof e.location !== "number" /* location isn't supported */ || e.location === 1 /* left */);
+					return;
+				}
+
+				if (e.shiftKey && e.altKey && e.ctrlKey && bLeftAlt) {
+					// invariant: when e.altKey is true, there must have been a preceding keydown with keyCode === 18, so bLeftAlt is always up-to-date
 					if ( e.keyCode === 80 ) { // 'P'
 						sap.ui.require(['sap/ui/core/support/techinfo/TechnicalInfo'], function(TechnicalInfo) {
 							TechnicalInfo.open(function() {
