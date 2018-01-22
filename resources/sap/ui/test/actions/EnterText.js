@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 /*global FocusEvent, document */
@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/Device'], function ($, A
 			}.bind(this);
 
 			var bWasFocused = $ActionDomRef.is(":focus");
-			if (!bWasFocused) {
+			if (!bWasFocused && !(Device.browser.msie && Device.browser.version < 12)) {
 				createAndDispatchFocusEvent("focusin");
 				createAndDispatchFocusEvent("focus");
 				createAndDispatchFocusEvent("activate");
