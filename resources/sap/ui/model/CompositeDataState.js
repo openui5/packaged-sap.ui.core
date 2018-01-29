@@ -52,7 +52,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	 * @extends sap.ui.model.DataState
 	 *
 	 * @author SAP SE
-	 * @version 1.52.4
+	 * @version 1.52.5
 	 *
 	 * @public
 	 * @alias sap.ui.model.CompositeDataState
