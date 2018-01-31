@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.50.8
+	 * @version 1.50.9
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -878,6 +878,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		sHref = this._getThemePath(sLibName, sThemeName) + sLibFileName;
 		if ( sHref != oLink.href ) {
+			// jQuery.sap.includeStyleSheet has a special FOUC handling
+			// which enables once the attribute data-sap-ui-foucmarker is
+			// present on the link to be replaced (usage of the Promise
+			// API is not sufficient as it will change the sync behavior)
+			oLink.setAttribute("data-sap-ui-foucmarker", oLink.id);
 			// Replace the current <link> tag with a new one.
 			// Changing "oLink.href" would also trigger loading the new stylesheet but
 			// the load/error handlers would not get called which causes issues with the ThemeCheck

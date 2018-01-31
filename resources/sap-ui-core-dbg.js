@@ -10364,7 +10364,7 @@ $.ui.position = {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10375,7 +10375,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.50.8
+ * @version 1.50.9
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10401,7 +10401,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.50.8";
+		var apiVersion = "1.50.9";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10459,7 +10459,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.50.8";
+		var v = "1.50.9";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15262,7 +15262,7 @@ return URI;
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16056,7 +16056,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.50.8
+	 * @version 1.50.9
 	 * @namespace
 	 * @public
 	 * @static
@@ -20244,12 +20244,30 @@ return URI;
 		};
 
 		// check for existence of the link
-		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		var oOld = jQuery.sap.domById(mAttributes && mAttributes.id);
+		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
 			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
-				jQuery(oOld).replaceWith(oLink);
+				// if the attribute "data-sap-ui-foucmarker" exists and the value
+				// matches the id of the new link the new link will be put
+				// before the old link into the document and the id attribute
+				// will be removed from the old link (to avoid FOUC)
+				// => sap/ui/core/ThemeCheck removes these old links again once
+				//    the new theme has been fully loaded
+				if (oOld.getAttribute("data-sap-ui-foucmarker") === oLink.id) {
+					jQuery(oOld).removeAttr("id").before(oLink);
+				} else {
+					jQuery(oOld).replaceWith(oLink);
+				}
+			} else {
+				// in case of using without callbacks and applying the same URL
+				// the foucmarker has to be removed as the link will not be
+				// replaced with another link - otherwise the ThemeCheck would
+				// remove this link
+				if (oOld.getAttribute("data-sap-ui-foucmarker") === oLink.id) {
+					oOld.removeAttribute("data-sap-ui-foucmarker");
+				}
 			}
 		} else {
 			oOld = jQuery('#sap-ui-core-customcss');
@@ -20270,11 +20288,11 @@ return URI;
 	 * @param {string|object}
 	 *          vUrl the URL of the stylesheet to load or a configuration object
 	 * @param {string}
-	 *            vUrl.url the URL of the stylesheet to load
+	 *          vUrl.url the URL of the stylesheet to load
 	 * @param {string}
-	 *            [vUrl.id] id that should be used for the link tag
+	 *          [vUrl.id] id that should be used for the link tag
 	 * @param {object}
-	 *            [vUrl.attributes] map of attributes that should be used for the script tag
+	 *          [vUrl.attributes] map of attributes that should be used for the script tag
 	 * @param {string|object}
 	 *          [vId] id that should be used for the link tag or map of attributes
 	 * @param {function}

@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 	 * @class
 	 * Component Container
 	 * @extends sap.ui.core.Control
-	 * @version 1.50.8
+	 * @version 1.50.9
 	 *
 	 * @constructor
 	 * @public
@@ -239,7 +239,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 		var oComponent = this.getComponentInstance(),
 			sUsage = this.getUsage(),
 			sName = this.getName();
-		if (!oComponent && (sUsage || sName)) {
+		if (!this._oComponentPromise && !oComponent && (sUsage || sName)) {
 			// determine the owner component
 			var oOwnerComponent = Component.getOwnerComponentFor(this),
 				mConfig = createComponentConfig(this);
@@ -251,13 +251,18 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			}
 			// check whether it is needed to delay to set the component or not
 			if (oComponent instanceof Promise) {
+				this._oComponentPromise = oComponent;
 				oComponent.then(function(oComponent) {
+					delete this._oComponentPromise;
 					// set the component and invalidate to ensure a re-rendering!
 					this.setComponent(oComponent);
 					// notify listeners that a new component instance has been created
 					this.fireComponentCreated({
 						component: oComponent
 					});
+				}.bind(this), function(oReason) {
+					delete this._oComponentPromise;
+					jQuery.sap.log.error("Failed to load component for container " + this.getId() + ". Reason: " + oReason);
 				}.bind(this));
 			} else {
 				this.setComponent(oComponent, true);

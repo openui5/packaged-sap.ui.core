@@ -1,19 +1,22 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 // A static class to show a busy indicator
-sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core', './BusyIndicatorUtils'],
-	function(jQuery, EventProvider, Popup, Core, BusyIndicatorUtils) {
+sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core', './BusyIndicatorUtils', 'sap/ui/core/library'],
+	function(jQuery, EventProvider, Popup, Core, BusyIndicatorUtils, library) {
 	"use strict";
+
+	//shortcut for sap.ui.core.BusyIndicatorSize
+	var BusyIndicatorSize = library.BusyIndicatorSize;
 
 	/**
 	 * Provides methods to show or hide a waiting animation covering the whole
 	 * page and blocking user interaction.
 	 * @namespace
-	 * @version 1.50.8
+	 * @version 1.50.9
 	 * @public
 	 * @alias sap.ui.core.BusyIndicator
 	 */
@@ -98,7 +101,7 @@ sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core'
 		oBusyContainer.setAttribute("title", sTitle);
 		oRootDomRef.appendChild(oBusyContainer);
 
-		var oBusyElement = BusyIndicatorUtils.getElement("Big");
+		var oBusyElement = BusyIndicatorUtils.getElement(BusyIndicatorSize.Large);
 		oBusyElement.setAttribute("title", sTitle);
 		oRootDomRef.appendChild(oBusyElement);
 
