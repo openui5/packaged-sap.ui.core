@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP SE
-	 * @version 1.44.26
+	 * @version 1.44.27
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -294,7 +294,7 @@ sap.ui.define(['jquery.sap.global'],
 				return false;
 			}
 			if (a.nodeName && b.nodeName && a.namespaceURI && b.namespaceURI) {
-				return jQuery.sap.isEqualNode(a,b);
+				return a.isEqualNode(b);
 			}
 			if (a instanceof Date) {
 				return a.valueOf() == b.valueOf();

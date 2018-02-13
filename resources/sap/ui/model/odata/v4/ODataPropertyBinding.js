@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.PropertyBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.44.26
+	 * @version 1.44.27
 	 */
 	var ODataPropertyBinding
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataPropertyBinding", {
