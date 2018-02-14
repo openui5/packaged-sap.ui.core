@@ -449,6 +449,9 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			this.oDateTimeFormat = DateFormat.getDateInstance({
 				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss''"
 			});
+			this.oDateTimeFormatMs = DateFormat.getDateInstance({
+				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss.SSS''"
+			});
 			this.oDateTimeOffsetFormat = DateFormat.getDateInstance({
 				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''"
 			});
@@ -477,10 +480,17 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				}
 				break;
 			case "Edm.DateTime":
-				sValue = this.oDateTimeFormat.format(new Date(vValue), true);
+				var oDate = new Date(vValue);
+
+				if (oDate.getMilliseconds() > 0) {
+					sValue = this.oDateTimeFormatMs.format(oDate, true);
+				} else {
+					sValue = this.oDateTimeFormat.format(oDate, true);
+				}
 				break;
 			case "Edm.DateTimeOffset":
-				sValue = this.oDateTimeOffsetFormat.format(new Date(vValue), true);
+				var oDate = new Date(vValue);
+				sValue = this.oDateTimeOffsetFormat.format(oDate, true);
 				break;
 			case "Edm.Guid":
 				sValue = "guid'" + vValue + "'";
