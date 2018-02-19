@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.52.6
+ * @version 1.52.7
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.52.6";
+		var apiVersion = "1.52.7";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.52.6";
+		var v = "1.52.7";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -3902,6 +3902,30 @@ p.escapeQuerySpace = function(v) {
 return URI;
 }));
 /*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+/*global Node, window */
+/*
+ * A polyfill for document.baseURI (mainly targeting IE11).
+ *
+ * Implemented as a property getter to also support dynamically created &lt;base&gt; tags.
+ */
+if ( !('baseURI' in Node.prototype) ) {
+	Object.defineProperty(Node.prototype, 'baseURI', {
+		get: function() {
+			var doc = this.ownerDocument || this, // a Document node returns ownerDocument null
+				// look for first base tag with an href attribute
+				// (https://html.spec.whatwg.org/multipage/urls-and-fetching.html#document-base-url )
+				baseOrLoc = doc.querySelector("base[href]") || window.location;
+			return baseOrLoc.href;
+		},
+		configurable: true
+	});
+}
+/*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
  * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
  * @license   Licensed under MIT license
@@ -4954,6 +4978,22 @@ return URI;
 		});
 	}
 
+	/**
+	 * Resolves the given url relative to the given base or relative to the document base
+	 * if base is <code>undefined</code>. If the document base is used, its query parameters
+	 * will be suppressed.
+	 *
+	 * @param {string} url URL to resolve
+	 * @param {string} [base=document.baseURI] Base URL (optional)
+	 * @returns {string} Absolute URL
+	 */
+	function resolveURL(url, base) {
+		if ( base === undefined ) {
+			base = new URI(document.baseURI).search(""); // suppress query portion of document base
+		}
+		return new URI(url, base).toString();
+	}
+
 	var _sBootstrapUrl;
 
 	// -------------------------- VERSION -------------------------------------
@@ -5705,7 +5745,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.52.6
+	 * @version 1.52.7
 	 * @namespace
 	 * @public
 	 * @static
@@ -6670,7 +6710,7 @@ return URI;
 					}
 					options = options || {};
 
-					var sMeasureId = new URI(url || options.url).absoluteTo(document.location.origin + document.location.pathname).href();
+					var sMeasureId = resolveURL(url || options.url);
 					jQuery.sap.measure.start(sMeasureId, "Request for " + sMeasureId, "xmlhttprequest");
 					var fnComplete = options.complete;
 					options.complete = function() {
@@ -7787,8 +7827,6 @@ return URI;
 		// max size a script should have when executing it with execScript (IE). Otherwise fallback to eval
 			MAX_EXEC_SCRIPT_LENGTH = 512 * 1024,
 
-			sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, ""),
-
 			FRAGMENT = "fragment",
 			VIEW = "view",
 			mKnownSubtypes = {
@@ -8012,7 +8050,7 @@ return URI;
 				sResourceName;
 
 			// Make sure to have an absolute URL to check against absolute prefix URLs
-			sURL = new URI(sURL, sDocumentLocation).toString();
+			sURL = resolveURL(sURL);
 
 			for (sNamePrefix in mUrlPrefixes) {
 				if ( mUrlPrefixes.hasOwnProperty(sNamePrefix) ) {
@@ -8376,7 +8414,7 @@ return URI;
 								// found a sourcemap annotation with a typical UI5 generated relative URL
 								sScript = sScript.slice(0, oMatch.index) + oMatch[0].slice(0, -oMatch[2].length) + URI(oMatch[2]).absoluteTo(oModule.url);
 							} else if ( !oMatch ) {
-								sScript += "\n//# sourceURL=" + URI(oModule.url).absoluteTo(sDocumentLocation);
+								sScript += "\n//# sourceURL=" + resolveURL(oModule.url);
 								if (Device.browser.safari || Device.browser.chrome) {
 									sScript += "?eval";
 								}
@@ -8652,7 +8690,7 @@ return URI;
 
 				// calculate absolute url
 				// only to be used by 'guessResourceName'
-				vUrlPrefix.absoluteUrl = new URI(vUrlPrefix.url, sDocumentLocation).toString();
+				vUrlPrefix.absoluteUrl = resolveURL(vUrlPrefix.url);
 
 				mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
 
@@ -9904,7 +9942,7 @@ return URI;
 		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
-			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
+			if (fnLoadCallback || fnErrorCallback || oOld.href !== resolveURL(sUrl)) {
 				// if the attribute "data-sap-ui-foucmarker" exists and the value
 				// matches the id of the new link the new link will be put
 				// before the old link into the document and the id attribute
