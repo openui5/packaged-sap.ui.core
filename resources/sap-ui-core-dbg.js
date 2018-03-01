@@ -9727,7 +9727,14 @@ function createActiveXHR() {
 }
 
 
-
+//##### BEGIN: MODIFIED BY SAP
+//Prevent auto-execution of scripts when no explicit dataType was provided (See gh-2432)
+jQuery.ajaxPrefilter( function( s ) {
+	if ( s.crossDomain ) {
+		s.contents.script = false;
+	}
+} );
+//##### END: MODIFIED BY SAP
 
 // Install script dataType
 jQuery.ajaxSetup({
@@ -10815,14 +10822,14 @@ $.ui.position = {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 /**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.28.50
+ * @version 1.28.51
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10847,7 +10854,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.28.50";
+		var apiVersion = "1.28.51";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10905,7 +10912,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.28.50";
+		var v = "1.28.51";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15411,7 +15418,7 @@ return URI;
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2017 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -15507,7 +15514,7 @@ return URI;
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.28.50
+	 * @version 1.28.51
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -15951,7 +15958,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.28.50
+	 * @version 1.28.51
 	 * @namespace
 	 * @public
 	 * @static
