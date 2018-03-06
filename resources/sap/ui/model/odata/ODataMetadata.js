@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * Implementation to access oData metadata
 	 *
 	 * @author SAP SE
-	 * @version 1.52.7
+	 * @version 1.52.8
 	 *
 	 * @public
 	 * @alias sap.ui.model.odata.ODataMetadata

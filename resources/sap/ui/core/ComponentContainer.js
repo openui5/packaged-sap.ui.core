@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 	 * @class Container that embeds a UIComponent in a control tree.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.52.7
+	 * @version 1.52.8
 	 *
 	 * @public
 	 * @alias sap.ui.core.ComponentContainer
