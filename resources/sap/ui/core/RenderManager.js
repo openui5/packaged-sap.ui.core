@@ -38,7 +38,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.38.32
+	 * @version 1.38.33
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
