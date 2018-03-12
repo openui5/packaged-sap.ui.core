@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.44.28
+ * @version 1.44.29
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.44.28";
+		var apiVersion = "1.44.29";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.44.28";
+		var v = "1.44.29";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -5531,18 +5531,22 @@ return URI;
 	(function() {
 		// check URI param
 		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(location.search),
-			vDebugInfo = (mUrlMatch && mUrlMatch[1]) || '';
+			vDebugInfo = mUrlMatch && decodeURIComponent(mUrlMatch[1]);
 
 		// check local storage
 		try {
 			vDebugInfo = vDebugInfo || window.localStorage.getItem("sap-ui-debug");
 		} catch (e) {
-			// happens in FF when cookies are deactivated
+			// access to localStorage might be disallowed
 		}
 
-		// normalize
-		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
-			vDebugInfo = vDebugInfo !== 'false';
+		// normalize vDebugInfo; afterwards, it either is a boolean or a string not representing a boolean
+		if ( typeof vDebugInfo === 'string' ) {
+			if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
+				vDebugInfo = vDebugInfo !== 'false';
+			}
+		} else {
+			vDebugInfo = !!vDebugInfo;
 		}
 
 		window["sap-ui-debug"] = vDebugInfo;
@@ -5681,7 +5685,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.44.28
+	 * @version 1.44.29
 	 * @namespace
 	 * @public
 	 * @static
