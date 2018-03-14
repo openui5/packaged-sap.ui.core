@@ -163,7 +163,7 @@ sap.ui.define([
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.54.1
+	 * @version 1.54.2
 	 * @namespace
 	 * @public
 	 * @static
@@ -2022,7 +2022,7 @@ sap.ui.define([
 	if ( oJQVersion.compareTo("2.2.3") != 0 ) {
 		// if the loaded jQuery version isn't SAPUI5's default version -> notify
 		// the application
-		_earlyLog("warning", "SAPUI5's default jQuery version is 2.2.3; current version is " + jQuery.fn.jquery + ". Please note that we only support version 2.2.3.");
+		log.warning("SAPUI5's default jQuery version is 2.2.3; current version is " + jQuery.fn.jquery + ". Please note that we only support version 2.2.3.");
 	}
 
 	initjQueryBrowser();

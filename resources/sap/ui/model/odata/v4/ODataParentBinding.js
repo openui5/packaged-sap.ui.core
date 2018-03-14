@@ -401,6 +401,7 @@ sap.ui.define([
 
 		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
 				|| sChildPath[0] === "@" || this.getRootBinding().isSuspended()) {
+			// Note: Operation bindings do not support auto-$expand/$select yet
 			return SyncPromise.resolve(true);
 		}
 
@@ -426,15 +427,10 @@ sap.ui.define([
 				mLocalQueryOptions = aResult[0],
 				oProperty = aResult[1];
 
-			if (!that.oOperation) {
-				// Note: Operation bindings do not support auto-$expand/$select yet
+			if (that.bAggregatedQueryOptionsInitial) {
 				that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
-			}
-			// this.mAggregatedQueryOptions contains the aggregated query options of all child
-			// bindings which can use the cache of this binding or an ancestor binding merged
-			// with this binding's local query options
-			if (Object.keys(that.mAggregatedQueryOptions).length === 0) {
 				that.mAggregatedQueryOptions = jQuery.extend(true, {}, mLocalQueryOptions);
+				that.bAggregatedQueryOptionsInitial = false;
 			}
 			if (bIsAdvertisement) {
 				mWrappedChildQueryOptions = {"$select" : [sChildMetaPath.slice(1)]};
@@ -449,6 +445,9 @@ sap.ui.define([
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable);
 				}
 				return false;
+			}
+			if (sChildMetaPath === "value") { // symbolic name for operation result
+				return that.aggregateQueryOptions(mChildQueryOptions, bCacheImmutable);
 			}
 			jQuery.sap.log.error("Failed to enhance query options for "
 					+ "auto-$expand/$select as the path '"
@@ -737,7 +736,7 @@ sap.ui.define([
 	/**
 	 * Updates the aggregated query options of this binding with the values from the given
 	 * query options except the values for "$select" and "$expand" as these are computed by
-	 * auto-$expand/$select and must not be changed later on.
+	 * auto-$expand/$select and are only changed in {@link #fetchIfChildCanUseCache}.
 	 * Note: If the aggregated query options contain a key which is not contained in the given
 	 * query options, it is deleted from the aggregated query options.
 	 *

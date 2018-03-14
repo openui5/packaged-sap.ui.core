@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Contex
 		var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 			var oData;
 
-			if (that.bCreatePreliminaryContext && oContext && (oContext.isPreliminary() || that.oElementContext)) {
+			if (that.bCreatePreliminaryContext && oContext && oContext.isPreliminary()) {
 				that.oElementContext.setPreliminary(false);
 				that.oModel._updateContext(that.oElementContext, oContext.getPath());
 				that._fireChange({ reason: ChangeReason.Context }, false, true);
@@ -209,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Contex
 				mParameters.groupId = this.sRefreshGroup;
 			}
 			var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
-				if (that.bCreatePreliminaryContext && oContext && (oContext.isPreliminary() || that.oElementContext)) {
+				if (that.bCreatePreliminaryContext) {
 					that.oElementContext.setPreliminary(false);
 					that.oModel._updateContext(that.oElementContext, oContext.getPath());
 					that._fireChange({ reason: ChangeReason.Context }, false, true);
@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Contex
 				this.bPendingRequest = true;
 			}
 			var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
-				if (that.bCreatePreliminaryContext && oContext && (oContext.isPreliminary() || that.oElementContext)) {
+				if (that.bCreatePreliminaryContext) {
 					that.oElementContext.setPreliminary(false);
 					that.oModel._updateContext(that.oElementContext, oContext.getPath());
 					that._fireChange({ reason: ChangeReason.Context }, false, true);

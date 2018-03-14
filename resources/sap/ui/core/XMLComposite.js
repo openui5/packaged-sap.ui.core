@@ -361,7 +361,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.54.1
+	 * @version 1.54.2
 	 * @since 1.50.0
 	 * @alias sap.ui.core.XMLComposite
 	 *

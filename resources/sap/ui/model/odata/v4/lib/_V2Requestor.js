@@ -13,15 +13,16 @@ sap.ui.define([
 	"use strict";
 
 	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds
-		rDate = /^\/Date\((\d+)\)\/$/,
+		rDate = /^\/Date\((-?\d+)\)\/$/,
 		oDateFormatter = DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC : true}),
 		// Example "/Date(1420529121547+0530)/", the offset ("+0530") is optional
 		// matches: 1 = ticks in milliseconds, 2 = offset sign, 3 = offset hours, 4 = offset minutes
-		rDateTimeOffset = /^\/Date\((\d+)(?:([-+])(\d\d)(\d\d))?\)\/$/,
+		rDateTimeOffset = /^\/Date\((-?\d+)(?:([-+])(\d\d)(\d\d))?\)\/$/,
 		mPattern2Formatter = {},
 		oDateTimeOffsetParser =
 			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"}),
 		rPlus = /\+/g,
+		rSegmentWithPredicate = /^([^(]+)(\(.+\))$/,
 		rSlash = /\//g,
 		// Example: "PT11H33M55S",
 		// PT followed by optional hours, optional minutes, optional seconds with optional fractions
@@ -271,6 +272,78 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts an OData V4 key predicate for the given type to OData V2.
+	 *
+	 * @param {string} sV4KeyPredicate
+	 *   The OData V4 key predicate
+	 * @param {string} sPath
+	 *   The path of the entity described by the key predicate
+	 * @returns {string}
+	 *   The corresponding OData V2 key predicate
+	 */
+	_V2Requestor.prototype.convertKeyPredicate = function (sV4KeyPredicate, sPath) {
+		// Note: metadata can be fetched synchronously because ready() ensured that it's loaded
+		var oEntityType = this.fetchTypeForPath(_Helper.getMetaPath(sPath)).getResult(),
+			mKeyToValue = _Parser.parseKeyPredicate(decodeURIComponent(sV4KeyPredicate)),
+			that = this;
+
+		/*
+		 * Converts the literal to V2 syntax.
+		 * @param {string} sPropertyName The name of the property in the metadata
+		 * @param {string} sValue The value in the key predicate in V4 syntax
+		 * @returns {string} The value in V2 syntax
+		 */
+		function convertLiteral(sPropertyName, sValue) {
+			var oPropertyMetadata = oEntityType[sPropertyName];
+
+			if (oPropertyMetadata.$Type !== "Edm.String") {
+				sValue = that.formatPropertyAsLiteral(
+					_Helper.parseLiteral(sValue, oPropertyMetadata.$Type, sPath),
+					oPropertyMetadata);
+			}
+			return encodeURIComponent(sValue);
+		}
+
+		if ("" in mKeyToValue) {
+			return "(" + convertLiteral(oEntityType.$Key[0], mKeyToValue[""]) + ")";
+		}
+		return "(" + oEntityType.$Key.map(function (sPropertyName) {
+			return encodeURIComponent(sPropertyName) + "="
+				+ convertLiteral(sPropertyName, mKeyToValue[sPropertyName]);
+		}).join(",") + ")";
+	};
+
+	/**
+	 * Converts the resource path. Transforms literals in key predicates from V4 to V2 syntax.
+	 *
+	 * @param {string} sResourcePath The V4 resource path
+	 * @returns {string} The resource path as required for V2
+	 */
+	_V2Requestor.prototype.convertResourcePath = function (sResourcePath) {
+		var iIndex = sResourcePath.indexOf("?"),
+			sQueryString = "",
+			aSegments,
+			iSubPathLength = -1,
+			that = this;
+
+		if (iIndex > 0) {
+			sQueryString = sResourcePath.slice(iIndex);
+			sResourcePath = sResourcePath.slice(0, iIndex);
+		}
+		aSegments = sResourcePath.split("/");
+		return aSegments.map(function (sSegment, i) {
+			var aMatches = rSegmentWithPredicate.exec(sSegment);
+
+			iSubPathLength += sSegment.length + 1;
+			if (aMatches) {
+				sSegment = aMatches[1] + that.convertKeyPredicate(aMatches[2],
+					"/" + sResourcePath.slice(0, iSubPathLength));
+			}
+			return sSegment;
+		}).join("/") + sQueryString;
+	};
+
+	/**
 	 * Converts an OData V2 value of type Edm.Time to the corresponding OData V4 Edm.TimeOfDay value
 	 *
 	 *  @param {string} sV2Value
@@ -510,8 +583,32 @@ sap.ui.define([
 	 */
 	_V2Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
 			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
-		var aSelects = [],
+		var aSelects,
+			mSelects = {},
 			that = this;
+
+		/**
+		 * Strips all selects to their first segment and adds them to mSelects.
+		 *
+		 * @param {string|string[]} vSelects The selects for the given expand path as
+		 *   comma-separated list or array
+		 * @param {string} [sExpandPath] The expand path
+		 */
+		function addSelects(vSelects, sExpandPath) {
+			if (!Array.isArray(vSelects)) {
+				vSelects = vSelects.split(",");
+			}
+			vSelects.forEach(function (sSelect) {
+				var iIndex = sSelect.indexOf("/");
+
+				if (iIndex >= 0 && sSelect.indexOf(".") < 0) {
+					// only strip if there is no type cast and no bound action (avoid "correcting"
+					// unsupported selects in V2)
+					sSelect = sSelect.slice(0, iIndex);
+				}
+				mSelects[_Helper.buildPath(sExpandPath, sSelect)] = true;
+			});
+		}
 
 		/**
 		 * Converts the V4 $expand options to flat V2 $expand and $select structure.
@@ -531,8 +628,7 @@ sap.ui.define([
 
 			Object.keys(mExpandItem).forEach(function (sExpandPath) {
 				var sAbsoluteExpandPath = _Helper.buildPath(sPathPrefix, sExpandPath),
-					vExpandOptions = mExpandItem[sExpandPath], // an object or true
-					vSelectsInExpand;
+					vExpandOptions = mExpandItem[sExpandPath]; // an object or true
 
 				aExpands.push(sAbsoluteExpandPath);
 
@@ -546,13 +642,7 @@ sap.ui.define([
 								break;
 							case "$select":
 								// process nested selects
-								vSelectsInExpand = vExpandOptions.$select;
-								if (!Array.isArray(vSelectsInExpand)) {
-									vSelectsInExpand = vSelectsInExpand.split(",");
-								}
-								vSelectsInExpand.forEach(function (sSelect) {
-									aSelects.push(_Helper.buildPath(sAbsoluteExpandPath, sSelect));
-								});
+								addSelects(vExpandOptions.$select, sAbsoluteExpandPath);
 								break;
 							default:
 								throw new Error("Unsupported query option in $expand: "
@@ -561,7 +651,7 @@ sap.ui.define([
 					});
 				}
 				if (!vExpandOptions.$select) {
-					aSelects.push(sAbsoluteExpandPath + "/*");
+					mSelects[sAbsoluteExpandPath + "/*"] = true;
 				}
 			});
 			return aExpands;
@@ -587,8 +677,7 @@ sap.ui.define([
 				case "$orderby":
 					break;
 				case "$select":
-					aSelects.push.apply(aSelects,
-						Array.isArray(vValue) ? vValue : vValue.split(","));
+					addSelects(vValue);
 					return; // don't call fnResultHandler; this is done later
 				case "$filter":
 					vValue = that.convertFilter(vValue, sMetaPath);
@@ -602,6 +691,7 @@ sap.ui.define([
 		});
 
 		// only if all (nested) query options are processed, all selects are known
+		aSelects = Object.keys(mSelects);
 		if (aSelects.length > 0) {
 			if (!mQueryOptions.$select) {
 				aSelects.push("*");

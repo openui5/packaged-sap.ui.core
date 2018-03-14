@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.54.1
+	 * @version 1.54.2
 	 *
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
@@ -105,6 +105,7 @@ sap.ui.define([
 				}
 
 				this.mAggregatedQueryOptions = {};
+				this.bAggregatedQueryOptionsInitial = true;
 				this.oCachePromise = SyncPromise.resolve();
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
@@ -605,13 +606,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
-		this.mAggregatedQueryOptions = {};
-		this.mCacheByContext = undefined;
-		this.fetchCache(this.oContext);
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.resumeInternal(bCheckUpdate);
-		});
-		this._fireChange({reason : ChangeReason.Change});
+		if (!this.oOperation) {
+			this.mAggregatedQueryOptions = {};
+			this.bAggregatedQueryOptionsInitial = true;
+			this.mCacheByContext = undefined;
+			this.fetchCache(this.oContext);
+			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+				oDependentBinding.resumeInternal(bCheckUpdate);
+			});
+			this._fireChange({reason : ChangeReason.Change});
+		} else if (this.oOperation.bAction === false) {
+			// ignore returned promise, error handling takes place in execute
+			this.execute();
+		}
 	};
 
 	/**

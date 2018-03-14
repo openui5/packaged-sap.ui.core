@@ -68,6 +68,12 @@ sap.ui.define([
 			return this;
 		},
 
+		getAccessibilityInfo : function() {
+			var oField = this.getAggregation("field");
+
+			return oField && oField.getAccessibilityInfo();
+		},
+
 		removeAssociation : function() {
 			var oField = this.getAggregation("field");
 
@@ -206,7 +212,12 @@ sap.ui.define([
 					var sParameterPath = oParameter.ValueListProperty;
 
 					// TODO use Label annotation
-					oTable.addColumn(new Column({header : new Text({text : sParameterPath})}));
+					oTable.addColumn(new Column({
+						header : new Text({
+							text : sParameterPath,
+							wrapping : false
+						})
+					}));
 					oColumnListItem.addCell(new Text({text : "{" + sParameterPath + "}"}));
 				});
 				oTable.attachSelectionChange(onSelectionChange);

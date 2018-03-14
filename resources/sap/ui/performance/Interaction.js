@@ -13,9 +13,16 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 	"use strict";
 
 
-	var INTERACTION = "INTERACTION",
+	var HOST = window.location.host, // static per session
+		INTERACTION = "INTERACTION",
 		aInteractions = [],
 		oPendingInteraction = createMeasurement();
+
+	function isCORSRequest(sUrl) {
+		var sHost = new URI(sUrl).host();
+		// url is relative or with same host
+		return sHost && sHost !== HOST;
+	}
 
 	function createMeasurement() {
 		return {
@@ -47,10 +54,33 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 		}
 	}
 
-	function isCompleteTiming(oRequestTiming) {
-		return oRequestTiming.startTime > 0 &&
+	/**
+	 * Valid timings are all timings which are completed, not empty and not responded from browser cache.
+	 *
+	 * Note: Currently only Chrome and FF support size related properties (body size and transfer size),
+	 * hence the requests of others not supporting them are counted as complete (in dubio pro reo), as
+	 * before.
+	 *
+	 * @param {object} oRequestTiming
+	 * @private
+	 */
+	function isValidRoundtrip(oRequestTiming) {
+		var bComplete, bEmpty, bCached;
+
+		// if the request has been completed it has complete timing figures)
+		bComplete = oRequestTiming.startTime > 0 &&
 			oRequestTiming.startTime <= oRequestTiming.requestStart &&
 			oRequestTiming.requestStart <= oRequestTiming.responseEnd;
+
+		// encodedBodySize and transferSize info are not available in all browsers
+		if (oRequestTiming.encodedBodySize !== undefined && oRequestTiming.transferSize !== undefined) {
+			// if the body is empty a script tag responded from cache is assumed
+			bEmpty = oRequestTiming.encodedBodySize ===  0;
+			// if transfer size is smaller than body an xhr responded from cache is assumed
+			bCached = oRequestTiming.transferSize < oRequestTiming.encodedBodySize;
+		}
+
+		return bComplete && !bEmpty && !bCached;
 	}
 
 	function aggregateRequestTiming(oRequest) {
@@ -114,14 +144,14 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 			oPendingInteraction.end = iTime;
 			oPendingInteraction.duration = oPendingInteraction.processing;
 			oPendingInteraction.requests = ResourceTimings.getRequestTimings();
-			oPendingInteraction.incompleteRequests = 0;
+			oPendingInteraction.completeRoundtrips = 0;
 			oPendingInteraction.measurements = Measurement.filterMeasurements(isCompleteMeasurement, true);
 
-			var aCompleteRequestTimings = oPendingInteraction.requests.filter(isCompleteTiming);
-			if (aCompleteRequestTimings.length > 0) {
-				aggregateRequestTimings(aCompleteRequestTimings);
-				oPendingInteraction.incompleteRequests = oPendingInteraction.requests.length - aCompleteRequestTimings.length;
+			var aCompleteRoundtripTimings = oPendingInteraction.requests.filter(isValidRoundtrip);
+			if (aCompleteRoundtripTimings.length > 0) {
+				aggregateRequestTimings(aCompleteRoundtripTimings);
 			}
+			oPendingInteraction.completeRoundtrips = aCompleteRoundtripTimings.length;
 
 			// calculate real processing time if any processing took place
 			// cannot be negative as then requests took longer than processing
@@ -205,7 +235,10 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 
 		// register the response handler for data collection
 		XHRInterceptor.register(INTERACTION, "open", function () {
-			this.addEventListener("readystatechange", handleResponse);
+			// only use Interaction for non CORS requests
+			if (!isCORSRequest(arguments[1])) {
+				this.addEventListener("readystatechange", handleResponse);
+			}
 			// assign the current interaction to the xhr for later response header retrieval.
 			this.pendingInteraction = oPendingInteraction;
 		});
