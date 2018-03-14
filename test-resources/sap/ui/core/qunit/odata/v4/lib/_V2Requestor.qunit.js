@@ -63,8 +63,8 @@ sap.ui.require([
 		bIsCollection : true,
 		oResponsePayload : {
 			"d" : {
-				"__count": "3",
-				"__next": "...?$skiptoken=12",
+				"__count" : "3",
+				"__next" : "...?$skiptoken=12",
 				"results" : [{"String" : "foo"}, {"Boolean" : true}]
 			}
 		},
@@ -76,9 +76,13 @@ sap.ui.require([
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
-			"d" : {"String" : "foo"}
+			"d" : {
+				"__metadata" : {},
+				"String" : "foo"
+			}
 		},
-		oExpectedResult : {"String" : "foo"}
+		//TODO "__metadata" : {} is actually unexpected here, in real life
+		oExpectedResult : {"__metadata" : {}, "String" : "foo"}
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
@@ -108,6 +112,110 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.3 RetrieveComplexType Request", function (assert) {
+		var oPayload = {},
+			oRequestor = {},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/flightDetails
+				"d" : {
+					"flightDetails" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						}
+					}
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor).expects("convertNonPrimitive")
+			.withExactArgs(sinon.match.same(oResponsePayload.d.flightDetails))
+			.returns(oPayload);
+
+		// code under test
+		assert.strictEqual(oRequestor.doConvertResponse(oResponsePayload), oPayload);
+	});
+
+	//*********************************************************************************************
+	[{
+		"d" : {
+			// "An optional "__metadata" name/value pair..."
+			"readMe1st" : {}
+		}
+	}, {
+		"d" : {
+			// "An optional "__metadata" name/value pair..."
+			"ID" : 0,
+			"Name" : "Food"
+		}
+	}].forEach(function (oResponsePayload, i) {
+		QUnit.test("doConvertResponse, not 2.2.7.2.3 RetrieveComplexType: " + i, function (assert) {
+			var oPayload = {},
+				oRequestor = {};
+
+			asV2Requestor(oRequestor);
+			this.mock(oRequestor).expects("convertNonPrimitive")
+				.withExactArgs(sinon.match.same(oResponsePayload.d))
+				.returns(oPayload);
+
+			// code under test
+			assert.strictEqual(oRequestor.doConvertResponse(oResponsePayload), oPayload);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.4 RetrievePrimitiveProperty Req.", function (assert) {
+		var sMetaPath = "/FlightCollection/fldate",
+			sOutput = "2017-08-10T00:00:00Z",
+			oProperty = {},
+			oRequestor = {
+				oModelInterface : {fnFetchMetadata : function () {}}
+			},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
+				"d" : {
+					"fldate": "/Date(1502323200000)/"
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			.withExactArgs(sMetaPath)
+			.returns(SyncPromise.resolve(oProperty));
+		this.mock(oRequestor).expects("convertPrimitive")
+			.withExactArgs(oResponsePayload.d.fldate, sinon.match.same(oProperty), sMetaPath,
+				"fldate")
+			.returns(sOutput);
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : sOutput});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.3 & 2.2.7.2.4: null", function (assert) {
+		var sMetaPath = "/FlightCollection/fldate",
+			oRequestor = {},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
+				"d" : {
+					"fldate": null
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor).expects("convertPrimitive").never();
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : null});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertNonPrimitive, complex value", function (assert) {
 		var oObject = {
 				__metadata : {type : "TypeQName"},
@@ -120,7 +228,7 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 		oRequestorMock.expects("getTypeForName").twice().withExactArgs("TypeQName").returns(oType);
 		oRequestorMock.expects("convertPrimitive")
-			.withExactArgs("42", "Edm.Double", "TypeQName", "property")
+			.withExactArgs("42", {$Type : "Edm.Double"}, "TypeQName", "property")
 			.returns(42);
 
 		// code under test
@@ -166,10 +274,10 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 		oRequestorMock.expects("getTypeForName").thrice().withExactArgs("TypeQName").returns(oType);
 		oRequestorMock.expects("convertPrimitive")
-			.withExactArgs("42", "Edm.Double", "TypeQName", "property")
+			.withExactArgs("42", {$Type : "Edm.Double"}, "TypeQName", "property")
 			.returns(42);
 		oRequestorMock.expects("convertPrimitive")
-			.withExactArgs("77", "Edm.Double", "TypeQName", "property")
+			.withExactArgs("77", {$Type : "Edm.Double"}, "TypeQName", "property")
 			.returns(77);
 
 		// code under test
@@ -207,7 +315,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oObject.complex))
 			.returns(oObject.complex);
 		this.mock(oRequestor).expects("convertPrimitive")
-			.withExactArgs(oObject.property, "Edm.Double", "TypeQName", "property")
+			.withExactArgs(oObject.property, {$Type : "Edm.Double"}, "TypeQName", "property")
 			.returns(42);
 
 		// code under test
@@ -233,8 +341,8 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.convertNonPrimitive(oObject, {});
-			}, new Error("Cannot convert complex value without type information in "
+				oRequestor.convertNonPrimitive(oObject);
+			}, new Error("Cannot convert structured value without type information in "
 					+ "__metadata.type: " + JSON.stringify(oObject)));
 		});
 	});
@@ -264,29 +372,39 @@ sap.ui.require([
 
 			asV2Requestor(oRequestor);
 			if (oFixture.sConvertMethod) {
-				this.mock(oRequestor).expects(oFixture.sConvertMethod)
-					.withExactArgs(sinon.match.same(vV2Value))
-					.returns(vV4Value);
+				if (oFixture.sType === "Edm.DateTimeOffset") {
+					this.mock(oRequestor).expects(oFixture.sConvertMethod)
+						.withExactArgs(sinon.match.same(vV2Value), {$Type : oFixture.sType})
+						.returns(vV4Value);
+				} else {
+					this.mock(oRequestor).expects(oFixture.sConvertMethod)
+						.withExactArgs(sinon.match.same(vV2Value))
+						.returns(vV4Value);
+				}
 			} else {
 				vV4Value = vV2Value; // no conversion
 			}
 
 			// code under test
-			assert.strictEqual(oRequestor.convertPrimitive(vV2Value, oFixture.sType, "property",
-				"Type"), vV4Value);
+			assert.strictEqual(oRequestor.convertPrimitive(vV2Value, {$Type : oFixture.sType},
+				"property", "Type"), vV4Value);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertPrimitive, unknown type", function (assert) {
+	QUnit.test("convertPrimitive, unknown and undefined type", function (assert) {
 		var oRequestor = {};
 
 		asV2Requestor(oRequestor);
 
 		// code under test
 		assert.throws(function () {
-			oRequestor.convertPrimitive("foo", "Unknown", "Type", "Property");
+			oRequestor.convertPrimitive("foo", {$Type : "Unknown"}, "Type", "Property");
 		}, new Error("Type 'Unknown' of property 'Property' in type 'Type' is unknown; "
+			+ "cannot convert value: foo"));
+		assert.throws(function () {
+			oRequestor.convertPrimitive("foo", undefined, "Type", "Property");
+		}, new Error("Type 'undefined' of property 'Property' in type 'Type' is unknown; "
 			+ "cannot convert value: foo"));
 	});
 
@@ -345,25 +463,33 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		input : "/Date(1420529121547+0000)/",
-		output : "2015-01-06T07:25:21.547Z"
+		output : "2015-01-06T07:25:21Z"
 	}, {
 		input : "/Date(1420529121547+0500)/",
-		output : "2015-01-06T12:25:21.547+05:00"
+		output : "2015-01-06T12:25:21+05:00"
 	}, {
 		input : "/Date(1420529121547+1500)/",
-		output : "2015-01-06T22:25:21.547+15:00"
+		output : "2015-01-06T22:25:21+15:00"
 	}, {
 		input : "/Date(1420529121547+0530)/",
-		output : "2015-01-06T12:55:21.547+05:30"
+		output : "2015-01-06T12:55:21+05:30"
 	}, {
 		input : "/Date(1420529121547+0030)/",
-		output : "2015-01-06T07:55:21.547+00:30"
+		output : "2015-01-06T07:55:21+00:30"
 	}, {
 		input : "/Date(1420529121547-0530)/",
-		output : "2015-01-06T01:55:21.547-05:30"
+		output : "2015-01-06T01:55:21-05:30"
+	}, {
+		input : "/Date(1420529121547-0530)/",
+		output : "2015-01-06T01:55:21-05:30",
+		precision : 0
+	}, {
+		input : "/Date(1420529121547-0530)/",
+		output : "2015-01-06T01:55:21.547000-05:30",
+		precision : 6
 	}, {
 		input : "/Date(1395752399000)/", // DateTime in V2
-		output : "2014-03-25T12:59:59.000Z"  // must be interpreted as UTC
+		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
 	}].forEach(function (oFixture, i) {
 		QUnit.test("convertDateTimeOffset, success " + i, function (assert) {
 			var oRequestor = {};
@@ -371,7 +497,8 @@ sap.ui.require([
 			asV2Requestor(oRequestor);
 
 			// code under test
-			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input), oFixture.output);
+			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input,
+				{$Precision : oFixture.precision}), oFixture.output);
 		});
 	});
 
@@ -390,9 +517,25 @@ sap.ui.require([
 
 			assert.throws(function () {
 				// code under test
-				return oRequestor.convertDateTimeOffset(oFixture.input);
+				return oRequestor.convertDateTimeOffset(oFixture.input, {});
 			}, new Error(oFixture.expectedError));
 		});
+	});
+
+	//*********************************************************************************************
+	// This test assumes that the precisions in this test are not used in other tests
+	QUnit.test("convertDateTimeOffset, DateTimeInstance map callCount", function (assert) {
+		var oDateFormatMock = this.mock(DateFormat),
+			oRequestor = {};
+
+		asV2Requestor(oRequestor);
+
+		oRequestor.convertDateTimeOffset("/Date(1395752399000)/", {$Precision : 42});
+		// after calling #getDateTimeInstance, there is no further call with the same precision
+		oDateFormatMock.expects("getDateTimeInstance").never();
+
+		// code under test
+		oRequestor.convertDateTimeOffset("/Date(1395752399000)/", {$Precision : 42});
 	});
 
 	//*********************************************************************************************
@@ -605,7 +748,7 @@ sap.ui.require([
 				asV2Requestor(oRequestor);
 
 				// code under test
-				oRequestor.doConvertSystemQueryOptions("Foo", oFixture.queryOptions,
+				oRequestor.doConvertSystemQueryOptions("/Foo", oFixture.queryOptions,
 					fnResultHandlerSpy, oFixture.dropSystemQueryOptions, bSorted);
 
 				assert.strictEqual(fnResultHandlerSpy.callCount,
@@ -639,7 +782,7 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.doConvertSystemQueryOptions("Foo", {"$expand" : vExpandOption});
+				oRequestor.doConvertSystemQueryOptions("/Foo", {"$expand" : vExpandOption});
 			}, new Error("$expand must be a valid object"));
 		});
 	});
@@ -695,7 +838,7 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.doConvertSystemQueryOptions("Foo", oFixture.queryOptions,
+				oRequestor.doConvertSystemQueryOptions("/Foo", oFixture.queryOptions,
 					function () {});
 			}, new Error(oFixture.error));
 		});
@@ -710,10 +853,10 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 
 		this.mock(oRequestor).expects("convertFilter")
-			.withExactArgs(sFilter, "Foo").returns("~");
+			.withExactArgs(sFilter, "/Foo").returns("~");
 
 		// code under test
-		oRequestor.doConvertSystemQueryOptions("Foo", {$filter : sFilter},
+		oRequestor.doConvertSystemQueryOptions("/Foo", {$filter : sFilter},
 			fnResultHandlerSpy);
 
 		sinon.assert.calledOnce(fnResultHandlerSpy);
@@ -948,20 +1091,20 @@ sap.ui.require([
 	].forEach(function (oFixture) {
 		QUnit.test("convertFilter: " + oFixture.type, function (assert) {
 			var sFilter = "foo/bar eq " + oFixture.literal,
+				sMetaPath = "/MyEntitySet",
 				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
 				oRequestor = {
 					oModelInterface : {fnFetchMetadata : function () {}}
-				},
-				sResourcePath = "MyEntitySet";
+				};
 
 			asV2Requestor(oRequestor);
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
-				.withExactArgs("/" + sResourcePath + "/foo/bar")
+				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
-			assert.strictEqual(oRequestor.convertFilter(sFilter, sResourcePath),
+			assert.strictEqual(oRequestor.convertFilter(sFilter, sMetaPath),
 				oFixture.result || sFilter);
 		});
 	});
@@ -1075,23 +1218,20 @@ sap.ui.require([
 		error : "Invalid filter path: foo/bar"
 	}].forEach(function (oFixture) {
 		QUnit.test("convertFilter: " + oFixture.error, function (assert) {
-			var oRequestor = {
-					oModelInterface : {
-						fnFetchMetadata : function () {
-						}
-					}
-				},
-				sResourcePath = "MyEntitySet";
+			var sMetaPath = "/MyEntitySet",
+				oRequestor = {
+					oModelInterface : {fnFetchMetadata : function () {}}
+				};
 
 			asV2Requestor(oRequestor);
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
-				.withExactArgs("/" + sResourcePath + "/foo/bar")
+				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oFixture.property));
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.convertFilter("foo/bar eq " + oFixture.literal, sResourcePath);
+				oRequestor.convertFilter("foo/bar eq " + oFixture.literal, sMetaPath);
 			}, new Error(oFixture.error));
 		});
 	});
@@ -1122,9 +1262,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getTypeForName", function (assert) {
 		var oRequestor = {
-				oModelInterface : {
-					fnFetchMetadata : function () {}
-				}
+				oModelInterface : {fnFetchMetadata : function () {}}
 			},
 			oType = {};
 
@@ -1243,9 +1381,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oEntity = {"Foo" : 42, "ID" : "1"},
-				oModelInterface = {
-					fnFetchMetadata : function () {}
-				},
+				oModelInterface = {fnFetchMetadata : function () {}},
 				oOperationMetadata = {
 					"$IsBound" : true,
 					"$Parameter" : [{ // "$Name" : null, "$Nullable" : false,
@@ -1288,20 +1424,38 @@ sap.ui.require([
 					bAction ? oEntity : function () { return oEntity; }),
 				"ResetEdmTypes");
 			assert.deepEqual(mQueryOptions, {"Bar" : "true", "Foo" : "42", "ID" : "'1'"});
+			assert.deepEqual(mParameters, {});
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: Operation w/o parameters", function (assert) {
 		var oOperationMetadata = {},
+			mParameters = {foo : "bar"},
 			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
 
 		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
 
 		assert.strictEqual(
 			// code under test
-			oRequestor.getPathAndAddQueryOptions("/some.Operation(...)", oOperationMetadata),
+			oRequestor.getPathAndAddQueryOptions("/some.Operation(...)", oOperationMetadata,
+				mParameters),
 			"some.Operation");
+		assert.deepEqual(mParameters, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: $v2HttpMethod", function (assert) {
+		var oOperationMetadata = {$v2HttpMethod : "PUT"},
+			mParameters = {foo : "bar"},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Operation(...)", oOperationMetadata,
+				mParameters),
+			"some.Operation");
+		assert.deepEqual(mParameters, {"X-HTTP-Method" : oOperationMetadata.$v2HttpMethod});
 	});
 
 	//*********************************************************************************************

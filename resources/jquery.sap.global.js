@@ -28,7 +28,7 @@ sap.ui.define([
 	"sap/base/util/extend", "sap/base/assert", "sap/base/log",
 
 	// new sap/ui/* modules
-	"sap/ui/bootstrap/Info", "sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/includeScript",
+	"sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/includeScript",
 	"sap/ui/dom/includeStylesheet", "sap/ui/initjQuerySupport", "sap/ui/initSupportHooks", "sap/ui/initjQueryBrowser",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/Interaction", "sap/ui/performance/ResourceTimings",
 	"sap/ui/bootstrap/StoredConfig", "sap/ui/SyncPoint", "sap/ui/XHRProxy",
@@ -41,7 +41,7 @@ sap.ui.define([
 	"ui5loader-autoconfig"
 ], function(now, getObject, getter, Version, extend, assert, log,
 
-     BootstrapInfo, Configuration, appendHead, computedStylePolyfill, includeScript,
+     Configuration, appendHead, computedStylePolyfill, includeScript,
      includeStylesheet, initjQuerySupport, initSupportHooks, initjQueryBrowser,
      FrameOptions, Measurement, Interaction, ResourceTimings,
      StoredConfig, SyncPoint, XHRProxy,
@@ -128,58 +128,6 @@ sap.ui.define([
 		XHRProxy();
 	}
 
-	/**
-	 * Find the script URL where the SAPUI5 is loaded from and return an object which
-	 * contains the identified script-tag and resource root
-	 */
-	var _oBootstrap = BootstrapInfo;
-
-	/**
-	 * Determine whether to use debug sources depending on URL parameter and local storage
-	 * and load debug library if necessary
-	 */
-	(function() {
-		// check URI param
-		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(location.search),
-			vDebugInfo = (mUrlMatch && decodeURIComponent(mUrlMatch[1])) || '';
-
-		// check local storage
-		try {
-			vDebugInfo = vDebugInfo || window.localStorage.getItem("sap-ui-debug");
-		} catch (e) {
-			// happens in FF when cookies are deactivated
-		}
-		vDebugInfo = vDebugInfo || (_oBootstrap.tag && _oBootstrap.tag.getAttribute("data-sap-ui-debug"));
-
-		// normalize
-		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
-			vDebugInfo = vDebugInfo !== 'false';
-		}
-
-		window["sap-ui-debug"] = vDebugInfo;
-
-		// if bootstrap URL already contains -dbg URL, just set sap-ui-loaddbg
-		if (/-dbg\.js([?#]|$)/.test(_oBootstrap.url)) {
-			window["sap-ui-loaddbg"] = true;
-			window["sap-ui-debug"] = vDebugInfo = vDebugInfo || true;
-		}
-
-		if ( window["sap-ui-optimized"] && vDebugInfo ) {
-			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
-			window["sap-ui-loaddbg"] = true;
-			// if debug sources should be used in general, restart with debug URL
-			if ( vDebugInfo === true ) {
-				var sDebugUrl = _oBootstrap.url.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
-				window["sap-ui-optimized"] = false;
-				document.write("<script type=\"text/javascript\" src=\"" + sDebugUrl + "\"></script>");
-				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
-				oRestart.name = "Restart";
-				throw oRestart;
-			}
-		}
-
-	})();
-
 	/*
 	 * Merged, raw (un-interpreted) configuration data from the following sources
 	 * (last one wins)
@@ -215,7 +163,7 @@ sap.ui.define([
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.54.0
+	 * @version 1.54.1
 	 * @namespace
 	 * @public
 	 * @static
@@ -901,30 +849,23 @@ sap.ui.define([
 	 * @static
 	 */
 	jQuery.sap.getObject = function(sName, iNoCreates, oContext) {
+		var oObject = oContext || window,
+			aNames = (sName || "").split("."),
+			l = aNames.length,
+			iEndCreate = isNaN(iNoCreates) ? 0 : l - iNoCreates,
+			i;
 
 		if ( syncCallBehavior && oContext === window ) {
-			log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
+			jQuery.sap.log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
 		}
 
-		var oObject;
-
-		oContext = oContext || window;
-		sName = sName || "";
-
-		if (iNoCreates === 0 || iNoCreates === null ) {
-			oObject = getObject(oContext, sName, true);
-		} else if (isNaN(iNoCreates)) {
-			oObject = getObject(oContext, sName, false);
-		} else {
-			var aNames = sName.split(".");
-			if ( aNames.length - iNoCreates > 0 ) {
-				getObject(oContext, aNames.slice(0, -iNoCreates).join("."), true);
+		for (i = 0; oObject && i < l; i++) {
+			if (!oObject[aNames[i]] && i < iEndCreate ) {
+				oObject[aNames[i]] = {};
 			}
-			return getObject(oContext, sName, false);
+			oObject = oObject[aNames[i]];
 		}
-
 		return oObject;
-
 	};
 
 	/**

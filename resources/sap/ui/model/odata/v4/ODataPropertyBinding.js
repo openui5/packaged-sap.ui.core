@@ -50,7 +50,8 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.54.0
+	 * @version 1.54.1
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -515,16 +516,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and checks for updates.
+	 * Resumes this binding and checks for updates if the parameter <code>bCheckUpdate</code> is
+	 * set.
+	 *
+	 * @param {boolean} bCheckUpdate
+	 *   Whether this property binding shall call <code>checkUpdate</code>
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.resumeInternal = function () {
+	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
 		this.fetchCache(this.oContext);
-		this.checkUpdate();
+		if (bCheckUpdate) {
+			this.checkUpdate();
+		}
 	};
 
-		/**
+	/**
 	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
 	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
@@ -591,7 +598,8 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the new value is not primitive or no value has been read before
+	 *   If the binding's root binding is suspended, the new value is not primitive or no value has
+	 *   been read before
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
@@ -607,6 +615,7 @@ sap.ui.define([
 			return oError;
 		}
 
+		this.checkSuspended();
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw reportError(new Error("Not a primitive value"));
 		}

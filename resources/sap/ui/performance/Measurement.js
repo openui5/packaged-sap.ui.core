@@ -7,7 +7,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-/*global XMLHttpRequest */
+/*global XMLHttpRequest, document, location, window */
 sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 ], function(log, URI, now) {
 
@@ -146,7 +146,7 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 						sMeasureId;
 
 					oXHR.open = function() {
-						sMeasureId = new URI(arguments[1]).absoluteTo(document.location.origin + document.location.pathname).href();
+						sMeasureId = new URI(arguments[1], new URI(document.baseURI).search("")).href();
 						fnStart(sMeasureId, "Request for " + sMeasureId, "xmlhttprequest");
 						oXHR.addEventListener("loadend", fnEnd.bind(null, sMeasureId));
 
@@ -237,9 +237,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 					oMeasurement.duration = oMeasurement.pause - oMeasurement.start;
 				}
 			}
-			log.info("Performance measurement pause: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 
 			if (oMeasurement) {
+				log.info("Performance measurement pause: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
@@ -262,7 +262,6 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 
 			var iTime = now();
 			var oMeasurement = mMeasurements[sId];
-			log.info("Performance measurement resume: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 
 			if (oMeasurement && oMeasurement.pause > 0) {
 				// already paused
@@ -271,6 +270,7 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			}
 
 			if (oMeasurement) {
+				log.info("Performance measurement resume: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
@@ -527,12 +527,13 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 				var bFound = aAverageMethods.indexOf(fnMethod) > -1;
 				if (!bFound) {
 					aOriginalMethods.push({func : fnMethod, obj: oObject, method: sMethod, id: sId});
+					var that = this;
 					oObject[sMethod] = function() {
-						this.average(sId, sId + " method average", aCategories);
+						that.average(sId, sId + " method average", aCategories);
 						var result = fnMethod.apply(this, arguments);
-						this.end(sId);
+						that.end(sId);
 						return result;
-					}.bind(this);
+					};
 					aAverageMethods.push(oObject[sMethod]);
 					return true;
 				}

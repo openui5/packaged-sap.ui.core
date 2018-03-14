@@ -1,4 +1,28 @@
 /*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+/*global Node, window */
+/*
+ * A polyfill for document.baseURI (mainly targeting IE11).
+ *
+ * Implemented as a property getter to also support dynamically created &lt;base&gt; tags.
+ */
+if ( !('baseURI' in Node.prototype) ) {
+	Object.defineProperty(Node.prototype, 'baseURI', {
+		get: function() {
+			var doc = this.ownerDocument || this, // a Document node returns ownerDocument null
+				// look for first base tag with an href attribute
+				// (https://html.spec.whatwg.org/multipage/urls-and-fetching.html#document-base-url )
+				baseOrLoc = doc.querySelector("base[href]") || window.location;
+			return baseOrLoc.href;
+		},
+		configurable: true
+	});
+}
+/*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
  * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
  * @license   Licensed under MIT license
@@ -1268,15 +1292,24 @@ if (!String.prototype.padEnd) {
 		}
 	}(navigator.userAgent.toLowerCase()));
 
+	/*
+	 * Helper function that returns the document base URL without search parameters and hash.
+	 */
+	function docBase() {
+		var href = document.baseURI,
+			p = href.search(/[?#]/);
+		return p < 0 ? href : href.slice(0, p);
+	}
+
 	/**
-	 * Resolve a given URL, either against the location of the current page or against a given base URL.
+	 * Resolve a given URL, either against the base URL of the current document or against a given base URL.
 	 *
-	 * If no base URL is given, the URL will be resolved relative to the location of the current page.
-	 * If a base URL is given, that base will first be resolved relative to the current page,
+	 * If no base URL is given, the URL will be resolved relative to the baseURI of the current document.
+	 * If a base URL is given, that base will first be resolved relative to the document's baseURI,
 	 * then the URL will be resolved relative to the resolved base.
 	 *
-	 * @param {string} sURI relative or absolute URL that should be resolved
-	 * @param {string} [sBase] base URL relative to which the URL should be resolved
+	 * @param {string} sURI Relative or absolute URL that should be resolved
+	 * @param {string} [sBase=document.baseURI] Base URL relative to which the URL should be resolved
 	 * @returns {string} Resolved URL
 	 */
 	var resolveURL = (function(_URL) {
@@ -1296,20 +1329,20 @@ if (!String.prototype.padEnd) {
 			return function(sURI, sBase) {
 				// For a spec see https://url.spec.whatwg.org/
 				// For browser support see https://developer.mozilla.org/en/docs/Web/API/URL
-				return new _URL(sURI, sBase ? new _URL(sBase, window.location.href) : window.location.href).toString();
+				return new _URL(sURI, sBase ? new _URL(sBase, docBase()) : docBase()).toString();
 			};
 		}
 
 		// fallback for IE11 and PhantomJS: use a shadow document with <base> and <a>nchor tag
 		var doc = document.implementation.createHTMLDocument("Dummy doc for resolveURI");
 		var base = doc.createElement('base');
-		base.href = window.location.href;
+		base.href = docBase();
 		doc.head.appendChild(base);
 		var anchor = doc.createElement("A");
 		doc.body.appendChild(anchor);
 
 		return function (sURI, sBase) {
-			base.href = window.location.href;
+			base.href = docBase();
 			if ( sBase != null ) {
 				// first resolve sBase relative to location
 				anchor.href = sBase;
@@ -1410,6 +1443,23 @@ if (!String.prototype.padEnd) {
 	 * @private
 	 */
 	var DEFAULT_BASE_URL = 'resources/';
+
+	/**
+	 * Temporarily saved reference to the original value of the global define variable.
+	 *
+	 * @type {any}
+	 * @private
+	 */
+	var vOriginalDefine;
+
+	/**
+	 * Temporarily saved reference to the original value of the global require variable.
+	 *
+	 * @type {any}
+	 * @private
+	 */
+	var vOriginalRequire;
+
 
 	/**
 	 * A map of URL prefixes keyed by the corresponding module name prefix.
@@ -3139,6 +3189,15 @@ if (!String.prototype.padEnd) {
 			if ( report === 0 || report === 1 || report === 2 ) {
 				syncCallBehavior = report;
 			}
+		},
+		noConflict: function(bValue) {
+			if (bValue) {
+				__global.define = vOriginalDefine;
+				__global.require = vOriginalRequire;
+			} else {
+				__global.define = define;
+				__global.require = require;
+			}
 		}
 	};
 
@@ -3178,6 +3237,7 @@ if (!String.prototype.padEnd) {
 		getResourcePath: getResourcePath,
 		getUrlPrefixes: getUrlPrefixes,
 		loadJSResourceAsync: loadJSResourceAsync,
+		resolveURL: resolveURL,
 		toUrl: getResourcePath,
 		unloadResources: unloadResources
 	};
@@ -3241,9 +3301,12 @@ if (!String.prototype.padEnd) {
 	}
 	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
 
-	// @evo-todo enable usage of global define/require
-	// __global.define = define;
-	// __global.require = require;
+	// Store current global define and require values
+	vOriginalDefine = __global.define;
+	vOriginalRequire = __global.require;
+
+	__global.define = define;
+	__global.require = require;
 
 	__global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};
@@ -3604,18 +3667,30 @@ if (!String.prototype.padEnd) {
 	/*global console, document, jQuery, sap, window */
 	"use strict";
 
-	var oCfg = window['sap-ui-config'],
+	var _ui5loader = window.sap && window.sap.ui && window.sap.ui._ui5loader,
+		oCfg = window['sap-ui-config'],
 		sBaseUrl, bNojQuery,
-		aScripts, rBootScripts, i;
+		aScripts, rBootScripts, i,
+		oBootstrapScript, sBootstrapUrl, bNoConflict = true;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
 			oMatch = rUrlPattern.exec(sUrl);
 		if ( oMatch ) {
 			sBaseUrl = oMatch[1] || "";
+			oBootstrapScript = oScript;
+			sBootstrapUrl = sUrl;
 			bNojQuery = /sap-ui-core-nojQuery\.js(?:\?|#|$)/.test(sUrl);
 			return true;
 		}
+	}
+
+	function ensureSlash(path) {
+		return path && path[path.length] !== '/' ? path + '/' : path;
+	}
+
+	if (_ui5loader == null) {
+		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
 	}
 
 	// Prefer script tags which have the sap-ui-bootstrap ID
@@ -3624,14 +3699,22 @@ if (!String.prototype.padEnd) {
 	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:.*\/)?resources\/)/ ) ) {
 
 		// only when there's no such script tag, check all script tags
-		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-\w*)?|jquery.sap.global|ui5loader-autoconfig)\.js(?:[?#]|$)/;
+		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-\w*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
 		aScripts = document.scripts;
 		for ( i = 0; i < aScripts.length; i++ ) {
 			if ( findBaseUrl(aScripts[i], rBootScripts) ) {
 				break;
 			}
 		}
+	}
 
+	var sNoConflictBootstrapValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-noloaderconflict");
+	if (sNoConflictBootstrapValue) {
+		bNoConflict = /^(?:true|x|X)$/.test(sNoConflictBootstrapValue);
+	}
+	var aNoConflictURLMatches = window.location.search.match(/(?:^\?|&)sap-ui-noLoaderConflict=(true|x|X|false)(?:&|$)/);
+	if (aNoConflictURLMatches) {
+		bNoConflict = aNoConflictURLMatches[1] != "false";
 	}
 
 	// configuration via window['sap-ui-config'] always overrides an auto detected base URL
@@ -3645,8 +3728,106 @@ if (!String.prototype.padEnd) {
 		throw new Error("ui5loader-autoconfig.js: could not determine base URL. No known script tag and no configuration found!");
 	}
 
-	sap.ui._ui5loader.config({
+	/**
+	 * Determine whether to use debug sources depending on URL parameter, local storage
+	 * and script tag attribute.
+	 * If full debug mode is required, restart with a debug version of the bootstrap.
+	 */
+	(function() {
+		// check URI param
+		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(window.location.search),
+			vDebugInfo = (mUrlMatch && decodeURIComponent(mUrlMatch[1])) || '';
+
+		// check local storage
+		try {
+			vDebugInfo = vDebugInfo || window.localStorage.getItem("sap-ui-debug");
+		} catch (e) {
+			// happens in FF when cookies are deactivated
+		}
+		vDebugInfo = vDebugInfo || (oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-debug"));
+
+		// normalize
+		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
+			vDebugInfo = vDebugInfo !== 'false';
+		}
+
+		// if bootstrap URL already contains -dbg URL, just set sap-ui-loaddbg
+		if (/-dbg\.js([?#]|$)/.test(sBootstrapUrl)) {
+			window['sap-ui-loaddbg'] = true;
+			vDebugInfo = vDebugInfo || true;
+		}
+
+		// export resulting debug mode under legacy property
+		window["sap-ui-debug"] = vDebugInfo;
+
+		if ( window["sap-ui-optimized"] && vDebugInfo ) {
+			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
+			window['sap-ui-loaddbg'] = true;
+			// if debug sources should be used in general, restart with debug URL
+			if ( vDebugInfo === true ) {
+				var sDebugUrl;
+				if ( sBootstrapUrl != null ) {
+					sDebugUrl = sBootstrapUrl.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
+				} else {
+					// when no boot script could be identified, we can't derive the name of the
+					// debug boot script from it, so fall back to a default debug boot script
+					sDebugUrl = ensureSlash(sBaseUrl) + 'sap-ui-core.js';
+				}
+				window["sap-ui-optimized"] = false;
+				document.write("<script src=\"" + sDebugUrl + "\"></script>");
+				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
+				oRestart.name = "Restart";
+				throw oRestart;
+			}
+		}
+
+		function makeRegExp(sGlobPattern) {
+			if (!/\/\*\*\/$/.test(sGlobPattern)) {
+				sGlobPattern = sGlobPattern.replace(/\/$/, '/**/');
+			}
+			return sGlobPattern.replace(/\*\*\/|\*|[[\]{}()+?.\\^$|]/g, function(sMatch) {
+				switch (sMatch) {
+					case '**/': return '(?:[^/]+/)*';
+					case '*': return '[^/]*';
+					default: return '\\' + sMatch;
+				}
+			});
+		}
+
+		var fnIgnorePreload;
+
+		if (typeof vDebugInfo === 'string') {
+			var sPattern = "^(?:" + vDebugInfo.split(/,/).map(makeRegExp).join("|") + ")",
+				rFilter = new RegExp(sPattern);
+
+			fnIgnorePreload = function(sModuleName) {
+				return rFilter.test(sModuleName);
+			};
+
+			_ui5loader.logger.debug("Modules that should be excluded from preload: '" + sPattern + "'");
+
+		} else if (vDebugInfo === true) {
+
+			fnIgnorePreload = function() {
+				return true;
+			};
+
+			_ui5loader.logger.debug("All modules should be excluded from preload");
+
+		}
+
+		_ui5loader.config({
+			debugSources: !!window['sap-ui-loaddbg'],
+			ignoreBundledResources: fnIgnorePreload
+		});
+
+	})();
+
+
+	_ui5loader.config({
 		baseUrl: sBaseUrl,
+
+		noConflict: bNoConflict,
 
 		map: {
 			"*": {
@@ -3732,6 +3913,7 @@ if (!String.prototype.padEnd) {
 			},
 			'sap/ui/thirdparty/jquery-mobile-custom': {
 				amd: true,
+				deps: ['sap/ui/thirdparty/jquery'],
 				exports: 'jQuery.mobile'
 			},
 			'sap/ui/thirdparty/jszip': {

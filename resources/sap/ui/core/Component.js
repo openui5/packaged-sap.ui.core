@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.54.0
+	 * @version 1.54.1
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -2608,13 +2608,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 								bResolved = true;
 								resolve();
 							}
-							try {
-								sap.ui.require([sModuleName], resolve, logErrorAndResolve);
-							} catch (err) {
-								// TODO: try-catch can be removed once the underlaying loader supports
-								// the "errback" function
-								logErrorAndResolve(err);
-							}
+							sap.ui.require([sModuleName], resolve, logErrorAndResolve);
 						});
 					})).then(function() {
 						return oControllerClass;

@@ -11,7 +11,8 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AppCacheBuster.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/appcachebuster/AppCacheBuster.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/baseuri.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CacheManager.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ControlDefinition.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core.qunit.html");
@@ -55,8 +56,7 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ManagedObject_isPropertyInitial.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ManagedObject_forwardAggregation.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ManagedObjectObserver.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ModuleSystem.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ModuleSystem_async.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Modularization.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Object.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/PlaceAt.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/RenderManager.qunit.html");
@@ -73,9 +73,6 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Persian.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/QUnit.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/QUnit.qunit.html?sap-ui-qunitversion=2");
-
-			// TODO: In which testsuite to put this test?
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Modularization.qunit.html");
 
 			return suite;
 		}

@@ -36,15 +36,24 @@
 		}
 	}(navigator.userAgent.toLowerCase()));
 
+	/*
+	 * Helper function that returns the document base URL without search parameters and hash.
+	 */
+	function docBase() {
+		var href = document.baseURI,
+			p = href.search(/[?#]/);
+		return p < 0 ? href : href.slice(0, p);
+	}
+
 	/**
-	 * Resolve a given URL, either against the location of the current page or against a given base URL.
+	 * Resolve a given URL, either against the base URL of the current document or against a given base URL.
 	 *
-	 * If no base URL is given, the URL will be resolved relative to the location of the current page.
-	 * If a base URL is given, that base will first be resolved relative to the current page,
+	 * If no base URL is given, the URL will be resolved relative to the baseURI of the current document.
+	 * If a base URL is given, that base will first be resolved relative to the document's baseURI,
 	 * then the URL will be resolved relative to the resolved base.
 	 *
-	 * @param {string} sURI relative or absolute URL that should be resolved
-	 * @param {string} [sBase] base URL relative to which the URL should be resolved
+	 * @param {string} sURI Relative or absolute URL that should be resolved
+	 * @param {string} [sBase=document.baseURI] Base URL relative to which the URL should be resolved
 	 * @returns {string} Resolved URL
 	 */
 	var resolveURL = (function(_URL) {
@@ -64,20 +73,20 @@
 			return function(sURI, sBase) {
 				// For a spec see https://url.spec.whatwg.org/
 				// For browser support see https://developer.mozilla.org/en/docs/Web/API/URL
-				return new _URL(sURI, sBase ? new _URL(sBase, window.location.href) : window.location.href).toString();
+				return new _URL(sURI, sBase ? new _URL(sBase, docBase()) : docBase()).toString();
 			};
 		}
 
 		// fallback for IE11 and PhantomJS: use a shadow document with <base> and <a>nchor tag
 		var doc = document.implementation.createHTMLDocument("Dummy doc for resolveURI");
 		var base = doc.createElement('base');
-		base.href = window.location.href;
+		base.href = docBase();
 		doc.head.appendChild(base);
 		var anchor = doc.createElement("A");
 		doc.body.appendChild(anchor);
 
 		return function (sURI, sBase) {
-			base.href = window.location.href;
+			base.href = docBase();
 			if ( sBase != null ) {
 				// first resolve sBase relative to location
 				anchor.href = sBase;
@@ -178,6 +187,23 @@
 	 * @private
 	 */
 	var DEFAULT_BASE_URL = 'resources/';
+
+	/**
+	 * Temporarily saved reference to the original value of the global define variable.
+	 *
+	 * @type {any}
+	 * @private
+	 */
+	var vOriginalDefine;
+
+	/**
+	 * Temporarily saved reference to the original value of the global require variable.
+	 *
+	 * @type {any}
+	 * @private
+	 */
+	var vOriginalRequire;
+
 
 	/**
 	 * A map of URL prefixes keyed by the corresponding module name prefix.
@@ -1907,6 +1933,15 @@
 			if ( report === 0 || report === 1 || report === 2 ) {
 				syncCallBehavior = report;
 			}
+		},
+		noConflict: function(bValue) {
+			if (bValue) {
+				__global.define = vOriginalDefine;
+				__global.require = vOriginalRequire;
+			} else {
+				__global.define = define;
+				__global.require = require;
+			}
 		}
 	};
 
@@ -1946,6 +1981,7 @@
 		getResourcePath: getResourcePath,
 		getUrlPrefixes: getUrlPrefixes,
 		loadJSResourceAsync: loadJSResourceAsync,
+		resolveURL: resolveURL,
 		toUrl: getResourcePath,
 		unloadResources: unloadResources
 	};
@@ -2009,9 +2045,12 @@
 	}
 	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
 
-	// @evo-todo enable usage of global define/require
-	// __global.define = define;
-	// __global.require = require;
+	// Store current global define and require values
+	vOriginalDefine = __global.define;
+	vOriginalRequire = __global.require;
+
+	__global.define = define;
+	__global.require = require;
 
 	__global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};

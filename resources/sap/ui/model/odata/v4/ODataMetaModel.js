@@ -48,10 +48,10 @@ sap.ui.define([
 			},
 			"Edm.Decimal" : {
 				constraints : {
-					"@Org.OData.Validation.V1.Minimum" : "minimum",
+					"@Org.OData.Validation.V1.Minimum/$Decimal" : "minimum",
 					"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" :
 						"minimumExclusive",
-					"@Org.OData.Validation.V1.Maximum" : "maximum",
+					"@Org.OData.Validation.V1.Maximum/$Decimal" : "maximum",
 					"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" :
 						"maximumExclusive",
 					"$Precision" : "precision",
@@ -81,6 +81,7 @@ sap.ui.define([
 				type : "sap.ui.model.odata.type.TimeOfDay"
 			}
 		},
+		UNBOUND = {},
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
 		mValueListModelByUrl = {},
 		sValueListReferences = "@com.sap.vocabularies.Common.v1.ValueListReferences",
@@ -336,7 +337,8 @@ sap.ui.define([
 					sResolvedPath = sResolvedPath.slice(0, -1);
 				}
 				return Object.keys(oResult).filter(function (sKey) {
-					// always filter technical properties; filter annotations iff. not iterating them
+					// always filter technical properties;
+					// filter annotations iff. not iterating them
 					return sKey[0] !== "$" &&  bIterateAnnotations !== (sKey[0] !== "@");
 				}).map(function (sKey) {
 					return new BaseContext(that.oModel, sResolvedPath + sKey);
@@ -479,7 +481,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.MetaModel
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.54.0
+	 * @version 1.54.1
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 		/*
@@ -759,7 +761,10 @@ sap.ui.define([
 		}
 
 		return this.fetchEntityContainer().then(function (mScope) {
-			var vLocation, // {string[]|string} location of indirection
+				// binding parameter's type name ({string}) for overloading of bound operations
+				// or UNBOUND ({object}) for unbound operations called via an import
+			var vBindingParameterType,
+				vLocation, // {string[]|string} location of indirection
 				sName, // what "@sapui.name" refers to: OData or annotation name
 				bODataMode = true, // OData navigation mode with scope lookup etc.
 				// parent for next "17.2 SimpleIdentifier"...
@@ -809,6 +814,22 @@ sap.ui.define([
 				}
 
 				return false;
+			}
+
+			/*
+			 * Tells whether the given overload is the right one.
+			 *
+			 * @param {object} oOverload
+			 *   A single operation overload
+			 * @returns {true}
+			 *   Iff the given overload is an action with the appropriate binding parameter (bound
+			 *   and unbound cases), or not an action at all.
+			 */
+			function isRightOverload(oOverload) {
+				return oOverload.$kind !== "Action"
+					|| (!oOverload.$IsBound && vBindingParameterType === UNBOUND
+						|| oOverload.$IsBound
+						&& vBindingParameterType === oOverload.$Parameter[0].$Type);
 			}
 
 			/*
@@ -875,6 +896,7 @@ sap.ui.define([
 					return log.apply(this, arguments);
 				}
 
+				vBindingParameterType = vResult && vResult.$Type;
 				if (that.bSupportReferences && !(sQualifiedName in mScope)) {
 					// unknown qualified name: maybe schema is referenced and can be included?
 					sSchema = schema(sQualifiedName);
@@ -971,6 +993,7 @@ sap.ui.define([
 								if (!scopeLookup(vResult.$Action, "$Action")) {
 									return false;
 								}
+								vBindingParameterType = UNBOUND;
 							} else if (vResult && "$Function" in vResult) {
 								// implicit $Function insertion at function import
 								if (!scopeLookup(vResult.$Function, "$Function")) {
@@ -989,6 +1012,10 @@ sap.ui.define([
 								}
 							}
 							if (Array.isArray(vResult)) { // overloads of Action or Function
+								vResult = vResult.filter(isRightOverload);
+								if (sSegment === "@$ui5.overload") {
+									return true;
+								}
 								if (vResult.length !== 1) {
 									return log(WARNING, "Unsupported overloads");
 								}
@@ -996,7 +1023,8 @@ sap.ui.define([
 								sTarget = sTarget + "/0/$ReturnType";
 								if (vResult) {
 									if (sSegment === "value"
-										&& !(mScope[vResult.$Type] && mScope[vResult.$Type].value)) {
+										&& !(mScope[vResult.$Type]
+											&& mScope[vResult.$Type].value)) {
 										// symbolic name "value" points to primitive return type
 										sName = undefined; // block "@sapui.name"
 										return true;
@@ -1121,7 +1149,7 @@ sap.ui.define([
 		// Note: undefined is more efficient than "" here
 		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mConstraints,
-				sName,
+				sConstraintPath,
 				oType = oProperty["$ui5.type"],
 				oTypeInfo,
 				sTypeName = "sap.ui.model.odata.type.Raw";
@@ -1144,10 +1172,12 @@ sap.ui.define([
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 				if (oTypeInfo) {
 					sTypeName = oTypeInfo.type;
-					for (sName in oTypeInfo.constraints) {
-						setConstraint(oTypeInfo.constraints[sName], sName[0] === "@"
-							? that.getObject(sName, oMetaContext)
-							: oProperty[sName]);
+					for (sConstraintPath in oTypeInfo.constraints) {
+						setConstraint(oTypeInfo.constraints[sConstraintPath],
+							sConstraintPath[0] === "@"
+								// external targeting
+								? that.getObject(sConstraintPath, oMetaContext)
+								: oProperty[sConstraintPath]);
 					}
 					if (oProperty.$Nullable === false) {
 						setConstraint("nullable", false);
@@ -1259,12 +1289,7 @@ sap.ui.define([
 					sNavigationPath = _Helper.buildPath(sNavigationPath, sPropertyName);
 					oProperty = oType[sPropertyName];
 					if (!oProperty) {
-						if (!oType[sPropertyName.split("@odata.bind")[0]]) {
-							error("Not a (navigation) property: " + sPropertyName);
-						} else {
-							// handle navigation properties with @odata.bind as simple property
-							oProperty = {};
-						}
+						error("Not a (navigation) property: " + sPropertyName);
 					}
 					oType = mScope[oProperty.$Type];
 					if (oProperty.$kind === "NavigationProperty") {

@@ -213,9 +213,9 @@ sap.ui.require([
 		 * @returns {string} The ID of the text control which can be used for {@link #expectChange}
 		 */
 		addToTable : function (oTable, sPropertyPath, assert) {
-			var bAbsolute = oTable.getBinding("items").getPath()[0] === "/",
-				sId = "id" + sPropertyPath.replace("/", "_"),
-				oNewTemplate = oTable.getBindingInfo("items").template,
+			var sId = "id" + sPropertyPath.replace("/", "_"),
+				bRelative = oTable.getBinding("items").isRelative(),
+				oTemplate = oTable.getBindingInfo("items").template,
 				oText = new Text({
 					id : this.oView.createId(sId),
 					text : "{" + sPropertyPath + "}"
@@ -223,13 +223,13 @@ sap.ui.require([
 
 			// attach formatter to check value for dynamically created control
 			this.setFormatterInList(assert, oText, sId);
-			oNewTemplate.addCell(oText);
+			oTemplate.addCell(oText);
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
 			// It is not possible to modify the aggregation's template on an existing binding.
 			// Hence, we have to re-create.
 			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
-				{template : oNewTemplate, suspended : bAbsolute}));
+				{suspended : !bRelative, template : oTemplate}));
 			return sId;
 		},
 
@@ -359,11 +359,6 @@ sap.ui.require([
 					.withExactArgs("Unsupported annotation 'sap:" + sAnnotation + "'",
 						sinon.match.string, sClassName);
 			});
-			["UpdateAgencyPhoneNo"].forEach(function (sName) {
-				oLogMock.expects("warning")
-					.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
-						+ "', removing this FunctionImport", undefined, sClassName);
-			});
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
 			return createModel(sFlight, mModelParameters);
@@ -439,7 +434,8 @@ sap.ui.require([
 			 * Stub function for _Requestor#request. Checks that the expected request arrived and
 			 * returns a promise for its response.
 			 */
-			function checkRequest(sMethod, sUrl, sGroupId, mHeaders, oPayload) {
+			function checkRequest(sMethod, sUrl, sGroupId, mHeaders, oPayload, fnSubmit,
+					fnCancel, sMetaPath, bIsFreshToken) {
 				var oActualRequest = {
 						groupId : sGroupId,
 						method : sMethod,
@@ -458,7 +454,7 @@ sap.ui.require([
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
-					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse);
+					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse, sMetaPath);
 				}
 
 				if (!that.aRequests.length) { // waiting may be over after promise has been handled
@@ -648,14 +644,14 @@ sap.ui.require([
 		 * @param {string} sControlId The ID of the control to remove
 		 */
 		removeFromTable : function (oTable, sControlId) {
-			var bAbsolute = oTable.getBinding("items").getPath()[0] === "/",
-				oNewTemplate = oTable.getBindingInfo("items").template;
+			var bRelative = oTable.getBinding("items").isRelative(),
+				oTemplate = oTable.getBindingInfo("items").template;
 
-			oNewTemplate.removeCell(this.oView.byId(sControlId));
+			oTemplate.removeCell(this.oView.byId(sControlId));
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
 			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
-				{template : oNewTemplate, suspended : bAbsolute}));
+				{suspended : !bRelative, template : oTemplate}));
 		},
 
 		/**
@@ -761,11 +757,12 @@ sap.ui.require([
 	 *   and response as value
 	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
 	 *   key and the expected control values as value
-	 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
-	 *   and to the test instance.
+	 * @param {string|sap.ui.model.odata.v4.ODataModel} [vModel]
+	 *   The model (or the name of a function at <code>this</code> which creates it); it is attached
+	 *   to the view and to the test instance.
 	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
 	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, oModel) {
+	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel) {
 
 		QUnit.test(sTitle, function (assert) {
 			var sControlId, sRequest, that = this;
@@ -784,7 +781,10 @@ sap.ui.require([
 			} else {
 				expectChanges(mValueByControl);
 			}
-			return this.createView(assert, sView, oModel);
+			if (typeof vModel === "string") {
+				vModel = this[vModel]();
+			}
+			return this.createView(assert, sView, vModel);
 		});
 	}
 
@@ -1006,8 +1006,7 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-//TODO Why is formatter on property binding in form called twice for the below?
-			that.expectChange("id", "1")
+			that.expectChange("id", "1") //TODO unexpected change
 				.expectChange("id", "1");
 
 			// code under test
@@ -1998,9 +1997,8 @@ sap.ui.require([
 				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectChange("id", "2", 0)
-					.expectChange("text", "Frederic Fall", 0)
-					//TODO why do we get events twice?
+				that.expectChange("id", "2", 0) //TODO unexpected change
+					.expectChange("text", "Frederic Fall", 0) //TODO unexpected change
 					.expectChange("id", "2", 0)
 					.expectChange("text", "Frederic Fall", 0);
 
@@ -2063,6 +2061,49 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: overloaded bound action
+	// Note: there are 3 binding types for __FAKE__AcOverload, but only Worker has Is_Manager
+	QUnit.test("Bound action w/ overloading", function (assert) {
+		var sView = '\
+<VBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}" />\
+	<VBox id="action" \
+			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcOverload(...)}">\
+		<Text id="isManager" text="{Is_Manager}" />\
+	</VBox>\
+</VBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')", {
+				"Name" : "Jonathan Smith",
+				"@odata.etag" : "eTag"
+			})
+			.expectChange("name", "Jonathan Smith")
+			.expectChange("isManager", null); //TODO unexpected change
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "eTag"},
+					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+						+ ".__FAKE__AcOverload",
+					payload : {
+						"Message" : "The quick brown fox jumps over the lazy dog"
+					}
+				}, {
+					"Is_Manager" : true
+				})
+				.expectChange("isManager", "Yes");
+
+			that.oView.byId("action").getObjectBinding()
+				.setParameter("Message", "The quick brown fox jumps over the lazy dog")
+				.execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect on an operation
 	QUnit.test("Auto-$expand/$select: Function import", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -2079,7 +2120,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
+				.expectChange("name", "Jonathan Smith") //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 
 			that.oView.byId("function").getObjectBinding()
@@ -2809,9 +2850,9 @@ sap.ui.require([
 				"Quantity" : "10.000",
 				"QuantityUnit" : "EA"
 			})
-			.expectChange("quantity", "10.000") //TODO duplicate change event
+			.expectChange("quantity", "10.000") //TODO unexpected change
 			.expectChange("quantity", "10.000")
-			.expectChange("quantityUnit", "EA")
+			.expectChange("quantityUnit", "EA") //TODO unexpected change
 			.expectChange("quantityUnit", "EA");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -2932,8 +2973,8 @@ sap.ui.require([
 					}
 				}
 			})
+			.expectChange("id", "0500000001") //TODO unexpected change
 			.expectChange("id", "0500000001")
-			.expectChange("id", "0500000001") //TODO duplicate change event
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
 		// code under test
@@ -3112,7 +3153,7 @@ sap.ui.require([
 				})
 				//TODO The below null's are: Text has binding context null and its initial value is
 				// undefined (formatted to null by String type). (How) can we get rid of this?
-				.expectChange("text", null, null)
+				.expectChange("text", null, null) //TODO unexpected change
 				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 			return that.waitForChanges(assert);
 		});
@@ -3320,7 +3361,7 @@ sap.ui.require([
 				{
 					"STATUS" : "42"
 				})
-				.expectChange("status", null) //TODO unexpected change
+				.expectChange("status", "42") //TODO unexpected change
 				.expectChange("status", "42");
 
 			that.oView.byId("function").getObjectBinding().execute();
@@ -3347,7 +3388,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
+				.expectChange("name", "Jonathan Smith") //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3402,7 +3443,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
+				.expectChange("name", "Jonathan Smith") //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3698,21 +3739,21 @@ sap.ui.require([
 						},
 						"carrid" : "AA",
 						"connid" : "0017",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
 							"type":"RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "DL",
 						"connid" : "1699",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
 							"type":"RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "UA",
 						"connid" : "3517",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}]
 				}
 			});
@@ -3732,12 +3773,55 @@ sap.ui.require([
 					// Note: This just illustrates the status quo. It is not meant to say this must
 					// be kept stable.
 					assert.strictEqual(oContext.getPath(), "/GetAvailableFlights(...)/value/" + i);
-					//TODO Precision="0" vs. ".000"?!
-					assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00.000Z");
+					assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00Z");
 				});
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" ReturnType="Edm.DateTime"> in V2 Adapter
+	QUnit.test("V2 Adapter: bound function returns primitive", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			sView = '\
+<FlexBox binding="{/NotificationCollection(\'foo\')}">\
+	<Text id="updated" text="{updated}" />\
+	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.__FAKE__FunctionImport(...)}">\
+		<Text id="value" text="{value}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("NotificationCollection('foo')", {
+				"d" : {
+					"__metadata" : {
+						"type":"RMTSAMPLEFLIGHT.Notification"
+					},
+					"ID" : "foo",
+					"updated" : "/Date(1502323200000)/"
+				}
+			})
+			.expectChange("updated", "Aug 10, 2017, 2:00:00 AM") //TODO unexpected change
+			.expectChange("updated", "Aug 10, 2017, 2:00:00 AM")
+			.expectChange("value", null); //TODO unexpected change
+
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("__FAKE__FunctionImport?ID='foo'", {
+					"d" : { // Note: DataServiceVersion : 1.0
+						"__FAKE__FunctionImport" : "/Date(1502323200000)/"
+					}
+				})
+				.expectChange("value", "Aug 10, 2017, 2:00:00 AM");
+
+			that.oView.byId("function").getObjectBinding().execute();
+			return that.waitForChanges(assert);
+		});
+	});
+	//TODO support also "version 2.0 JSON representation of a property"?
+	//TODO support "version 2.0 JSON representation of a collection of EDMSimpleType values"!
+
 
 	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET" sap:action-for="..."> in V2 Adapter
@@ -3764,7 +3848,7 @@ sap.ui.require([
 					},
 					"carrid" : "AA",
 					"connid" : "0017",
-					"fldate" : "\/Date(1502323200000)\/"
+					"fldate" : "/Date(1502323200000)/"
 				}
 			})
 			.expectChange("carrid", "AA")
@@ -3776,8 +3860,7 @@ sap.ui.require([
 			that.expectRequest("GetFlightDetails?carrid='AA'&connid='0017'"
 				+ "&fldate=datetime'2017-08-10T00:00:00'", {
 					"d" : {
-//TODO why does the server send this?
-//						"GetFlightDetails" : {
+						"GetFlightDetails" : {
 							"__metadata" : {
 								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
 							},
@@ -3795,16 +3878,9 @@ sap.ui.require([
 							"flightType" : "",
 							"period" : 0
 						}
-//					}
+					}
 				})
 				.expectChange("distance", "2,572.0000");
-			if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING,
-					"sap.ui.model.odata.v4.ODataMetaModel")) {
-				//TODO Cache#fetchTypes determines a V4 meta path from sResourcePath, which is V2
-				that.oLogMock.expects("warning").withExactArgs("Unknown child GetFlightDetails of"
-					+ " RMTSAMPLEFLIGHT.RMTSAMPLEFLIGHT_Entities", "/GetFlightDetails/",
-					"sap.ui.model.odata.v4.ODataMetaModel");
-			}
 
 			that.oView.byId("function").getObjectBinding().execute();
 			return that.waitForChanges(assert);
@@ -3813,7 +3889,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="POST"> in V2 Adapter
-	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	QUnit.test("V2 Adapter: ActionImport", function (assert) {
 		var oModel = this.createModelForV2FlightService(),
 			that = this;
@@ -3837,7 +3912,7 @@ sap.ui.require([
 						},
 						"carrid" : "AA",
 						"connid" : "0017",
-						"fldate" : "\/Date(1502323200000)\/",
+						"fldate" : "/Date(1502323200000)/",
 						"PRICE" : "2222.00",
 						"SEATSMAX" : 320
 					}
@@ -3855,8 +3930,7 @@ sap.ui.require([
 
 				assert.strictEqual(oContext.getProperty("carrid"), "AA");
 				assert.strictEqual(oContext.getProperty("connid"), "0017");
-				//TODO Precision="0"
-				assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00.000Z");
+				assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00Z");
 				assert.strictEqual(oContext.getProperty("SEATSMAX"), 320);
 
 				// Note: this is async due to type retrieval
@@ -3908,7 +3982,7 @@ sap.ui.require([
 							"type" : "GWSAMPLE_BASIC.SalesOrder"
 						},
 						"SalesOrderID" : "08/15",
-						"CreatedAt" : "\/Date(1502323200000)\/"
+						"CreatedAt" : "/Date(1502323200000)/"
 					}
 				})
 				.expectChange("id0", "0815") //TODO unexpected change
@@ -3919,8 +3993,67 @@ sap.ui.require([
 			return Promise.all([oPromise, that.waitForChanges(assert)]).then(function () {
 				assert.strictEqual(
 					oContextBinding.getBoundContext().getProperty("CreatedAt"),
-					"2017-08-10T00:00:00.000Z"); //TODO Precision="7"
+					"2017-08-10T00:00:00.0000000Z");
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="PUT" sap:action-for="..."> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
+	// --> server expects UpdateAgencyPhoneNo?agency_id='...'
+	QUnit.test("V2 Adapter: bound action w/ PUT", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			sView = '\
+<FlexBox binding="{/TravelAgencies(\'00000061\')}">\
+	<Text id="oldPhone" text="{TELEPHONE}" />\
+	<FlexBox id="action" binding="{RMTSAMPLEFLIGHT.UpdateAgencyPhoneNo(...)}">\
+		<Text id="newPhone" text="{TELEPHONE}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TravelAgencies('00000061')", {
+				"d" : {
+					"__metadata" : {
+						"type" : "RMTSAMPLEFLIGHT.Travelagency"
+					},
+					"agencynum" : "00000061",
+					"NAME" : "Fly High",
+					"TELEPHONE" : "+49 2102 69555"
+				}
+			})
+			.expectChange("oldPhone", "+49 2102 69555")
+			.expectChange("oldPhone", "+49 2102 69555") //TODO unexpected change
+			.expectChange("newPhone", null); //TODO unexpected change
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("action").getObjectBinding(),
+				oPromise;
+
+			that.expectRequest({
+					groupId : "$direct",
+					headers : {"If-Match" : undefined},
+					method : "PUT",
+					url : "UpdateAgencyPhoneNo?agencynum='00000061'"
+						+ "&telephone='%2B49%20(0)2102%2069555'"
+				}, {
+					"d" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.Travelagency"
+						},
+						"agencynum" : "00000061",
+						"NAME" : "Fly High",
+						"TELEPHONE" : "+49 (0)2102 69555"
+					}
+				})
+				.expectChange("newPhone", "+49 (0)2102 69555");
+
+			oPromise = oContextBinding.setParameter("telephone", "+49 (0)2102 69555").execute();
+
+			return Promise.all([oPromise, that.waitForChanges(assert)]);
 		});
 	});
 
@@ -3987,6 +4120,16 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
+	// "FavoriteProduct" in the SalesOrders application.
+	testViewStart("V2 Adapter: Absolute ODataPropertyBinding",
+		'<Text id="text" text="{/ProductSet(\'HT-1000\')/CreatedAt}" />',
+		{"ProductSet('HT-1000')/CreatedAt" : {"d" : {"CreatedAt" : "/Date(1502323200000)/"}}},
+		{"text" : "Aug 10, 2017, 2:00:00 AM"},
+		"createModelForV2SalesOrderService"
+	);
 
 	//*********************************************************************************************
 	// Scenario: Table with suspended list binding is changed by adding and removing a column. After
@@ -4064,8 +4207,8 @@ sap.ui.require([
 			})
 			.expectChange("idCategory", "Electronics")
 			.expectChange("idEmployeeId", "0001")
-			.expectChange("idCategory", "Electronics") // TODO unexpected changes
-			.expectChange("idEmployeeId", "0001");
+			.expectChange("idCategory", "Electronics") // TODO unexpected change
+			.expectChange("idEmployeeId", "0001"); // TODO unexpected change
 		return this.createView(assert, sView, oModel).then(function () {
 			var oForm = that.oView.byId("form"),
 				sId;
@@ -4181,9 +4324,9 @@ sap.ui.require([
 			.expectChange("idEquipmentName", "Office PC")
 			.expectChange("idEmployeeName", "Frederic Fall")
 			.expectChange("idManagerId", "5")
-			.expectChange("idEquipmentName", "Office PC") // TODO unexpected changes
-			.expectChange("idEmployeeName", "Frederic Fall")
-			.expectChange("idManagerId", "5");
+			.expectChange("idEquipmentName", "Office PC") // TODO unexpected change
+			.expectChange("idEmployeeName", "Frederic Fall") // TODO unexpected change
+			.expectChange("idManagerId", "5"); // TODO unexpected change
 		return this.createView(assert, sView, oModel).then(function () {
 			var oOuterForm = that.oView.byId("outerForm"),
 				oInnerForm = that.oView.byId("innerForm"),
@@ -4252,7 +4395,7 @@ sap.ui.require([
 				}]
 			})
 			.expectChange("idMemberCount", "2")
-			.expectChange("idMemberCount", "2") // TODO unexpected changes
+			.expectChange("idMemberCount", "2") // TODO unexpected change
 			.expectChange("idAge", ["52", "56"])
 			.expectChange("idName", ["Frederic Fall", "Jonathan Smith"]);
 
@@ -4291,6 +4434,58 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
-});
 
+	//*********************************************************************************************
+	// Scenario: List binding of a table is suspended and then resumed with no change to the table,
+	//    so that the list binding is not re-created. Property bindings from existing rows must not
+	//    call checkUpdate in resumeInternal while the list binding is "empty" as it has not yet
+	//    fired a change event. This would lead to "Failed to drill-down" errors.
+	QUnit.test("suspend/resume: no checkUpdate for existing property bindings in a list binding",
+			function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="idEquipmentName" text="{Name}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
+				value : [{
+					"Category": "Electronics",
+					"ID": 1,
+					"Name": "Office PC"
+				}, {
+					"Category": "Electronics",
+					"ID": 2,
+					"Name": "Tablet X"
+				}]
+			})
+			.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
+		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("items");
+
+			oListBinding.suspend();
+
+			that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
+					value : [{
+						"Category": "Electronics",
+						"ID": 1,
+						"Name": "Office PC"
+					}, {
+						"Category": "Electronics",
+						"ID": 2,
+						"Name": "Tablet X"
+					}]
+				})
+				.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
+
+			oListBinding.resume();
+			return that.waitForChanges(assert);
+		});
+	});
+});
 //TODO test delete

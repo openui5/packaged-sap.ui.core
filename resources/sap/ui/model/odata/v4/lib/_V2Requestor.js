@@ -18,8 +18,7 @@ sap.ui.define([
 		// Example "/Date(1420529121547+0530)/", the offset ("+0530") is optional
 		// matches: 1 = ticks in milliseconds, 2 = offset sign, 3 = offset hours, 4 = offset minutes
 		rDateTimeOffset = /^\/Date\((\d+)(?:([-+])(\d\d)(\d\d))?\)\/$/,
-		oDateTimeOffsetFormatter =
-			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS", UTC : true}),
+		mPattern2Formatter = {},
 		oDateTimeOffsetParser =
 			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"}),
 		rPlus = /\+/g,
@@ -107,17 +106,21 @@ sap.ui.define([
 	 *
 	 * @param {string} sV2Value
 	 *   The OData V2 value
+	 * @param {object} oPropertyMetadata
+	 *   The property metadata
 	 * @returns {string}
 	 *   The corresponding OData V4 value
 	 * @throws {Error}
 	 *   If the V2 value is not convertible
 	 */
-	_V2Requestor.prototype.convertDateTimeOffset = function (sV2Value) {
+	_V2Requestor.prototype.convertDateTimeOffset = function (sV2Value, oPropertyMetadata) {
 		var aMatches = rDateTimeOffset.exec(sV2Value),
 			sOffset,
 			iOffsetHours,
 			iOffsetMinutes,
 			iOffsetSign,
+			sPattern = "yyyy-MM-dd'T'HH:mm:ss",
+			iPrecision = oPropertyMetadata.$Precision,
 			iTicks;
 
 		if (!aMatches) {
@@ -133,7 +136,14 @@ sap.ui.define([
 			iTicks += iOffsetSign * (iOffsetHours * 60 * 60 * 1000 + iOffsetMinutes * 60 * 1000);
 			sOffset = aMatches[2] + aMatches[3] + ":"  + aMatches[4];
 		}
-		return oDateTimeOffsetFormatter.format(new Date(iTicks)) + sOffset;
+		if (iPrecision > 0) {
+			sPattern += "." + jQuery.sap.padRight("", "S", iPrecision);
+		}
+		if (!mPattern2Formatter[sPattern]) {
+			mPattern2Formatter[sPattern] =
+				DateFormat.getDateTimeInstance({pattern: sPattern,UTC : true});
+		}
+		return mPattern2Formatter[sPattern].format(new Date(iTicks)) + sOffset;
 	};
 
 	/**
@@ -160,12 +170,12 @@ sap.ui.define([
 	 * Converts the filter string literals to OData V2 syntax
 	 *
 	 * @param {string} sFilter The filter string
-	 * @param {string} sResourcePath
-	 *   The resource path (allows metadata access, but does not become part of the result)
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
 	 * @returns {string} The filter string ready for a V2 query
 	 * @throws {Error} If the filter path is invalid
 	 */
-	_V2Requestor.prototype.convertFilter = function (sFilter, sResourcePath) {
+	_V2Requestor.prototype.convertFilter = function (sFilter, sMetaPath) {
 		var oFilterTree = _Parser.parseFilter(sFilter),
 			that = this;
 
@@ -201,7 +211,7 @@ sap.ui.define([
 		 *   the type cannot be determined
 		 */
 		function getType(oNode) {
-			var oProperty;
+			var oPropertyMetadata;
 
 			if (oNode.type) {
 				return {
@@ -209,15 +219,15 @@ sap.ui.define([
 				};
 			}
 			if (oNode.id === "PATH") {
-				oProperty = that.oModelInterface
-					.fnFetchMetadata("/" + sResourcePath + "/" + oNode.value).getResult();
-				if (!oProperty) {
+				oPropertyMetadata = that.oModelInterface
+					.fnFetchMetadata(sMetaPath + "/" + oNode.value).getResult();
+				if (!oPropertyMetadata) {
 					throw new Error("Invalid filter path: " + oNode.value);
 				}
 				return {
 					path : oNode.value,
-					$Type : oProperty.$Type,
-					$v2Type : oProperty.$v2Type
+					$Type : oPropertyMetadata.$Type,
+					$v2Type : oPropertyMetadata.$v2Type
 				};
 			}
 			// oNode must have id "FUNCTION" and type undefined here. So it must be either ceiling,
@@ -297,25 +307,25 @@ sap.ui.define([
 	 */
 	_V2Requestor.prototype.convertNonPrimitive = function (oObject) {
 		var sPropertyName,
-			sPropertyType,
 			oType,
 			sTypeName,
 			vValue,
 			that = this;
 
-		// results may be an array of entities or the property 'results' of a single request.
-		if (oObject.results && !oObject.__metadata) {
-			// collection of complex values, coll. of primitive values only supported since OData V3
+		// 'results' may be an array of entities in case of a collection request or the value when
+		// requesting a property 'results' (which is not an array in V2 since collection of complex
+		// or primitive values is only supported since OData V3)
+		if (Array.isArray(oObject.results)) {
 			oObject.results.forEach(function (oItem) {
 				that.convertNonPrimitive(oItem);
 			});
 			return oObject.results;
 		}
 
-		// complex value
+		// structured value
 		if (!oObject.__metadata || !oObject.__metadata.type) {
-			throw new Error("Cannot convert complex value without type information in "
-					+ "__metadata.type: " + JSON.stringify(oObject));
+			throw new Error("Cannot convert structured value without type information in "
+				+ "__metadata.type: " + JSON.stringify(oObject));
 		}
 
 		sTypeName = oObject.__metadata.type;
@@ -334,9 +344,8 @@ sap.ui.define([
 				}
 				continue;
 			}
-			sPropertyType = oType[sPropertyName] && oType[sPropertyName].$Type;
 			// primitive property value
-			oObject[sPropertyName] = this.convertPrimitive(vValue, sPropertyType,
+			oObject[sPropertyName] = this.convertPrimitive(vValue, oType[sPropertyName],
 				sTypeName, sPropertyName);
 		}
 		return oObject;
@@ -347,27 +356,27 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue
 	 *   The value to be converted
-	 * @param {string} sPropertyType
-	 *   The name of the OData V4 primitive type for conversion such as "Edm.String"
+	 * @param {object} oPropertyMetadata
+	 *   The property metadata
 	 * @param {string} sTypeName
 	 *   The qualified name of the entity or complex type containing the property with the value to
-	 *   be converted
+	 *   be converted (for error message only)
 	 * @param {string} sPropertyName
-	 *   The name of the property in the entity or complex type
+	 *   The name of the property in the entity or complex type (for error message only)
 	 * @returns {any}
 	 *   The converted value
 	 * @throws {Error}
 	 *   If the property type is unknown
 	 */
-	_V2Requestor.prototype.convertPrimitive = function (vValue, sPropertyType, sTypeName,
+	_V2Requestor.prototype.convertPrimitive = function (vValue, oPropertyMetadata, sTypeName,
 			sPropertyName) {
-		switch (sPropertyType) {
+		switch (oPropertyMetadata && oPropertyMetadata.$Type) {
 			case "Edm.Binary":
 				return this.convertBinary(vValue);
 			case "Edm.Date":
 				return this.convertDate(vValue);
 			case "Edm.DateTimeOffset":
-				return this.convertDateTimeOffset(vValue);
+				return this.convertDateTimeOffset(vValue, oPropertyMetadata);
 			case "Edm.Boolean":
 			case "Edm.Byte":
 			case "Edm.Decimal":
@@ -384,8 +393,9 @@ sap.ui.define([
 			case "Edm.TimeOfDay":
 				return this.convertTimeOfDay(vValue);
 			default:
-				throw new Error("Type '" + sPropertyType + "' of property '" + sPropertyName
-					+ "' in type '" + sTypeName + "' is unknown; cannot convert value: " + vValue);
+				throw new Error("Type '" + (oPropertyMetadata && oPropertyMetadata.$Type)
+					+ "' of property '" + sPropertyName + "' in type '" + sTypeName
+					+ "' is unknown; cannot convert value: " + vValue);
 		}
 	};
 
@@ -428,23 +438,54 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData V2 response payload
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
 	 * @returns {object}
 	 *   The OData V4 response payload
 	 * @throws {Error}
 	 *   If the OData V2 response payload cannot be converted
 	 */
-	_V2Requestor.prototype.doConvertResponse = function (oResponsePayload) {
-		var oPayload = this.convertNonPrimitive(oResponsePayload.d);
+	_V2Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
+		var oCandidate, bIsArray, aKeys, oPayload;
 
-		// d.results may be an array of entities in case of a collection request or the property
-		// 'results' of a single request.
-		if (oResponsePayload.d.results && !oResponsePayload.d.__metadata) {
-			oPayload = {value : oPayload};
-			if (oResponsePayload.d.__count) {
-				oPayload["@odata.count"] = oResponsePayload.d.__count;
+		oResponsePayload = oResponsePayload.d;
+		// 'results' may be an array of entities in case of a collection request or the value when
+		// requesting a property 'results' (which is not an array in V2 since collection of complex
+		// or primitive values is only supported since OData V3)
+		bIsArray = Array.isArray(oResponsePayload.results);
+
+		if (!bIsArray && !oResponsePayload.__metadata) {
+			aKeys = Object.keys(oResponsePayload);
+			oCandidate = oResponsePayload[aKeys[0]];
+			if (aKeys.length === 1) {
+				if (oCandidate === null) {
+					// no conversion needed
+					return {value : null};
+				} else if (typeof oCandidate !== "object") {
+					// treat as candidate for "entityPropertyInJson"
+					return {
+						value : this.convertPrimitive(oCandidate,
+							this.oModelInterface.fnFetchMetadata(sMetaPath).getResult(),
+							sMetaPath, aKeys[0])
+					};
+				} else if (oCandidate.__metadata) {
+					// drill down into candidate for "entityComplexProperty"
+					oResponsePayload = oCandidate;
+				}
 			}
-			if (oResponsePayload.d.__next) {
-				oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
+		}
+
+		oPayload = this.convertNonPrimitive(oResponsePayload);
+
+		if (bIsArray) {
+			oPayload = {value : oPayload};
+			if (oResponsePayload.__count) {
+				oPayload["@odata.count"] = oResponsePayload.__count;
+			}
+			if (oResponsePayload.__next) {
+				oPayload["@odata.nextLink"] = oResponsePayload.__next;
 			}
 		}
 		return oPayload;
@@ -454,8 +495,8 @@ sap.ui.define([
 	 * Converts the supported V4 OData system query options to the corresponding V2 OData system
 	 * query options.
 	 *
-	 * @param {string} sResourcePath
-	 *   The resource path (allows metadata access, but does not become part of the result)
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
@@ -467,7 +508,7 @@ sap.ui.define([
 	 *   If a system query option other than $expand and $select is used or if any $expand value is
 	 *   not an object
 	 */
-	_V2Requestor.prototype.doConvertSystemQueryOptions = function (sResourcePath, mQueryOptions,
+	_V2Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
 			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
 		var aSelects = [],
 			that = this;
@@ -550,7 +591,7 @@ sap.ui.define([
 						Array.isArray(vValue) ? vValue : vValue.split(","));
 					return; // don't call fnResultHandler; this is done later
 				case "$filter":
-					vValue = that.convertFilter(vValue, sResourcePath);
+					vValue = that.convertFilter(vValue, sMetaPath);
 					break;
 				default:
 					if (bIsSystemQueryOption) {
@@ -575,21 +616,21 @@ sap.ui.define([
 	 *
 	 * @param {*} vValue
 	 *   The value
-	 * @param {object} oProperty
-	 *   The OData property
+	 * @param {object} oPropertyMetadata
+	 *   The property metadata
 	 * @returns {string}
 	 *   The literal for the URL
 	 * @throws {Error}
 	 *   When called for an unsupported type
 	 * @see sap.ui.model.odata.ODataUtils#formatValue
 	 */
-	_V2Requestor.prototype.formatPropertyAsLiteral = function (vValue, oProperty) {
+	_V2Requestor.prototype.formatPropertyAsLiteral = function (vValue, oPropertyMetadata) {
 
 		// Parse using the given formatter and check that the result is valid
 		function parseAndCheck(oDateFormat, sValue) {
 			var oDate = oDateFormat.parse(sValue);
 			if (!oDate) {
-				throw new Error("Not a valid " + oProperty.$Type + " value: " + sValue);
+				throw new Error("Not a valid " + oPropertyMetadata.$Type + " value: " + sValue);
 			}
 			return oDate;
 		}
@@ -599,7 +640,7 @@ sap.ui.define([
 		}
 
 		// Convert the value to V2 model format
-		switch (oProperty.$Type) {
+		switch (oPropertyMetadata.$Type) {
 			case "Edm.Boolean":
 			case "Edm.Byte":
 			case "Edm.Decimal":
@@ -625,17 +666,18 @@ sap.ui.define([
 				};
 				break;
 			default:
-				throw new Error("Type '" + oProperty.$Type
+				throw new Error("Type '" + oPropertyMetadata.$Type
 					+ "' in the key predicate is not supported");
 		}
 		// Use the V2 function to format the value for a literal
-		return ODataUtils.formatValue(vValue, oProperty.$v2Type || oProperty.$Type);
+		return ODataUtils.formatValue(vValue, oPropertyMetadata.$v2Type || oPropertyMetadata.$Type);
 	};
 
 	/**
 	 * Returns the resource path relative to the service URL and adds query options in case of
 	 * a bound operation (V2: "sap:action-for"). Operation parameters are moved to query options,
-	 * undeclared parameters are removed.
+	 * undeclared parameters are removed. In case of a non-POST action, the V2 HTTP method is
+	 * tunneled as a parameter "X-HTTP-Method".
 	 *
 	 * @param {string} sPath
 	 *   The absolute binding path to the bound operation or operation import, e.g.
@@ -693,6 +735,9 @@ sap.ui.define([
 		}
 		for (sName in mParameters) {
 			delete mParameters[sName];
+		}
+		if (oOperationMetadata.$v2HttpMethod) {
+			mParameters["X-HTTP-Method"] = oOperationMetadata.$v2HttpMethod;
 		}
 
 		return sPath;
