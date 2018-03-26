@@ -797,7 +797,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.44.29
+	 * @version 1.44.30
 	 * @namespace
 	 * @public
 	 * @static
