@@ -59,7 +59,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.type.ODataType
 	 * @public
 	 * @since 1.51.0
-	 * @version 1.52.9
+	 * @version 1.52.10
 	 */
 	var Stream = ODataType.extend("sap.ui.model.odata.type.Stream", {
 			constructor : function (oFormatOptions, oConstraints) {

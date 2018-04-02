@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.52.9
+	 * @version 1.52.10
 	 * @alias sap.ui.core.Core
 	 * @public
 	 */
@@ -2557,11 +2557,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			Parameters.reset(/* bOnlyWhenNecessary= */ true);
 		}
 
+		mParameters = mParameters || {};
+		// set the current theme name as default if omitted
+		if (!mParameters.theme) {
+			mParameters.theme = this.getConfiguration().getTheme();
+		}
+
 		// notify all elements/controls via a pseudo browser event
 		var sEventId = Core.M_EVENTS.ThemeChanged;
 		var oEvent = jQuery.Event(sEventId);
-		//set the current theme name as default if omitted
-		oEvent.theme = mParameters && mParameters.theme || this.getConfiguration().getTheme();
+		oEvent.theme = mParameters.theme;
 		jQuery.each(this.mElements, function(sId, oElement) {
 			oElement._handleEvent(oEvent);
 		});

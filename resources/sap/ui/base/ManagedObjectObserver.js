@@ -376,7 +376,12 @@ sap.ui.define([
 				type: "destroy"
 			};
 		});
-		remove(oManagedObject, this, null);
+		var sId = oManagedObject.getId();
+		if (mTargets[sId]) {
+			// detachEvent doesn't fail if the listener is not registered
+			oManagedObject.detachEvent("EventHandlerChange", fnHandleEventChange);
+			delete mTargets[sId];
+		}
 		delete oManagedObject._observer;
 	};
 
@@ -418,7 +423,7 @@ sap.ui.define([
 	}
 
 	// adds a listener and its configuration to the internal list of observed targets mTargets.
-	// if the listener is already registered to the target only its configuration is updated.
+	// if the listener is already registered to the target, only its configuration is updated.
 	// adds the observer to the target managed object if an observer is missing.
 	function create(oTarget, oListener, oConfiguration) {
 		updateConfiguration(oTarget, oListener, oConfiguration, false);
@@ -439,9 +444,8 @@ sap.ui.define([
 		return null;
 	}
 
-	// removes a listener and its configuration to the internal list of observed targets mTargets.
-	// if the listener is already registered to the target only its configuration is updated.
-	// adds the observer to the target managed object if an observer is missing.
+	// removes the given configuration for the given listener from the internal list of observed targets mTargets.
+	// removes the observer from the target managed object if the target hasn't to be observed any longer
 	function remove(oTarget, oListener, oConfiguration) {
 		oConfiguration = oConfiguration || getConfiguration(oTarget, oListener);
 		updateConfiguration(oTarget, oListener, oConfiguration, true);
@@ -541,14 +545,18 @@ sap.ui.define([
 			updateSingleArray(oCurrentConfig.events, oConfiguration.events, bRemove);
 
 			if (oConfiguration.destroy != null) {
-				oCurrentConfig.destroy = oConfiguration.destroy;
+				if (bRemove) {
+					delete oCurrentConfig.destroy;
+				} else {
+					oCurrentConfig.destroy = oConfiguration.destroy;
+				}
 			}
 		}
 		var bEventsObserved = hasObserverFor(oTarget, "events");
 
 		if (oTarget._observer && bRemove) {
 			//delete oTarget._observer;
-			if (!bEventsObserved && isObservingEvents(oTarget)) {
+			if (!bEventsObserved && EventProvider.hasListener(oTarget, "EventHandlerChange", fnHandleEventChange)) {
 				oTarget.detachEvent("EventHandlerChange", fnHandleEventChange);
 			}
 			if (!bEventsObserved &&
@@ -562,19 +570,12 @@ sap.ui.define([
 			}
 		} else if (!oTarget._observer && !bRemove) {
 			//is any config listening to events
-			if (bEventsObserved && !isObservingEvents(oTarget)) {
+			if (bEventsObserved && !EventProvider.hasListener(oTarget, "EventHandlerChange", fnHandleEventChange)) {
 				oTarget.attachEvent("EventHandlerChange", fnHandleEventChange);
 			}
 			oTarget._observer = Observer;
 		}
 
-	}
-
-	//checks whether events are currently observed for the given target
-	function isObservingEvents(oTarget) {
-		var aRegistry = EventProvider.getEventList(oTarget)["EventHandlerChange"];
-		return (aRegistry &&
-				aRegistry.indexOf(fnHandleEventChange) === -1);
 	}
 
 	//checks whether a given type (events, aggregations, associations, properties, bindings, destroy) is
