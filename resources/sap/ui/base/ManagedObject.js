@@ -230,7 +230,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.54.2
+	 * @version 1.54.3
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 */
@@ -2705,7 +2705,6 @@ sap.ui.define([
 		}
 
 		if ( this._observer ) {
-			// TODO notify observer to cleanup bookkeeping?
 			this._observer.objectDestroyed(this);
 		}
 

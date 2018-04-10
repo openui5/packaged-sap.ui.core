@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.mvc.View
 	 *
 	 * @author SAP SE
-	 * @version 1.54.2
+	 * @version 1.54.3
 	 *
 	 * @public
 	 * @since 1.16.0

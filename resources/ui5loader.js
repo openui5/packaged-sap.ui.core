@@ -727,6 +727,8 @@
 				deferred.resolve = resolve;
 				deferred.reject = reject;
 			});
+			// avoid 'Uncaught (in promise)' log entries
+			deferred.promise.catch(noop);
 		}
 		return this._deferred;
 	};

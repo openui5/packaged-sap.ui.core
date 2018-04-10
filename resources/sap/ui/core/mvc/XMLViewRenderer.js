@@ -127,6 +127,9 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager'],
 				var fragment = oControl._aParsedContent[i];
 				if ( typeof (fragment) !== "string") {
 
+					// render DOM string for child control
+					rm.renderControl(fragment);
+
 					// replace any old DOM (or invisible placeholder) for a child control with a dummy placeholder
 					var sFragmentId = fragment.getId(),
 						$fragment = jQuery.sap.byId(sFragmentId, $oldContent);
@@ -134,9 +137,6 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager'],
 						$fragment = jQuery.sap.byId(PREFIX_INVISIBLE + sFragmentId, $oldContent);
 					}
 					$fragment.replaceWith('<div id="' + PREFIX_DUMMY + sFragmentId + '" class="sapUiHidden"/>');
-
-					// render new DOM for the child
-					rm.renderControl(fragment);
 				}
 			}
 			rm.write('</div>');
