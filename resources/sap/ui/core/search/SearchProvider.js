@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library'
 	 * @class
 	 * Abstract base class for all SearchProviders which can be e.g. attached to a SearchField. Do not create instances of this class, but use a concrete sub class instead.
 	 * @extends sap.ui.core.Element
-	 * @version 1.52.10
+	 * @version 1.52.11
 	 *
 	 * @public
 	 * @alias sap.ui.core.search.SearchProvider

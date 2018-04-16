@@ -175,7 +175,7 @@ sap.ui.define([
 	 * {@link #loaded loaded} has been resolved!
 	 *
 	 * @author SAP SE
-	 * @version 1.52.10
+	 * @version 1.52.11
 	 * @alias sap.ui.model.odata.ODataMetaModel
 	 * @extends sap.ui.model.MetaModel
 	 * @public

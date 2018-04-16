@@ -627,7 +627,7 @@ sap.ui.define([
 				var oPlugin = Opa5.getPlugin();
 
 				// even if we have no control the matchers may provide a value for vControl
-				vResult = oPlugin.getFilterdControls(options, vControl);
+				vResult = oPlugin._getFilteredControls(options, vControl);
 
 				if (iFrameLauncher.hasLaunched() && $.isArray(vResult)) {
 					// People are using instanceof Array in their check so i need to make sure the Array
@@ -1206,7 +1206,6 @@ sap.ui.define([
 
 			return oDeferred.promise();
 		};
-
 
 		return Opa5;
 }, /* export= */ true);
