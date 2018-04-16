@@ -23,7 +23,7 @@ sap.ui.define(['./Item', './library'],
 	 * @extends sap.ui.core.Item
 	 *
 	 * @author SAP SE
-	 * @version 1.38.33
+	 * @version 1.38.34
 	 *
 	 * @constructor
 	 * @public
