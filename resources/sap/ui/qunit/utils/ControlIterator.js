@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 	 * @namespace
 	 *
 	 * @author SAP SE
-	 * @version 1.54.3
+	 * @version 1.54.4
 	 *
 	 * @public
 	 * @since 1.48.0
@@ -77,6 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		"sap.m.Menu",
 		"sap.m.NotificationListItem",
 		"sap.m.NotificationListBase",
+		"sap.m.internal.NumericInput",
 		"sap.m.QuickViewBase",
 		"sap.m.QuickViewGroup",
 		"sap.m.QuickViewGroupElement",

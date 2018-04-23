@@ -1270,6 +1270,5 @@ sap.ui.define([
 			return oDeferred.promise();
 		};
 
-
 		return Opa5;
 });

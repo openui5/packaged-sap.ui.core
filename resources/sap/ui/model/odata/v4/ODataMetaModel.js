@@ -481,7 +481,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.MetaModel
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.54.3
+	 * @version 1.54.4
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 		/*
