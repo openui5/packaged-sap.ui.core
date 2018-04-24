@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 	 * @class
 	 * Component Container
 	 * @extends sap.ui.core.Control
-	 * @version 1.44.30
+	 * @version 1.44.31
 	 *
 	 * @constructor
 	 * @public
