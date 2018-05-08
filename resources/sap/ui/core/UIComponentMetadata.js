@@ -22,7 +22,7 @@ sap.ui.define(['./ComponentMetadata', './library'],
 	 * @experimental Since 1.15.1. The Component concept is still under construction, so some implementation details can be changed in future.
 	 * @class
 	 * @author SAP SE
-	 * @version 1.54.4
+	 * @version 1.54.5
 	 * @since 1.15.1
 	 * @alias sap.ui.core.UIComponentMetadata
 	 */

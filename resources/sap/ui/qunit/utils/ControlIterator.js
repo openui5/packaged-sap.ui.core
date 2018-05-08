@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 	 * @namespace
 	 *
 	 * @author SAP SE
-	 * @version 1.54.4
+	 * @version 1.54.5
 	 *
 	 * @public
 	 * @since 1.48.0

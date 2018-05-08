@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.54.4
+	 * @version 1.54.5
 	 *
 	 * @public
 	 * @deprecated Please use {@link sap.ui.model.odata.v2.ODataModel} instead.

@@ -109,7 +109,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.54.4
+	 * @version 1.54.5
 	 *
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataModel
@@ -2175,8 +2175,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._getEntity = function(sKey) {
-		sKey = sKey && ODataUtils._normalizeKey(sKey);
-		return this.oData[sKey];
+		var oEntity = this.oData[sKey];
+		if (!oEntity) {
+			sKey = sKey && ODataUtils._normalizeKey(sKey);
+			oEntity = this.oData[sKey];
+		}
+		return oEntity;
 	};
 
 	/**
@@ -2197,7 +2201,10 @@ sap.ui.define([
 		} else if (typeof vValue === 'string') {
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
-		return sKey && ODataUtils._normalizeKey(sKey);
+		if (!this.oData[sKey]) {
+			sKey = sKey && ODataUtils._normalizeKey(sKey);
+		}
+		return sKey;
 	};
 
 	/**
