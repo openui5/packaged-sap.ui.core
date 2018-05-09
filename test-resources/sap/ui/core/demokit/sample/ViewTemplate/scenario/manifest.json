@@ -1,0 +1,63 @@
+{
+	"_version" : "1.8.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description": "{{sap.app.description}}",
+		"id" : "sap.ui.core.sample.ViewTemplate.scenario",
+		"i18n" : "i18n/i18n.properties",
+		"title" : "{{sap.app.title}}",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5": {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"ChartAnnotation.fragment.xml",
+					"Component.js",
+					"Detail.controller.js",
+					"Detail.view.xml",
+					"Facets.fragment.xml",
+					"Field.fragment.xml",
+					"FormFacet.fragment.xml",
+					"Helper.js",
+					"Identification.fragment.xml",
+					"LabeledField.fragment.xml",
+					"Main.controller.js",
+					"Main.view.xml",
+					"ODataMetaModel.json",
+					"Table.fragment.xml",
+					"TableFacet.fragment.xml"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			},
+			"minUI5Version": "1.30"
+		},
+		"models": {
+			"@i18n": {
+				"settings": {
+					"bundleName": "sap.ui.core.sample.ViewTemplate.scenario.i18n.i18n"
+				},
+				"type": "sap.ui.model.resource.ResourceModel"
+			}
+		}
+	}
+}
