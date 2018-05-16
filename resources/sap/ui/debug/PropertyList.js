@@ -18,7 +18,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus
-	 * @version 1.38.35
+	 * @version 1.38.36
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis
