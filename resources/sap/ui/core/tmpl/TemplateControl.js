@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	 * @class
 	 * This is the base class for all template controls. Template controls are declared based on templates.
 	 * @extends sap.ui.core.Control
-	 * @version 1.52.12
+	 * @version 1.52.13
 	 *
 	 * @public
 	 * @since 1.15
