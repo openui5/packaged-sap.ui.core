@@ -39,7 +39,7 @@ sap.ui.define([
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.56.0
+	 * @version 1.56.1
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.View
@@ -871,6 +871,19 @@ sap.ui.define([
 		var mParameters = extend(true, {}, mOptions);
 		mParameters.async = true;
 		mParameters.viewContent = mParameters.definition;
+
+		// Get current owner component to create the View with the proper owner
+		// This is required as the viewFactory is called async
+		var Component = sap.ui.require("sap/ui/core/Component");
+		var oOwnerComponent;
+		if (Component && ManagedObject._sOwnerId) {
+			oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+		}
+
+		function createView() {
+			return viewFactory(mParameters.id, mParameters, mParameters.type).loaded();
+		}
+
 		return new Promise(function(resolve, reject) {
 			 var sViewClass = getViewClassName(mParameters);
 			 sap.ui.require([sViewClass], function(ViewClass){
@@ -880,7 +893,11 @@ sap.ui.define([
 			 });
 		})
 		.then(function(ViewClass) {
-			return viewFactory(mParameters.id, mParameters, mParameters.type).loaded();
+			if (oOwnerComponent) {
+				return oOwnerComponent.runAsOwner(createView);
+			} else {
+				return createView();
+			}
 		});
 	};
 

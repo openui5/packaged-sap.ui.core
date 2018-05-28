@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', './Templat
 	 * @extends sap.ui.core.tmpl.Template
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.56.0
+	 * @version 1.56.1
 	 * @alias sap.ui.core.tmpl.HandlebarsTemplate
 	 * @since 1.15
 	 * @deprecated since 1.56

@@ -64,7 +64,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.56.0
+	 * @version 1.56.1
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
@@ -843,14 +843,12 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, oListener, oGroupLock) {
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
@@ -859,18 +857,12 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					if (oGroupLock) {
-						oGroupLock.unlock();
-					}
 					return oCache.fetchValue(_GroupLock.$cached, sRelativePath, undefined,
 						oListener);
 				}
 			}
 			if (that.oContext) {
-				return that.oContext.fetchValue(sPath, oListener, oGroupLock);
-			}
-			if (oGroupLock) {
-				oGroupLock.unlock();
+				return that.oContext.fetchValue(sPath, oListener);
 			}
 		});
 	};
@@ -1588,9 +1580,10 @@ sap.ui.define([
 	 * @param {object} [oAggregation.group]
 	 *   A map from groupable property names to empty objects
 	 * @param {string[]} [oAggregation.groupLevels]
-	 *   A list of groupable property names (which may, but don't need to be repeated in
-	 *   <code>oAggregation.group</code>) used to determine group levels; only a single group level
-	 *   is supported
+	 *   A list of groupable property names used to determine group levels. They may, but don't need
+	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
+	 *   filtering or with the system query option <code>$count</code>; only a single group level
+	 *   is supported.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, if the binding's root binding
@@ -1603,7 +1596,7 @@ sap.ui.define([
 	 *     aggregate : {
 	 *       AverageNetAmountInTransactionCurrency : {
 	 *         name : "NetAmountInTransactionCurrency", // original name
-	 *         with : "avg" // aggregation method
+	 *         with : "average" // aggregation method
 	 *       },
 	 *       NetAmountInDisplayCurrency : {subtotals : true}
 	 *     },
@@ -1755,6 +1748,12 @@ sap.ui.define([
 	 *   Measures only: Whether the minimum value (ignoring currencies or units of measure) for this
 	 *   measure is needed (since 1.55.0);
 	 *   <b>filtering and sorting is not supported in this case</b>
+	 * @param {string} [aAggregation[].with]
+	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
+	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
+	 * @param {string} [aAggregation[].as]
+	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
+	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
 	 * @returns {object}
 	 *   The return object contains a property <code>measureRangePromise</code> if and only if at
 	 *   least one measure has requested a minimum or maximum value; its value is a
@@ -1785,7 +1784,12 @@ sap.ui.define([
 				if ("grouped" in oColumn) {
 					throw new Error("Both dimension and measure: " + oColumn.name);
 				}
-				oAggregation.aggregate[oColumn.name] = oDetails;
+				if (oColumn.as) {
+					oDetails.name = oColumn.name;
+					oAggregation.aggregate[oColumn.as] = oDetails;
+				} else {
+					oAggregation.aggregate[oColumn.name] = oDetails;
+				}
 				if (oColumn.min) {
 					oDetails.min = true;
 					bHasMinMax = true;
@@ -1793,6 +1797,9 @@ sap.ui.define([
 				if (oColumn.max) {
 					oDetails.max = true;
 					bHasMinMax = true;
+				}
+				if (oColumn.with) {
+					oDetails.with = oColumn.with;
 				}
 			} else if (!("grouped" in oColumn) || oColumn.inResult || oColumn.visible) {
 				// dimension or unit/text property

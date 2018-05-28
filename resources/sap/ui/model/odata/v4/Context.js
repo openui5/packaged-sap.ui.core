@@ -80,7 +80,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Context
 	 * @public
 	 * @since 1.39.0
-	 * @version 1.56.0
+	 * @version 1.56.1
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
 			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
@@ -241,15 +241,12 @@ sap.ui.define([
 	 *   A path (absolute or relative to this context)
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the request; if not specified, the group ID depends
-	 *   on the parent binding which owns the cache
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the binding's <code>fetchValue</code> call
 	 *
 	 * @private
 	 */
-	Context.prototype.fetchValue = function (sPath, oListener, oGroupLock) {
+	Context.prototype.fetchValue = function (sPath, oListener) {
 		if (this.iIndex === -2) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
@@ -257,8 +254,7 @@ sap.ui.define([
 		// predicates if the context does. Then the path to register the listener in the cache is
 		// the same that is used for an update and the update notifies the listener.
 		return this.oBinding.fetchValue(
-			sPath && sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
-			oListener, oGroupLock);
+			sPath && sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath), oListener);
 	};
 
 	/**
@@ -343,6 +339,8 @@ sap.ui.define([
 	 *   A relative path within the JSON structure
 	 * @returns {any}
 	 *   The requested value
+	 * @throws {Error}
+	 *   If the context's root binding is suspended
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getObject
@@ -350,7 +348,10 @@ sap.ui.define([
 	 */
 	// @override
 	Context.prototype.getObject = function (sPath) {
-		var oSyncPromise = this.fetchValue(sPath);
+		var oSyncPromise;
+
+		this.oBinding.checkSuspended();
+		oSyncPromise = this.fetchValue(sPath);
 
 		if (oSyncPromise.isFulfilled()) {
 			return _Helper.publicClone(oSyncPromise.getResult());
@@ -371,7 +372,7 @@ sap.ui.define([
 	 * @returns {any}
 	 *   The requested property value
 	 * @throws {Error}
-	 *   If the value is not primitive
+	 *   If the context's root binding is suspended or if the value is not primitive
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getProperty
@@ -380,8 +381,10 @@ sap.ui.define([
 	 */
 	// @override
 	Context.prototype.getProperty = function (sPath, bExternalFormat) {
-		var oError,
-			oSyncPromise = fetchPrimitiveValue(this, sPath, bExternalFormat);
+		var oError, oSyncPromise;
+
+		this.oBinding.checkSuspended();
+		oSyncPromise = fetchPrimitiveValue(this, sPath, bExternalFormat);
 
 		if (oSyncPromise.isRejected()) {
 			oSyncPromise.caught();

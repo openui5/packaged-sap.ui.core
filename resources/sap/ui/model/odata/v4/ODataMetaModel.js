@@ -91,20 +91,6 @@ sap.ui.define([
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
-	 * Logs an error with the given message and details and throws it.
-	 *
-	 * @param {string} sMessage
-	 *   Error message
-	 * @param {string} sDetails
-	 *   Error details
-	 * @throws {Error}
-	 */
-	function logAndThrowError(sMessage, sDetails) {
-		jQuery.sap.log.error(sMessage, sDetails, sODataMetaModel);
-		throw new Error(sDetails + ": " + sMessage);
-	}
-
-	/**
 	 * Adds the given reference URI to the map of reference URIs for schemas.
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
@@ -123,18 +109,17 @@ sap.ui.define([
 			mUrls = oMetaModel.mSchema2MetadataUrl[sSchema];
 
 		if (!mUrls) {
-			oMetaModel.mSchema2MetadataUrl[sSchema] = {};
-			oMetaModel.mSchema2MetadataUrl[sSchema][sReferenceUri] = false;
+			mUrls = oMetaModel.mSchema2MetadataUrl[sSchema] = {};
+			mUrls[sReferenceUri] = false;
 		} else if (!(sReferenceUri in mUrls)) {
 			sUrl0 = Object.keys(mUrls)[0];
-			if (oMetaModel.mSchema2MetadataUrl[sSchema][sUrl0]) {
+			if (mUrls[sUrl0]) {
 				// document already processed, no different URLs allowed
 				logAndThrowError("A schema cannot span more than one document: " + sSchema
 					+ " - expected reference URI " + sUrl0
 					+ " but instead saw " + sReferenceUri, sDocumentUri);
-			} else {
-				oMetaModel.mSchema2MetadataUrl[sSchema][sReferenceUri] = false;
 			}
+			mUrls[sReferenceUri] = false;
 		}
 	}
 
@@ -158,7 +143,7 @@ sap.ui.define([
 	 *   If the schema has already been loaded and read from a different URI
 	 */
 	function getOrFetchSchema(oMetaModel, mScope, sSchema, fnLog) {
-		var oPromise, sUrl, aUrls, oUrls;
+		var oPromise, sUrl, aUrls, mUrls;
 
 		/**
 		 * Include the schema (and all of its children) with namespace <code>sSchema</code> from
@@ -191,16 +176,16 @@ sap.ui.define([
 			return mScope[sSchema];
 		}
 
-		oUrls = oMetaModel.mSchema2MetadataUrl[sSchema];
-		if (oUrls) {
-			aUrls = Object.keys(oUrls);
+		mUrls = oMetaModel.mSchema2MetadataUrl[sSchema];
+		if (mUrls) {
+			aUrls = Object.keys(mUrls);
 			if (aUrls.length > 1) {
 				logAndThrowError("A schema cannot span more than one document: schema is referenced"
 					+ " by following URLs: " + aUrls.join(", "), sSchema);
 			}
 
 			sUrl = aUrls[0];
-			oUrls[sUrl] = true;
+			mUrls[sUrl] = true;
 			fnLog(DEBUG, "Namespace ", sSchema, " found in $Include of ", sUrl);
 			oPromise = oMetaModel.mMetadataUrl2Promise[sUrl];
 			if (!oPromise) {
@@ -237,6 +222,20 @@ sap.ui.define([
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
+	}
+
+	/**
+	 * Logs an error with the given message and details and throws it.
+	 *
+	 * @param {string} sMessage
+	 *   Error message
+	 * @param {string} sDetails
+	 *   Error details
+	 * @throws {Error}
+	 */
+	function logAndThrowError(sMessage, sDetails) {
+		jQuery.sap.log.error(sMessage, sDetails, sODataMetaModel);
+		throw new Error(sDetails + ": " + sMessage);
 	}
 
 	/**
@@ -559,7 +558,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.MetaModel
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.56.0
+	 * @version 1.56.1
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 		/*

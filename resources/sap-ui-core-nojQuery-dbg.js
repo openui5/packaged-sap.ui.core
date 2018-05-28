@@ -1428,11 +1428,12 @@ if (!String.prototype.padEnd) {
 
 
 	/**
-	 * Whether another AMD loader can make use of global define/require.
+	 * Whether ui5loader currently exposes its AMD implementation as global properties
+	 * <code>define</code> and <code>require</code>. Defaults to <code>false</code>.
 	 * @type {boolean}
 	 * @private
 	 */
-	var bNoConflict = false;
+	var bExposeAsAMDLoader = false;
 
 	/**
 	 * How the loader should react to calls of sync APIs or when global names are accessed:
@@ -2301,7 +2302,8 @@ if (!String.prototype.padEnd) {
 		}
 
 		xhr.addEventListener('load', function(e) {
-			if ( xhr.status === 200 ) {
+			// File protocol (file://) always has status code 0
+			if ( xhr.status === 200 || xhr.status === 0 ) {
 				oModule.state = LOADED;
 				oModule.data = xhr.responseText;
 			} else {
@@ -3244,6 +3246,21 @@ if (!String.prototype.padEnd) {
 			}
 			mShims[module + '.js'] = shim;
 		},
+		amd: function(bValue) {
+			bValue = !!bValue;
+			if ( bExposeAsAMDLoader !== bValue ) {
+				bExposeAsAMDLoader = bValue;
+				if (bValue) {
+					vOriginalDefine = __global.define;
+					vOriginalRequire = __global.require;
+					__global.define = amdDefine;
+					__global.require = amdRequire;
+				} else {
+					__global.define = vOriginalDefine;
+					__global.require = vOriginalRequire;
+				}
+			}
+		},
 		async: function(async) {
 			if (bGlobalAsyncMode && !async) {
 				throw new Error("Changing the ui5loader config from async to sync is not supported. Only a change from sync to async is allowed.");
@@ -3284,14 +3301,8 @@ if (!String.prototype.padEnd) {
 			}
 		},
 		noConflict: function(bValue) {
-			bNoConflict = bValue;
-			if (bValue) {
-				__global.define = vOriginalDefine;
-				__global.require = vOriginalRequire;
-			} else {
-				__global.define = amdDefine;
-				__global.require = amdRequire;
-			}
+			log.warning("Config option 'noConflict' has been deprecated, use option 'amd' instead, if still needed.");
+			mConfigHandlers.amd(!bValue);
 		}
 	};
 
@@ -3307,8 +3318,9 @@ if (!String.prototype.padEnd) {
 	function config(cfg) {
 		if ( cfg === undefined ) {
 			return {
-				noConflict: bNoConflict,
-				async: bGlobalAsyncMode
+				amd: bExposeAsAMDLoader,
+				async: bGlobalAsyncMode,
+				noConflict: !bExposeAsAMDLoader // TODO needed?
 			};
 		}
 
@@ -3411,13 +3423,6 @@ if (!String.prototype.padEnd) {
 		Module.get('sap/ui/thirdparty/es6-promise.js').ready(ES6Promise);
 	}
 	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
-
-	// Store current global define and require values
-	vOriginalDefine = __global.define;
-	vOriginalRequire = __global.require;
-
-	__global.define = amdDefine;
-	__global.require = amdRequire;
 
 	__global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};
@@ -3791,7 +3796,7 @@ if (!String.prototype.padEnd) {
 		oCfg = window['sap-ui-config'] || {},
 		sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
-		oBootstrapScript, sBootstrapUrl, bNoConflict = false;
+		oBootstrapScript, sBootstrapUrl, bExposeAsAMDLoader = false;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
@@ -3892,7 +3897,7 @@ if (!String.prototype.padEnd) {
 				}
 				// revert changes to global names
 				ui5loader.config({
-					noConflict:true
+					exposeAsAMDLoader:false
 				});
 				window["sap-ui-optimized"] = false;
 
@@ -3952,25 +3957,42 @@ if (!String.prototype.padEnd) {
 
 	})();
 
-	if ( oCfg['xx-async'] === true || /(?:^|\?|&)sap-ui-xx-async=(?:x|X|true)(?:&|$)/.test(window.location.search) ) {
+	function _getOption(name, defaultValue, pattern) {
+		// check for an URL parameter ...
+		var match = window.location.search.match(new RegExp("(?:^\\??|&)sap-ui-" + name + "=([^&]*)(?:&|$)"));
+		if ( match && (pattern == null || pattern.test(match[1])) ) {
+			return match[1];
+		}
+		// ... or an attribute of the bootstrap tag
+		var attrValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-" + name.toLowerCase());
+		if ( attrValue != null && (pattern == null || pattern.test(attrValue)) ) {
+			return attrValue;
+		}
+		// ... or an entry in the global config object
+		if ( Object.prototype.hasOwnProperty.call(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
+			return oCfg[name];
+		}
+		// if no valid config value is found, fall back to a system default value
+		return defaultValue;
+	}
+
+	function _getBooleanOption(name, defaultValue) {
+		return /^(?:true|x|X)$/.test( _getOption(name, defaultValue, /^(?:true|x|X|false)$/) );
+	}
+
+	if ( _getBooleanOption("xx-async", false) ) {
 		ui5loader.config({
 			async: true
 		});
 	}
 
-	var sNoConflictBootstrapValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-noloaderconflict");
-	if (sNoConflictBootstrapValue) {
-		bNoConflict = /^(?:true|x|X)$/.test(sNoConflictBootstrapValue);
-	}
-	var aNoConflictURLMatches = window.location.search.match(/(?:^\?|&)sap-ui-noLoaderConflict=(true|x|X|false)(?:&|$)/);
-	if (aNoConflictURLMatches) {
-		bNoConflict = aNoConflictURLMatches[1] != "false";
-	}
+	// support legacy switch 'noLoaderConflict', but 'amdLoader' has higher precedence
+	var bExposeAsAMDLoader = _getBooleanOption("amd", !_getBooleanOption("noLoaderConflict", true));
 
 	ui5loader.config({
 		baseUrl: sBaseUrl,
 
-		noConflict: bNoConflict,
+		amd: bExposeAsAMDLoader,
 
 		map: {
 			"*": {

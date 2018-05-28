@@ -50,7 +50,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.56.0
+	 * @version 1.56.1
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
@@ -229,7 +229,7 @@ sap.ui.define([
 				if (that.oContext.getIndex() === -2) { // virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}
-				return that.oContext.fetchValue(that.sPath, that, that.oModel.lockGroup(sGroupId));
+				return that.oContext.fetchValue(that.sPath, that);
 			}).then(function (vValue) {
 				if (!vValue || typeof vValue !== "object"
 					|| (that.sInternalType === "any"

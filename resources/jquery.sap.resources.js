@@ -63,7 +63,7 @@ sap.ui.define([
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP SE
-	 * @version 1.56.0
+	 * @version 1.56.1
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
