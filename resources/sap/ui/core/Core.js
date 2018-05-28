@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.54.5
+	 * @version 1.54.6
 	 * @alias sap.ui.core.Core
 	 * @public
 	 */
@@ -1114,7 +1114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				vOnInit();
 			} else if (typeof vOnInit === "string") {
 				// determine onInit being a module name prefixed via module or a global name
-				var aResult = /^module\:((?:(?:[_$a-zA-Z][_$a-zA-Z0-9]*)\/?)*)$/.exec(vOnInit);
+				var aResult = /^module\:((?:(?:[_$.\-a-zA-Z][_$.\-a-zA-Z0-9]*)\/?)*)$/.exec(vOnInit);
 				if (aResult && aResult[1]) {
 					// ensure that the require is done async and the Core is finally booted!
 					setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);

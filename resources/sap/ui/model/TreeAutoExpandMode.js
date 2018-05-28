@@ -12,7 +12,7 @@ sap.ui.define([],
 	/**
 	 * Different modes for setting the auto expand mode on tree or analytical bindings.
 	 *
-	 * @version 1.54.5
+	 * @version 1.54.6
 	 * @enum {string}
 	 * @alias sap.ui.model.TreeAutoExpandMode
 	 * @protected
