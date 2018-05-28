@@ -10375,7 +10375,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.44.31
+ * @version 1.44.32
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10401,7 +10401,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.44.31";
+		var apiVersion = "1.44.32";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10459,7 +10459,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.44.31";
+		var v = "1.44.32";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15553,6 +15553,33 @@ return URI;
 
 	}
 
+	// document.activeElement iframe fix
+	if (Device.browser.msie || Device.browser.edge) {
+		var activeElementDescriptor = Object.getOwnPropertyDescriptor(Document.prototype, 'activeElement');
+		if (!activeElementDescriptor) {
+			jQuery.sap.log.warning("activeElementFix: Unable to retrieve property descriptor for 'Document.prototype.activeElement'");
+			return;
+		}
+
+		var getActiveElement = activeElementDescriptor.get;
+		if (!getActiveElement) {
+			jQuery.sap.log.warning("activeElementFix: Unable to retrieve getter of property 'Document.prototype.activeElement'");
+			return;
+		}
+
+		Object.defineProperty(Document.prototype, 'activeElement', {
+			configurable: true,
+			enumerable: true,
+			get: function() {
+				try {
+					return getActiveElement.call(this);
+				} catch (e) {
+					return null;
+				}
+			}
+		});
+	}
+
 	// XHR proxy for Firefox
 	if ( Device.browser.firefox && window.Proxy ) {
 
@@ -16049,7 +16076,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.44.31
+	 * @version 1.44.32
 	 * @namespace
 	 * @public
 	 * @static
