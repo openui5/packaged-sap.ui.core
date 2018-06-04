@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @class
 	 * Contains a single key/value pair of custom data attached to an Element. See method data().
 	 * @extends sap.ui.core.Element
-	 * @version 1.52.13
+	 * @version 1.52.14
 	 *
 	 * @public
 	 * @alias sap.ui.core.CustomData
