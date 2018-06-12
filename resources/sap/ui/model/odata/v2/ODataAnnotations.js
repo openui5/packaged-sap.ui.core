@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.56.1
+	 * 1.56.2
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -731,6 +731,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 			.then(function() {
 				mSource.annotations
 					= AnnotationParser.parse(this._oMetadata, mSource.document, mSource.data);
+				//delete document as it is not needed anymore after parsing
+				delete mSource.document;
 				return mSource;
 			}.bind(this));
 	};

@@ -7,6 +7,7 @@
 // Provides control sap.ui.core.Icon.
 sap.ui.define([
     'jquery.sap.global',
+    'sap/base/assert',
     '../Device',
     './Control',
     './IconPool',
@@ -17,6 +18,7 @@ sap.ui.define([
 ],
 	function(
 	    jQuery,
+		assert,
 		Device,
 		Control,
 		IconPool,
@@ -43,7 +45,7 @@ sap.ui.define([
 	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
-	 * @version 1.56.1
+	 * @version 1.56.2
 	 *
 	 * @public
 	 * @since 1.11.1
@@ -315,7 +317,9 @@ sap.ui.define([
 	/* =========================================================== */
 
 	Icon.prototype.setSrc = function(sSrc) {
-		var vIconInfo = IconPool.getIconInfo(sSrc, "mixed"),
+		assert(IconPool.isIconURI(sSrc), this + ": Property 'src' (value: '" + sSrc + "') should be a valid Icon URI (sap-icon://...)");
+
+		var vIconInfo = IconPool.getIconInfo(sSrc, undefined, "mixed"),
 			$Icon = this.$(),
 			sIconLabel, sTooltip, bUseIconTooltip, aLabelledBy, oInvisibleText;
 
@@ -572,7 +576,7 @@ sap.ui.define([
 		}
 
 		var bHasPressListeners = this.hasListeners("press");
-		var oIconInfo = IconPool.getIconInfo(this.getSrc(), "sync");
+		var oIconInfo = IconPool.getIconInfo(this.getSrc(), undefined, "sync");
 
 		return {
 			role: bHasPressListeners ? "button" : "img",

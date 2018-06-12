@@ -2538,11 +2538,6 @@ if (!String.prototype.padEnd) {
 			}
 
 			if ( oModule.state === LOADING ) {
-				// loading failed for some reason, load again as script for better error reporting
-				// (but without further eventing)
-				if ( fnIgnorePreload ) {
-					loadScript(oModule);
-				}
 				// transition to FAILED
 				oModule.fail(
 					makeNestedError("failed to load '" + sModuleName +  "' from " + oModule.url, oModule.error));
@@ -2554,6 +2549,11 @@ if (!String.prototype.padEnd) {
 			measure && measure.end(sModuleName);
 
 			if ( oModule.state !== READY ) {
+				// loading or executing failed for some reason, load again as script for better error reporting
+				// (but without further eventing)
+				if ( fnIgnorePreload ) {
+					loadScript(oModule);
+				}
 				throw oModule.error;
 			}
 

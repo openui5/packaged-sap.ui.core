@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @class Container that embeds a UIComponent in a control tree.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.56.1
+	 * @version 1.56.2
 	 *
 	 * @public
 	 * @alias sap.ui.core.ComponentContainer
@@ -263,7 +263,7 @@ sap.ui.define([
 		var mConfig = {
 			name: sName ? sName : undefined,
 			usage: sUsage ? sUsage : undefined,
-			manifest: vManifest !== null ? vManifest : undefined,
+			manifest: vManifest !== null ? vManifest : false,
 			async: oComponentContainer.getAsync(),
 			url: sUrl ? sUrl : undefined,
 			handleValidation: oComponentContainer.getHandleValidation(),
@@ -284,7 +284,12 @@ sap.ui.define([
 			mConfig = createComponentConfig(this);
 		// create the component instance
 		if (!oOwnerComponent) {
-			return sap.ui.component(mConfig);
+			if ( mConfig.async ) {
+				return Component.create(mConfig);
+			} else {
+				// use deprecated factory for sync use case only
+				return sap.ui.component(mConfig);
+			}
 		} else {
 			return oOwnerComponent._createComponent(mConfig);
 		}

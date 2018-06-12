@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * @class The Manifest class.
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.56.1
+	 * @version 1.56.2
 	 * @alias sap.ui.core.Manifest
 	 * @since 1.33.0
 	 */
@@ -462,7 +462,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 					for (var sName in mComponents) {
 						if (!mComponents[sName].lazy) {
 							jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
-							sap.ui.component.load({
+							sap.ui.requireSync("sap/ui/core/Component").load({
 								name: sName
 							});
 						}

@@ -18,7 +18,7 @@ sap.ui.define([], function() {
 	 * Use {@link getUriParameters} to create an instance of sab.base.util.UriParameters.
 	 *
 	 * @author SAP SE
-	 * @version 1.56.1
+	 * @version 1.56.2
 	 * @exports sap/base/util/UriParameters
 	 * @param {string} sUri URL with parameters
 	 * @private

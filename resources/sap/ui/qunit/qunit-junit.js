@@ -40,7 +40,7 @@
 				qunitNode.appendChild(qunitDetailNodes[i]);
 			}
 		}
-		if ( qunitFixtureNode == null ) {
+		if ( qunitFixtureNode == null && qunitNode ) {
 			qunitFixtureNode = document.createElement('DIV');
 			qunitFixtureNode.id = 'qunit-fixture';
 			qunitNode.parentNode.insertBefore(qunitFixtureNode, qunitNode.nextSibling);

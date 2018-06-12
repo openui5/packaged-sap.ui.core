@@ -38,7 +38,7 @@ function (
 	 * @alias sap.ui.core.postmessage.Bus
 	 * @author SAP SE
 	 * @since 1.56.0
-	 * @version 1.56.1
+	 * @version 1.56.2
 	 * @private
 	 * @ui5-restricted sap.ui.core.support, sap.ui.support, sap.ui.rta
 	 */
@@ -140,15 +140,6 @@ function (
 		}
 		if (typeof sEventId !== "string") {
 			throw TypeError("EventId must be a string");
-		}
-		if (typeof vData !== "undefined") {
-			try {
-				if (!equal(JSON.parse(JSON.stringify(vData)), vData, Infinity)) {
-					throw Error("Data could not be serialized");
-				}
-			} catch (oError) {
-				throw TypeError("Data has to be undefined or a serializable data type (e.g. not JSON compatible): " + oError.toString());
-			}
 		}
 
 		// Accept host immediately when message is sent
