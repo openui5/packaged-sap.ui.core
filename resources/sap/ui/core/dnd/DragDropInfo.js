@@ -20,7 +20,7 @@ sap.ui.define(["./DragDropBase", "../Element", "jquery.sap.dom"],
 	 * @extends sap.ui.core.dnd.DragDropBase
 	 *
 	 * @author SAP SE
-	 * @version 1.54.6
+	 * @version 1.54.7
 	 *
 	 * @public
 	 * @since 1.52

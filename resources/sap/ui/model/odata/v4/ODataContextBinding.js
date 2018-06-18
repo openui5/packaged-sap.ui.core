@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.54.6
+	 * @version 1.54.7
 	 *
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges

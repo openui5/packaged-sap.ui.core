@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.54.6
+	 * @version 1.54.7
 	 *
 	 * @public
 	 * @since 1.27.0

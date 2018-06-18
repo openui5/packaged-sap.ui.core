@@ -5,7 +5,7 @@
  */
 
 sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
-	function(Filter, jQuery /* jQuerySapUnicode */) {
+	function(Filter, jQuery /* jQuerySapUnicode */ ) {
 	"use strict";
 
 	/**
@@ -66,7 +66,7 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 						var oValue = fnGetValue(vRef, sPath),
 							fnTest = that.getFilterFunction(oFilter);
 						if (!oFilter.fnCompare) {
-							oValue = that.normalizeFilterValue(oValue);
+							oValue = that.normalizeFilterValue(oValue, oFilter.bCaseSensitive);
 						}
 						if (oValue !== undefined && fnTest(oValue)) {
 							bGroupFiltered = true;
@@ -99,13 +99,19 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 	 *
 	 * @private
 	 */
-	FilterProcessor.normalizeFilterValue = function(oValue){
+	FilterProcessor.normalizeFilterValue = function(oValue, bCaseSensitive){
 		if (typeof oValue == "string") {
-			// Internet Explorer and Edge cannot uppercase properly on composed characters
-			if (String.prototype.normalize && (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
-				oValue = oValue.normalize("NFKD");
+			if (bCaseSensitive === undefined) {
+				bCaseSensitive = false;
 			}
-			oValue = oValue.toUpperCase();
+			if (!bCaseSensitive) {
+				// Internet Explorer and Edge cannot uppercase properly on composed characters
+				if (String.prototype.normalize && (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
+					oValue = oValue.normalize("NFKD");
+				}
+				oValue = oValue.toUpperCase();
+			}
+
 			// use canonical composition as recommended by W3C
 			// http://www.w3.org/TR/2012/WD-charmod-norm-20120501/#sec-ChoiceNFC
 			if (String.prototype.normalize) {
@@ -138,7 +144,7 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 					var oValue = fnGetValue(vRef, oFilter.sPath),
 						fnTest = that.getFilterFunction(oFilter);
 					if (!oFilter.fnCompare) {
-						oValue = that.normalizeFilterValue(oValue);
+						oValue = that.normalizeFilterValue(oValue, oFilter.bCaseSensitive);
 					}
 					if (oValue !== undefined && fnTest(oValue)) {
 						bLocalMatch = true;
@@ -172,8 +178,8 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 			fnCompare = oFilter.fnCompare || Filter.defaultComparator;
 
 		if (!oFilter.fnCompare) {
-			oValue1 = this.normalizeFilterValue(oValue1);
-			oValue2 = this.normalizeFilterValue(oValue2);
+			oValue1 = this.normalizeFilterValue(oValue1, oFilter.bCaseSensitive);
+			oValue2 = this.normalizeFilterValue(oValue2, oFilter.bCaseSensitive);
 		}
 
 		switch (oFilter.sOperator) {
