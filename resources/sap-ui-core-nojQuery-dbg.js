@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.38.36
+ * @version 1.38.37
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -37,7 +37,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.38.36";
+		var apiVersion = "1.38.37";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -95,7 +95,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.38.36";
+		var v = "1.38.37";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -5221,6 +5221,19 @@ return URI;
 		});
 	}
 
+	//getComputedStyle polyfill for firefox
+	if ( Device.browser.firefox ) {
+		var fnGetComputedStyle = window.getComputedStyle;
+		window.getComputedStyle = function(element, pseudoElt){
+			var oCSS2Style = fnGetComputedStyle.call(this, element, pseudoElt);
+			if (oCSS2Style === null) {
+				//Copy StyleDeclaration of document.body
+				return document.body.cloneNode(false).style;
+			}
+			return oCSS2Style;
+		};
+	}
+
 	// XHR proxy for Firefox
 	if ( Device.browser.firefox && window.Proxy ) {
 
@@ -5617,7 +5630,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.38.36
+	 * @version 1.38.37
 	 * @namespace
 	 * @public
 	 * @static

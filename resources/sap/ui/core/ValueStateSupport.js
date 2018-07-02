@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		 * Helper functionality for value state support.
 		 *
 		 * @author SAP SE
-		 * @version 1.38.36
+		 * @version 1.38.37
 		 * @public
 		 * @namespace sap.ui.core.ValueStateSupport
 		 */

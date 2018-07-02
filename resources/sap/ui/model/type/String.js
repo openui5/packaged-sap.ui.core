@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/For
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.38.36
+	 * @version 1.38.37
 	 *
 	 * @constructor
 	 * @public

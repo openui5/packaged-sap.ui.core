@@ -128,7 +128,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.38.36
+	 * @version 1.38.37
 	 *
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int64

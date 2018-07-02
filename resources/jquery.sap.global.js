@@ -332,6 +332,19 @@
 		});
 	}
 
+	//getComputedStyle polyfill for firefox
+	if ( Device.browser.firefox ) {
+		var fnGetComputedStyle = window.getComputedStyle;
+		window.getComputedStyle = function(element, pseudoElt){
+			var oCSS2Style = fnGetComputedStyle.call(this, element, pseudoElt);
+			if (oCSS2Style === null) {
+				//Copy StyleDeclaration of document.body
+				return document.body.cloneNode(false).style;
+			}
+			return oCSS2Style;
+		};
+	}
+
 	// XHR proxy for Firefox
 	if ( Device.browser.firefox && window.Proxy ) {
 
@@ -728,7 +741,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.38.36
+	 * @version 1.38.37
 	 * @namespace
 	 * @public
 	 * @static
