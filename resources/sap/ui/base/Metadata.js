@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.script'],
 	 *
 	 * @class Metadata for a class.
 	 * @author Frank Weigel
-	 * @version 1.56.2
+	 * @version 1.56.3
 	 * @since 0.8.6
 	 * @public
 	 * @alias sap.ui.base.Metadata
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.script'],
 			result[this._sClassName] = true;
 
 			// additionally collect interfaces
-			var aInterfaces = this.getInterfaces(),
+			var aInterfaces = this._aInterfaces,
 				i = aInterfaces.length;
 			while ( i-- > 0 ) {
 				if ( !result[aInterfaces[i]] ) {

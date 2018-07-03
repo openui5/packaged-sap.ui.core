@@ -5318,6 +5318,32 @@ var sNestedAnnotations = '\
 								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High"/>\
 						</Record>\
 					</Collection>\
+					<Annotation Term="UI.Criticality" Path="Criticality"/>\
+				</Annotation>\
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem" Qualifier="foo">\
+					<Collection>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Label" String="Business Partner"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"\
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/Medium"/>\
+						</Record>\
+					</Collection>\
+					<Annotation Term="UI.Criticality" Qualifier="bar" Path="Criticality"/>\
+				</Annotation>\
+				<Annotation Term="UI.Facets">\
+					<Collection>\
+						<Record Type="UI.CollectionFacet">\
+							<PropertyValue Property="Facets">\
+								<Collection>\
+									<Record Type="UI.ReferenceFacet">\
+										<PropertyValue Property="Target" AnnotationPath="Supplier/@UI.Identification" />\
+									</Record>\
+								</Collection>\
+								<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Supplier Identification"/>\
+							</PropertyValue>\
+						</Record>\
+					</Collection>\
 				</Annotation>\
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CategoryName">\
 					<!-- We are keeping this (invalid) example in to document the behavior of the parser in cases that are not allowed in actual annotation sources -->\
@@ -5326,7 +5352,7 @@ var sNestedAnnotations = '\
 						<Annotation Term="Core.Description2" String="If used for a single property the Common.Text annotation is annotated"/>\
 					</Term>\
 				</Annotation>\
-				<Annotation Term="com.sap.vocabularies.Common.v1.Text2" Path="CategoryName">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text#2" Path="CategoryName">\
 					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement" EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast" />\
 				</Annotation>\
 				<Annotation Term="unittest.ui5.parentAnnotation">\

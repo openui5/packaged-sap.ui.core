@@ -9,14 +9,16 @@ sap.ui.define([
 	"sap/base/util/equal",
 	"sap/base/util/includes",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/isWindow"
+	"sap/base/util/isWindow",
+	"sap/base/Log"
 ],
 function (
 	EventBus,
 	equal,
 	includes,
 	isPlainObject,
-	isWindow
+	isWindow,
+	Log
 ) {
 	"use strict";
 
@@ -34,11 +36,13 @@ function (
 	 *   <li>via the static method <code>sap.ui.core.postmessage.Bus.getInstance()</code></li>
 	 * </ul>
 	 *
+	 * For supported data types for payload messages see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm}
+	 *
 	 * @extends sap.ui.core.EventBus
 	 * @alias sap.ui.core.postmessage.Bus
 	 * @author SAP SE
 	 * @since 1.56.0
-	 * @version 1.56.2
+	 * @version 1.56.3
 	 * @private
 	 * @ui5-restricted sap.ui.core.support, sap.ui.support, sap.ui.rta
 	 */
@@ -100,7 +104,7 @@ function (
 	 * @param {string} mParameters.origin - Origin of the receiving window, e.g. http://example.com
 	 * @param {string} mParameters.channelId - Channel identifier
 	 * @param {string} mParameters.eventId - Event identifier
-	 * @param {*} [mParameters.data] - Custom serializable payload (JSON compatible)
+	 * @param {*} [mParameters.data] - Payload data. For supported data types see - {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm}
 	 * @throws {TypeError} when invalid data is specified
 	 * @public
 	 */
@@ -114,7 +118,9 @@ function (
 		// Defaults for READY event
 		if (sEventId === PostMessageBus.event.READY) {
 			if (!oTarget) {
-				if (window.parent !== window) {
+				if (window.opener && window.opener !== window) {
+					oTarget = window.opener;
+				} else if (window.parent !== window) {
 					oTarget = window.parent;
 				} else {
 					return; // Ignore ready event when there is no valid target
@@ -194,7 +200,7 @@ function (
 	 *     - {string} eventId - Event ID
 	 *     - {Window} source - Sender window
 	 *     - {string} origin - Sender origin, e.g. https://example.com
-	 *     - {object} [data] - Payload (JSON like object)
+	 *     - {*} [data] - Payload data
 	 * </pre>
 	 * @param {object}
 	 *            [oListener] Object that wants to be notified when the event occurs (<code>this</code> context within the
@@ -323,6 +329,21 @@ function (
 				}
 			}
 		}.bind(this))
+		.catch(function (vError) {
+			var sMessage;
+			var sDetail;
+
+			if (typeof vError === 'string') {
+				sMessage = vError;
+			} else if (vError instanceof Error) {
+				sMessage = vError.message;
+				sDetail = vError.stack;
+			} else {
+				sMessage = 'Some unexpected error happened during post message processing';
+			}
+
+			Log.error(sMessage, sDetail, 'sap.ui.core.postmessage.Bus');
+		})
 		.then(function () {
 			this._oPendingProcess = (
 				this._aEventQueue.length > 0

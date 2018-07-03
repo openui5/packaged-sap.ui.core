@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Fire event DataStateChange to attached listeners.
+	 * Fire event 'DataStateChange' to attached listeners.
 	 * @param {Map}
 	 *         mArguments the arguments to pass along with the event.
 	 * @private

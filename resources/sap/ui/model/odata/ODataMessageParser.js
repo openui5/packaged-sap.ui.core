@@ -70,7 +70,7 @@ var mSeverityMap = {
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
- * @version 1.56.2
+ * @version 1.56.3
  * @public
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
@@ -506,7 +506,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
 		if (sRequestTargetName.indexOf("(") > -1) {
 			// It is an entity
-			sTarget = sRequestTarget + "/" + sTarget;
+			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
 		} else {
 			// It's a collection
 			sTarget = sRequestTarget + sTarget;

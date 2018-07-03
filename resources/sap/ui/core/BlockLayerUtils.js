@@ -333,4 +333,4 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 	return BlockLayerUtils;
 
-}, /* bExport= */ true);
+});
