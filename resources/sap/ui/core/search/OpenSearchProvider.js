@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 	 * @class
 	 * A SearchProvider which uses the OpenSearch protocol (either JSON or XML).
 	 * @extends sap.ui.core.search.SearchProvider
-	 * @version 1.52.15
+	 * @version 1.52.16
 	 *
 	 * @public
 	 * @alias sap.ui.core.search.OpenSearchProvider

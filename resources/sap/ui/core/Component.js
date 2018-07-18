@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.52.15
+	 * @version 1.52.16
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -825,7 +825,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					var oServiceManifestEntry = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias);
 
 					// lookup the factoryName in the manifest
-					var sServiceFactoryName = oServiceManifestEntry.factoryName;
+					var sServiceFactoryName = oServiceManifestEntry && oServiceManifestEntry.factoryName;
 					if (!sServiceFactoryName) {
 						fnReject(new Error("Service " + sLocalServiceAlias + " not declared!"));
 						return;

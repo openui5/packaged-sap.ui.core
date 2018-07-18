@@ -10375,7 +10375,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.52.15
+ * @version 1.52.16
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10401,7 +10401,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.52.15";
+		var apiVersion = "1.52.16";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10459,7 +10459,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.52.15";
+		var v = "1.52.16";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15609,6 +15609,21 @@ if ( !('baseURI' in Node.prototype) ) {
 		window.getComputedStyle = function(element, pseudoElt){
 			var oCSS2Style = fnGetComputedStyle.call(this, element, pseudoElt);
 			if (oCSS2Style === null) {
+				// If no body element exists yet, we create a fake one to return the style attribute.
+				// This approach is also used by some jQuery modules like "jQuery Mobile".
+				if (document.body == null) {
+					// create and insert a fake body into the HTML
+					var oFakeBody = document.createElement("body");
+					var oHTML = document.getElementsByTagName("html")[0];
+					oHTML.insertBefore( oFakeBody, oHTML.firstChild );
+
+					// get the style from this fake body
+					var oStyle = oFakeBody.style;
+
+					// remove the fake body again
+					oFakeBody.parentNode.removeChild(oFakeBody);
+					return oStyle;
+				}
 				//Copy StyleDeclaration of document.body
 				return document.body.cloneNode(false).style;
 			}
@@ -16140,7 +16155,7 @@ if ( !('baseURI' in Node.prototype) ) {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.52.15
+	 * @version 1.52.16
 	 * @namespace
 	 * @public
 	 * @static
