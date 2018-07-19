@@ -196,7 +196,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.56.3
+	 * @version 1.56.4
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -843,7 +843,7 @@ sap.ui.define([
 					var oServiceManifestEntry = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias);
 
 					// lookup the factoryName in the manifest
-					var sServiceFactoryName = oServiceManifestEntry.factoryName;
+					var sServiceFactoryName = oServiceManifestEntry && oServiceManifestEntry.factoryName;
 					if (!sServiceFactoryName) {
 						fnReject(new Error("Service " + sLocalServiceAlias + " not declared!"));
 						return;
@@ -1909,6 +1909,8 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @static
 	 * @public
+	 * @experimental Since 1.56.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 *   It must not be used in productive code, except in code delivered by the UI5 teams.
 	 */
 	Component.create = function(mOptions) {
 		if (mOptions == null || typeof mOptions !== "object") {
@@ -1979,18 +1981,12 @@ sap.ui.define([
 	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
 	 * @returns {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
 	 *
-	 * @deprecated Since 1.56.0, use one of the following alternatives instead:
-	 * <ul>
-	 * <li>to load a component class, use {@link sap.ui.core.Component.load Component.load}</li>
-	 * <li>to create a new component instance, use {@link sap.ui.core.Component.create Component.create};
-	 *     note that this new factory does not support synchronous loading (<code>async:false</code>) nor does
-	 *     it support the deprecated options <code>manifestFirst</code> or <code>manifestUrl<code>.</li>
-	 * <li>to retrieve an existing component instance by its ID, use {@link sap.ui.core.Component.get Component.get}</li>
-	 * </ul>
+	 * @deprecated Since 1.56, use {@link #.get Component.get} or {@link #.create Component.create} instead.
+	 *   Note: {@link #.create Component.create} does not support synchronous loading or the deprecated options <code>manifestFirst</code> and <code>manifestUrl</code>.
 	 * @public
 	 * @static
 	 * @since 1.15.0
-	 * @experimental Since 1.27.0. Support for asyncHints is still experimental and might be modified or removed completely again.
+	 * @experimental Since 1.27.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
 	 *   It must not be used in productive code, except in code delivered by the UI5 teams. The synchronous usage of the API is
 	 *   not experimental and can be used without restrictions.
 	 */
@@ -2155,6 +2151,8 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @static
 	 * @public
+	 * @experimental Since 1.56.0. Support for <code>asyncHints</code> is still experimental and might be modified or removed completely again.
+	 *   It must not be used in productive code, except in code delivered by the UI5 teams.
 	 */
 	Component.load = function (mOptions) {
 

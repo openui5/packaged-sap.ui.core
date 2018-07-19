@@ -553,6 +553,11 @@
 
 		// Make sure to have an absolute URL to check against absolute prefix URLs
 		sURL = resolveURL(sURL);
+		// remove url parameters
+		var pos = sURL.search(/[?#]/);
+		if (pos >= 0) {
+			sURL = sURL.slice(0, pos);
+		}
 
 		for (sNamePrefix in mUrlPrefixes) {
 
@@ -1998,9 +2003,13 @@
 					vOriginalRequire = __global.require;
 					__global.define = amdDefine;
 					__global.require = amdRequire;
+
+					// Enable async loading behaviour implicitly when switching to amd mode
+					bGlobalAsyncMode = true;
 				} else {
 					__global.define = vOriginalDefine;
 					__global.require = vOriginalRequire;
+					// NOTE: Do not set async mode back to false when amd mode gets deactivated
 				}
 			}
 		},
@@ -2291,6 +2300,11 @@
 		 *   When set to true, the ui5loader will overwrite the global properties <code>define</code>
 		 *   and <code>require</code> with its own implementations. Any previously active AMD loader will
 		 *   be remembered internally and can be restored by setting <code>amd</code> to false again.
+		 *
+		 *   <b>Note:</b> Switching to the <code>amd</code> mode, the ui5loader will set <code>async</code>
+		 *   to true implicitly for activating asynchronous loading. Once the loading behaviour has been
+		 *   defined to be asynchronous, it can not be changed to synchronous behaviour again, also not
+		 *   via setting <code>amd</code> to false.
 		 *
 		 * @returns {object|undefined} UI5 loader configuration in use.
 		 * @throws {Error} When trying to switch back from async mode to sync mode.

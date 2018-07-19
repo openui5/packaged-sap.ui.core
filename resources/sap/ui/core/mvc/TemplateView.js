@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.mvc.View
 	 *
 	 * @author SAP SE
-	 * @version 1.56.3
+	 * @version 1.56.4
 	 *
 	 * @public
 	 * @deprecated Since version 1.56.0, use XMLView or JSView instead.

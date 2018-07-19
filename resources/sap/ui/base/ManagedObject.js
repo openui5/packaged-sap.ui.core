@@ -231,7 +231,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.56.3
+	 * @version 1.56.4
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 */
@@ -3224,9 +3224,9 @@ sap.ui.define([
 					// if binding is one time but not resolved yet we don't destroy it yet.
 					oBinding.detachChange(fnModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
-                                        if (this.refreshDataState) {
-                                                oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
-                                        }
+					if (this.refreshDataState) {
+						oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
+					}
 					oBinding.destroy();
 					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
 				}

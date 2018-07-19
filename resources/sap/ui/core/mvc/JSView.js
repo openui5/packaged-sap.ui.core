@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @class
 	 * A View defined/constructed by JavaScript code.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.56.3
+	 * @version 1.56.4
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.JSView
@@ -104,7 +104,7 @@ sap.ui.define([
 	 * Defines a view of the given name with the given implementation. <code>sId</code> must be the view's name,
 	 * <code>vView</code> must be an object and can contain implementations for any of the hooks provided by JSView.
 	 *
-	 * <h3>View Instantiation</h3>
+	 * <h3>View Instantiation (deprecated)</h3>
 	 * <pre>
 	 *   var oView = sap.ui.jsview(vView);
 	 *   var oView = sap.ui.jsview(vView, bASync);
@@ -121,6 +121,10 @@ sap.ui.define([
 	 * When <code>bAsync</code> has a truthy value, the view definition will be read asynchronously, if needed,
 	 * but the (incomplete) view instance will be returned immediately.
 	 *
+	 * <b>Note:</b> Using <code>sap.ui.jsview</code> for creating view instances has been deprecated, use
+	 * {@link sap.ui.core.mvc.JSView.create JSView.create} instead. <code>JSView.create</code> enforces
+	 * asynchronous loading and can be used via an AMD reference, it doesn't rely on a global name.
+	 *
 	 * <b>Note:</b> Any other call signature will lead to a runtime error.
 	 *
 	 * @param {string} [sId] id of the newly created view, only allowed for instance creation
@@ -129,12 +133,8 @@ sap.ui.define([
 	 *   (only relevant for instantiation, ignored for everything else)
 	 * @public
 	 * @static
-	 * @deprecated since 1.56.0,
-	 * <ul>
-	 * <li>For view instance creation use <code>JSView.create</code> instead.</li>
-	 * <li>For defining views use <code>JSView.extend</code> instead.</li>
-	 * </ul>
-	 *
+	 * @deprecated Since 1.56, use {@link #.create JSView.create} to create view instances;
+	 *   for defining JavaScript views, there's no substitute yet and <code>sap.ui.jsview</code> still has to be used
 	 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {
