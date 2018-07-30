@@ -63,7 +63,7 @@ sap.ui.define([
 	 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView#addDependent}.
 	 *
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.56.4
+	 * @version 1.56.5
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.XMLView
