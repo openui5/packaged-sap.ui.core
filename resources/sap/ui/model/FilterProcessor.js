@@ -65,7 +65,7 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 					jQuery.each(aFilterGroup, function(j, oFilter) {
 						var oValue = fnGetValue(vRef, sPath),
 							fnTest = that.getFilterFunction(oFilter);
-						if (!oFilter.fnCompare) {
+						if (!oFilter.fnCompare || oFilter.bCaseSensitive !== undefined) {
 							oValue = that.normalizeFilterValue(oValue, oFilter.bCaseSensitive);
 						}
 						if (oValue !== undefined && fnTest(oValue)) {
@@ -143,7 +143,7 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 				} else if (oFilter.sPath !== undefined) {
 					var oValue = fnGetValue(vRef, oFilter.sPath),
 						fnTest = that.getFilterFunction(oFilter);
-					if (!oFilter.fnCompare) {
+					if (!oFilter.fnCompare || oFilter.bCaseSensitive !== undefined) {
 						oValue = that.normalizeFilterValue(oValue, oFilter.bCaseSensitive);
 					}
 					if (oValue !== undefined && fnTest(oValue)) {
@@ -177,9 +177,9 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 			oValue2 = oFilter.oValue2,
 			fnCompare = oFilter.fnCompare || Filter.defaultComparator;
 
-		if (!oFilter.fnCompare) {
-			oValue1 = this.normalizeFilterValue(oValue1, oFilter.bCaseSensitive);
-			oValue2 = this.normalizeFilterValue(oValue2, oFilter.bCaseSensitive);
+		if (!oFilter.fnCompare || oFilter.bCaseSensitive !== undefined) {
+			oValue1 = oValue1 ? this.normalizeFilterValue(oValue1, oFilter.bCaseSensitive) : oValue1;
+			oValue2 = oValue2 ? this.normalizeFilterValue(oValue2, oFilter.bCaseSensitive) : oValue2;
 		}
 
 		switch (oFilter.sOperator) {
@@ -231,7 +231,7 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 					if (iPos == -1) {
 						return false;
 					}
-					return iPos == value.length - new String(oFilter.oValue1).length;
+					return iPos == value.length - oValue1.length;
 				};
 				break;
 			default:
