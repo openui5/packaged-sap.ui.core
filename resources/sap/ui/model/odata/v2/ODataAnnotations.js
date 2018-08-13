@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.56.5
+	 * 1.56.6
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -45,10 +45,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 			this._pLoaded = oMetadata.loaded();
 			this._mCustomHeaders = {};
 			this._mAnnotations = {};
+			this._hasErrors = false;
 
 			function writeCache(aResults) {
-				// write annotations to cache
-				CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
+				// write annotations to cache if no errors occured
+				if (!that._hasErrors) {
+					CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
+				}
 			}
 
 			if (!mOptions || !mOptions.skipMetadata) {
@@ -254,6 +257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 					return oResult instanceof Error;
 				});
 				if (aErrors.length > 0) {
+					that._hasErrors = true;
 					if (aErrors.length !== aResults.length) {
 						that._fireSomeLoaded(aResults);
 						that._fireFailed(aResults);

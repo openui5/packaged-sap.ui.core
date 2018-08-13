@@ -54,7 +54,7 @@ sap.ui.define([
 	 *
 	 * @extends Object
 	 * @author SAP SE
-	 * @version 1.56.5
+	 * @version 1.56.6
 	 * @alias sap.ui.core.RenderManager
 	 * @public
 	 */

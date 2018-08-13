@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @class Container that embeds a UIComponent in a control tree.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.56.5
+	 * @version 1.56.6
 	 *
 	 * @public
 	 * @alias sap.ui.core.ComponentContainer
