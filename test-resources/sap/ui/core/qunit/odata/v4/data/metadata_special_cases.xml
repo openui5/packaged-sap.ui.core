@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:DataServices>
+		<Schema Namespace="special.cases">
+			<EntityType Name="ArtistsType">
+				<Key>
+					<PropertyRef Name="ArtistID"/>
+					<PropertyRef Name="IsActiveEntity"/>
+				</Key>
+				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="Messages" Type="Collection(special.cases.Message)" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
+				<Annotation Term="Org.OData.Core.V1.Messages" Path="Messages" />
+			</EntityType>
+			<EntityType Name="DraftAdministrativeDataType">
+				<Key>
+					<PropertyRef Name="DraftID"/>
+				</Key>
+				<Property Name="DraftID" Type="Edm.String" Nullable="false"/>
+				<Property Name="InProcessByUser" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="EntityWithComplexKey">
+				<Key>
+					<PropertyRef Name="Key/P1" Alias="Key1"/>
+					<PropertyRef Name="Key/P2" Alias="Key2"/>
+				</Key>
+				<Property Name="Key" Type="special.cases.ComplexKey"/>
+				<Property Name="Value" Type="Edm.String"/>
+			</EntityType>
+			<ComplexType Name="ComplexKey">
+				<Property Name="P1" Type="Edm.String"/>
+				<Property Name="P2" Type="Edm.Int32"/>
+			</ComplexType>
+			<ComplexType Name="Message">
+				<Property Name="code" Type="Edm.String" Nullable="false" />
+				<Property Name="message" Type="Edm.String" Nullable="false" />
+				<Property Name="target" Type="Edm.String" Nullable="true" />
+				<Property Name="transition" Type="Edm.Boolean" Nullable="false" />
+				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
+				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
+			</ComplexType>
+			<Action Name="ActivationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
+			<Action Name="EditAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
+			<Function Name="GetDraft" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="true"/>
+			</Function>
+			<EntityContainer Name="Container">
+				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
+				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
