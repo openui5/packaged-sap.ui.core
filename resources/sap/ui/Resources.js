@@ -51,7 +51,7 @@ sap.ui.define([
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP SE
-	 * @version 1.56.6
+	 * @version 1.56.7
 	 * @name sap/ui/Resources/Bundle
 	 * @private
 	 */
