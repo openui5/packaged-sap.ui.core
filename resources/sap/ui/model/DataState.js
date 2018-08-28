@@ -52,7 +52,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", '../base/Object', "sap/base/util/deep
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.58.0
+	 * @version 1.58.1
 	 *
 	 * @public
 	 * @alias sap.ui.model.DataState

@@ -1160,7 +1160,7 @@ sap.ui.require([
 				that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
 					.returns(Promise.resolve(oFixture.types[sPath]));
 				that.oRequestorMock.expects("fetchMetadata")
-					.withExactArgs(sPath + "/@Org.OData.Core.V1.Messages")
+					.withExactArgs(sPath + "/@com.sap.vocabularies.Common.v1.Messages")
 					.returns(SyncPromise.resolve(
 						oFixture.messageAnnotations && oFixture.messageAnnotations[sPath] || null));
 			});
@@ -1182,7 +1182,7 @@ sap.ui.require([
 
 					if (oMessageAnnotation) {
 						assert.strictEqual(
-							mTypeForMetaPath[sMetaPath]["@Org.OData.Core.V1.Messages"],
+							mTypeForMetaPath[sMetaPath]["@com.sap.vocabularies.Common.v1.Messages"],
 							oMessageAnnotation,
 							"Message property for " + sMetaPath + ": " + oMessageAnnotation.$Path);
 						assert.ok(oFixture.types[sMetaPath]
@@ -1434,13 +1434,15 @@ sap.ui.require([
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrder"}
+					"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messagesInSalesOrder"}
 				},
 				"/SalesOrderList/SO_2_BP" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInBusinessPartner"}
+					"@com.sap.vocabularies.Common.v1.Messages" :
+						{$Path : "messagesInBusinessPartner"}
 				},
 				"/SalesOrderList/SO_2_SCHDL" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrderSchedule"},
+					"@com.sap.vocabularies.Common.v1.Messages" :
+						{$Path : "messagesInSalesOrderSchedule"},
 					$Key : ["ScheduleKey"],
 					ScheduleKey : {
 						$Type : "Edm.String"
@@ -1456,8 +1458,45 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#visitResponse: no reportBoundMessages if message property is not selected",
+			function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')");
+
+		this.oRequestorMock.expects("reportBoundMessages").never();
+
+		// code under test
+		oCache.visitResponse({}, {
+			"/SalesOrderList" : {
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messagesInSalesOrder"}
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#visitResponse: no reportBoundMessages; message in complex type",
+			function (assert) {
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
+			oData = {};
+
+		this.mock(_Helper).expects("drillDown")
+			.withExactArgs(oData, ["foo", "bar", "messages"])
+			.returns();
+		this.oRequestorMock.expects("reportBoundMessages").never();
+
+		// code under test
+		oCache.visitResponse(oData, {
+			"/SalesOrderList" : {
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "foo/bar/messages"}
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: reportBoundMessages; collection", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+			oHelperMock = this.mock(_Helper),
+			aKeySegments = ["SalesOrderID"],
+			aMessagePathSegments = ["messagesInSalesOrder"],
 			aMessagesSalesOrder0 = [{/* any message object */}],
 			aMessagesSalesOrder1 = [{/* any message object */}],
 			oData = {
@@ -1478,7 +1517,7 @@ sap.ui.require([
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList" : {
-					"@Org.OData.Core.V1.Messages" : {$Path : "messagesInSalesOrder"},
+					"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messagesInSalesOrder"},
 					$Key : ["SalesOrderID"],
 					SalesOrderID : {
 						$Type : "Edm.String"
@@ -1491,6 +1530,24 @@ sap.ui.require([
 		mExpectedMessages["('42')"].$byPredicate = {}; // no key predicates
 		mExpectedMessages["('43')"].$count = 0;
 		mExpectedMessages["('43')"].$byPredicate = {}; // no key predicates
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[0], aKeySegments)
+			.returns("42");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[1], aKeySegments)
+			.returns("43");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[2], aKeySegments)
+			.returns("44");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[0], aMessagePathSegments)
+			.returns(aMessagesSalesOrder0);
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[1], aMessagePathSegments)
+			.returns(aMessagesSalesOrder1);
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oData.value[2], aMessagePathSegments)
+			.returns([]);
 		this.oRequestorMock.expects("reportBoundMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('42')", "('43')", "('44')"]);
 
@@ -1512,7 +1569,7 @@ sap.ui.require([
 				"" : [{longtextUrl : "/~/EntitySet('42')/Longtext(1)"}]
 			},
 			oType = {
-				"@Org.OData.Core.V1.Messages" : {$Path : "messages"},
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
 				$Key : ["id"],
 				id : {
 					$Type : "Edm.Int32"
@@ -1573,7 +1630,7 @@ sap.ui.require([
 				"/foo/baz" : [{longtextUrl : "/foo/baz/Longtext(4)"}]
 			},
 			oType = {
-				"@Org.OData.Core.V1.Messages" : {$Path : "messages"},
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
 				$Key : ["id"],
 				id : {
 					$Type : "Edm.Int32"
@@ -1642,7 +1699,7 @@ sap.ui.require([
 				"(1)/foo(2)/bar(3)" : [{longtextUrl : "/foo/bar/Longtext(3)"}]
 			},
 			oType = {
-				"@Org.OData.Core.V1.Messages" : {$Path : "messages"},
+				"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
 				$Key : ["id"],
 				id : {
 					$Type : "Edm.Int32"

@@ -203,7 +203,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.58.0
+	 * @version 1.58.1
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
@@ -1230,8 +1230,8 @@ sap.ui.define([
 	 *      "error")
 	 *   {string} target - The target for the message relative to the resource path with key
 	 *      predicates
-	 *   {boolean} transition - Messages marked as transition by the server need to be managed by
-	 *      the application and are reported as persistent
+	 *   {boolean} transition - Whether the message is reported as <code>persistent=true</code> and
+	 *      therefore needs to be managed by the application
 	 * @param {string[]} [aCachePaths]
 	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
 	 *    be removed; if the array is not given, all entities are affected

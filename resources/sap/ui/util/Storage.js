@@ -52,7 +52,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		 * should be deleted the method {@link #removeAll} should be used.
 		 *
 		 * @author SAP SE
-		 * @version 1.58.0
+		 * @version 1.58.1
 		 * @private
 		 * @name sap/ui/util/Storage.Storage
 		 */
@@ -301,7 +301,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * an object implementing the browser's Storage API.
 			 * @param {string} [sIdPrefix] Prefix used for the IDs. If not set a default prefix is used.
 			 * @returns {module:sap/ui/util/Storage.Storage} A storage instance
-			 * @version 1.58.0
+			 * @version 1.58.1
 			 * @namespace
 			 * @function
 			 * @private
@@ -349,7 +349,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 *
 	 * @enum {string}
 	 * @private
-	 * @version 1.58.0
+	 * @version 1.58.1
 	 */
 	fnStorage.Type = {
 		/**

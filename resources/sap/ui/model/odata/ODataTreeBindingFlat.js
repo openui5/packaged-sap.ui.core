@@ -1105,9 +1105,7 @@ sap.ui.define([
 	 * @param {int} iLevel the number of expanded levels
 	 */
 	ODataTreeBindingFlat.prototype.expandToLevel = function (iLevel) {
-		if (iLevel > this.getNumberOfExpandedLevels()) {
-			this.setNumberOfExpandedLevels(iLevel);
-		}
+		this.setNumberOfExpandedLevels(iLevel);
 	};
 
 	/**
@@ -1178,20 +1176,17 @@ sap.ui.define([
 	 * @param {int} iLevel the number of expanded levels
 	 */
 	ODataTreeBindingFlat.prototype.collapseToLevel = function (iLevel) {
-		if (iLevel < this.getNumberOfExpandedLevels()) {
-
-			if (this.bCollapseRecursive) {
-				// first remove selection up to the given level
-				for (var sKey in this._mSelected) {
-					var oSelectedNode = this._mSelected[sKey];
-					if (oSelectedNode.level > iLevel) {
-						this.setNodeSelection(oSelectedNode, false);
-					}
+		if (this.bCollapseRecursive) {
+			// first remove selection up to the given level
+			for (var sKey in this._mSelected) {
+				var oSelectedNode = this._mSelected[sKey];
+				if (oSelectedNode.level > iLevel) {
+					this.setNodeSelection(oSelectedNode, false);
 				}
 			}
-
-			this.setNumberOfExpandedLevels(iLevel);
 		}
+
+		this.setNumberOfExpandedLevels(iLevel);
 	};
 
 	/**

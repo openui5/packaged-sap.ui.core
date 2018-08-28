@@ -29,7 +29,7 @@ function(library, View, TemplateViewRenderer, Log) {
 	 * @extends sap.ui.core.mvc.View
 	 *
 	 * @author SAP SE
-	 * @version 1.58.0
+	 * @version 1.58.1
 	 *
 	 * @public
 	 * @deprecated Since version 1.56.0, use XMLView or JSView instead.

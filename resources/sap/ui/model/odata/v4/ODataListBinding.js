@@ -70,7 +70,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.58.0
+	 * @version 1.58.1
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
@@ -1173,6 +1173,14 @@ sap.ui.define([
 	 * Consumers must not rely on the origin information to be available, future filter
 	 * implementations will not provide this information.
 	 *
+	 * If the system query option <code>$filter</code> is present, it will be added to the AST as a
+	 * node with the following structure:
+	 *   <ul>
+	 *   <li><code>expression</code>: the value of the system query option <code>$filter</code>
+	 *   <li><code>syntax</code>: the OData version of this bindings model, e.g. "OData 4.0"
+	 *   <li><code>type</code>: "Custom"
+	 *   </ul>
+	 *
 	 * @param {boolean} [bIncludeOrigin=false] whether to include information about the filter
 	 *   objects from which the tree has been created
 	 * @returns {object} The AST of the filter tree including the static filter as string or null if
@@ -1193,8 +1201,9 @@ sap.ui.define([
 
 		if (this.mQueryOptions.$filter) {
 			oStaticAST = {
-				args : [this.mQueryOptions.$filter],
-				type : "Static"
+				expression : this.mQueryOptions.$filter,
+				syntax : "OData " + this.oModel.getODataVersion(),
+				type : "Custom"
 			};
 			if (oResultAST) {
 				oResultAST = {

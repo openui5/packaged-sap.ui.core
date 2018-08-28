@@ -26,7 +26,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function(LoaderExtensions) {
 	 * can be used to retrieve an array of all keys that are currently stored in the collection.
 	 *
 	 * @author SAP SE
-	 * @version 1.58.0
+	 * @version 1.58.1
 	 * @name sap.base.util.Properties
 	 * @private
 	 */

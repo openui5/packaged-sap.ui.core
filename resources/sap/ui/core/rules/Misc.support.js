@@ -43,7 +43,7 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support"],
 			var count = 0,
 				message = "";
 
-			var log = Log.getLog();
+			var log = Log.getLogEntries();
 			log.forEach(function(logEntry) {
 				if (logEntry.level === Log.Level.ERROR) {
 					count++;
@@ -197,7 +197,7 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support"],
 		resolutionurls: [],
 		check: function(oIssueManager, oCoreFacade) {
 
-			var aLogEntries = Log.getLog();
+			var aLogEntries = Log.getLogEntries();
 			var aMessages = [];
 			aLogEntries.forEach(function(oLogEntry) {
 				if (oLogEntry.component === "sap.ui.core.EventBus") {

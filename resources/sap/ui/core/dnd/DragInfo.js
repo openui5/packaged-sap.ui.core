@@ -21,7 +21,7 @@ sap.ui.define(["./DragDropBase", "sap/base/Log"],
 	 * @extends sap.ui.core.dnd.DragDropBase
 	 *
 	 * @author SAP SE
-	 * @version 1.58.0
+	 * @version 1.58.1
 	 *
 	 * @public
 	 * @since 1.56

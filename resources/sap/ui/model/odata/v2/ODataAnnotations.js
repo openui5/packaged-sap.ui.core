@@ -33,7 +33,7 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.58.0
+	 * 1.58.1
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -52,10 +52,13 @@ sap.ui.define([
 			this._pLoaded = oMetadata.loaded();
 			this._mCustomHeaders = {};
 			this._mAnnotations = {};
+			this._hasErrors = false;
 
 			function writeCache(aResults) {
-				// write annotations to cache
-				CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
+				// write annotations to cache if no errors occured
+				if (!that._hasErrors) {
+					CacheManager.set(that.sCacheKey, JSON.stringify(aResults));
+				}
 			}
 
 			if (!mOptions || !mOptions.skipMetadata) {
@@ -260,6 +263,7 @@ sap.ui.define([
 					return oResult instanceof Error;
 				});
 				if (aErrors.length > 0) {
+					that._hasErrors = true;
 					if (aErrors.length !== aResults.length) {
 						that._fireSomeLoaded(aResults);
 						that._fireFailed(aResults);
