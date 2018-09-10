@@ -213,7 +213,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.58.1
+	 * @version 1.58.2
 	 * @alias sap.ui.core.Core
 	 * @public
 	 * @hideconstructor

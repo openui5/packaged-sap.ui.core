@@ -3,24 +3,30 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/assert"], function(jQuery, assert) {
 	"use strict";
 
+	/**
+	 * This module provides the {@link jQuery#rectContains} API.
+	 *
+	 * @namespace
+	 * @name module:sap/ui/dom/jquery/rectContains
+	 * @public
+	 * @since 1.58
+	 */
 
-	/*
+	/**
 	 * Returns whether a point described by X and Y is inside this Rectangle's boundaries.
 	 *
 	 * @param {int} iPosX The X coordinate
 	 * @param {int} iPosY The Y coordinate
 	 * @return {boolean} Whether X and Y are inside this Rectangle's boundaries
-	 * @private
+	 * @public
+	 * @name jQuery#rectContains
 	 * @author SAP SE
+	 * @since 0.18.0
 	 * @function
-	 * @exports sap/ui/dom/jquery/rectContains
+	 * @requires module:sap/ui/dom/jquery/rectContains
 	 */
 	var fnRectContains = function rectContains(iPosX, iPosY) {
 		assert(!isNaN(iPosX), "iPosX must be a number");
@@ -39,18 +45,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/assert"], function(jQuery, 
 		return false;
 	};
 
-	/**
-	 * Returns whether a point described by X and Y is inside this Rectangle's boundaries.
-	 *
-	 * @param {int} iPosX The X coordinate
-	 * @param {int} iPosY The Y coordinate
-	 * @return {boolean} Whether X and Y are inside this Rectangle's boundaries
-	 * @private
-	 * @name jQuery#rectContains
-	 * @author SAP SE
-	 * @function
-	 * @deprecated since 1.48 use {@link sap/ui/dom/jquery/rectContains} instead
-	 */
 	jQuery.fn.rectContains = fnRectContains;
 
 	return jQuery;

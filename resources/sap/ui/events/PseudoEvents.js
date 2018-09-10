@@ -3,16 +3,14 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(KeyCodes, jQuery) {
 	"use strict";
 
 	/**
-	 * @exports sap/ui/events/PseudoEvents
-	 * @private
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/events/PseudoEvents
+	 * @public
 	 */
 	var oPseudoEvents = {};
 
@@ -53,14 +51,14 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	 * delivered to any jQuery-style listeners registered for that browser event.
 	 *
 	 * Pure JavaScript listeners can evaluate the classification information using
-	 * the {@link sap/ui/events/jquery/EventExtension#isPseudoType} method.
+	 * the {@link module:sap/ui/events/jquery/EventExtension#isPseudoType} method.
 	 *
 	 * Instead of using the procedure as described above, the SAPUI5 controls and elements
 	 * should simply implement an <code>on<i>pseudo-event</i>(oEvent)</code> method. It will
 	 * be invoked only when that specific pseudo event has been recognized. This simplifies event
 	 * dispatching even further.
 	 *
-	 * @private
+	 * @public
 	 */
 	oPseudoEvents.events = { // IMPORTANT: update the public documentation when extending this list
 
@@ -68,7 +66,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard arrow down without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapdown: {
 			sName: "sapdown",
@@ -80,7 +78,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard arrow down with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapdownmodifiers: {
 			sName: "sapdownmodifiers",
@@ -92,7 +90,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'show' event (F4, Alt + down-Arrow)
-		 * @private
+		 * @public
 		 */
 		sapshow: {
 			sName: "sapshow",
@@ -109,7 +107,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard arrow up without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapup: {
 			sName: "sapup",
@@ -121,7 +119,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard arrow up with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapupmodifiers: {
 			sName: "sapupmodifiers",
@@ -133,7 +131,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'hide' event (Alt + up-Arrow)
-		 * @private
+		 * @public
 		 */
 		saphide: {
 			sName: "saphide",
@@ -145,7 +143,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard arrow left without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapleft: {
 			sName: "sapleft",
@@ -157,7 +155,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard arrow left with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapleftmodifiers: {
 			sName: "sapleftmodifiers",
@@ -169,7 +167,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard arrow right without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapright: {
 			sName: "sapright",
@@ -181,7 +179,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard arrow right with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		saprightmodifiers: {
 			sName: "saprightmodifiers",
@@ -193,7 +191,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard Home/Pos1 with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		saphome: {
 			sName: "saphome",
@@ -205,7 +203,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard Home/Pos1 without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		saphomemodifiers: {
 			sName: "saphomemodifiers",
@@ -217,7 +215,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for  pseudo top event
-		 * @private
+		 * @public
 		 */
 		saptop: {
 			sName: "saptop",
@@ -229,7 +227,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard End without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapend: {
 			sName: "sapend",
@@ -241,7 +239,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard End with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapendmodifiers: {
 			sName: "sapendmodifiers",
@@ -253,7 +251,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo bottom event
-		 * @private
+		 * @public
 		 */
 		sapbottom: {
 			sName: "sapbottom",
@@ -265,7 +263,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard page up without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sappageup: {
 			sName: "sappageup",
@@ -277,7 +275,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard page up with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sappageupmodifiers: {
 			sName: "sappageupmodifiers",
@@ -289,7 +287,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard page down without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sappagedown: {
 			sName: "sappagedown",
@@ -301,7 +299,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard page down with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sappagedownmodifiers: {
 			sName: "sappagedownmodifiers",
@@ -313,7 +311,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'select' event... space, enter, ... without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapselect: {
 			sName: "sapselect",
@@ -329,7 +327,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'select' event... space, enter, ... with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapselectmodifiers: {
 			sName: "sapselectmodifiers",
@@ -345,7 +343,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard space without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapspace: {
 			sName: "sapspace",
@@ -358,7 +356,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard space with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapspacemodifiers: {
 			sName: "sapspacemodifiers",
@@ -371,7 +369,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard enter without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapenter: {
 			sName: "sapenter",
@@ -383,7 +381,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard enter with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapentermodifiers: {
 			sName: "sapentermodifiers",
@@ -395,7 +393,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard backspace without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapbackspace: {
 			sName: "sapbackspace",
@@ -407,7 +405,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard backspace with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapbackspacemodifiers: {
 			sName: "sapbackspacemodifiers",
@@ -419,7 +417,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard delete without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapdelete: {
 			sName: "sapdelete",
@@ -432,7 +430,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard delete with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapdeletemodifiers: {
 			sName: "sapdeletemodifiers",
@@ -445,7 +443,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo expand event (keyboard numpad +) without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapexpand: {
 			sName: "sapexpand",
@@ -457,7 +455,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo expand event (keyboard numpad +) with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapexpandmodifiers: {
 			sName: "sapexpandmodifiers",
@@ -469,7 +467,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo collapse event (keyboard numpad -) without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapcollapse: {
 			sName: "sapcollapse",
@@ -481,7 +479,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo collapse event (keyboard numpad -) with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapcollapsemodifiers: {
 			sName: "sapcollapsemodifiers",
@@ -493,7 +491,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo collapse event (keyboard numpad *)
-		 * @private
+		 * @public
 		 */
 		sapcollapseall: {
 			sName: "sapcollapseall",
@@ -505,7 +503,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard escape
-		 * @private
+		 * @public
 		 */
 		sapescape: {
 			sName: "sapescape",
@@ -518,7 +516,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard tab (TAB + no modifier)
-		 * @private
+		 * @public
 		 */
 		saptabnext: {
 			sName: "saptabnext",
@@ -530,7 +528,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for keyboard tab (TAB + shift modifier)
-		 * @private
+		 * @public
 		 */
 		saptabprevious: {
 			sName: "saptabprevious",
@@ -542,7 +540,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo skip forward (F6 + no modifier)
-		 * @private
+		 * @public
 		 */
 		sapskipforward: {
 			sName: "sapskipforward",
@@ -554,7 +552,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo skip back (F6 + shift modifier)
-		 * @private
+		 * @public
 		 */
 		sapskipback: {
 			sName: "sapskipback",
@@ -571,7 +569,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'decrease' event without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapdecrease: {
 			sName: "sapdecrease",
@@ -592,7 +590,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pressing the '-' (minus) sign.
-		 * @private
+		 * @public
 		 */
 		sapminus: {
 			sName: "sapminus",
@@ -604,7 +602,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'decrease' event with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapdecreasemodifiers: {
 			sName: "sapdecreasemodifiers",
@@ -625,7 +623,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'increase' event without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapincrease: {
 			sName: "sapincrease",
@@ -647,7 +645,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pressing the '+' (plus) sign.
-		 * @private
+		 * @public
 		 */
 		sapplus: {
 			sName: "sapplus",
@@ -659,7 +657,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'increase' event with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapincreasemodifiers: {
 			sName: "sapincreasemodifiers",
@@ -681,7 +679,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'previous' event without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapprevious: {
 			sName: "sapprevious",
@@ -702,7 +700,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'previous' event with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sappreviousmodifiers: {
 			sName: "sappreviousmodifiers",
@@ -723,7 +721,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'next' event without modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapnext: {
 			sName: "sapnext",
@@ -744,7 +742,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/**
 		 * Pseudo event for pseudo 'next' event with modifiers (Ctrl, Alt or Shift)
-		 * @private
+		 * @public
 		 */
 		sapnextmodifiers: {
 			sName: "sapnextmodifiers",
@@ -791,12 +789,12 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 
 		/*
 		 * Other pseudo events
-		 * @private
+		 * @public
 		 */
 
 		/**
 		 * Pseudo event indicating delayed double click (e.g. for inline edit)
-		 * @private
+		 * @public
 		 */
 		sapdelayeddoubleclick: {
 			sName: "sapdelayeddoubleclick",
@@ -814,11 +812,11 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	};
 
 	/**
-	 * Ordered array of the {@link sap/ui/events/PseudoEvents}.
+	 * Ordered array of the {@link module:sap/ui/events/PseudoEvents}.
 	 *
 	 * Order is significant as some check methods rely on the fact that they are tested before other methods.
 	 * The array is processed during event analysis (when classifying browser events as pseudo events).
-	 * @private
+	 * @public
 	 */
 	oPseudoEvents.order = ["sapdown", "sapdownmodifiers", "sapshow", "sapup", "sapupmodifiers", "saphide", "sapleft", "sapleftmodifiers", "sapright", "saprightmodifiers", "saphome", "saphomemodifiers", "saptop", "sapend", "sapendmodifiers", "sapbottom", "sappageup", "sappageupmodifiers", "sappagedown", "sappagedownmodifiers", "sapselect", "sapselectmodifiers", "sapspace", "sapspacemodifiers", "sapenter", "sapentermodifiers", "sapexpand", "sapbackspace", "sapbackspacemodifiers", "sapdelete", "sapdeletemodifiers", "sapexpandmodifiers", "sapcollapse", "sapcollapsemodifiers", "sapcollapseall", "sapescape", "saptabnext", "saptabprevious", "sapskipforward", "sapskipback", "sapprevious", "sappreviousmodifiers", "sapnext", "sapnextmodifiers", "sapdecrease", "sapminus", "sapdecreasemodifiers", "sapincrease", "sapplus", "sapincreasemodifiers", "sapdelayeddoubleclick"];
 
@@ -826,6 +824,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	/**
 	 * Function for initialization of an Array containing all basic event types of the available pseudo events.
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	oPseudoEvents.getBasicTypes = function() {
 		var mEvents = oPseudoEvents.events,
@@ -851,6 +850,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	/**
 	 * Array containing all basic event types of the available pseudo events.
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	oPseudoEvents.addEvent = function(oEvent) {
 		oPseudoEvents.events[oEvent.sName] = oEvent;

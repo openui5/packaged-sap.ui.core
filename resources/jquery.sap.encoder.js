@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for HTML contexts
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeXML} instead
 	 */
 	jQuery.sap.encodeHTML = encodeXML;
 
@@ -38,6 +39,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for XML contexts
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeXML} instead
 	 */
 	jQuery.sap.encodeXML = encodeXML;
 
@@ -51,6 +53,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @deprecated As of version 1.4.0, has been renamed, use {@link jQuery.sap.encodeHTML} instead.
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeXML} instead
 	 */
 	jQuery.sap.escapeHTML = encodeXML;
 
@@ -63,6 +66,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for a JavaScript contexts
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeJS} instead
 	 */
 	jQuery.sap.encodeJS = encodeJS;
 
@@ -74,8 +78,8 @@ sap.ui.define(['jquery.sap.global',
 	 * @return The escaped string
 	 * @type {string}
 	 * @public
-	 * @deprecated Since 1.3.0. Has been renamed, use {@link jQuery.sap.encodeJS} instead.
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeJS} instead
 	 */
 	jQuery.sap.escapeJS = encodeJS;
 
@@ -88,6 +92,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for a URL context
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeURL} instead
 	 */
 	jQuery.sap.encodeURL = encodeURL;
 
@@ -100,6 +105,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for a CSS context
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeURLParameters} instead
 	 */
 	jQuery.sap.encodeURLParameters =  encodeURLParameters;
 
@@ -113,6 +119,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 * @SecValidate {0|return|XSS} validates the given string for a CSS context
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/encodeCSS} instead
 	 */
 	jQuery.sap.encodeCSS = encodeCSS;
 
@@ -122,6 +129,7 @@ sap.ui.define(['jquery.sap.global',
 	 *
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.clear} instead
 	 */
 	jQuery.sap.clearUrlWhitelist = URLWhitelist.clear;
 
@@ -134,6 +142,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {string} path the path of the URL
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.add} instead
 	 */
 	jQuery.sap.addUrlWhitelist = URLWhitelist.add;
 
@@ -143,6 +152,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {int} iIndex index of entry
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.delete} instead
 	 */
 	jQuery.sap.removeUrlWhitelist = function(iIndex) {
 		URLWhitelist.delete(URLWhitelist.entries()[iIndex]);
@@ -154,6 +164,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @return {object[]} A copy of the whitelist
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.entries} instead
 	 */
 	jQuery.sap.getUrlWhitelist = URLWhitelist.entries;
 
@@ -273,6 +284,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @return true if valid, false if not valid
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLWhitelist.validate} instead
 	 */
 	jQuery.sap.validateUrl = URLWhitelist.validate;
 
@@ -285,6 +297,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @private
 	 * @name jQuery.sap._sanitizeHTML
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/security/sanitizeHTML} instead
 	 */
 	jQuery.sap._sanitizeHTML = sanitizeHTML;
 

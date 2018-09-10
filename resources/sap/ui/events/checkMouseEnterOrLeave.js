@@ -3,10 +3,6 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 
@@ -15,8 +11,9 @@ sap.ui.define([], function() {
 	 * equivalent to a mouseenter or mouseleave event regarding the given DOM reference.
 	 *
 	 * @function
-	 * @private
-	 * @exports sap/base/events/checkMouseEnterOrLeave
+	 * @since 1.58
+	 * @public
+	 * @alias module:sap/ui/events/checkMouseEnterOrLeave
 	 * @param {jQuery.Event} oEvent The Mouse Event
 	 * @param {Element} oDomRef The domref of the element to check
 	 * @returns {boolean} True if the provided event is equivalent

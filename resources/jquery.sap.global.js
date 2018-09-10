@@ -87,6 +87,7 @@ sap.ui.define([
 		 * @name jQuery.support
 		 * @namespace
 		 * @private
+	 	 * @deprecated since 1.58 use {@link sap.ui.Device} instead
 		 */
 		jQuery.support = jQuery.support || {};
 
@@ -94,7 +95,7 @@ sap.ui.define([
 		 * Whether the device has a retina display (window.devicePixelRatio >= 2)
 		 * @type {boolean}
 		 * @public
-		 * @deprecated since 1.58.0 Use <code>sap.ui.Device.support.retina</code> instead
+		 * @deprecated since 1.58 use {@link sap.ui.Device.support.retina} instead
 		 */
 		jQuery.support.retina = Device.support.retina;
 
@@ -418,10 +419,13 @@ sap.ui.define([
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.58.1
+	 * @version 1.58.2
 	 * @namespace
 	 * @public
 	 * @static
+	 * @deprecated since 1.58. To avoid usage of global variables in general, please
+	 *  do not use the jQuery.sap namespace any longer. Most of the jQuery.sap functionalities
+	 *  are replaced by alternative modules which can be found in the API doc.
 	 */
 	jQuery.sap = jQuery.sap || {}; // namespace already created by jquery.sap.stubs
 
@@ -462,6 +466,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.15.0
 	 * @alias jQuery.sap.Version
+	 * @deprecated since 1.58 use {@link module:sap/base/util/Version} instead
 	 */
 	jQuery.sap.Version = Version;
 
@@ -553,6 +558,7 @@ sap.ui.define([
 	 * @returns {float} timestamp in microseconds if supported by the environment otherwise in milliseconds
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/util/now} instead
 	 */
 	jQuery.sap.now = now;
 
@@ -591,6 +597,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @function
+	 * @deprecated since 1.58
 	 */
 	jQuery.sap.setReboot = fnMakeLocalStorageAccessor.call(this, 'sap-ui-reboot-URL', 'string', function(sRebootUrl) { // null-ish clears the reboot request
 		if ( sRebootUrl ) {
@@ -617,6 +624,7 @@ sap.ui.define([
 	 * @class A Logger class
 	 * @since 1.1.2
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/base/Log.getLogger} instead
 	 */
 
 	/**
@@ -812,6 +820,7 @@ sap.ui.define([
 	 * @borrows jQuery.sap.log.Logger#getLevel as getLevel
 	 * @borrows jQuery.sap.log.Logger#setLevel as setLevel
 	 * @borrows jQuery.sap.log.Logger#isLoggable as isLoggable
+	 * @deprecated since 1.58 use {@link module:sap/base/Log} instead
 	 */
 	jQuery.sap.log = Object.assign(Log.getLogger(), /** @lends jQuery.sap.log */ {
 
@@ -823,6 +832,7 @@ sap.ui.define([
 		 * @see jQuery.sap.log.Logger#setLevel
 		 * @enum {int}
 		 * @public
+		 * @deprecated since 1.58 use {@link module:sap/base/Log.Level} instead
 		 */
 		Level: Log.Level,
 
@@ -990,6 +1000,7 @@ sap.ui.define([
 	 * @static
 	 * @SecSink {1|SECRET} Could expose secret data in logs
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/assert} instead
 	 */
 	jQuery.sap.assert = function(bResult, vMessage) {
 		if (!bResult) {
@@ -1073,6 +1084,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 * @function
+	 * @deprecated since 1.58
 	 */
 	jQuery.sap.getter = function(oValue) {
 		return function() {
@@ -1121,7 +1133,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
-	 * @deprecated since 1.58 use <code>sap/base/util/ObjectPath</code> instead
+	 * @deprecated since 1.58 use {@link module:sap/base/util/ObjectPath.get} or
+	 *  {@link module:sap/base/util/ObjectPath.get} instead
 	 */
 	jQuery.sap.getObject = function(sName, iNoCreates, oContext) {
 		var oObject = oContext || window,
@@ -1161,7 +1174,7 @@ sap.ui.define([
 	 * @param {object} [oContext=window] the context to execute the search in
 	 * @public
 	 * @static
-	 * @deprecated since 1.58 use <code>sap/base/util/ObjectPath</code> instead
+	 * @deprecated since 1.58 use {@link module:sap/base/util/ObjectPath.set} instead
 	 */
 	jQuery.sap.setObject = function (sName, vValue, oContext) {
 		var oObject = oContext || window,
@@ -1188,6 +1201,7 @@ sap.ui.define([
 	 * @namespace
 	 * @public
 	 * @static
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement} or {@link module:sap/ui/performance/Interaction} instead
 	 */
 	jQuery.sap.measure = Measurement;
 
@@ -1198,6 +1212,7 @@ sap.ui.define([
 	 * @function
 	 * @return {boolean} current state of the performance measurement functionality
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.getActive} instead
 	 */
 
 	/**
@@ -1211,6 +1226,7 @@ sap.ui.define([
 	 * @name jQuery.sap.measure#setActive
 	 * @function
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.setActive} instead
 	 */
 
 	/**
@@ -1225,6 +1241,7 @@ sap.ui.define([
 	 *
 	 * @return {object} current measurement containing id, info and start-timestamp (false if error)
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.start} instead
 	 */
 
 	/**
@@ -1235,6 +1252,7 @@ sap.ui.define([
 	 * @param {string} sId ID of the measurement
 	 * @return {object} current measurement containing id, info and start-timestamp, pause-timestamp (false if error)
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.pause} instead
 	 */
 
 	/**
@@ -1245,6 +1263,7 @@ sap.ui.define([
 	 * @param {string} sId ID of the measurement
 	 * @return {object} current measurement containing id, info and start-timestamp, resume-timestamp (false if error)
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.resume} instead
 	 */
 
 	/**
@@ -1255,6 +1274,7 @@ sap.ui.define([
 	 * @param {string} sId ID of the measurement
 	 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.end} instead
 	 */
 
 	/**
@@ -1263,6 +1283,7 @@ sap.ui.define([
 	 * @name jQuery.sap.measure.clear
 	 * @function
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.clear} instead
 	 */
 
 	/**
@@ -1272,6 +1293,7 @@ sap.ui.define([
 	 * @function
 	 * @param {string} sId ID of the measurement
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.remove} instead
 	 */
 
 	/**
@@ -1289,6 +1311,7 @@ sap.ui.define([
 	 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
 	 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.add} instead
 	 */
 
 	/**
@@ -1303,6 +1326,7 @@ sap.ui.define([
 	 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
 	 * @return {object} current measurement containing id, info and start-timestamp (false if error)
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.average} instead
 	 */
 
 	/**
@@ -1313,6 +1337,7 @@ sap.ui.define([
 	 * @param {string} sId ID of the measurement
 	 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.getMeasurement} instead
 	 */
 
 	/**
@@ -1323,6 +1348,7 @@ sap.ui.define([
 	 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
 	 * @return {object[]} current array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories
 	 * @public
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.getAllMeasurements} instead
 	 */
 
 	/**
@@ -1343,6 +1369,7 @@ sap.ui.define([
 	 * @return {object} [] filtered array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.filterMeasurements} instead
 	 */
 
 	/**
@@ -1358,6 +1385,7 @@ sap.ui.define([
 	 * @returns {boolean} true if the registration was successful
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.registerMethod} instead
 	 */
 
 	/**
@@ -1372,6 +1400,7 @@ sap.ui.define([
 	 * @returns {boolean} true if the unregistration was successful
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.unregisterMethod} instead
 	 */
 
 	/**
@@ -1381,6 +1410,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Measurement.unregisterAllMethods} instead
 	 */
 
 	/**
@@ -1389,6 +1419,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.clear} instead
 	 */
 	jQuery.sap.measure.clearInteractionMeasurements = Interaction.clear;
 
@@ -1400,6 +1431,7 @@ sap.ui.define([
 	 * @param {object} oSrcElement the control on which the interaction was triggered
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.start} instead
 	 */
 	jQuery.sap.measure.startInteraction = Interaction.start;
 
@@ -1410,6 +1442,7 @@ sap.ui.define([
 	 * @param {boolean} bForce forces end of interaction now and ignores further re-renderings
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.end} instead
 	 */
 	jQuery.sap.measure.endInteraction = Interaction.end;
 
@@ -1419,6 +1452,7 @@ sap.ui.define([
 	 * @return {object} interaction measurement
 	 * @private
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.getPending} instead
 	 */
 	jQuery.sap.measure.getPendingInteractionMeasurement = Interaction.getPending;
 
@@ -1435,6 +1469,7 @@ sap.ui.define([
 	 * @return {object[]} all interaction measurements passing the filter function successfully
 	 * @public
 	 * @since 1.36.2
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.filter} instead
 	 */
 	jQuery.sap.measure.filterInteractionMeasurements = Interaction.filter;
 
@@ -1445,6 +1480,7 @@ sap.ui.define([
 	 * @return {object[]} all interaction measurements
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use {@link module:sap/ui/performance/Interaction.getAll} instead
 	 */
 	jQuery.sap.measure.getAllInteractionMeasurements = Interaction.getAll;
 
@@ -1455,6 +1491,7 @@ sap.ui.define([
 	 * @return {object[]} array of performance timing objects
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use native function <code>performance.getEntriesByType("resource")</code> instead
 	 */
 	jQuery.sap.measure.getRequestTimings = function() {
 		return window.performance.getEntriesByType("resource");
@@ -1466,6 +1503,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use native function <code>performance.clearResourceTimings()</code> where available
 	 */
 	jQuery.sap.measure.clearRequestTimings = function() {
 		if (window.performance.clearResourceTimings) {
@@ -1481,6 +1519,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 * @since 1.34.0
+	 * @deprecated since 1.58 use native function <code>performance.setResourceTimingBufferSize(iSize)</code> where available
 	 */
 	jQuery.sap.measure.setRequestBufferSize = function(iSize) {
 		if (window.performance.setResourceTimingBufferSize) {
@@ -1749,6 +1788,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @sap-restricted sap.ui.core sap.ui.export sap.ui.vk
+	  	 * @deprecated since 1.58 use {@link sap.ui.loader.config} instead
 		 */
 		jQuery.sap.registerModuleShims = function(mShims) {
 			jQuery.sap.assert( typeof mShims === 'object', "mShims must be an object");
@@ -1780,7 +1820,7 @@ sap.ui.define([
 		 * @return {boolean} whether the module has been declared already
 		 * @public
 		 * @static
-		 * @deprecated since 1.58 use <code>sap.ui.require(sModuleName)</code> instead
+		 * @deprecated since 1.58 use {@link sap.ui.require} instead
 		 */
 		jQuery.sap.isDeclared = function isDeclared(sModuleName, bIncludePreloaded) {
 			var state = _ui5loader.getModuleState( ui5ToRJS(sModuleName) + ".js" );
@@ -1793,6 +1833,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the resource has been loaded already
 		 * @private
 		 * @sap-restricted sap.ui.core
+		 * @deprecated since 1.58
 		 */
 		jQuery.sap.isResourceLoaded = function isResourceLoaded(sResourceName) {
 			return !!_ui5loader.getModuleState(sResourceName);
@@ -1953,6 +1994,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @sap-restricted sap.ui.core,preloadfiles
+	  	 * @deprecated since 1.58
 		 */
 		jQuery.sap.registerPreloadedModules = function(oData) {
 
@@ -1977,6 +2019,7 @@ sap.ui.define([
 		 * @experimental Since 1.16.3 API might change completely, apps must not develop against it.
 		 * @private
 		 * @function
+	  	 * @deprecated since 1.58
 		 */
 		jQuery.sap.unloadResources = _ui5loader.unloadResources;
 
@@ -1993,6 +2036,7 @@ sap.ui.define([
 		 * @param {string} [sSuffix='.js'] Suffix to add to the final resource name
 		 * @private
 		 * @sap-restricted sap.ui.core
+	  	 * @deprecated since 1.58
 		 */
 		jQuery.sap.getResourceName = function(sModuleName, sSuffix) {
 			return ui5ToRJS(sModuleName) + (sSuffix == null ? ".js" : sSuffix);
@@ -2039,6 +2083,7 @@ sap.ui.define([
 		 * @private
 		 * @experimental API is not yet fully mature and may change in future.
 		 * @since 1.15.1
+	  	 * @deprecated since 1.58
 		 */
 		jQuery.sap.loadResource = LoaderExtensions.loadResource;
 
@@ -2075,6 +2120,7 @@ sap.ui.define([
 		 * @experimental
 		 * @private
 		 * @sap-restricted sap.ui.core,sap.ushell
+	  	 * @deprecated since 1.58
 		 */
 		jQuery.sap._loadJSResourceAsync = _ui5loader.loadJSResourceAsync;
 
@@ -2116,6 +2162,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/includeScript} instead
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	jQuery.sap.includeScript = includeScript;
@@ -2153,6 +2200,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/ui/dom/includeStylesheet} instead
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	jQuery.sap.includeStyleSheet = includeStylesheet;
@@ -2174,6 +2222,9 @@ sap.ui.define([
 
 	// --------------------- frame protection -------------------------------------------------------
 
+	/**
+	 * @deprecated since 1.58 use {@link module:sap/ui/security/FrameOptions} instead
+	 */
 	jQuery.sap.FrameOptions = FrameOptions;
 
 	/**
@@ -2185,6 +2236,7 @@ sap.ui.define([
 	 * @type void
 	 * @public
 	 * @static
+	 * @deprecated since 1.58
 	 * @SecSink {0|XSS} Parameter is evaluated
 	 */
 	jQuery.sap.globalEval = function() {

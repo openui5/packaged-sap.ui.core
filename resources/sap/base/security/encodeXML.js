@@ -3,10 +3,6 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	"use strict";
 
@@ -45,11 +41,12 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	 * Encode the string for inclusion into XML content/attribute.
 	 *
 	 * @function
-	 * @private
-	 * @exports sap/base/security/encodeXML
+	 * @since 1.58
+	 * @alias module:sap/base/security/encodeXML
 	 * @param {string} sString The string to be escaped
 	 * @returns {string} The encoded string
 	 * @SecValidate {0|return|XSS} validates the given string for XML contexts
+	 * @public
 	 */
 	var fnEncodeXML = function(sString) {
 		return sString.replace(rHtml, fnHtml);

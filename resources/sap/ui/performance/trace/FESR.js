@@ -3,10 +3,6 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/ui/Device',
@@ -154,29 +150,35 @@ sap.ui.define([
 	}
 
 	/**
-	 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
-	 *<p>
+	 * FESR API, consumed by E2eTraceLib instead of former EppLib.js.
+
 	 * Provides functionality for creating the headers for the frontend-subrecords which will be sent with each
 	 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
 	 * methods.<br>
-	 *</p><p>
-	 * There is a special order in which things are happening: <br>
-	 * 1. Interaction starts<br>
-	 * 1.1. Request 1.1 sent<br>
-	 * 1.2. Request 1.2 sent<br>
-	 * 2. Interaction starts<br>
-	 * 2.1 Creation of FESR for 1. interaction<br>
-	 * 2.2 Request 2.1 sent with FESR header for 1. interaction<br>
-	 * ...<br>
-	 *</p>
+
+	 * There is a special order in which things are happening:
+	 * <pre>
+	 * 1. Interaction starts
+	 * 1.1. Request 1.1 sent
+	 * 1.2. Request 1.2 sent
+	 * 2. Interaction starts
+	 * 2.1 Creation of FESR for 1. interaction
+	 * 2.2 Request 2.1 sent with FESR header for 1. interaction
+	 * ...
+	 * </pre>
+	 *
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/performance/trace/FESR
 	 * @static
-	 * @private
+	 * @public
 	 */
 	var FESR = {};
 
 	/**
 	 * @param {boolean} bActive State of the FESR header creation
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	FESR.setActive = function (bActive) {
 		if (bActive) {
@@ -209,6 +211,7 @@ sap.ui.define([
 	/**
 	 * @return {boolean} State of the FESR header creation
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	FESR.getActive = function () {
 		return bFesrActive;

@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @class
 	 * Contains a single key/value pair of custom data attached to an Element. See method data().
 	 * @extends sap.ui.core.Element
-	 * @version 1.58.1
+	 * @version 1.58.2
 	 *
 	 * @public
 	 * @alias sap.ui.core.CustomData

@@ -2575,7 +2575,7 @@ if (!String.prototype.padEnd) {
 		});
 	}
 
-	function loadScript(oModule, bRetryOnFailure) {
+	function loadScript(oModule, sAlternativeURL) {
 
 		var oScript;
 
@@ -2591,12 +2591,13 @@ if (!String.prototype.padEnd) {
 		function onerror(e) {
 			oScript.removeEventListener('load', onload);
 			oScript.removeEventListener('error', onerror);
-			if (bRetryOnFailure) {
+			if (sAlternativeURL) {
 				log.warning("retry loading Javascript resource: " + oModule.name);
 				if (oScript && oScript.parentNode) {
 					oScript.parentNode.removeChild(oScript);
 				}
-				loadScript(oModule, /* bRetryOnFailure= */ false);
+				oModule.url = sAlternativeURL;
+				loadScript(oModule, /* sAlternativeURL= */ null);
 				return;
 			}
 
@@ -2608,7 +2609,7 @@ if (!String.prototype.padEnd) {
 		oScript = document.createElement('SCRIPT');
 		oScript.src = oModule.url;
 		oScript.setAttribute("data-sap-ui-module", oModule.name);
-		if ( bRetryOnFailure !== undefined ) {
+		if ( sAlternativeURL !== undefined ) {
 			oScript.addEventListener('load', onload);
 			oScript.addEventListener('error', onerror);
 		}
@@ -2791,11 +2792,12 @@ if (!String.prototype.padEnd) {
 
 		} else {
 
-			// @evo-todo support debug mode also in async mode
-			oModule.url = getResourcePath(oSplitName.baseID, oSplitName.subType);
-			// call notification hook
-			ui5Require.load({ completeLoad:noop, async: true }, oModule.url, oSplitName.baseID);
-			loadScript(oModule, /* bRetryOnFailure= */ true);
+			oModule.url = getResourcePath(oSplitName.baseID, aExtensions[0] + oSplitName.subType);
+			// in debug mode, fall back to the non-dbg source, otherwise try the same source again (for SSO re-connect)
+			var sAltUrl = bDebugSources ? getResourcePath(oSplitName.baseID, aExtensions[1] + oSplitName.subType) : oModule.url;
+			// call notification hook only once
+			ui5Require.load({ completeLoad:noop, async: true }, sAltUrl, oSplitName.baseID);
+			loadScript(oModule, /* sAlternativeURL= */ sAltUrl);
 
 			// process dep cache info
 			preloadDependencies(sModuleName);
@@ -4477,6 +4479,10 @@ if (!String.prototype.padEnd) {
 		if ( Object.prototype.hasOwnProperty.call(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
 			return oCfg[name];
 		}
+		// compat fallback
+		if ( name.slice(0,3) !== "xx-" ) {
+			return _getOption("xx-" + name, defaultValue, pattern);
+		}
 		// if no valid config value is found, fall back to a system default value
 		return defaultValue;
 	}
@@ -4485,7 +4491,7 @@ if (!String.prototype.padEnd) {
 		return /^(?:true|x|X)$/.test( _getOption(name, defaultValue, /^(?:true|x|X|false)$/) );
 	}
 
-	if ( _getBooleanOption("xx-async", false) ) {
+	if ( _getBooleanOption("async", false) ) {
 		ui5loader.config({
 			async: true
 		});

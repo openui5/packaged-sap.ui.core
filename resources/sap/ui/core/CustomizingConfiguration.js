@@ -73,7 +73,7 @@ sap.ui.define([
 		 * gets removed again.
 		 *
 		 * @author SAP SE
-		 * @version 1.58.1
+		 * @version 1.58.2
 		 * @constructor
 		 * @private
 		 * @since 1.15.1

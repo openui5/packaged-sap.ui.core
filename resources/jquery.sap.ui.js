@@ -28,21 +28,12 @@ sap.ui.define([
 	}
 
 	/**
-	 * Extension function to the jQuery.fn which identifies SAPUI5 controls in the given jQuery context.
-	 *
-	 * @param {int} [iIndex] Optional parameter to return the control instance at the given index in the array.
-	 * @returns {sap.ui.core.Control[] | sap.ui.core.Control | null} Depending on the given context and index parameter an array of controls, an instance or null.
-	 * @name jQuery#control
-	 * @function
-	 * @public
-	 */
-
-	/**
 	 * @param {object} oRootControl The root control
 	 * @returns {jQuery} Returns itself
 	 * @name jQuery#root
 	 * @function
 	 * @public
+	 * @deprecated since 1.58
 	 */
 	jQuery.fn.root = function(oRootControl) {
 		// handle 'setRoot'
@@ -82,6 +73,7 @@ sap.ui.define([
 	 * @name jQuery#uiarea
 	 * @function
 	 * @public
+	 * @deprecated since 1.58
 	 */
 	jQuery.fn.uiarea = function(iIdx) {
 		// UIAreas need to have IDs... so reduce to those elements first
@@ -99,6 +91,7 @@ sap.ui.define([
 	 * @param {object} [oConfiguration] Optional map/JSON-object with initial values for the new control
 	 * @returns {jQuery} the given jQuery object
 	 * @private
+	 * @deprecated since 1.58
 	 */
 	jQuery.fn.sapui = function(sControlType, sId, oConfiguration) {
 

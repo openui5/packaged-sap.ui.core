@@ -34,7 +34,7 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 *
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
-	 * @version 1.58.1
+	 * @version 1.58.2
 	 *
 	 * @public
 	 * @since 1.52

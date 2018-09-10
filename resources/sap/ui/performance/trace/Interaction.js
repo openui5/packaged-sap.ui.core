@@ -193,25 +193,6 @@ sap.ui.define([
 		};
 	}
 
-	/**
-	 * @namespace Provides base functionality for interaction detection heuristics & API<br>
-	 * <p>
-	 * Interaction detection works through the detection of relevant events and tracking of rendering activities.<br>
-	 * An example:<br>
-	 * The user clicks on a button<br>
-	 * -> "click" event gets detected via notification (<code>var notifyEventStart</code>)<br>
-	 * -> a click handler is registered on the button, so this is an interaction start (<code>var notifyStepStart</code>)<br>
-	 * -> some requests are made and rendering has finished (<code>var notifyStepEnd</code>)<br>
-	 * </p>
-	 * All measurement takes place in {@link sap/ui/performance/Measurement}<br>.
-	 *
-	 * Namespace exists since 1.32 and became public API since 1.36.
-	 *
-	 * @name sap.ui.performance.Interaction
-	 * @static
-	 * @private
-	 */
-
 	var bInteractionActive = false,
 		oCurrentBrowserEvent,
 		iInteractionStepTimer,
@@ -235,7 +216,7 @@ sap.ui.define([
 			}
 			// double string length for byte length as in js characters are stored as 16 bit ints
 			// sHeader + ": " + sValue + " "   --  means two blank and one colon === 3
-			this.requestHeaderLength += (sHeader.length + sValue.length + 3) * 2;
+			this.requestHeaderLength += ((sHeader + "").length + (sValue + "").length + 3) * 2;
 		});
 
 		// register the response handler for data collection
@@ -281,6 +262,25 @@ sap.ui.define([
 	}
 
 
+	/**
+	 * Provides base functionality for interaction detection heuristics & API.
+
+	 * Interaction detection works through the detection of relevant events and tracking of rendering activities.<br>
+	 * An example:<br>
+	 * The user clicks on a button<br>
+	 * <ul>
+	 *  <li>"click" event gets detected via notification (<code>var notifyEventStart</code>)</li>
+	 *  <li>a click handler is registered on the button, so this is an interaction start (<code>var notifyStepStart</code>)</li>
+	 *  <li>some requests are made and rendering has finished (<code>var notifyStepEnd</code>)</li>
+	 * </ul>
+	 * All measurement takes place in {@link module:sap/ui/performance/Measurement}.
+	 *
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/performance/trace/Interaction
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
 	var Interaction = {
 
 		/**
@@ -288,8 +288,7 @@ sap.ui.define([
 		 *
 		 * @param {boolean} bFinalize finalize the current pending interaction so that it is contained in the returned array
 		 * @return {object[]} all interaction measurements
-		 * @name getAll
-		 * @function
+		 * @static
 		 * @private
 		 */
 		getAll : function(bFinalize) {
@@ -310,8 +309,7 @@ sap.ui.define([
 		 * }</code>
 		 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
 		 * @return {object[]} all interaction measurements passing the filter function successfully
-		 * @name filter
-		 * @function
+		 * @static
 		 * @private
 		 */
 		filter : function(fnFilter) {
@@ -329,8 +327,7 @@ sap.ui.define([
 		 * Gets the incomplete pending interaction.
 		 *
 		 * @return {object} interaction measurement
-		 * @name getPending
-		 * @function
+		 * @static
 		 * @private
 		 */
 		getPending : function() {
@@ -340,8 +337,6 @@ sap.ui.define([
 		/**
 		 * Clears all interaction measurements.
 		 *
-		 * @name clear
-		 * @function
 		 * @private
 		 */
 		clear : function() {
@@ -353,8 +348,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sType type of the event which triggered the interaction
 		 * @param {object} oSrcElement the control on which the interaction was triggered
-		 * @name start
-		 * @function
+		 * @static
 		 * @private
 		 */
 		start : function(sType, oSrcElement) {
@@ -387,8 +381,7 @@ sap.ui.define([
 		 * End an interaction measurements.
 		 *
 		 * @param {boolean} bForce forces end of interaction now and ignores further re-renderings
-		 * @name end
-		 * @function
+		 * @static
 		 * @private
 		 */
 		end : function(bForce) {
@@ -406,6 +399,7 @@ sap.ui.define([
 		 * Returns true if the interaction detection was enabled explicitly, or implicitly along with fesr.
 		 *
 		 * @return {boolean} bActive State of the interaction detection
+		 * @static
 		 * @private
 		 */
 		getActive : function() {
@@ -416,6 +410,7 @@ sap.ui.define([
 		 * Enables the interaction tracking.
 		 *
 		 * @param {boolean} bActive State of the interaction detection
+		 * @static
 		 * @private
 		 */
 		setActive : function(bActive) {
@@ -432,6 +427,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Element} oElement Element on which the interaction has been triggered
 		 * @param {boolean} bForce Forces the interaction to start independently from a currently active browser event
+		 * @static
 		 * @private
 		 */
 		notifyStepStart : function(oElement, bForce) {
@@ -465,6 +461,7 @@ sap.ui.define([
 		/**
 		 * This method ends the started interaction measurement.
 		 *
+		 * @static
 		 * @private
 		 */
 		notifyStepEnd : function() {
@@ -480,6 +477,7 @@ sap.ui.define([
 		 * This method notifies if a relevant event has been triggered.
 		 *
 		 * @param {Event} oEvent Event whose processing has started
+		 * @static
 		 * @private
 		 */
 		notifyEventStart : function(oEvent) {
@@ -491,6 +489,7 @@ sap.ui.define([
 		 * as the generic detection process via notifyEventStart is not sufficient.
 		 *
 		 * @param {Event} oEvent Scroll event whose processing has started
+		 * @static
 		 * @private
 		 */
 		notifyScrollEvent : function(oEvent) {
@@ -511,6 +510,7 @@ sap.ui.define([
 		/**
 		 * This method notifies if a relevant event has ended by detecting another interaction.
 		 *
+		 * @static
 		 * @private
 		 */
 		notifyEventEnd : function() {
@@ -535,6 +535,7 @@ sap.ui.define([
 		 * component is created in an interaction step while for example navigating to a new page. Differs
 		 * from the actual owner component of the trigger control, which is still the previous component.
 		 *
+		 * @static
 		 * @private
 		 */
 		setStepComponent : function(sComponentName) {
@@ -545,6 +546,7 @@ sap.ui.define([
 
 		/**
 		 * @param {float} iDuration Increase busy duration of pending interaction by this value
+		 * @static
 		 * @private
 		 */
 		addBusyDuration : function (iDuration) {

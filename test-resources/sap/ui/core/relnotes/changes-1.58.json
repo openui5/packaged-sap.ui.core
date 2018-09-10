@@ -564,17 +564,40 @@
         "type": "FIX",
         "text": " v2.ODataAnnotations: don\u0027t cache invalid annotations",
         "references": []
-      },
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
       {
-        "id": "d179a6e18d67c04cc527f1924e16760eb9cbce2c",
+        "id": "7311df0405915e1177f9180f1ec6d61c7ccc5cd7",
         "type": "FIX",
         "text": " Controller: controllerFactory resolves wrong controller class",
         "references": []
       },
       {
-        "id": "54b07814a4e5bef89d1d9ffd44fccdfa8789dc66",
+        "id": "b875db6fa052ee68663e0e1c3608973e64a5deb0",
         "type": "FIX",
         "text": " core/routing/Target: _updateOptions should not overwrite _name",
+        "references": []
+      },
+      {
+        "id": "8953e7b919bec59e4317a32c7be6d7ce43f76c92",
+        "type": "FIX",
+        "text": " model/ODataUtils: Fix brackets for MultiFilter objects",
+        "references": []
+      },
+      {
+        "id": "998ffad82418cb6d35e4c317a770cc427c94030a",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": []
+      },
+      {
+        "id": "c6aa08a28f3fb8d80df5b7ce258bd8f7055457eb",
+        "type": "FIX",
+        "text": " core.routing: convert route config for internal target",
         "references": []
       }
     ]

@@ -3,10 +3,6 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(function() {
 	"use strict";
 
@@ -14,10 +10,11 @@ sap.ui.define(function() {
 	 * Returns values from an object
 	 *
 	 * @function
-	 * @exports sap/base/util/values
+	 * @since 1.58
+	 * @alias module:sap/base/util/values
 	 * @param {object} mObject - Object to be extracted
 	 * @returns {Array.<*>} - array of object values, if object does not contain values, an empty array will be returned
-	 * @private
+	 * @public
 	 */
 	return function values(mObject) {
 		// Default is always an empty array

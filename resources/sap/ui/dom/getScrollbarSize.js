@@ -3,10 +3,6 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
@@ -18,11 +14,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * This function must only be used when the DOM is ready.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {string} [sClasses=null] The CSS class that should be added to the test element.
 	 * @param {boolean} [bForce=false] Force recalculation of size (e.g. when CSS was changed). When no classes are passed all calculated sizes are reset.
-	 * @return {object} JSON object with properties <code>width</code> and <code>height</code> (the values are of type number and are pixels).
-	 * @private
-	 * @exports sap/ui/dom/getScrollbarSize
+	 * @return {object} Object with properties <code>width</code> and <code>height</code> (the values are of type number and are pixels).
+	 * @public
+	 * @alias module:sap/ui/dom/getScrollbarSize
 	 */
 	var fnGetScrollbarSize = function(sClasses, bForce) {
 		if (typeof sClasses === "boolean") {

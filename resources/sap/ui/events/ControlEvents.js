@@ -3,18 +3,16 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([
 	'sap/ui/thirdparty/jquery'
 ], function(jQuery) {
 	"use strict";
 
 	/**
-	 * @exports sap/ui/events/ControlEvents
-	 * @private
+	 * @namespace
+	 * @since 1.58
+	 * @alias module:sap/ui/events/ControlEvents
+	 * @public
 	 */
 	var oControlEvents = {};
 
@@ -32,7 +30,7 @@ sap.ui.define([
 	 * The mouse events and touch events are supported simultaneously on both desktop and mobile browsers. Do NOT
 	 * create both onmouse* and ontouch* functions to avoid one event being handled twice on the same control.
 	 *
-	 * @private
+	 * @public
 	 */
 	oControlEvents.events = [ // IMPORTANT: update the public documentation when extending this list
 		"click",
@@ -66,7 +64,8 @@ sap.ui.define([
 	 * Binds all events for listening with the given callback function.
 	 *
 	 * @param {function} fnCallback Callback function
-	 * @private
+	 * @static
+	 * @public
 	 */
 	oControlEvents.bindAnyEvent = function(fnCallback) {
 		if (fnCallback) {
@@ -78,7 +77,8 @@ sap.ui.define([
 	 * Unbinds all events for listening with the given callback function.
 	 *
 	 * @param {function} fnCallback Callback function
-	 * @private
+	 * @static
+	 * @public
 	 */
 	oControlEvents.unbindAnyEvent = function unbindAnyEvent(fnCallback) {
 		if (fnCallback) {

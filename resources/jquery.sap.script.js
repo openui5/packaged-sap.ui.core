@@ -27,6 +27,7 @@ sap.ui.define([
 	 * @return {string} A pseudo-unique id.
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/util/uid} instead
 	 */
 	jQuery.sap.uid = uid;
 
@@ -38,6 +39,7 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted sap.ui.core
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/strings/hash} instead
 	 */
 	jQuery.sap.hashCode = hash;
 
@@ -51,6 +53,7 @@ sap.ui.define([
 	 * @return {Array} Same array as given (for chaining)
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/util/array/uniqueSort} instead
 	 */
 	jQuery.sap.unique = uniqueSort;
 
@@ -67,6 +70,7 @@ sap.ui.define([
 	 * @return {boolean} Whether a and b are equal
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/util/deepEqual} instead
 	 */
 	jQuery.sap.equal = deepEqual;
 
@@ -85,6 +89,7 @@ sap.ui.define([
 	 * @return {object|any[]} the given <code>oObject</code>
 	 * @since 1.11
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/util/each} instead
 	 */
 	jQuery.sap.each = each;
 
@@ -152,6 +157,7 @@ sap.ui.define([
 	 * @return {Array.<{type:string,index:int}>} List of update operations
 	 * @public
 	 * @function
+	 * @deprecated since 1.58 use {@link module:sap/base/util/array/diff} instead
 	 */
 	jQuery.sap.arraySymbolDiff = diff;
 
@@ -162,6 +168,7 @@ sap.ui.define([
 	 * @function
 	 * @private
 	 * @returns {object} - the tokenizer
+	 * @deprecated since 1.58 use {@link module:sap/base/util/JSTokenizer} instead
 	 */
 	jQuery.sap._createJSTokenizer = function() {
 		return new JSTokenizer();
@@ -184,6 +191,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @since 1.11
+	 * @deprecated since 1.58 use {@link module:sap/base/util/JSTokenizer.parseJS} instead
 	 */
 	jQuery.sap.parseJS = JSTokenizer.parseJS;
 
@@ -191,7 +199,7 @@ sap.ui.define([
 	 * Merge the contents of two or more objects together into the first object.
 	 * Usage is the same as jQuery.extend, but Arguments that are null or undefined are NOT ignored.
 	 *
-	 * @deprecated since 1.58. For shallow extend use <code>Object.assign</code> (polyfilled), for deep extend use <code>sap/base/util/merge</code>
+	 * @deprecated since 1.58. For shallow extend use <code>Object.assign</code> (polyfilled), for deep extend use <code>sap/base/util/merge</code>.
 	 * @function
 	 * @since 1.26
 	 * @private
@@ -260,7 +268,7 @@ sap.ui.define([
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP SE
-	 * @version 1.58.1
+	 * @version 1.58.2
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -321,6 +329,7 @@ sap.ui.define([
 	 * @param {array} [aParameters] Method parameters
 	 * @return {string} Id which can be used to cancel the timer with clearDelayedCall
 	 * @public
+	 * @deprecated since 1.58 use native <code>setTimeout</code> instead
 	 */
 	jQuery.sap.delayedCall = function delayedCall(iDelay, oObject, method, aParameters) {
 		return setTimeout(function(){
@@ -338,6 +347,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sDelayedCallId The id returned, when calling delayedCall
 	 * @public
+	 * @deprecated since 1.58 use native <code>clearTimeout</code> instead
 	 */
 	jQuery.sap.clearDelayedCall = function clearDelayedCall(sDelayedCallId) {
 		clearTimeout(sDelayedCallId);
@@ -353,6 +363,7 @@ sap.ui.define([
 	 * @param {array} [aParameters] Method parameters
 	 * @return {string} Id which can be used to cancel the interval with clearIntervalCall
 	 * @public
+	 * @deprecated since 1.58 use native <code>setInterval</code> instead
 	 */
 	jQuery.sap.intervalCall = function intervalCall(iInterval, oObject, method, aParameters) {
 		return setInterval(function(){
@@ -370,6 +381,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sIntervalCallId The id returned, when calling intervalCall
 	 * @public
+	 * @deprecated since 1.58 use native <code>clearInterval</code> instead
 	 */
 	jQuery.sap.clearIntervalCall = function clearIntervalCall(sIntervalCallId) {
 		clearInterval(sIntervalCallId);
@@ -402,7 +414,7 @@ sap.ui.define([
 	 * but instead of working with hashes, it does compare each entry of the old list with each entry of the new
 	 * list, which causes terrible performance on large datasets.
 	 *
-	 * @deprecated As of 1.38, use {@link jQuery.sap.arraySymbolDiff} instead if applicable
+	 * @deprecated As of 1.38, use {@link module:sap/base/util/array/diff} instead if applicable
 	 * @public
 	 * @param {Array} aOld Old Array
 	 * @param {Array} aNew New Array

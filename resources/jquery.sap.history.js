@@ -343,6 +343,7 @@ sap.ui.define([
 		 * @enum {string}
 		 * @public
 		 * @alias jQuery.sap.history.NavType
+		 * @deprecated since 1.19.1. Please use {@link sap.ui.core.routing.HistoryDirection} instead.
 		 */
 		jQuery.sap.history.NavType = {
 

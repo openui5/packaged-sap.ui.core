@@ -3,10 +3,6 @@
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
@@ -21,12 +17,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	 * method also does not do so.
 	 *
 	 * @function
+	 * @since 1.58
 	 * @param {Element} oDomRefContainer The container element
 	 * @param {Element} oDomRefChild The child element (must not be a text node, must be an element)
 	 * @return {boolean} Whether <code>oDomRefChild</code> is contained in or equal to <code>oDomRefContainer</code>
-	 * @private
-	 * @author SAP SE
-	 * @exports sap/ui/dom/containsOrEquals
+	 * @public
+	 * @alias module:sap/ui/dom/containsOrEquals
 	 */
 	var fnContainsOrEquals = function(oDomRefContainer, oDomRefChild) {
 		if (oDomRefChild && oDomRefContainer && oDomRefChild != document && oDomRefChild != window) {

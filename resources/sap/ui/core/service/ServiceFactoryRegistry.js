@@ -18,7 +18,7 @@ sap.ui.define(['./ServiceFactory', "sap/base/assert"],
 	 * The service factory registry.
 	 *
 	 * @author SAP SE
-	 * @version 1.58.1
+	 * @version 1.58.2
 	 * @alias sap.ui.core.service.ServiceFactoryRegistry
 	 * @private
 	 * @sap-restricted sap.ushell

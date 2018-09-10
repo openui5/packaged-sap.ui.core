@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/DeclarativeSupport', "sap/base/L
 	 * @see sap.ui.core.DeclarativeSupport
 	 * @public
 	 * @since 1.7.0
-	 * @version 1.58.1
+	 * @version 1.58.2
 	 * @alias sap.ui.core.plugin.DeclarativeSupport
 	 */
 	var DeclarativeSupport = function() {
