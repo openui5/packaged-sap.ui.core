@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.type.ODataType
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.44.35
+	 * @version 1.44.36
 	 */
 	var Raw = ODataType.extend("sap.ui.model.odata.type.Raw", {
 			constructor : function (oFormatOptions, oConstraints) {
