@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @classdesc Base Class for a Renderer.
 	 *
 	 * @author SAP SE
-	 * @version 1.56.10
+	 * @version 1.56.11
 	 * @namespace
 	 * @public
 	 * @alias sap.ui.core.Renderer
