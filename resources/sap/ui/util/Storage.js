@@ -288,7 +288,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			 * an object implementing the browser's Storage API.
 			 * @param {string} [sIdPrefix] Prefix used for the IDs. If not set a default prefix is used.
 			 * @returns {module:sap/ui/util/Storage.Storage} A storage instance
-			 * @version 1.58.2
+			 * @version 1.58.3
 			 * @namespace
 			 * @function
 			 * @public
@@ -336,7 +336,7 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 *
 	 * @enum {string}
 	 * @public
-	 * @version 1.58.2
+	 * @version 1.58.3
 	 */
 	fnStorage.Type = {
 		/**

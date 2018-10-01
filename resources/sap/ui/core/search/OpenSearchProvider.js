@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @class
 	 * A SearchProvider which uses the OpenSearch protocol (either JSON or XML).
 	 * @extends sap.ui.core.search.SearchProvider
-	 * @version 1.58.2
+	 * @version 1.58.3
 	 *
 	 * @public
 	 * @alias sap.ui.core.search.OpenSearchProvider

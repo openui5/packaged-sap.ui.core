@@ -6,7 +6,7 @@
   <copyright>UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.</copyright>
-  <version>1.58.2</version>
+  <version>1.58.3</version>
 
   <documentation>The SAPUI5 Core Runtime.
 
@@ -351,6 +351,9 @@
         </lib>
         <lib name="bignumber" displayName="bignumber.js" homepage="https://github.com/MikeMcl/bignumber.js">
             <license url="https://github.com/MikeMcl/bignumber.js/blob/master/LICENCE" type="MIT License" file="../thirdparty/licenses/bignumber-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="lodash" displayName="lodash" homepage="https://github.com/lodash/lodash">
+            <license url="https://github.com/lodash/lodash/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/lodash-MIT-LICENSE.txt" />
         </lib>
     </thirdparty>
 

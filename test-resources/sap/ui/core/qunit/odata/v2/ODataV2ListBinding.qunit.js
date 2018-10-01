@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/Filter",
@@ -21,6 +22,7 @@ sap.ui.define([
 		OperationMode,
 		Sorter,
 		Filter,
+		FilterProcessor,
 		FilterType,
 		FilterOperator,
 		ODataFilter,
@@ -83,6 +85,28 @@ sap.ui.define([
 			oBinding.attachChange(handler);
 			oBinding.initialize();
 			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		});
+	});
+
+	QUnit.test("ListBinding applyFilter creates combinedFilters", function(assert){
+		var done = assert.async();
+		var oCombineFilterSpy = sinon.spy(FilterProcessor, "combineFilters");
+
+
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindList("/Categories");
+			var handler = function() {
+				oBinding.applyFilter();
+				assert.ok(true, "Filter does not cause an exception");
+				// combineFilters is called the first time when the binding gets initialized
+				assert.equal(oCombineFilterSpy.callCount, 2, "FilterProcessor.combineFilters should be called a second time after applyFilter.");
+				done();
+			};
+			oBinding.attachRefresh(function() {
+				oBinding.getContexts();
+			});
+			oBinding.attachChange(handler);
+			oBinding.initialize();
 		});
 	});
 
@@ -2296,6 +2320,28 @@ sap.ui.define([
 			oBinding.getContexts(0, 2, 0);
 		});
 	});
+
+	QUnit.test("Inline Count mode - service returns no data & 0 count: Count should be updated irrespective of startIndex", function(assert) {
+		var done = assert.async();
+		var oModel = initModel(true);
+		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Inline", custom:{search: "foo"}});
+		var oSpy = sinon.spy(oBinding, "loadData");
+		var handler = function() {
+			oBinding.detachChange(handler);
+			assert.equal(oSpy.callCount, 1, "1 Request has been triggered to load data");
+			oSpy.reset();
+			assert.equal(oBinding.getLength(), 0, "Current length is 0");
+			assert.equal(oBinding.isLengthFinal(), true, "Length is final");
+			done();
+		};
+
+		oBinding.attachChange(handler);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts(1, 5); //Get rows starting from 1, top 5 (startIndex !=0)
+		});
+		oBinding.initialize();
+	});
+
 	QUnit.test("Export to file URL", function(assert){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");

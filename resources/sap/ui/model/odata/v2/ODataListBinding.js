@@ -588,7 +588,7 @@ sap.ui.define([
 		function fnSuccess(oData) {
 
 			// update iLength (only when the inline count was requested and is available)
-			if (bInlineCountRequested && oData.__count) {
+			if (bInlineCountRequested && oData.__count !== undefined) {
 				that.iLength = parseInt(oData.__count, 10);
 				that.bLengthFinal = true;
 
@@ -1432,6 +1432,7 @@ sap.ui.define([
 		var that = this,
 			oContext;
 
+		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 		this.aKeys = FilterProcessor.apply(this.aAllKeys, this.oCombinedFilter, function(vRef, sPath) {
 			oContext = that.oModel.getContext('/' + vRef);
 			return that.oModel.getProperty(sPath, oContext);
@@ -1456,6 +1457,7 @@ sap.ui.define([
 		this.addComparators(this.aApplicationFilters);
 		this.convertFilters();
 		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
+
 		if (!this.useClientMode()) {
 			this.createSortParams(this.aSorters);
 			this.createFilterParams(this.oCombinedFilter);

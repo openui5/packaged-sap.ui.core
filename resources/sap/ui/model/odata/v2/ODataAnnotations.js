@@ -33,7 +33,7 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.58.2
+	 * 1.58.3
 	 *
 	 * @public
 	 * @since 1.37.0

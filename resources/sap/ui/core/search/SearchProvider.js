@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library', "sap/base/Log"],
 	 * @class
 	 * Abstract base class for all SearchProviders which can be e.g. attached to a SearchField. Do not create instances of this class, but use a concrete sub class instead.
 	 * @extends sap.ui.core.Element
-	 * @version 1.58.2
+	 * @version 1.58.3
 	 *
 	 * @public
 	 * @alias sap.ui.core.search.SearchProvider

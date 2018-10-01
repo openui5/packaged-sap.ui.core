@@ -83,7 +83,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/service/Service', "sap/base/as
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.58.2
+	 * @version 1.58.3
 	 * @alias sap.ui.core.service.ServiceFactory
 	 * @private
 	 * @sap-restricted sap.ushell

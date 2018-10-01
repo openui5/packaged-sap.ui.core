@@ -38,7 +38,7 @@ sap.ui.define([
 		 * With this plugIn the performance measurements are displayed
 		 *
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.58.2
+		 * @version 1.58.3
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Interaction
 		 */

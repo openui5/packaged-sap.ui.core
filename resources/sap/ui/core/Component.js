@@ -217,7 +217,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.58.2
+	 * @version 1.58.3
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -2686,7 +2686,10 @@ sap.ui.define([
 
 					// preload the component
 					return preload(sComponentName, true).then(function() {
-						// after preload is finished, the resource models from the manifest are loaded
+						// after preload is finished, load the i18n resource
+						return oManifest._processI18n(true);
+					}).then(function() {
+						// after i18n resource is finished, the resource models from the manifest are loaded
 
 						if (!mOptions.createModels) {
 							return null;

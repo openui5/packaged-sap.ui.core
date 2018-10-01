@@ -51,7 +51,7 @@ sap.ui.define([
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.58.2
+	 * @version 1.58.3
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.View
@@ -186,7 +186,8 @@ sap.ui.define([
 				type : "boolean",
 				defaultValue : false
 			}
-		}
+		},
+		designtime: "sap/ui/core/designtime/mvc/View.designtime"
 	}});
 
 	/**

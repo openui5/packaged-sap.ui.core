@@ -56,7 +56,7 @@ function(
 	 * @class
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.58.2
+	 * @version 1.58.3
 	 * @public
 	 * @alias sap.ui.core.Fragment
 	 */
@@ -371,10 +371,13 @@ function(
 
 		mParameters.type = mParameters.type || "XML";
 
-		// map new parameter names to classic API
+		// map new parameter names to classic API, delete new names to avoid assertion failures
 		mParameters.fragmentName = mParameters.name;
 		mParameters.fragmentContent = mParameters.definition;
 		mParameters.oController = mParameters.controller;
+		delete mParameters.name;
+		delete mParameters.definition;
+		delete mParameters.controller;
 
 		return Promise.resolve(fragmentFactory(mParameters));
 	};
