@@ -109,7 +109,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.52.19
+	 * @version 1.52.20
 	 *
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataModel
@@ -5337,9 +5337,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._createPropertyValue = function(sType) {
-		var aTypeName = this.oMetadata._splitName(sType); // name, namespace
-		var sNamespace = aTypeName[1];
-		var sTypeName = aTypeName[0];
+		var oTypeInfo = this.oMetadata._splitName(sType); // name, namespace
+		var sNamespace = oTypeInfo.namespace;
+		var sTypeName = oTypeInfo.name;
 		if (sNamespace.toUpperCase() !== 'EDM') {
 			var oComplexType = {};
 			var oComplexTypeMetadata = this.oMetadata._getObjectMetadata("complexType",sTypeName,sNamespace);

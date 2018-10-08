@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.52.19
+	 * @version 1.52.20
 	 *
 	 * @public
 	 * @deprecated Please use {@link sap.ui.model.odata.v2.ODataModel} instead.
@@ -3166,9 +3166,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 * @private
 	 */
 	ODataModel.prototype._createPropertyValue = function(sType) {
-		var aTypeName = this.oMetadata._splitName(sType); // name, namespace
-		var sNamespace = aTypeName[1];
-		var sTypeName = aTypeName[0];
+		var oTypeInfo = this.oMetadata._splitName(sType); // name, namespace
+		var sNamespace = oTypeInfo.namespace;
+		var sTypeName = oTypeInfo.name;
 		if (sNamespace.toUpperCase() !== 'EDM') {
 			var oComplexType = {};
 			var oComplexTypeMetadata = this.oMetadata._getObjectMetadata("complexType",sTypeName,sNamespace);
