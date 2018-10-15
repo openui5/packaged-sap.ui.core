@@ -81,7 +81,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/ValidateExcept
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.58.3
+	 * @version 1.58.4
 	 *
 	 * @alias sap.ui.model.odata.type.String
 	 * @param {object} [oFormatOptions]

@@ -155,7 +155,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.58.3
+	 * @version 1.58.4
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -868,7 +868,7 @@ sap.ui.define([
 					break;
 				}
 			}
-			if (!bGroupChanged) {
+			if (!bGroupChanged && !oEvent.isMarked("enterKeyConsumedAsContent")) {
 				bGroupChanged = this._handleGroupChange(oEvent,oElement);
 			}
 

@@ -51,7 +51,7 @@ sap.ui.define([
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.58.3
+	 * @version 1.58.4
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.View

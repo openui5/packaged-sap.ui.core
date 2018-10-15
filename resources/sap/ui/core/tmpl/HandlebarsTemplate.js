@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.tmpl.Template
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.58.3
+	 * @version 1.58.4
 	 * @alias sap.ui.core.tmpl.HandlebarsTemplate
 	 * @since 1.15
 	 * @deprecated since 1.56

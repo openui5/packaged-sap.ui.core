@@ -75,7 +75,7 @@ function(
 	 *
 	 *
 	 * @author Frank Weigel
-	 * @version 1.58.3
+	 * @version 1.58.4
 	 * @since 0.8.6
 	 * @alias sap.ui.base.ManagedObjectMetadata
 	 * @public

@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @public
 	 * @class
 	 * @author SAP SE
-	 * @version 1.58.3
+	 * @version 1.58.4
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
