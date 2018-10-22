@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 	 * destroy</code> method. All functions can be called but may not work properly or lead to unexpected side effects.
 	 *
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.44.36
+	 * @version 1.44.37
 	 *
 	 * @constructor
 	 * @public
