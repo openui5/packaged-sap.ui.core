@@ -52,7 +52,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/ui/thirdparty/jque
 	 * @extends sap.ui.model.DataState
 	 *
 	 * @author SAP SE
-	 * @version 1.58.4
+	 * @version 1.58.5
 	 *
 	 * @public
 	 * @alias sap.ui.model.CompositeDataState

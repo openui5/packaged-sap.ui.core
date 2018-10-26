@@ -419,7 +419,7 @@ sap.ui.define([
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.58.4
+	 * @version 1.58.5
 	 * @namespace
 	 * @public
 	 * @static

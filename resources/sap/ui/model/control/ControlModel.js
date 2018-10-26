@@ -26,7 +26,7 @@ sap.ui.define(['sap/ui/model/Model', './ControlPropertyBinding', "sap/ui/thirdpa
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.58.4
+	 * @version 1.58.5
 	 *
 	 * @alias sap.ui.model.control.ControlModel
 	 */
