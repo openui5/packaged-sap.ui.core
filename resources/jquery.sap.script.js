@@ -204,7 +204,7 @@ sap.ui.define([
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP SE
-	 * @version 1.56.13
+	 * @version 1.56.14
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
