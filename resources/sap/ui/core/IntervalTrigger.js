@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', './EventBus'],
 		 *
 		 * @extends sap.ui.base.Object
 		 * @author SAP SE
-		 * @version 1.52.21
+		 * @version 1.52.22
 		 * @public
 		 * @since 1.11.0
 		 * @alias sap.ui.core.IntervalTrigger
