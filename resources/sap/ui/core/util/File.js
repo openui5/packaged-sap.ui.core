@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * @class Utility class to handle files
 	 * @author SAP SE
-	 * @version 1.44.37
+	 * @version 1.44.38
 	 * @static
 	 *
 	 * @public
