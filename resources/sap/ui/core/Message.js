@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.52.22
+	 * @version 1.52.23
 	 *
 	 * @public
 	 * @alias sap.ui.core.Message

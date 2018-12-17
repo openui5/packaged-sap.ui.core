@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	 * @class
 	 * Represents a DOM element. It allows to use databinding for the properties and nested DOM attributes.
 	 * @extends sap.ui.core.Control
-	 * @version 1.52.22
+	 * @version 1.52.23
 	 *
 	 * @public
 	 * @since 1.15
