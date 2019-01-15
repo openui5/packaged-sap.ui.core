@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -319,6 +319,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 
 		var sFinalAnnotationURL;
 		var iAnnotationIndex = sAnnotationURL.indexOf("/Annotations(");
+		var iHanaXsSegmentIndex = vParameters && vParameters.preOriginBaseUri ? vParameters.preOriginBaseUri.indexOf(".xsodata") : -1;
 
 		if (iAnnotationIndex === -1){ // URL might be encoded, "(" becomes %28
 			iAnnotationIndex = sAnnotationURL.indexOf("/Annotations%28");
@@ -335,6 +336,12 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				var sAnnotationWithOrigin = ODataUtils.setOrigin(sAnnotationUrlBase, vParameters);
 				sFinalAnnotationURL = sAnnotationWithOrigin + sAnnotationUrlRest;
 			}
+		} else if (iHanaXsSegmentIndex >= 0) {
+			// Hana XS case: the Hana XS engine can provide static Annotation files for its services.
+			// The services can be identifed by their URL segment ".xsodata"; if such a service uses the origin feature
+			// the Annotation URLs need also adaption.
+			sFinalAnnotationURL = ODataUtils.setOrigin(sAnnotationURL, vParameters);
+
 		} else {
 			// Legacy Code for compatibility reasons:
 			// ... if not, we check if the annotation url is on the same service-url base-path

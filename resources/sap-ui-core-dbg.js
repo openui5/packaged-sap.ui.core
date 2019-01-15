@@ -10364,7 +10364,7 @@ $.ui.position = {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10375,7 +10375,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.52.23
+ * @version 1.52.24
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10401,7 +10401,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.52.23";
+		var apiVersion = "1.52.24";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10459,7 +10459,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.52.23";
+		var v = "1.52.24";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -11245,8 +11245,10 @@ if (typeof window.sap.ui !== "object") {
 
 	device.support = {};
 
-	//Maybe better to but this on device.browser because there are cases that a browser can touch but a device can't!
-	device.support.touch = !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch);
+	//Maybe better to but this on Device.browser because there are cases that a browser can touch but a device can't!
+	//Chrome 70 removes the 'ontouchstart' from window for device with and without touch screen. Therefore we need to
+	//use maxTouchPoints to check whether the device support touch interaction
+	device.support.touch = !!(('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.DocumentTouch && document instanceof window.DocumentTouch));
 
 	// FIXME: PhantomJS doesn't support touch events but exposes itself as touch
 	//        enabled browser. Therfore we manually override that in jQuery.support!
@@ -14267,7 +14269,7 @@ return URI;
 }));
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -15286,7 +15288,7 @@ if ( !('baseURI' in Node.prototype) ) {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -15649,11 +15651,13 @@ if ( !('baseURI' in Node.prototype) ) {
 			configurable: true,
 			enumerable: true,
 			get: function() {
+				var oActiveElement = null;
 				try {
-					return getActiveElement.call(this);
+					oActiveElement = getActiveElement.call(this);
 				} catch (e) {
-					return null;
+					// ignore
 				}
+				return (oActiveElement && oActiveElement.nodeType) ? oActiveElement : document.body;
 			}
 		});
 	}
@@ -16155,7 +16159,7 @@ if ( !('baseURI' in Node.prototype) ) {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.52.23
+	 * @version 1.52.24
 	 * @namespace
 	 * @public
 	 * @static

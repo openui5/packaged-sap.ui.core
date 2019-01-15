@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -642,6 +642,12 @@ sap.ui.define([
 
 		// save current focused element to restore the focus after closing
 		this._oPreviousFocus = Popup.getCurrentFocusInfo();
+
+		// if the Popup is modal, remove the focus from the current focused element to avoid
+		// the same action being triggered again before the focus is moved into the Popup
+		if (this._bModal && document.activeElement) {
+			document.activeElement.blur();
+		}
 
 		// It is mandatroy to check if the new Popup runs within another Popup because
 		// if this new Popup is rendered via 'this._$(true)' and focused (happens e.g. if
