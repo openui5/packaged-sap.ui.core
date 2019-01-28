@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 /*
@@ -58,7 +58,7 @@ sap.ui.define(["./assert"], function(assert) {
 		 * should be deleted the method {@link #removeAll} should be used.
 		 *
 		 * @author SAP SE
-		 * @version 1.56.16
+		 * @version 1.56.18
 		 * @private
 		 * @name sap/base/storage.Storage
 		 */
@@ -307,7 +307,7 @@ sap.ui.define(["./assert"], function(assert) {
 			 * an object implementing the browser's Storage API.
 			 * @param {string} [sIdPrefix] Prefix used for the IDs. If not set a default prefix is used.
 			 * @returns {module:sap/base/storage.Storage} A storage instance
-			 * @version 1.56.16
+			 * @version 1.56.18
 			 * @namespace
 			 * @function
 			 * @private
@@ -355,7 +355,7 @@ sap.ui.define(["./assert"], function(assert) {
 	 *
 	 * @enum {string}
 	 * @private
-	 * @version 1.56.16
+	 * @version 1.56.18
 	 */
 	fnStorage.Type = {
 		/**
