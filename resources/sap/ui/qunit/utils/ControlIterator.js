@@ -52,7 +52,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	 * This module is independent from QUnit, so it could be used for other purposes than unit tests.
 	 *
 	 * @author SAP SE
-	 * @version 1.52.24
+	 * @version 1.52.25
 	 *
 	 * @public
 	 * @since 1.48.0

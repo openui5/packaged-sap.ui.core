@@ -230,7 +230,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.52.24
+	 * @version 1.52.25
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 */

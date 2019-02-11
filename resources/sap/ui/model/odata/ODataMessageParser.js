@@ -70,7 +70,7 @@ var mSeverityMap = {
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
- * @version 1.52.24
+ * @version 1.52.25
  * @public
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
@@ -332,6 +332,8 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		bPersistent = true;
 		oMessageObject.target = oMessageObject.target.substr(12);
 	} else if (oMessageObject.transient) {
+		bPersistent = true;
+	} else if (oMessageObject.transition) {
 		bPersistent = true;
 	}
 

@@ -41,7 +41,7 @@ sap.ui.define(['./Object'],
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Malte Wedel
-	 * @version 1.52.24
+	 * @version 1.52.25
 	 * @alias sap.ui.base.ObjectPool
 	 * @public
 	 */
