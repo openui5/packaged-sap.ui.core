@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.52.26
+	 * @version 1.52.27
 	 * @alias sap.ui.core.Core
 	 * @public
 	 */
@@ -1727,10 +1727,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				this.initLibrary(sLibrary); // TODO redundant to generated initLibrary call....
 			}
 
-			if ( this.oThemeCheck && this.isInitialized() ) {
-				this.oThemeCheck.fireThemeChangedEvent(true);
-			}
-
 		}
 
 		// Note: return parameter is undocumented by intention! Structure of lib info might change
@@ -1766,8 +1762,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// default values for options
 		mOptions = jQuery.extend({ async : true, preloadOnly : false }, mOptions);
 
-		var that = this,
-			bPreload = this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async',
+		var bPreload = this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async',
 			bAsync = mOptions.async,
 			bRequire = !mOptions.preloadOnly;
 
@@ -1780,16 +1775,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			});
 		}
 
-		function triggerThemeCheck() {
-			if ( that.oThemeCheck && that.isInitialized() ) {
-				that.oThemeCheck.fireThemeChangedEvent(true);
-			}
-		}
-
 		function requireLibsAsync() {
 			return new Promise(function(resolve, reject) {
 				sap.ui.require(getLibraryModuleNames(), function() {
-					triggerThemeCheck();
 					resolve();
 				});
 			});
@@ -1797,7 +1785,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		function requireLibsSync() {
 			getLibraryModuleNames().forEach(sap.ui.requireSync);
-			triggerThemeCheck();
 		}
 
 		if ( bAsync ) {
@@ -2058,6 +2045,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				var sQuery = this._getLibraryCssQueryParams(oLibInfo);
 
 				this.includeLibraryTheme(sLibName, undefined, sQuery);
+
+				if (this.oThemeCheck && this.isInitialized()) {
+					this.oThemeCheck.fireThemeChangedEvent(false);
+				}
 			}
 		}
 
