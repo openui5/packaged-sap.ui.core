@@ -2148,14 +2148,40 @@
       {
         "id": "bceb1bed6e6ace5075a67c4f34a9d978221e406f",
         "type": "FIX",
-        "text": " crossroads.js: correctly handle the parse of skipped optional param",
-        "references": []
+        "text": "crossroads.js: correctly handle the parse of skipped optional param",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006225322017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000588072018"
+          }
+        ]
       },
       {
         "id": "196e626a878763a11183983b3c904ebb1254a225",
         "type": "FIX",
-        "text": " jquery-mobile-custom: Edge button events",
-        "references": []
+        "text": "jquery-mobile-custom: Edge button events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005680192017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001076112018"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880219029"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004318102017"
+          }
+        ]
       }
     ]
   },
@@ -2165,26 +2191,41 @@
       {
         "id": "b6420fef666e34a5e2c00e03dcf907cf09e0e927",
         "type": "FIX",
-        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
+        "text": "CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
         "references": []
       },
       {
         "id": "b6cf0b80ba507932e0b27efdce0ce64432569393",
         "type": "FIX",
-        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
-        "references": []
+        "text": "ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001269922018"
+          }
+        ]
       },
       {
         "id": "b838001d6ee09259e39ec7f6902e323c19df0df7",
         "type": "FIX",
-        "text": " sap.m.StepInput: do not create global NumericInput",
-        "references": []
+        "text": "sap.m.StepInput: do not create global NumericInput",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870117517"
+          }
+        ]
       },
       {
         "id": "b2d9853f36a4e3e05cf83ea9471313d345afc1e2",
         "type": "FIX",
-        "text": " v2.ODataModel: metadata url params missing",
-        "references": []
+        "text": "v2.ODataModel: metadata url params missing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780434200"
+          }
+        ]
       }
     ]
   },
@@ -2194,14 +2235,24 @@
       {
         "id": "06df3c97de262e49771f534fbcda914948c8c12d",
         "type": "FIX",
-        "text": " Fix synchronous document.activeElement access in iframes",
-        "references": []
+        "text": "Fix synchronous document.activeElement access in iframes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001736752018"
+          }
+        ]
       },
       {
         "id": "bdecafb143344c1537331d53aa591834fd23ecdf",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Implicit casting for filter values",
-        "references": []
+        "text": "v2.ODataListBinding: Implicit casting for filter values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870002694"
+          }
+        ]
       }
     ]
   },
@@ -2211,20 +2262,47 @@
       {
         "id": "cb51da1e4ea22eacab0cd3c746ffb26d15b409b1",
         "type": "FIX",
-        "text": " Theming Parameters: Improve inline parameters decoding",
-        "references": []
+        "text": "Theming Parameters: Improve inline parameters decoding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880276569"
+          }
+        ]
       },
       {
         "id": "1a9c84097d91a3f31985d2cb61a917526032d8bd",
         "type": "FIX",
-        "text": " sap.ui.polyfill.computedStyle: polyfill for firefox bug",
-        "references": []
+        "text": "sap.ui.polyfill.computedStyle: polyfill for firefox bug",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003524332017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003590552017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003704252017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002683542018"
+          }
+        ]
       },
       {
         "id": "4025959fd38009ede1e8a080af72518e6e71aaca",
         "type": "FIX",
-        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
-        "references": []
+        "text": "sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500003153742018"
+          }
+        ]
       }
     ]
   },
@@ -2234,8 +2312,17 @@
       {
         "id": "b7352b7bdca62ca24be88c7453f9ad5934e1d4df",
         "type": "FIX",
-        "text": " AppCacheBuster: ignore query parameter for index lookup",
-        "references": []
+        "text": "AppCacheBuster: ignore query parameter for index lookup",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2116"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880439767"
+          }
+        ]
       }
     ]
   },
@@ -2245,8 +2332,13 @@
       {
         "id": "0b027ff292d46ae6174b0fae390d2d49139d54e0",
         "type": "FIX",
-        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
-        "references": []
+        "text": "performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003553622018"
+          }
+        ]
       }
     ]
   },
@@ -2256,8 +2348,13 @@
       {
         "id": "d99c9b82a9f3a687e03ac17e3acae66b855a34c2",
         "type": "FIX",
-        "text": " Model.removeBinding: performance",
-        "references": []
+        "text": "Model.removeBinding: performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005859532018"
+          }
+        ]
       }
     ]
   },
@@ -2267,26 +2364,46 @@
       {
         "id": "b7af3d850445aaf9596d2e4fc90825df20e2c76b",
         "type": "FIX",
-        "text": " Device.js: use maxTouchPoints for touch support detection",
-        "references": []
+        "text": "Device.js: use maxTouchPoints for touch support detection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
       },
       {
         "id": "0690c50e2b9cc6ad0dbd98aa05806bfd493bca75",
         "type": "FIX",
-        "text": " ODataMessageParser: support \u0027transition\u0027 flag",
-        "references": []
+        "text": "ODataMessageParser: support \u0027transition\u0027 flag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970053675"
+          }
+        ]
       },
       {
         "id": "19dc8d5c408b7ab29ab9a8ac4e24c75be9c5044b",
         "type": "FIX",
-        "text": " ODataModel: memory leak",
-        "references": []
+        "text": "ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970044943"
+          }
+        ]
       },
       {
         "id": "48c068c689d1d3410e24025635d70822238d4dee",
         "type": "FIX",
-        "text": " v2.ODataModel: memory leak",
-        "references": []
+        "text": "v2.ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870521429"
+          }
+        ]
       }
     ]
   },
@@ -2296,7 +2413,31 @@
       {
         "id": "b4abb67ec28bfa6ad40fc10317ba1bdc3dcf9c0e",
         "type": "FIX",
-        "text": " Model: Reduce message check calls",
+        "text": "Model: Reduce message check calls",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1109"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000422622019"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680231732"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.41": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "f3d03dbed318b2a2600211b91dc04ecb251444dd",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile: Update favicon properly in IE",
         "references": []
       }
     ]
