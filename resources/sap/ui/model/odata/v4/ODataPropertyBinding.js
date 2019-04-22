@@ -50,7 +50,7 @@ sap.ui.define([
 	 * @mixes sap.ui.model.odata.v4.ODataBinding
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.52.27
+	 * @version 1.52.28
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh

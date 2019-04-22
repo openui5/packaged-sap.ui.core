@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.52.27
+	 * @version 1.52.28
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

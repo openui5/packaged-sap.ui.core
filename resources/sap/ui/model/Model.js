@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.52.27
+	 * @version 1.52.28
 	 *
 	 * @public
 	 * @alias sap.ui.model.Model
