@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.52.28
+	 * @version 1.52.29
 	 *
 	 * @public
 	 * @alias sap.ui.core.message.MessageManager

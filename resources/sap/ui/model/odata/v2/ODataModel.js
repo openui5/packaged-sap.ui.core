@@ -109,7 +109,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.52.28
+	 * @version 1.52.29
 	 *
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataModel

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.52.28
+	 * @version 1.52.29
 	 *
 	 *
 	 * @param {object} [mParameters] (optional) a map which contains the following parameter properties:
