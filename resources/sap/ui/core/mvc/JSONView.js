@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/li
 	 * @class
 	 * A View defined using JSON.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.52.29
+	 * @version 1.52.30
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.JSONView

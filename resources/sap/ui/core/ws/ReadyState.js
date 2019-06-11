@@ -12,7 +12,7 @@ sap.ui.define(function() {
 	/**
 	 * Defines the different ready states for a WebSocket connection.
 	 *
-	 * @version 1.52.29
+	 * @version 1.52.30
 	 * @enum {int}
 	 * @public
 	 * @alias sap.ui.core.ws.ReadyState

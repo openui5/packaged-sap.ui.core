@@ -209,10 +209,15 @@ jQuery.extend = jQuery.fn.extend = function() {
 				src = target[ name ];
 				copy = options[ name ];
 
+				// ##### BEGIN: MODIFIED BY SAP
+				// Prevent Object.prototype pollution for $.extend( true, ... )
+				// For further information, please visit https://github.com/jquery/jquery/pull/4333
+				// Code taken from jQuery v3.4.0
 				// Prevent never-ending loop
-				if ( target === copy ) {
+				if ( name === "__proto__" || target === copy ) {
 					continue;
 				}
+				// ##### END: MODIFIED BY SAP
 
 				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
@@ -10375,7 +10380,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.52.29
+ * @version 1.52.30
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10401,7 +10406,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.52.29";
+		var apiVersion = "1.52.30";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10459,7 +10464,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.52.29";
+		var v = "1.52.30";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -16159,7 +16164,7 @@ if ( !('baseURI' in Node.prototype) ) {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.52.29
+	 * @version 1.52.30
 	 * @namespace
 	 * @public
 	 * @static
