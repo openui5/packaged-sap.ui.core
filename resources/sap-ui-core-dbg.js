@@ -209,10 +209,15 @@ jQuery.extend = jQuery.fn.extend = function() {
 				src = target[ name ];
 				copy = options[ name ];
 
+				// ##### BEGIN: MODIFIED BY SAP
+				// Prevent Object.prototype pollution for $.extend( true, ... )
+				// For further information, please visit https://github.com/jquery/jquery/pull/4333
+				// Code taken from jQuery v3.4.0
 				// Prevent never-ending loop
-				if ( target === copy ) {
+				if ( name === "__proto__" || target === copy ) {
 					continue;
 				}
+				// ##### END: MODIFIED BY SAP
 
 				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
@@ -9385,8 +9390,19 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 	}
 } );
 
-
-
+// ##### BEGIN: MODIFIED BY SAP
+// Code taken from jQuery v3.1.1
+// Support: Safari 8 only
+// In Safari 8 documents created via document.implementation.createHTMLDocument
+// collapse sibling forms: the second one becomes a child of the first one.
+// Because of that, this security measure has to be disabled in Safari 8.
+// Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=137337
+support.createHTMLDocument = (function() {
+	var body = document.implementation.createHTMLDocument( "" ).body;
+	body.innerHTML = "<form></form><form></form>";
+	return body.childNodes.length === 2;
+})();
+// ##### END: MODIFIED BY SAP
 
 // Argument "data" should be string of html
 // context (optional): If specified, the fragment will be created in this context,
@@ -9400,10 +9416,34 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 		keepScripts = context;
 		context = false;
 	}
-	context = context || document;
 
-	var parsed = rsingleTag.exec( data ),
-		scripts = !keepScripts && [];
+	// ##### BEGIN: MODIFIED BY SAP
+	// Stop scripts or inline event handlers from being executed immediately
+	// by using document.implementation.
+	// Code taken from jQuery v3.1.1
+	var base, parsed, scripts;
+
+	if ( !context ) {
+
+		// Stop scripts or inline event handlers from being executed immediately
+		// by using document.implementation
+		if ( support.createHTMLDocument ) {
+			context = document.implementation.createHTMLDocument( "" );
+
+			// Set the base href for the created document
+			// so any parsed elements with URLs
+			// are based on the document's URL (gh-2965)
+			base = context.createElement( "base" );
+			base.href = document.baseURI;
+			context.head.appendChild( base );
+		} else {
+			context = document;
+		}
+	}
+	// ##### END: MODIFIED BY SAP
+
+	parsed = rsingleTag.exec( data );
+	scripts = !keepScripts && [];
 
 	// Single tag
 	if ( parsed ) {
@@ -10375,7 +10415,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.44.41
+ * @version 1.44.42
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10401,7 +10441,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.44.41";
+		var apiVersion = "1.44.42";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10459,7 +10499,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.44.41";
+		var v = "1.44.42";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -16106,7 +16146,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.44.41
+	 * @version 1.44.42
 	 * @namespace
 	 * @public
 	 * @static

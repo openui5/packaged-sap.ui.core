@@ -40,10 +40,10 @@ sap.ui.define([
 
 			// do not track long runners and call the original directly
 			if (iDelay >= MAX_TIMEOUT_DELAY) {
-				return fnOriginal.apply(this, arguments);
+				return fnOriginal(fnCallback, iDelay);
 			}
 
-			var iID = fnOriginal.call(this, fnWrappedCallback, iDelay);
+			var iID = fnOriginal(fnWrappedCallback, iDelay);
 
 			mTimeouts[iID] = iCurrentDepth;
 
@@ -52,7 +52,7 @@ sap.ui.define([
 
 		window[sClearName] = function (iID) {
 			delete mTimeouts[iID];
-			return fnOriginalClear.apply(this, arguments);
+			return fnOriginalClear(iID);
 		};
 	}
 

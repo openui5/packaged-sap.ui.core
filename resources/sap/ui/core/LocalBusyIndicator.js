@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', './theming/Paramet
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.44.41
+	 * @version 1.44.42
 	 *
 	 * @constructor
 	 * @public
