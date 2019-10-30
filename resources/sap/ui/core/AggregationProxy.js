@@ -172,7 +172,7 @@ sap.ui.define([
 	 *   &lt;/my:List&gt
 	 *
 	 * @author SAP SE
-	 * @version 1.52.35
+	 * @version 1.52.36
 	 * @since 1.50.0
 	 * @alias sap.ui.core.AggregationProxy
 	 * @experimental

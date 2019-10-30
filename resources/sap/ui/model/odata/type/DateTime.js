@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/DateTimeBase'],
 	 * @extends sap.ui.model.odata.type.DateTimeBase
 	 *
 	 * @author SAP SE
-	 * @version 1.52.35
+	 * @version 1.52.36
 	 *
 	 * @alias sap.ui.model.odata.type.DateTime
 	 * @param {object} [oFormatOptions]

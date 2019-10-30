@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @class HTML serializer delegate class.
 	 * @extends sap.ui.core.util.serializer.delegate.Delegate
 	 * @author SAP SE
-	 * @version 1.52.35
+	 * @version 1.52.36
 	 * @alias sap.ui.core.util.serializer.delegate.HTML
 	 * @private
 	 * @sap-restricted sap.watt com.sap.webide

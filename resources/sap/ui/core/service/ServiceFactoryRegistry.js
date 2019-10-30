@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './ServiceFactory'],
 	 * The service factory registry.
 	 *
 	 * @author SAP SE
-	 * @version 1.52.35
+	 * @version 1.52.36
 	 * @alias sap.ui.core.service.ServiceFactoryRegistry
 	 * @private
 	 * @sap-restricted sap.ushell
