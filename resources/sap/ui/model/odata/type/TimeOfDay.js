@@ -127,7 +127,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.type.ODataType
 	 * @public
 	 * @since 1.37.0
-	 * @version 1.44.43
+	 * @version 1.44.44
 	 */
 	var TimeOfDay = ODataType.extend("sap.ui.model.odata.type.TimeOfDay", {
 			constructor : function (oFormatOptions, oConstraints) {
