@@ -209,10 +209,15 @@ jQuery.extend = jQuery.fn.extend = function() {
 				src = target[ name ];
 				copy = options[ name ];
 
+				// ##### BEGIN: MODIFIED BY SAP
+				// Prevent Object.prototype pollution for $.extend( true, ... )
+				// For further information, please visit https://github.com/jquery/jquery/pull/4333
+				// Code taken from jQuery v3.4.0
 				// Prevent never-ending loop
-				if ( target === copy ) {
+				if ( name === "__proto__" || target === copy ) {
 					continue;
 				}
+				// ##### END: MODIFIED BY SAP
 
 				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
@@ -9385,8 +9390,19 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 	}
 } );
 
-
-
+// ##### BEGIN: MODIFIED BY SAP
+// Code taken from jQuery v3.1.1
+// Support: Safari 8 only
+// In Safari 8 documents created via document.implementation.createHTMLDocument
+// collapse sibling forms: the second one becomes a child of the first one.
+// Because of that, this security measure has to be disabled in Safari 8.
+// Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=137337
+support.createHTMLDocument = (function() {
+	var body = document.implementation.createHTMLDocument( "" ).body;
+	body.innerHTML = "<form></form><form></form>";
+	return body.childNodes.length === 2;
+})();
+// ##### END: MODIFIED BY SAP
 
 // Argument "data" should be string of html
 // context (optional): If specified, the fragment will be created in this context,
@@ -9400,10 +9416,34 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 		keepScripts = context;
 		context = false;
 	}
-	context = context || document;
 
-	var parsed = rsingleTag.exec( data ),
-		scripts = !keepScripts && [];
+	// ##### BEGIN: MODIFIED BY SAP
+	// Stop scripts or inline event handlers from being executed immediately
+	// by using document.implementation.
+	// Code taken from jQuery v3.1.1
+	var base, parsed, scripts;
+
+	if ( !context ) {
+
+		// Stop scripts or inline event handlers from being executed immediately
+		// by using document.implementation
+		if ( support.createHTMLDocument ) {
+			context = document.implementation.createHTMLDocument( "" );
+
+			// Set the base href for the created document
+			// so any parsed elements with URLs
+			// are based on the document's URL (gh-2965)
+			base = context.createElement( "base" );
+			base.href = document.baseURI;
+			context.head.appendChild( base );
+		} else {
+			context = document;
+		}
+	}
+	// ##### END: MODIFIED BY SAP
+
+	parsed = rsingleTag.exec( data );
+	scripts = !keepScripts && [];
 
 	// Single tag
 	if ( parsed ) {
@@ -10364,7 +10404,7 @@ $.ui.position = {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10375,7 +10415,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.38.39
+ * @version 1.38.43
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10401,7 +10441,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.38.39";
+		var apiVersion = "1.38.43";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10459,7 +10499,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.38.39";
+		var v = "1.38.43";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -10565,6 +10605,8 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * If this flag is set to <code>true</code>, a Mac operating system is used.
 	 *
+	 * <b>Note:</b> An iPad using Safari browser, which is requesting desktop sites, is also recognized as Macintosh.
+	 *
 	 * @name sap.ui.Device.os#macintosh
 	 * @type boolean
 	 * @public
@@ -10658,7 +10700,7 @@ if (typeof window.sap.ui !== "object") {
 		"WINDOWS_PHONE": "winphone"
 	};
 
-	function getOS(userAgent){ // may return null!!
+	function getOS(userAgent, customPlatform){ // may return null!!
 
 		userAgent = userAgent || navigator.userAgent;
 
@@ -10666,7 +10708,7 @@ if (typeof window.sap.ui !== "object") {
 			result;
 
 		function getDesktopOS(){
-			var pf = navigator.platform;
+			var pf = customPlatform || navigator.platform;
 			if (pf.indexOf("Win") != -1 ) {
 				// userAgent in windows 7 contains: windows NT 6.1
 				// userAgent in windows 8 contains: windows NT 6.2 or higher
@@ -10740,8 +10782,8 @@ if (typeof window.sap.ui !== "object") {
 		return getDesktopOS();
 	}
 
-	function setOS(customUA) {
-		device.os = getOS(customUA) || {};
+	function setOS(customUA, customPlatform) {
+		device.os = getOS(customUA, customPlatform) || {};
 		device.os.OS = OS;
 		device.os.version = device.os.versionStr ? parseFloat(device.os.versionStr) : -1;
 
@@ -11892,7 +11934,7 @@ if (typeof window.sap.ui !== "object") {
 		var s = {};
 		s.tablet = !!(((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t);
 		s.phone = !!(device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t);
-		s.desktop = !!((!s.tablet && !s.phone) || isWin8Upwards || isWin7);
+		s.desktop = !!((!s.tablet && !s.phone) || isWin8Upwards || isWin7 || device.os.linux || device.os.macintosh);
 		s.combi = !!(s.desktop && s.tablet);
 		s.SYSTEMTYPE = SYSTEMTYPE;
 
@@ -11907,6 +11949,11 @@ if (typeof window.sap.ui !== "object") {
 		var isWin8Upwards = device.os.windows && device.os.version >= 8;
 		if (device.os.name === device.os.OS.IOS) {
 			return /ipad/i.test(ua);
+		} else if (device.os.macintosh) {
+			// With iOS 13 the string 'iPad' was removed from the user agent string through a browser setting, which is applied on all sites by default:
+			// "Request Desktop Website -> All websites" (for more infos see: https://forums.developer.apple.com/thread/119186).
+			// Therefore the OS is detected as MACINTOSH instead of iOS and the device is a tablet if the supported touch points are more than 1
+			return navigator.maxTouchPoints > 1;
 		} else {
 			//in real mobile device
 			if (device.support.touch) {
@@ -15253,7 +15300,7 @@ return URI;
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2018 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16007,7 +16054,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.38.39
+	 * @version 1.38.43
 	 * @namespace
 	 * @public
 	 * @static
@@ -20090,9 +20137,22 @@ return URI;
 
 	// TODO should be in core, but then the 'callback' could not be implemented
 	if ( !(oCfgData.productive === true || oCfgData.productive === "true"  || oCfgData.productive === "x") ) {
+		// Check whether the left 'alt' key is used
+		// The TechnicalInfo should be shown only when left 'alt' key is used
+		// because the right 'alt' key is mapped to 'alt' + 'ctrl' on windows
+		// in some languages for example German or Polish which makes right
+		// 'alt' + 'shift' + S open the TechnicalInfo
+		var bLeftAlt = false;
+
 		document.addEventListener('keydown', function(e) {
 			try {
-				if ( e.shiftKey && e.altKey && e.ctrlKey ) {
+				if (e.keyCode === 18) { // 'alt' Key
+					bLeftAlt = (typeof e.location !== "number" /* location isn't supported */ || e.location === 1 /* left */);
+					return;
+				}
+
+				if (e.shiftKey && e.altKey && e.ctrlKey && bLeftAlt) {
+					// invariant: when e.altKey is true, there must have been a preceding keydown with keyCode === 18, so bLeftAlt is always up-to-date
 					if ( e.keyCode === 80 ) { // 'P'
 						sap.ui.require(['sap/ui/debug/TechnicalInfo'], function(TechnicalInfo) {
 							TechnicalInfo.open(function() {
