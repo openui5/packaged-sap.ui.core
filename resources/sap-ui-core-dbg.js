@@ -9430,6 +9430,12 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 		if ( support.createHTMLDocument ) {
 			context = document.implementation.createHTMLDocument( "" );
 
+			// Explicitely set domain to allow elements created with this document
+			// to be inserted into the parent document in IE11
+			if (context.domain !== document.domain) {
+				context.domain = document.domain;
+			}
+
 			// Set the base href for the created document
 			// so any parsed elements with URLs
 			// are based on the document's URL (gh-2965)
@@ -10415,7 +10421,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.52.36
+ * @version 1.52.37
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10441,7 +10447,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.52.36";
+		var apiVersion = "1.52.37";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10499,7 +10505,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.52.36";
+		var v = "1.52.37";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -16205,7 +16211,7 @@ if ( !('baseURI' in Node.prototype) ) {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.52.36
+	 * @version 1.52.37
 	 * @namespace
 	 * @public
 	 * @static
