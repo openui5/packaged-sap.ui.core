@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -62,7 +62,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @author SAP SE
-	 * @version 1.38.43
+	 * @version 1.38.44
 	 *
 	 * @constructor
 	 * @public
@@ -1136,10 +1136,10 @@ sap.ui.define([
 			if (!sKey) {
 				return sKey;
 			}
-			oEntry = this.oData[sKey];
+			oEntry = this._getEntity(sKey);
 			if (!oEntry) {
 				oEntry = oData;
-				this.oData[sKey] = oEntry;
+				this._addEntity(oEntry);
 			}
 			jQuery.each(oData, function(sName, oProperty) {
 				if (oProperty && (oProperty.__metadata && oProperty.__metadata.uri || oProperty.results) && !oProperty.__deferred) {
@@ -1481,7 +1481,7 @@ sap.ui.define([
 				var handleSuccess = function(oData) {
 					var sKey = oData ? that._getKey(oData) : null,
 						oRef = null,
-						sContextPath;
+						sContextPath, oEntity;
 
 					oNewContext = null;
 
@@ -1494,20 +1494,23 @@ sap.ui.define([
 						// remove starting slash
 						sContextPath = sContextPath.substr(1);
 						// when model is refreshed, parent entity might not be available yet
-						if (that.oData[sContextPath]) {
-							that.oData[sContextPath][sPath] = oRef;
+						oEntity = that._getEntity(sContextPath);
+						if (oEntity) {
+							oEntity[sPath] = oRef;
 						}
 					}
 					fnCallBack(oNewContext);
 				};
 				var handleError = function(oError) {
+					var oEntity;
 					if (oError.statusCode == '404' && oContext && bIsRelative) {
 						var sContextPath = oContext.getPath();
 						// remove starting slash
 						sContextPath = sContextPath.substr(1);
 						// when model is refreshed, parent entity might not be available yet
-						if (that.oData[sContextPath]) {
-							that.oData[sContextPath][sPath] = {__ref: null};
+						oEntity = that._getEntity(sContextPath);
+						if (oEntity) {
+							oEntity[sPath] = {__ref: null};
 						}
 					}
 					fnCallBack(null); // error - notify to recreate contexts
@@ -1530,8 +1533,8 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._isReloadNeeded = function(sPath, mParameters) {
 
-		var oMetadata = this.oMetadata,
-			oData = this.oData,
+		var that = this,
+			oMetadata = this.oMetadata,
 			oEntityType = this.oMetadata._getEntityTypeByPath(sPath),
 			oEntity = this.getObject(sPath),
 			aExpand = [], aSelect = [];
@@ -1614,14 +1617,14 @@ sap.ui.define([
 
 				// expanded entities need to be checked recursively for nested expand/select
 				if (vNavData.__ref) {
-					oNavEntity = oData[vNavData.__ref];
+					oNavEntity = that._getEntity(vNavData.__ref);
 					if (checkReloadNeeded(oNavEntityType, oNavEntity, aNavSelect, aNavExpand)) {
 						return true;
 					}
 				}
 				if (vNavData.__list) {
 					for (var j = 0; j < vNavData.__list.length; j++) {
-						oNavEntity = oData[vNavData.__list[j]];
+						oNavEntity = that._getEntity(vNavData.__list[j]);
 						if (checkReloadNeeded(oNavEntityType, oNavEntity, aNavSelect, aNavExpand)) {
 							return true;
 						}
@@ -1716,6 +1719,41 @@ sap.ui.define([
 		return this.sDefaultCountMode;
 	};
 
+	/**
+	 * Adds an entity to the internal cache
+	 *
+	 * @param {object} oEntity The entity object
+	 * @private
+	 */
+	ODataModel.prototype._addEntity = function(oEntity) {
+		var sKey = this._getKey(oEntity);
+		this.oData[sKey] = oEntity;
+	};
+
+	/**
+	 * Removes an entity from the internal cache, also removes related changed entity and context
+	 *
+	 * @param {string} sKey The entity key
+	 * @private
+	 */
+	ODataModel.prototype._removeEntity = function(sKey) {
+		sKey = sKey && this._normalizeKey(sKey);
+		delete this.oData[sKey];
+		delete this.mChangedEntities[sKey];
+		delete this.mContexts["/" + sKey];
+	};
+
+	/**
+	 * Returns an entity from the internal cache
+	 *
+	 * @param {string} sKey The entity key
+	 * @return {object} the entity object
+	 * @private
+	 */
+	ODataModel.prototype._getEntity = function(sKey) {
+		sKey = sKey && this._normalizeKey(sKey);
+		return this.oData[sKey];
+	};
 
 	/**
 	 * Returns the key part from the entry URI or the given context or object
@@ -1732,9 +1770,10 @@ sap.ui.define([
 			sURI = vValue.__metadata.uri;
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
 		} else if (typeof vValue === 'string') {
+			vValue = vValue.split("?")[0];
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
-		return sKey;
+		return sKey && this._normalizeKey(sKey);
 	};
 
 	/**
@@ -1785,6 +1824,30 @@ sap.ui.define([
 		}
 		sKey += ")";
 		return sKey;
+	};
+
+	/**
+	 * Normalizes the given canonical key.
+	 *
+	 * Although keys contained in OData response must be canonical, there are
+	 * minor differences (like capitalization of suffixes for Decimal, Double,
+	 * Float) which can differ and cause equality checks to fail.
+	 *
+	 * @param {string} sKey The canonical key of an entity
+	 * @returns {string} Normalized key of the entry
+	 * @private
+	 */
+		// Define regular expression and function outside function to avoid instatiation on every call
+	var rNormalizeString = /([(=,])('.*?')([,)])/g,
+		rNormalizeCase = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g,
+		fnNormalizeString = function(value, p1, p2, p3) {
+			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
+		},
+		fnNormalizeCase = function(value) {
+			return value.toLowerCase();
+		};
+	ODataModel.prototype._normalizeKey = function(sKey) {
+		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase);
 	};
 
 	/**
@@ -1861,6 +1924,10 @@ sap.ui.define([
 			if (!sResolvedPath) {
 				return oNode;
 			}
+			// doesn't make any sense, but used to work
+			if (sResolvedPath === "/") {
+				return this.oData;
+			}
 			var aParts = sResolvedPath.split("/"),
 			iIndex = 0;
 			// absolute path starting with slash
@@ -1868,13 +1935,8 @@ sap.ui.define([
 			aParts.splice(0,2);
 
 			oChangedNode = this.mChangedEntities[sKey];
-			oOrigNode = this.oData[sKey];
-			if (!bOriginalValue) {
-				//if sKey is undefined (for example sPath = '/') we have to return the data container
-				oNode = !sKey ? this.oData : oChangedNode || oOrigNode;
-			} else {
-				oNode = !sKey ? this.oData : oOrigNode;
-			}
+			oOrigNode = this._getEntity(sKey);
+			oNode = bOriginalValue ? oOrigNode : oChangedNode || oOrigNode;
 			while (oNode && aParts[iIndex]) {
 				var bHasChange = oChangedNode && oChangedNode.hasOwnProperty(aParts[iIndex]);
 				oChangedNode = oChangedNode && oChangedNode[aParts[iIndex]];
@@ -1883,7 +1945,7 @@ sap.ui.define([
 				if (oNode) {
 					if (oNode.__ref) {
 						oChangedNode = this.mChangedEntities[oNode.__ref];
-						oOrigNode =  this.oData[oNode.__ref];
+						oOrigNode =  this._getEntity(oNode.__ref);
 						oNode =  bOriginalValue ? oOrigNode : oChangedNode || oOrigNode;
 					} else if (oNode.__list) {
 						oNode = oNode.__list;
@@ -2541,7 +2603,7 @@ sap.ui.define([
 			jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 				for (var i = 0; i < aChangeSet.length; i++) {
 					var oRequest = aChangeSet[i].request,
-						sKey = oRequest.requestUri.split('?')[0];
+						sKey = that._getKey(oRequest.requestUri);
 					if (oRequest.method === "POST" || oRequest.method === "DELETE") {
 						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
 						if (oEntityMetadata) {
@@ -2699,7 +2761,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
-		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts,
+		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts, oEntity,
 		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
@@ -2737,9 +2799,10 @@ sap.ui.define([
 			that._importData(oImportData, mLocalGetEntities);
 		}
 
-		if (mLocalGetEntities && this.oData[oRequest.key] && this.oData[oRequest.key].__metadata.created && this.oData[oRequest.key].__metadata.created.functionImport) {
+		oEntity = this._getEntity(oRequest.key);
+		if (mLocalGetEntities && oEntity && oEntity.__metadata.created && oEntity.__metadata.created.functionImport) {
 			var aResults = [];
-			var oResult = this.oData[oRequest.key]["$result"];
+			var oResult = oEntity["$result"];
 			if (oResult && oResult.__list) {
 				jQuery.each(mLocalGetEntities, function(sKey) {
 					aResults.push(sKey);
@@ -2765,9 +2828,7 @@ sap.ui.define([
 			}
 			//for delete requests delete data in model (exclude $links)
 			if (oRequest.method === "DELETE" && aParts[2] !== "$links") {
-				delete that.oData[aParts[1]];
-				delete that.mContexts["/" + aParts[1]]; // contexts are stored starting with /
-				delete that.mChangedEntities[aParts[1]];
+				this._removeEntity(aParts[1]);
 			}
 		}
 		//get entityType for creates
@@ -2779,13 +2840,16 @@ sap.ui.define([
 			// for createEntry entities change context path to new one
 			if (oRequest.key) {
 				var sKey = this._getKey(oResultData);
-				delete this.mChangedEntities[oRequest.key];
-				delete this.oData[oRequest.key];
+				// rewrite context for new path
 				var oContext = this.getContext("/" + oRequest.key);
 				oContext.sPath = '/' + sKey;
-				//delete created flag after successfull creation
-				if (this.oData[sKey]) {
-					delete this.oData[sKey].__metadata.created;
+				this.mContexts[sKey] = oContext;
+				// remove old entity
+				this._removeEntity(oRequest.key);
+				//delete created flag after successful creation
+				oEntity = this._getEntity(sKey);
+				if (oEntity) {
+					delete oEntity.__metadata.created;
 				}
 			}
 		}
@@ -2914,7 +2978,7 @@ sap.ui.define([
 		} else if (sUpdateMethod === "MERGE") {
 			sMethod = "MERGE";
 			// get original unmodified entry for diff
-			oUnModifiedEntry = this.oData[sKey];
+			oUnModifiedEntry = this._getEntity(sKey);
 		} else {
 			sMethod = "PUT";
 		}
@@ -3435,7 +3499,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.remove = function(sPath, mParameters) {
-		var oContext, sEntry, fnSuccess, fnError, oRequest, sUrl, sGroupId,
+		var oContext, sKey, fnSuccess, fnError, oRequest, sUrl, sGroupId,
 		sChangeSetId, sETag, handleSuccess,
 		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
 		that = this;
@@ -3457,13 +3521,12 @@ sap.ui.define([
 		sETag = sETag || this._getETag(sPath, oContext);
 
 		handleSuccess = function(oData, oResponse) {
-			sEntry = sUrl.substr(sUrl.lastIndexOf('/') + 1);
+			sKey = sUrl.substr(sUrl.lastIndexOf('/') + 1);
 			//remove query params if any
-			if (sEntry.indexOf('?') !== -1) {
-				sEntry = sEntry.substr(0, sEntry.indexOf('?'));
+			if (sKey.indexOf('?') !== -1) {
+				sKey = sKey.substr(0, sKey.indexOf('?'));
 			}
-			delete that.oData[sEntry];
-			delete that.mContexts["/" + sEntry]; // contexts are stored starting with /
+			that._removeEntity(sKey);
 
 			if (fnSuccess) {
 				fnSuccess(oData, oResponse);
@@ -3600,7 +3663,7 @@ sap.ui.define([
 				functionImport: true
 			}};
 
-			that.oData[sKey] = oData;
+			that._addEntity(oData);
 			oContext = that.getContext("/" + sKey);
 			fnResolve(oContext);
 
@@ -4361,20 +4424,14 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.deleteCreatedEntry = function(oContext) {
-		var that = this, sGroupId;
+		var that = this, sKey, sGroupId;
 		if (oContext) {
-			var sPath = oContext.getPath();
-			delete this.mContexts[sPath]; // contexts are stored starting with /
-			// remove starting / if any
-			if (jQuery.sap.startsWith(sPath, "/")) {
-				sPath = sPath.substr(1);
-			}
-			sGroupId = this._resolveGroup(sPath).groupId;
+			var sKey = oContext.getPath().substr(1);
+			sGroupId = this._resolveGroup(sKey).groupId;
 			that.oMetadata.loaded().then(function() {
-				that.abortInternalRequest(sPath, sGroupId);
+				that.abortInternalRequest(sKey, sGroupId);
 			});
-			delete this.mChangedEntities[sPath];
-			delete this.oData[sPath];
+			that._removeEntity(sKey);
 		}
 	};
 
@@ -4485,7 +4542,7 @@ sap.ui.define([
 				changeSetId: sChangeSetId,
 				eTag: sETag}};
 
-			that.oData[sKey] = jQuery.sap.extend(true, {}, oEntity);
+			that._addEntity(jQuery.sap.extend(true, {}, oEntity));
 			that.mChangedEntities[sKey] = oEntity;
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);

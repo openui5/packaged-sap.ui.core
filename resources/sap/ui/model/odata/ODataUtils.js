@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -428,10 +428,10 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				sValue = "guid'" + vValue + "'";
 				break;
 			case "Edm.Decimal":
-				sValue = vValue + "M";
+				sValue = vValue + "m";
 				break;
 			case "Edm.Int64":
-				sValue = vValue + "L";
+				sValue = vValue + "l";
 				break;
 			case "Edm.Double":
 				sValue = vValue + "d";
