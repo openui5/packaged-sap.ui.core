@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.52.39
+	 * @version 1.52.40
 	 * @public
 	 * @alias sap.ui.core.LocaleData
 	 */
@@ -786,6 +786,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		getNumberSymbol: function(sType) {
 			jQuery.sap.assert(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign" || sType == "percentSign", "sType must be decimal, group, plusSign, minusSign or percentSign");
 			return this._get("symbols-latn-" + sType);
+		},
+
+		/**
+		 * Get lenient number symbols for "plusSign" or "minusSign".
+		 *
+		 * @param {string} sType the required type of symbol
+		 * @returns {string} the selected lenient number symbols, e.g. "-－﹣−⁻₋➖‒"
+		 * @public
+		 */
+		getLenientNumberSymbols: function(sType) {
+			jQuery.sap.assert(sType == "plusSign" || sType == "minusSign", "sType must be plusSign or minusSign");
+			return this._get("lenient-scope-number")[sType];
 		},
 
 		/**
@@ -2233,6 +2245,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"timeData": {
 				_allowed: "H h",
 				_preferred: "H"
+			},
+			"lenient-scope-number": {
+				"minusSign": "-－﹣−⁻₋➖‒",
+				"commaSign": ",，﹐︐،٫、﹑︑､",
+				"plusSign": "+＋﬩﹢⁺₊➕"
 			},
 			"plurals": {}
 	};

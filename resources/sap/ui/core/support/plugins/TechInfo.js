@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 		 * @class This class represents the technical info plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 *
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.52.39
+		 * @version 1.52.40
 		 * @private
 		 * @alias sap.ui.core.support.plugins.TechInfo
 		 */
