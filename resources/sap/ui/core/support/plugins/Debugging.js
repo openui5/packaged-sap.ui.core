@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			rm.write('<option value="none">Disabled (no custom reboot URL)</option>');
 			rm.write('<option value="other" id="sapUiSupportDebuggingRebootOther">Other (enter URL to sap-ui-core.js below)...:</option>');
 			rm.write('</select>');
-			rm.write('<input type="text" id="sapUiSupportDebuggingRebootInput" disabled="disabled"/>');
+			rm.write('<input type="text" id="sapUiSupportDebuggingRebootInput" disabled="disabled">');
 			rm.write('<button id="sapUiSupportDebuggingReboot">Activate Reboot URL</button>');
 			rm.write('</div>');
 
@@ -134,10 +134,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			rm.write('</select>');
 
-			rm.write('<input id="sapUiSupportDebuggingClassInput" class="sapUiSupportAutocomplete" type="text"/>');
+			rm.write('<input id="sapUiSupportDebuggingClassInput" class="sapUiSupportAutocomplete" type="text">');
 			rm.write('<button id="sapUiSupportDebuggingAddClass" class="sapUiSupportBtn">Add</button>');
 
-			rm.write('<hr class="no-border"/><ul id="sapUiSupportDebuggingClassList" class="sapUiSupportList">');
+			rm.write('<hr class="no-border"><ul id="sapUiSupportDebuggingClassList" class="sapUiSupportList">');
 
 			$.each(aClasses, function(iIndex, oValue) {
 				if (typeof (that._mAddedClasses[oValue]) === 'undefined') {
@@ -198,10 +198,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			rm.write('</select>');
 
-			rm.write('<input id="sapUiSupportDebuggingMethodInput" class="sapUiSupportAutocomplete" type="text"/>');
+			rm.write('<input id="sapUiSupportDebuggingMethodInput" class="sapUiSupportAutocomplete" type="text">');
 			rm.write('<button id="sapUiSupportDebuggingAddBreakpoint" class="sapUiSupportBtn">Add breakpoint</button>');
 
-			rm.write('<hr class="no-border"/><ul id="sapUiSupportDebuggingBreakpointList" class="sapUiSupportList sapUiSupportBreakpointList">');
+			rm.write('<hr class="no-border"><ul id="sapUiSupportDebuggingBreakpointList" class="sapUiSupportList sapUiSupportBreakpointList">');
 
 			$.each(mMethods, function(iIndex, oValue) {
 				if (!oValue.active) {

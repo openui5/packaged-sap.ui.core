@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -258,7 +258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write('</span>');
 
 
-          rm.write("<br/>");
+          rm.write("<br>");
 
 
           rm.write('<span class="sapUiInteractionItemTriggerText">');
@@ -374,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write('</span>');
 
 
-          rm.write("<br/>");
+          rm.write("<br>");
 
 
           rm.write('<span class="sapUiInteractionItemTriggerText">');

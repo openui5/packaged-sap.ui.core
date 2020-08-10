@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.44.44
+		 * @version 1.44.46
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.MessageTest
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support'],
 
 			var rm = sap.ui.getCore().createRenderManager();
 			rm.write("<div class='sapUiSupportToolbar'>");
-			rm.write("<input type='text' id='" + this.getId() + "-input' class='sapUiSupportTxtFld'/>");
+			rm.write("<input type='text' id='" + this.getId() + "-input' class='sapUiSupportTxtFld'>");
 			rm.write("<button id='" + this.getId() + "-send' class='sapUiSupportBtn'>Send</button>");
 			rm.write("</div><div class='sapUiSupportMessageCntnt'></div>");
 			rm.flush(this.$().get(0));

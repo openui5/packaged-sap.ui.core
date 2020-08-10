@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.44.44
+		 * @version 1.44.46
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Trace
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var rm = sap.ui.getCore().createRenderManager();
 			rm.write("<div class='sapUiSupportToolbar'>");
 			rm.write("<button id='" + this.getId() + "-clear' class='sapUiSupportBtn'>Clear</button>");
-			rm.write("<label class='sapUiSupportLabel'>Filter:</label><input type='text' id='" + this.getId() + "-filter' class='sapUiSupportTxtFld'/>");
+			rm.write("<label class='sapUiSupportLabel'>Filter:</label><input type='text' id='" + this.getId() + "-filter' class='sapUiSupportTxtFld'>");
 			rm.write("<label class='sapUiSupportLabel'>Log Level:</label><select id='" + this.getId() + "-loglevel' class='sapUiSupportTxtFld'>");
 			rm.write("<option value='0'>FATAL</option>");
 			rm.write("<option value='1'>ERROR</option>");

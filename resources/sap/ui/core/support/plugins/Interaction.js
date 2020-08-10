@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.44.44
+		 * @version 1.44.46
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Interaction
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			rm.write("<button id=\"" + this.getId() + "-record\" class=\"sapUiSupportIntToggleRecordingBtn\"></button>");
 			rm.write("<label class='sapUiSupportIntODataLbl'><input type='checkbox' id=\"" + this.getId() + "-odata\" > Enable OData Statistics</label>");
 			rm.write("<div class='sapUiSupportIntFupInputMask'>");
-			rm.write("<input id=\"" + this.getId() + "-fileImport\" tabindex='-1' size='1' accept='application/zip' type='file'/>");
+			rm.write("<input id=\"" + this.getId() + "-fileImport\" tabindex='-1' size='1' accept='application/zip' type='file'>");
 			rm.write("</div>");
 			rm.write("<button id=\"" + this.getId() + "-import\" class=\"sapUiSupportBtn sapUiSupportIntImportExportBtn sapUiSupportIntImportBtn \">Import</button>");
 			rm.write("<button id=\"" + this.getId() + "-export\" class=\"sapUiSupportBtn sapUiSupportIntImportExportBtn sapUiSupportIntExportBtn sapUiSupportIntHidden\">Export</button>");

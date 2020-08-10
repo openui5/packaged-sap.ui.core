@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16,6 +16,11 @@ sap.ui.define(['jquery.sap.global'],
 	 * @alias sap.ui.core.tmpl.DOMElementRenderer
 	 */
 	var DOMElementRenderer = {};
+
+	/**
+	 * RegExp to recognize void tags.
+	 */
+	var rVoidTags = /^(?:area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/i;
 
 	/**
 	 * Renders the DOM element for the given control, using the provided
@@ -71,10 +76,8 @@ sap.ui.define(['jquery.sap.global'],
 		var aElements = oElement.getElements(),
 			bHasChildren = !!oElement.getText() || aElements.length > 0;
 
-		if (!bHasChildren) {
-			oRM.write("/>");
-		} else {
-			oRM.write(">");
+		oRM.write(">");
+		if (bHasChildren) {
 
 			// append the text (do escaping)
 			if (oElement.getText()) {
@@ -85,7 +88,9 @@ sap.ui.define(['jquery.sap.global'],
 			jQuery.each(aElements, function(iIndex, oChildElement) {
 				oRM.renderControl(oChildElement);
 			});
+		}
 
+		if ( !rVoidTags.test(oElement.getTag()) ) {
 			// closing tag
 			oRM.write("</");
 			oRM.writeEscaped(oElement.getTag());

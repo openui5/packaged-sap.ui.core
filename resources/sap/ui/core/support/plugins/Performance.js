@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.44.44
+		 * @version 1.44.46
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Performance
@@ -293,7 +293,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				'<div>' +
 				'<label>' +
 				'Min. Duration: ' +
-				'<input id="sapUiSupportPerfHeaderFilterMinDuration" type="number" min="0" value="0" /> ms.' +
+				'<input id="sapUiSupportPerfHeaderFilterMinDuration" type="number" min="0" value="0"> ms.' +
 				'</label>' +
 				'</div>' +
 				'<div class="flex-spacer"></div>' +
@@ -817,7 +817,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			allCategories.forEach(function (category) {
 				category = jQuery.sap.escapeHTML(category);
-				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '" />' + category + '</label>';
+				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '">' + category + '</label>';
 			});
 
 			var categoriesDom = document.querySelector('#categories');

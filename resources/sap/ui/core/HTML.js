@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './Control', './RenderManager'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.44.44
+	 * @version 1.44.46
 	 *
 	 * @constructor
 	 * @public
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', './Control', './RenderManager'],
 			 * Please consider to consult the jQuery documentation as well.
 			 *
 			 * The HTML control currently doesn't prevent the usage of multiple root nodes in its DOM content
-			 * (e.g. <code>setContent("&lt;div/>&lt;div/>")</code>), but this is not a guaranteed feature.
+			 * (e.g. <code>setContent("&lt;div>&lt;/div>&lt;div>&lt;/div>")</code>), but this is not a guaranteed feature.
 			 * The accepted content might be restricted to single root nodes in future versions.
 			 * To notify applications about this fact, a warning is written in the log when multiple root nodes are used.
 			 *
