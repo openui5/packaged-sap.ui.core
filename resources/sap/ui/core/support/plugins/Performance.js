@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * With this plugIn the performance measurements are displayed
 		 *
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.52.42
+		 * @version 1.52.43
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Performance
 		 */
@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 								'<option value="duration">By Duration</option>' +
 							'</select>' +
 							'<label class="sapUiSupportLabel">Min. Duration:</label>' +
-							'<input id="sapUiSupportPerfHeaderFilterMinDuration" type="number" min="0" value="0" />' +
+							'<input id="sapUiSupportPerfHeaderFilterMinDuration" type="number" min="0" value="0">' +
 							'<label class="sapUiSupportLabel"> ms.</label>' +
 							'<div class="flex-spacer"></div>' +
 							'<div id="categories"></div>' +
@@ -810,7 +810,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			allCategories.forEach(function (category) {
 				category = jQuery.sap.escapeHTML(category);
-				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '" />' + category + '</label>';
+				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '">' + category + '</label>';
 			});
 
 			var categoriesDom = document.querySelector('#categories');

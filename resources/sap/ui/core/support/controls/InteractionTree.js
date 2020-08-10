@@ -258,7 +258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write('</span>');
 
 
-          rm.write("<br/>");
+          rm.write("<br>");
 
 
           rm.write('<span class="sapUiInteractionItemTriggerText">');
@@ -374,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write('</span>');
 
 
-          rm.write("<br/>");
+          rm.write("<br>");
 
 
           rm.write('<span class="sapUiInteractionItemTriggerText">');

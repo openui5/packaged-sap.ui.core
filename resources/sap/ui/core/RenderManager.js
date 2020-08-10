@@ -54,7 +54,7 @@ sap.ui.define([
 	 *
 	 * @extends Object
 	 * @author SAP SE
-	 * @version 1.52.42
+	 * @version 1.52.43
 	 * @alias sap.ui.core.RenderManager
 	 * @public
 	 */
@@ -1175,7 +1175,7 @@ sap.ui.define([
 			}
 			this.write("</span>");
 		} else {
-			this.write("/>");
+			this.write(">");
 		}
 
 		return this;
