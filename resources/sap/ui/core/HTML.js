@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './Control', './RenderManager'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.52.43
+	 * @version 1.52.44
 	 *
 	 * @public
 	 * @alias sap.ui.core.HTML

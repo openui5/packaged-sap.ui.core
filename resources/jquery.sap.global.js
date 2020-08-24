@@ -575,9 +575,12 @@
 								case "send":
 									return function() {
 										bSyncRequestOngoing = bSync;
-										vProp.apply(oTarget, arguments);
-										iReadyState = oTarget.readyState;
-										bSyncRequestOngoing = false;
+										try {
+											vProp.apply(oTarget, arguments);
+										} finally {
+											iReadyState = oTarget.readyState;
+											bSyncRequestOngoing = false;
+										}
 									};
 							}
 							// All functions need to be wrapped, so they are called on the correct object
@@ -871,7 +874,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.52.43
+	 * @version 1.52.44
 	 * @namespace
 	 * @public
 	 * @static
