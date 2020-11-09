@@ -345,10 +345,15 @@ jQuery.extend = jQuery.fn.extend = function() {
 				src = target[ name ];
 				copy = options[ name ];
 
+				// ##### BEGIN: MODIFIED BY SAP
+				// Prevent Object.prototype pollution for $.extend( true, ... )
+				// For further information, please visit https://github.com/jquery/jquery/pull/4333
+				// Code taken from jQuery v3.4.0
 				// Prevent never-ending loop
-				if ( target === copy ) {
+				if ( name === "__proto__" || target === copy ) {
 					continue;
 				}
+				// ##### END: MODIFIED BY SAP
 
 				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
@@ -8467,6 +8472,16 @@ function ajaxConvert( s, response, jqXHR, isSuccess ) {
 
 	return { state: "success", data: response };
 }
+
+// ##### BEGIN: MODIFIED BY SAP
+// Prevent auto-execution of scripts when no explicit dataType was provided (See gh-2432)
+jQuery.ajaxPrefilter( function( s ) {
+	if ( s.crossDomain ) {
+		s.contents.script = false;
+	}
+} );
+// ##### END: MODIFIED BY SAP
+
 // Install script dataType
 jQuery.ajaxSetup({
 	accepts: {
