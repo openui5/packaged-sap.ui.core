@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.storage'],
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.52.45
+	 * @version 1.52.46
 	 * @alias sap.ui.core.History
 	 * @protected
 	 */
