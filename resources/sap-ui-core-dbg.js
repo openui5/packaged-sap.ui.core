@@ -10471,7 +10471,7 @@ $.ui.position = {
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2021 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -10482,7 +10482,7 @@ $.ui.position = {
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.38.48
+ * @version 1.38.49
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -10508,7 +10508,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.38.48";
+		var apiVersion = "1.38.49";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -10566,7 +10566,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.38.48";
+		var v = "1.38.49";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -14231,6 +14231,51 @@ p.absoluteTo = function(base) {
     resolved.build();
     return resolved;
 };
+
+// ##### BEGIN: MODIFIED BY SAP
+// for the function isCrossOriginURL in jQuery.sap.script.js we need to extract the origin information
+// from the given URL. The accessor for origin is available in URI 1.19.1 and is borrowed for 1.11.2:
+
+/*!
+ * The following function is taken from
+ * URI.js - Mutating URLs
+ *
+ * Version: 1.19.1
+ *
+ * Author: Rodney Rehm
+ * Web: http://medialize.github.io/URI.js/
+ *
+ * Licensed under
+ * MIT License http://www.opensource.org/licenses/mit-license
+ *
+ */
+
+// compound accessors
+p.origin = function(v, build) {
+	if (this._parts.urn) {
+		return v === undefined ? '' : this;
+	}
+
+	if (v === undefined) {
+		var protocol = this.protocol();
+		var authority = this.authority();
+		if (!authority) {
+			return '';
+		}
+
+		return (protocol ? protocol + '://' : '') + this.authority();
+	} else {
+		var origin = URI(v);
+		this
+			.protocol(origin.protocol())
+			.authority(origin.authority())
+			.build(!build);
+		return this;
+	}
+};
+
+// ##### END: MODIFIED BY SAP
+
 p.relativeTo = function(base) {
     var relative = this.clone().normalize();
     var relativeParts, baseParts, common, relativePath, basePath;
@@ -15367,7 +15412,7 @@ return URI;
 
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2021 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -16121,7 +16166,7 @@ return URI;
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.38.48
+	 * @version 1.38.49
 	 * @namespace
 	 * @public
 	 * @static
