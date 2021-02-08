@@ -1,6 +1,6 @@
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2020 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2021 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Utility class to handle files.
 	 *
 	 * @author SAP SE
-	 * @version 1.52.46
+	 * @version 1.52.47
 	 * @namespace
 	 *
 	 * @public
@@ -97,6 +97,7 @@ sap.ui.define(['jquery.sap.global'],
 						// macOS Safari < 10.1 / iOS Safari
 						// (user has to save the file manually)
 						var oWindow = window.open(sType + "," + sData);
+						oWindow.opener = null;
 						if (!oWindow) {
 							throw new Error("Could not download the file, please deactivate your pop-up blocker.");
 						}
